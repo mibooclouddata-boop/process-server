@@ -264,6 +264,7 @@ app.get('/api/events', (req, res) => {
     'Connection': 'keep-alive',
     'Access-Control-Allow-Origin': '*',
   });
+  res.flushHeaders();
   res.write('data: connected\n\n');
   sseClients.add(res);
   req.on('close', () => sseClients.delete(res));
