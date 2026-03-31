@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+h<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -668,8 +668,13 @@ function connectSSE() {
     if (e.data === 'connected') return;
     if (currentUser) {
       loadStats();
-      if (document.getElementById('tabTracking').style.display !== 'none') loadTracking();
+      loadTracking();
     }
+  };
+
+  evtSource.onerror = () => {
+    evtSource.close();
+    setTimeout(connectSSE, 3000);
   };
 }
 </script>
