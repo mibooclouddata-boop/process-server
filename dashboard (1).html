@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공정 추적 시스템</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#00b894;--blue:#2980b9;--purple:#8e44ad;--amber:#e67e22;--red:#c0392b;
+  --bg:#f5f6fa;--card:#fff;--border:#ebebea;--text:#1a1a18;--text2:#888;
+  --radius:12px;
+}
+body{font-family:-apple-system,'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── 로그인 ── */
+#loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--card);border-radius:20px;padding:40px;width:100%;max-width:400px;border:0.5px solid var(--border)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo h1{font-size:22px;font-weight:800;color:var(--text);margin-top:12px}
+.login-logo p{font-size:14px;color:var(--text2);margin-top:6px}
+.login-icon{font-size:48px}
+.field-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+.field-label+input{width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;color:var(--text);background:#f9f9f8;outline:none;margin-bottom:16px}
+.field-label+input:focus{border-color:var(--teal)}
+.login-btn{width:100%;padding:15px;border-radius:var(--radius);border:none;background:var(--teal);color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px}
+.login-btn:hover{opacity:.9}
+.login-error{color:#c0392b;font-size:13px;text-align:center;margin-top:12px;display:none}
+
+/* ── 대시보드 ── */
+#dashboard{display:none}
+.topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:16px;height:56px}
+.topbar-title{font-size:16px;font-weight:800;flex:1}
+.topbar-user{font-size:13px;color:var(--text2)}
+.logout-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;font-size:12px;color:var(--text2)}
+.logout-btn:hover{background:var(--bg)}
+.main{padding:24px;max-width:1200px;margin:0 auto}
+
+/* 통계 카드 */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:16px;border:0.5px solid var(--border);text-align:center}
+.stat-label{font-size:11px;color:var(--text2);font-weight:500;margin-bottom:6px}
+.stat-val{font-size:28px;font-weight:800}
+
+/* 탭 */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:0.5px solid var(--border)}
+.tab{padding:10px 20px;border:none;background:none;cursor:pointer;font-size:14px;color:var(--text2);font-weight:500;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);font-weight:700}
+
+/* 검색 */
+.search-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text);background:var(--card);outline:none}
+.search-input:focus{border-color:var(--teal)}
+.search-btn{padding:10px 20px;border-radius:var(--radius);border:none;background:var(--teal);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.filter-select{padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text);background:var(--card);outline:none}
+
+/* 공정 추적 테이블 */
+.card{background:var(--card);border-radius:var(--radius);border:0.5px solid var(--border);overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:0.5px solid var(--border);background:#fafaf9}
+td{padding:12px 16px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf9}
+
+/* 공정 단계 배지 */
+.step-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.step-in      {background:#e8f8f2;color:#00724f}
+.step-stamp   {background:#f5eef8;color:#6c3483}
+.step-assembly{background:#eaf2ff;color:#1a5276}
+.step-out     {background:#fdf0ec;color:#922b21}
+
+/* 공정 진행 바 */
+.progress-wrap{display:flex;gap:4px;align-items:center}
+.progress-step{width:32px;height:8px;border-radius:4px;background:#ebebea}
+.progress-step.done-in      {background:#00b894}
+.progress-step.done-stamp   {background:#8e44ad}
+.progress-step.done-assembly{background:#2980b9}
+.progress-step.done-out     {background:#e67e22}
+
+/* 상세 공정 이력 */
+.detail-row{background:#fafaf9}
+.detail-row td{padding:0}
+.detail-inner{padding:12px 16px 16px 48px}
+.detail-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.step-list{display:flex;flex-direction:column;gap:6px}
+.step-item{display:flex;align-items:center;gap:10px;font-size:12px}
+.step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.step-dot-in      {background:#00b894}
+.step-dot-stamp   {background:#8e44ad}
+.step-dot-assembly{background:#2980b9}
+.step-dot-out     {background:#e67e22}
+.step-time{color:var(--text2)}
+.step-user{font-weight:600;color:var(--text)}
+
+/* 빈 상태 */
+.empty{padding:60px;text-align:center;color:var(--text2)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+
+/* 반응형 */
+@media(max-width:600px){.main{padding:16px}.stats-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ══ 로그인 페이지 ══ -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-icon">📦</div>
+      <h1>공정 추적 시스템</h1>
+      <p>담당자 로그인 후 이용하세요</p>
+    </div>
+    <div class="field-label">아이디</div>
+    <input type="text" id="loginId" placeholder="아이디 입력" autocomplete="username"/>
+    <div class="field-label">비밀번호</div>
+    <input type="password" id="loginPw" placeholder="비밀번호 입력" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══ 대시보드 ══ -->
+<div id="dashboard">
+  <div class="topbar">
+    <span class="topbar-title">📦 공정 추적 시스템</span>
+    <span class="topbar-user" id="topbarUser"></span>
+    <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+  </div>
+
+  <div class="main">
+    <!-- 통계 -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- 탭 -->
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('tracking',this)">공정 추적</button>
+      <button class="tab" onclick="switchTab('records',this)">전체 기록</button>
+    </div>
+
+    <!-- 공정 추적 탭 -->
+    <div id="tabTracking">
+      <div class="search-row">
+        <input class="search-input" type="text" id="trackSearch" placeholder="자재코드 검색..." oninput="loadTracking()"/>
+        <select class="filter-select" id="trackFilter" onchange="loadTracking()">
+          <option value="">전체 공정</option>
+          <option value="in">입고</option>
+          <option value="stamp">도장</option>
+          <option value="assembly">조립</option>
+          <option value="out">출고</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>자재코드</th>
+                <th>제품명</th>
+                <th>현재 공정</th>
+                <th>진행 현황</th>
+                <th>최근 업데이트</th>
+              </tr>
+            </thead>
+            <tbody id="trackingBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 전체 기록 탭 -->
+    <div id="tabRecords" style="display:none">
+      <div class="search-row">
+        <input class="search-input" type="text" id="recSearch" placeholder="자재코드 검색..." oninput="loadRecords()"/>
+        <select class="filter-select" id="recFilter" onchange="loadRecords()">
+          <option value="">전체 유형</option>
+          <option value="in">입고</option>
+          <option value="stamp">도장</option>
+          <option value="assembly">조립</option>
+          <option value="out">출고</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>시각</th>
+                <th>자재코드</th>
+                <th>제품명</th>
+                <th>공정</th>
+                <th>수량</th>
+                <th>담당자</th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 설정 ──
+const SERVER = window.location.origin; // 같은 서버에서 서빙되므로 자동
+let currentUser = null;
+let expandedBarcodes = new Set();
+
+const TYPE_INFO = {
+  in:       { label:'입고',  cls:'step-in',       dot:'step-dot-in',       prog:'done-in' },
+  stamp:    { label:'도장',  cls:'step-stamp',     dot:'step-dot-stamp',    prog:'done-stamp' },
+  assembly: { label:'조립',  cls:'step-assembly',  dot:'step-dot-assembly', prog:'done-assembly' },
+  out:      { label:'출고',  cls:'step-out',       dot:'step-dot-out',      prog:'done-out' },
+};
+const STEP_ORDER = ['in','stamp','assembly','out'];
+
+// ── 로그인 ──
+async function doLogin() {
+  const id = document.getElementById('loginId').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  if (!id || !pw) { errEl.textContent = '아이디와 비밀번호를 입력하세요.'; errEl.style.display = 'block'; return; }
+  try {
+    const r = await fetch(`${SERVER}/api/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id, password: pw })
+    });
+    const data = await r.json();
+    if (!r.ok) { errEl.textContent = data.error || '로그인 실패'; errEl.style.display = 'block'; return; }
+    currentUser = data.user;
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.id})`;
+    loadStats(); loadTracking();
+  } catch(e) {
+    errEl.textContent = '서버에 연결할 수 없습니다.'; errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPw').value = '';
+}
+
+// ── 탭 전환 ──
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('tabTracking').style.display = tab === 'tracking' ? 'block' : 'none';
+  document.getElementById('tabRecords').style.display  = tab === 'records'  ? 'block' : 'none';
+  if (tab === 'records') loadRecords();
+}
+
+// ── 통계 ──
+async function loadStats() {
+  try {
+    const r = await fetch(`${SERVER}/api/records`);
+    const data = await r.json();
+    const records = data.records || [];
+    const counts = { total: records.length, in:0, stamp:0, assembly:0, out:0 };
+    records.forEach(r => { if (counts[r.type] !== undefined) counts[r.type]++; });
+    document.getElementById('statsRow').innerHTML = [
+      { label:'전체 기록', val: counts.total, color:'#1a1a18' },
+      { label:'입고',      val: counts.in,    color:'#00967a' },
+      { label:'도장',      val: counts.stamp, color:'#8e44ad' },
+      { label:'조립',      val: counts.assembly, color:'#2980b9' },
+      { label:'출고',      val: counts.out,   color:'#e67e22' },
+    ].map(s => `
+      <div class="stat-card">
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-val" style="color:${s.color}">${s.val}</div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+// ── 공정 추적 ──
+async function loadTracking() {
+  const search = document.getElementById('trackSearch').value.trim();
+  const filter = document.getElementById('trackFilter').value;
+  try {
+    const r = await fetch(`${SERVER}/api/tracking`);
+    const data = await r.json();
+    let items = data.tracking || [];
+    if (search) items = items.filter(i => i.barcode.includes(search));
+    if (filter) items = items.filter(i => i.currentStep === filter);
+
+    const tbody = document.getElementById('trackingBody');
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>데이터가 없습니다</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(item => {
+      const t = TYPE_INFO[item.currentStep] || { label:'미상', cls:'', prog:'' };
+      const isExpanded = expandedBarcodes.has(item.barcode);
+
+      // 진행 바
+      const progressBar = STEP_ORDER.map(step => {
+        const done = item.steps.some(s => s.type === step);
+        const cls = done ? `progress-step ${TYPE_INFO[step].prog}` : 'progress-step';
+        return `<div class="${cls}" title="${TYPE_INFO[step].label}"></div>`;
+      }).join('');
+
+      // 마지막 업데이트 시각
+      const lastStep = item.steps[item.steps.length - 1];
+      const lastTime = lastStep ? (lastStep.time || lastStep.receivedAt?.substring(0,16).replace('T',' ') || '-') : '-';
+
+      // 상세 이력
+      const detailHtml = isExpanded ? `
+        <tr class="detail-row">
+          <td colspan="6">
+            <div class="detail-inner">
+              <div class="detail-title">공정 이력 (${item.steps.length}건)</div>
+              <div class="step-list">
+                ${item.steps.map(s => {
+                  const si = TYPE_INFO[s.type] || { label:s.type, dot:'' };
+                  const t = s.time || s.receivedAt?.substring(0,16).replace('T',' ') || '-';
+                  return `<div class="step-item">
+                    <div class="step-dot ${si.dot}"></div>
+                    <span class="step-badge ${si.cls}">${si.label}</span>
+                    <span class="step-user">${s.userName || s.userId}</span>
+                    <span class="step-time">${t}</span>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>
+          </td>
+        </tr>` : '';
+
+      return `
+        <tr style="cursor:pointer" onclick="toggleDetail('${item.barcode}')">
+          <td style="color:#bbb;font-size:16px">${isExpanded ? '▾' : '▸'}</td>
+          <td><code style="font-size:12px;font-weight:700">${item.barcode}</code></td>
+          <td style="color:#888;font-size:12px">${item.name || '-'}</td>
+          <td><span class="step-badge ${t.cls}">${t.label}</span></td>
+          <td><div class="progress-wrap">${progressBar}</div></td>
+          <td style="color:#888;font-size:12px">${lastTime}</td>
+        </tr>
+        ${detailHtml}
+      `;
+    }).join('');
+  } catch(e) {
+    document.getElementById('trackingBody').innerHTML = `<tr><td colspan="6" style="padding:20px;color:#c0392b;text-align:center">서버 연결 오류</td></tr>`;
+  }
+}
+
+function toggleDetail(barcode) {
+  if (expandedBarcodes.has(barcode)) expandedBarcodes.delete(barcode);
+  else expandedBarcodes.add(barcode);
+  loadTracking();
+}
+
+// ── 전체 기록 ──
+async function loadRecords() {
+  const search = document.getElementById('recSearch').value.trim();
+  const filter = document.getElementById('recFilter').value;
+  const params = new URLSearchParams();
+  if (search) params.set('barcode', search);
+  if (filter) params.set('type', filter);
+  try {
+    const r = await fetch(`${SERVER}/api/records?${params}`);
+    const data = await r.json();
+    const records = data.records || [];
+    const tbody = document.getElementById('recordsBody');
+    if (!records.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>기록이 없습니다</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = records.map(r => {
+      const t = TYPE_INFO[r.type] || { label:r.type, cls:'' };
+      const time = r.time || r.receivedAt?.substring(0,16).replace('T',' ') || '-';
+      return `<tr>
+        <td style="color:#888;font-size:12px">${time}</td>
+        <td><code style="font-size:12px;font-weight:700">${r.barcode}</code></td>
+        <td style="font-size:12px;color:#888">${r.name || '-'}</td>
+        <td><span class="step-badge ${t.cls}">${t.label}</span></td>
+        <td style="font-size:13px;font-weight:700">${r.qty}개</td>
+        <td style="font-size:12px;font-weight:600">${r.userName || r.userId || '-'}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('recordsBody').innerHTML = `<tr><td colspan="6" style="padding:20px;color:#c0392b;text-align:center">서버 연결 오류</td></tr>`;
+  }
+}
+
+// 30초마다 자동 새로고침
+setInterval(() => {
+  if (currentUser) { loadStats(); if (document.getElementById('tabTracking').style.display !== 'none') loadTracking(); }
+}, 30000);
+</script>
+</body>
+</html>
