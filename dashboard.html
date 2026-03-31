@@ -52,7 +52,8 @@ body{font-family:-apple-system,'Noto Sans KR',sans-serif;background:var(--bg);co
 
 /* 검색 */
 .search-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.search-input{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:var(--card);outline:none;transition:border-color .2s;box-shadow:var(--shadow)}
+.search-input{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:var(--card);outline:none;transition:border-color .2s;box-shadow:var(--shadow);font-family:inherit}
+.search-textarea{resize:vertical;min-height:80px;line-height:1.6;font-family:'Noto Sans KR',monospace}
 .search-input:focus{border-color:var(--teal)}
 .filter-select{padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:var(--card);outline:none;box-shadow:var(--shadow)}
 
@@ -146,8 +147,12 @@ tr:hover td{background:#f8f9fd}
 
     <!-- 공정 추적 탭 -->
     <div id="tabTracking">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:var(--text2);font-weight:500">자재코드 검색 (줄바꿈으로 여러 개 동시 검색)</span>
+        <span id="trackCount" style="font-size:12px;color:var(--teal);font-weight:700"></span>
+      </div>
       <div class="search-row">
-        <input class="search-input" type="text" id="trackSearch" placeholder="자재코드 검색..." oninput="loadTracking()"/>
+        <textarea class="search-input search-textarea" id="trackSearch" placeholder="자재코드 입력 (여러 개는 줄바꿈으로 구분)&#10;SN2700B7TL0100104&#10;SN2700B7TL0101234&#10;..." oninput="loadTracking()" rows="3"></textarea>
         <select class="filter-select" id="trackFilter" onchange="loadTracking()">
           <option value="">전체 공정</option>
           <option value="in">입고</option>
@@ -178,7 +183,7 @@ tr:hover td{background:#f8f9fd}
     <!-- 전체 기록 탭 -->
     <div id="tabRecords" style="display:none">
       <div class="search-row">
-        <input class="search-input" type="text" id="recSearch" placeholder="자재코드 검색..." oninput="loadRecords()"/>
+        <textarea class="search-input search-textarea" id="recSearch" placeholder="자재코드 입력 (여러 개는 줄바꿈으로 구분)&#10;SN2700B7TL0100104&#10;..." oninput="loadRecords()" rows="3"></textarea>
         <select class="filter-select" id="recFilter" onchange="loadRecords()">
           <option value="">전체 유형</option>
           <option value="in">입고</option>
@@ -288,18 +293,23 @@ async function loadStats() {
 
 // ── 공정 추적 ──
 async function loadTracking() {
-  const search = document.getElementById('trackSearch').value.trim();
+  const raw = document.getElementById('trackSearch').value;
+  const codes = raw.split('\n').map(s=>s.trim()).filter(Boolean);
   const filter = document.getElementById('trackFilter').value;
   try {
     const r = await fetch(`${SERVER}/api/tracking`);
     const data = await r.json();
     let items = data.tracking || [];
-    if (search) items = items.filter(i => i.barcode.includes(search));
+    if (codes.length > 0) {
+      items = items.filter(i => codes.some(c => i.barcode.includes(c)));
+    }
     if (filter) items = items.filter(i => i.currentStep === filter);
 
     const tbody = document.getElementById('trackingBody');
+    const countEl = document.getElementById('trackCount');
+    if (countEl) countEl.textContent = codes.length > 0 ? `${codes.length}개 코드 검색 → ${items.length}건 매칭` : `전체 ${items.length}건`;
     if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>데이터가 없습니다</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>${codes.length>0?'검색 결과가 없습니다':'데이터가 없습니다'}</p></div></td></tr>`;
       return;
     }
 
@@ -365,15 +375,18 @@ function toggleDetail(barcode) {
 
 // ── 전체 기록 ──
 async function loadRecords() {
-  const search = document.getElementById('recSearch').value.trim();
+  const raw = document.getElementById('recSearch').value;
+  const codes = raw.split('\n').map(s=>s.trim()).filter(Boolean);
   const filter = document.getElementById('recFilter').value;
   const params = new URLSearchParams();
-  if (search) params.set('barcode', search);
   if (filter) params.set('type', filter);
   try {
     const r = await fetch(`${SERVER}/api/records?${params}`);
     const data = await r.json();
-    const records = data.records || [];
+    let records = data.records || [];
+    if (codes.length > 0) {
+      records = records.filter(r => codes.some(c => r.barcode.includes(c)));
+    }
     const tbody = document.getElementById('recordsBody');
     if (!records.length) {
       tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>기록이 없습니다</p></div></td></tr>`;
