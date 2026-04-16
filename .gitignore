@@ -1,0 +1,9 @@
+node_modules/
+uploads/
+data.json
+master.json
+map.json
+location.json
+as.json
+erp.json
+erp_columns.json
