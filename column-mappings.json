@@ -1,0 +1,1103 @@
+{
+  "mappings": [
+    {
+      "id": 1,
+      "erpName": "순번",
+      "displayName": "순번",
+      "required": false
+    },
+    {
+      "id": 2,
+      "erpName": "진행현황",
+      "displayName": "진행현황",
+      "required": false
+    },
+    {
+      "id": 3,
+      "erpName": "설치/제작",
+      "displayName": "설치/제작",
+      "required": false
+    },
+    {
+      "id": 4,
+      "erpName": "프로젝트",
+      "displayName": "프로젝트",
+      "required": false
+    },
+    {
+      "id": 5,
+      "erpName": "자재코드",
+      "displayName": "자재코드",
+      "required": false
+    },
+    {
+      "id": 6,
+      "erpName": "블록",
+      "displayName": "블록",
+      "required": false
+    },
+    {
+      "id": 7,
+      "erpName": "자재그룹",
+      "displayName": "자재그룹",
+      "required": false
+    },
+    {
+      "id": 8,
+      "erpName": "자재그룹(물성)",
+      "displayName": "자재그룹(물성)",
+      "required": false
+    },
+    {
+      "id": 9,
+      "erpName": "자재그룹명",
+      "displayName": "자재그룹명",
+      "required": false
+    },
+    {
+      "id": 10,
+      "erpName": "BOM 삭제 여부",
+      "displayName": "BOM 삭제 여부",
+      "required": false
+    },
+    {
+      "id": 11,
+      "erpName": "BOM 삭제일",
+      "displayName": "BOM 삭제일",
+      "required": false
+    },
+    {
+      "id": 12,
+      "erpName": "P/O번호",
+      "displayName": "P/O번호",
+      "required": false
+    },
+    {
+      "id": 13,
+      "erpName": "P/O 품번",
+      "displayName": "P/O 품번",
+      "required": false
+    },
+    {
+      "id": 14,
+      "erpName": "제작사",
+      "displayName": "제작사",
+      "required": false
+    },
+    {
+      "id": 15,
+      "erpName": "도금사",
+      "displayName": "도금사",
+      "required": false
+    },
+    {
+      "id": 16,
+      "erpName": "도장사",
+      "displayName": "도장사",
+      "required": false
+    },
+    {
+      "id": 17,
+      "erpName": "적치사",
+      "displayName": "적치사",
+      "required": false
+    },
+    {
+      "id": 18,
+      "erpName": "도장사 이관 예정일 입력자",
+      "displayName": "도장사 이관 예정일 입력자",
+      "required": false
+    },
+    {
+      "id": 19,
+      "erpName": "도장사 이관 예정일 입력일",
+      "displayName": "도장사 이관 예정일 입력일",
+      "required": false
+    },
+    {
+      "id": 20,
+      "erpName": "도장사 이관 예정일",
+      "displayName": "도장사 이관 예정일",
+      "required": false
+    },
+    {
+      "id": 21,
+      "erpName": "계획도장 검사일",
+      "displayName": "계획도장 검사일",
+      "required": false
+    },
+    {
+      "id": 22,
+      "erpName": "제작사 인수일",
+      "displayName": "제작사 인수일",
+      "required": false
+    },
+    {
+      "id": 23,
+      "erpName": "제작 착수일",
+      "displayName": "제작 착수일",
+      "required": false
+    },
+    {
+      "id": 24,
+      "erpName": "F/UP 완료일",
+      "displayName": "F/UP 완료일",
+      "required": false
+    },
+    {
+      "id": 25,
+      "erpName": "용접 완료일",
+      "displayName": "용접 완료일",
+      "required": false
+    },
+    {
+      "id": 26,
+      "erpName": "제작 완료 검사일",
+      "displayName": "제작 완료 검사일",
+      "required": false
+    },
+    {
+      "id": 27,
+      "erpName": "제작완료 검사일 입력자",
+      "displayName": "제작완료 검사일 입력자",
+      "required": false
+    },
+    {
+      "id": 28,
+      "erpName": "제작 완료일",
+      "displayName": "제작 완료일",
+      "required": false
+    },
+    {
+      "id": 29,
+      "erpName": "도금 반출일",
+      "displayName": "도금 반출일",
+      "required": false
+    },
+    {
+      "id": 30,
+      "erpName": "도금 완료일",
+      "displayName": "도금 완료일",
+      "required": false
+    },
+    {
+      "id": 31,
+      "erpName": "도장사 인수일",
+      "displayName": "도장사 인수일",
+      "required": false
+    },
+    {
+      "id": 32,
+      "erpName": "도장 착수일",
+      "displayName": "도장 착수일",
+      "required": false
+    },
+    {
+      "id": 33,
+      "erpName": "1차도장 완료일",
+      "displayName": "1차도장 완료일",
+      "required": false
+    },
+    {
+      "id": 34,
+      "erpName": "2차도장 완료일",
+      "displayName": "2차도장 완료일",
+      "required": false
+    },
+    {
+      "id": 35,
+      "erpName": "도장 검사 신청일",
+      "displayName": "도장 검사 신청일",
+      "required": false
+    },
+    {
+      "id": 36,
+      "erpName": "확정 도장 검사일",
+      "displayName": "확정 도장 검사일",
+      "required": false
+    },
+    {
+      "id": 37,
+      "erpName": "확정 도장 검사명칭",
+      "displayName": "확정 도장 검사명칭",
+      "required": false
+    },
+    {
+      "id": 38,
+      "erpName": "도장검사결과",
+      "displayName": "도장검사결과",
+      "required": false
+    },
+    {
+      "id": 39,
+      "erpName": "도장 완료일",
+      "displayName": "도장 완료일",
+      "required": false
+    },
+    {
+      "id": 40,
+      "erpName": "현물 납품일",
+      "displayName": "현물 납품일",
+      "required": false
+    },
+    {
+      "id": 41,
+      "erpName": "입고일",
+      "displayName": "입고일",
+      "required": false
+    },
+    {
+      "id": 42,
+      "erpName": "적치일",
+      "displayName": "적치일",
+      "required": false
+    },
+    {
+      "id": 43,
+      "erpName": "적치자",
+      "displayName": "적치자",
+      "required": false
+    },
+    {
+      "id": 44,
+      "erpName": "입고 수량",
+      "displayName": "입고 수량",
+      "required": false
+    },
+    {
+      "id": 45,
+      "erpName": "납품 예약번호",
+      "displayName": "납품 예약번호",
+      "required": false
+    },
+    {
+      "id": 46,
+      "erpName": "최종납품 예약번호",
+      "displayName": "최종납품 예약번호",
+      "required": false
+    },
+    {
+      "id": 47,
+      "erpName": "PLT용기번호",
+      "displayName": "PLT용기번호",
+      "required": false
+    },
+    {
+      "id": 48,
+      "erpName": "최종납품 PALLET",
+      "displayName": "최종납품 PALLET",
+      "required": false
+    },
+    {
+      "id": 49,
+      "erpName": "납품 PALLET1",
+      "displayName": "납품 PALLET1",
+      "required": false
+    },
+    {
+      "id": 50,
+      "erpName": "납품 PALLET2",
+      "displayName": "납품 PALLET2",
+      "required": false
+    },
+    {
+      "id": 51,
+      "erpName": "불출 PALLET",
+      "displayName": "불출 PALLET",
+      "required": false
+    },
+    {
+      "id": 52,
+      "erpName": "PLT고유번호",
+      "displayName": "PLT고유번호",
+      "required": false
+    },
+    {
+      "id": 53,
+      "erpName": "사진유무",
+      "displayName": "사진유무",
+      "required": false
+    },
+    {
+      "id": 54,
+      "erpName": "자재 신청",
+      "displayName": "자재 신청",
+      "required": false
+    },
+    {
+      "id": 55,
+      "erpName": "적치메모",
+      "displayName": "적치메모",
+      "required": false
+    },
+    {
+      "id": 56,
+      "erpName": "불출메모",
+      "displayName": "불출메모",
+      "required": false
+    },
+    {
+      "id": 57,
+      "erpName": "불출일",
+      "displayName": "불출일",
+      "required": false
+    },
+    {
+      "id": 58,
+      "erpName": "불출자",
+      "displayName": "불출자",
+      "required": false
+    },
+    {
+      "id": 59,
+      "erpName": "불출 수량",
+      "displayName": "불출 수량",
+      "required": false
+    },
+    {
+      "id": 60,
+      "erpName": "공급일",
+      "displayName": "공급일",
+      "required": false
+    },
+    {
+      "id": 61,
+      "erpName": "공급자",
+      "displayName": "공급자",
+      "required": false
+    },
+    {
+      "id": 62,
+      "erpName": "제작메모1",
+      "displayName": "제작메모1",
+      "required": false
+    },
+    {
+      "id": 63,
+      "erpName": "제작메모2",
+      "displayName": "제작메모2",
+      "required": false
+    },
+    {
+      "id": 64,
+      "erpName": "도장메모1",
+      "displayName": "도장메모1",
+      "required": false
+    },
+    {
+      "id": 65,
+      "erpName": "도장메모2",
+      "displayName": "도장메모2",
+      "required": false
+    },
+    {
+      "id": 66,
+      "erpName": "YARD메모1",
+      "displayName": "YARD메모1",
+      "required": false
+    },
+    {
+      "id": 67,
+      "erpName": "YARD메모2",
+      "displayName": "YARD메모2",
+      "required": false
+    },
+    {
+      "id": 68,
+      "erpName": "입고예정일 입력일",
+      "displayName": "입고예정일 입력일",
+      "required": false
+    },
+    {
+      "id": 69,
+      "erpName": "입고예정일 입력자",
+      "displayName": "입고예정일 입력자",
+      "required": false
+    },
+    {
+      "id": 70,
+      "erpName": "입고 예정일",
+      "displayName": "입고 예정일",
+      "required": false
+    },
+    {
+      "id": 71,
+      "erpName": "불출 신청일",
+      "displayName": "불출 신청일",
+      "required": false
+    },
+    {
+      "id": 72,
+      "erpName": "불출 요청일",
+      "displayName": "불출 요청일",
+      "required": false
+    },
+    {
+      "id": 73,
+      "erpName": "불출 요청수량",
+      "displayName": "불출 요청수량",
+      "required": false
+    },
+    {
+      "id": 74,
+      "erpName": "P/O시 납품 기준일",
+      "displayName": "P/O시 납품 기준일",
+      "required": false
+    },
+    {
+      "id": 75,
+      "erpName": "납품 기준일",
+      "displayName": "납품 기준일",
+      "required": false
+    },
+    {
+      "id": 76,
+      "erpName": "L/T 구분",
+      "displayName": "L/T 구분",
+      "required": false
+    },
+    {
+      "id": 77,
+      "erpName": "소조 확정일",
+      "displayName": "소조 확정일",
+      "required": false
+    },
+    {
+      "id": 78,
+      "erpName": "APS 착수일",
+      "displayName": "APS 착수일",
+      "required": false
+    },
+    {
+      "id": 79,
+      "erpName": "APS 완료일",
+      "displayName": "APS 완료일",
+      "required": false
+    },
+    {
+      "id": 80,
+      "erpName": "A3착수일",
+      "displayName": "A3착수일",
+      "required": false
+    },
+    {
+      "id": 81,
+      "erpName": "A3완료일",
+      "displayName": "A3완료일",
+      "required": false
+    },
+    {
+      "id": 82,
+      "erpName": "보류",
+      "displayName": "보류",
+      "required": false
+    },
+    {
+      "id": 83,
+      "erpName": "보류사유",
+      "displayName": "보류사유",
+      "required": false
+    },
+    {
+      "id": 84,
+      "erpName": "보류 일자",
+      "displayName": "보류 일자",
+      "required": false
+    },
+    {
+      "id": 85,
+      "erpName": "보류 해제일자",
+      "displayName": "보류 해제일자",
+      "required": false
+    },
+    {
+      "id": 86,
+      "erpName": "전자 인증일",
+      "displayName": "전자 인증일",
+      "required": false
+    },
+    {
+      "id": 87,
+      "erpName": "SHI 승인일",
+      "displayName": "SHI 승인일",
+      "required": false
+    },
+    {
+      "id": 88,
+      "erpName": "기준계획",
+      "displayName": "기준계획",
+      "required": false
+    },
+    {
+      "id": 89,
+      "erpName": "12주EPC 계획일정",
+      "displayName": "12주EPC 계획일정",
+      "required": false
+    },
+    {
+      "id": 90,
+      "erpName": "최초 P/O일",
+      "displayName": "최초 P/O일",
+      "required": false
+    },
+    {
+      "id": 91,
+      "erpName": "수정 P/O일",
+      "displayName": "수정 P/O일",
+      "required": false
+    },
+    {
+      "id": 92,
+      "erpName": "P/R 생성일",
+      "displayName": "P/R 생성일",
+      "required": false
+    },
+    {
+      "id": 93,
+      "erpName": "추천업체 선정일",
+      "displayName": "추천업체 선정일",
+      "required": false
+    },
+    {
+      "id": 94,
+      "erpName": "사용자",
+      "displayName": "사용자",
+      "required": false
+    },
+    {
+      "id": 95,
+      "erpName": "신청자",
+      "displayName": "신청자",
+      "required": false
+    },
+    {
+      "id": 96,
+      "erpName": "요청지번",
+      "displayName": "요청지번",
+      "required": false
+    },
+    {
+      "id": 97,
+      "erpName": "요청장소",
+      "displayName": "요청장소",
+      "required": false
+    },
+    {
+      "id": 98,
+      "erpName": "공작 도장1",
+      "displayName": "공작 도장1",
+      "required": false
+    },
+    {
+      "id": 99,
+      "erpName": "공작 도장2",
+      "displayName": "공작 도장2",
+      "required": false
+    },
+    {
+      "id": 100,
+      "erpName": "도장 내부 SPEC",
+      "displayName": "도장 내부 SPEC",
+      "required": false
+    },
+    {
+      "id": 101,
+      "erpName": "도장 외부 SPEC1",
+      "displayName": "도장 외부 SPEC1",
+      "required": false
+    },
+    {
+      "id": 102,
+      "erpName": "도장 외부 SPEC2",
+      "displayName": "도장 외부 SPEC2",
+      "required": false
+    },
+    {
+      "id": 103,
+      "erpName": "도장 외부 SPEC3",
+      "displayName": "도장 외부 SPEC3",
+      "required": false
+    },
+    {
+      "id": 104,
+      "erpName": "도장 외부 SPEC4",
+      "displayName": "도장 외부 SPEC4",
+      "required": false
+    },
+    {
+      "id": 105,
+      "erpName": "ACTIVITY",
+      "displayName": "ACTIVITY",
+      "required": false
+    },
+    {
+      "id": 106,
+      "erpName": "Actv. 상태",
+      "displayName": "Actv. 상태",
+      "required": false
+    },
+    {
+      "id": 107,
+      "erpName": "모자재코드",
+      "displayName": "모자재코드",
+      "required": false
+    },
+    {
+      "id": 108,
+      "erpName": "BOM 수량",
+      "displayName": "BOM 수량",
+      "required": false
+    },
+    {
+      "id": 109,
+      "erpName": "BOM 수량 단위",
+      "displayName": "BOM 수량 단위",
+      "required": false
+    },
+    {
+      "id": 110,
+      "erpName": "BOM 중량(KG)",
+      "displayName": "BOM 중량(KG)",
+      "required": false
+    },
+    {
+      "id": 111,
+      "erpName": "단가",
+      "displayName": "단가",
+      "required": false
+    },
+    {
+      "id": 112,
+      "erpName": "P/O금액",
+      "displayName": "P/O금액",
+      "required": false
+    },
+    {
+      "id": 113,
+      "erpName": "P/O 수량",
+      "displayName": "P/O 수량",
+      "required": false
+    },
+    {
+      "id": 114,
+      "erpName": "P/O 수량 단위",
+      "displayName": "P/O 수량 단위",
+      "required": false
+    },
+    {
+      "id": 115,
+      "erpName": "P/O 중량(KG)",
+      "displayName": "P/O 중량(KG)",
+      "required": false
+    },
+    {
+      "id": 116,
+      "erpName": "납품 구분",
+      "displayName": "납품 구분",
+      "required": false
+    },
+    {
+      "id": 117,
+      "erpName": "SAP 입고일자",
+      "displayName": "SAP 입고일자",
+      "required": false
+    },
+    {
+      "id": 118,
+      "erpName": "BOM 확정일자",
+      "displayName": "BOM 확정일자",
+      "required": false
+    },
+    {
+      "id": 119,
+      "erpName": "BOM 개정 코드",
+      "displayName": "BOM 개정 코드",
+      "required": false
+    },
+    {
+      "id": 120,
+      "erpName": "개정 원인 코드",
+      "displayName": "개정 원인 코드",
+      "required": false
+    },
+    {
+      "id": 121,
+      "erpName": "자재 구분",
+      "displayName": "자재 구분",
+      "required": false
+    },
+    {
+      "id": 122,
+      "erpName": "자재내역1",
+      "displayName": "자재내역1",
+      "required": false
+    },
+    {
+      "id": 123,
+      "erpName": "자재내역2",
+      "displayName": "자재내역2",
+      "required": false
+    },
+    {
+      "id": 124,
+      "erpName": "재질",
+      "displayName": "재질",
+      "required": false
+    },
+    {
+      "id": 125,
+      "erpName": "설계 담당자",
+      "displayName": "설계 담당자",
+      "required": false
+    },
+    {
+      "id": 126,
+      "erpName": "구매 담당자",
+      "displayName": "구매 담당자",
+      "required": false
+    },
+    {
+      "id": 127,
+      "erpName": "조달 담당자",
+      "displayName": "조달 담당자",
+      "required": false
+    },
+    {
+      "id": 128,
+      "erpName": "구매L/T",
+      "displayName": "구매L/T",
+      "required": false
+    },
+    {
+      "id": 129,
+      "erpName": "Stage",
+      "displayName": "Stage",
+      "required": false
+    },
+    {
+      "id": 130,
+      "erpName": "M/SHEET 등록 건수",
+      "displayName": "M/SHEET 등록 건수",
+      "required": false
+    },
+    {
+      "id": 131,
+      "erpName": "시공W/C",
+      "displayName": "시공W/C",
+      "required": false
+    },
+    {
+      "id": 132,
+      "erpName": "책임W/C",
+      "displayName": "책임W/C",
+      "required": false
+    },
+    {
+      "id": 133,
+      "erpName": "공장BAY",
+      "displayName": "공장BAY",
+      "required": false
+    },
+    {
+      "id": 134,
+      "erpName": "DI SC.",
+      "displayName": "DI SC.",
+      "required": false
+    },
+    {
+      "id": 135,
+      "erpName": "BOM ID",
+      "displayName": "BOM ID",
+      "required": false
+    },
+    {
+      "id": 136,
+      "erpName": "선지급 P/O",
+      "displayName": "선지급 P/O",
+      "required": false
+    },
+    {
+      "id": 137,
+      "erpName": "ELEMENT NO",
+      "displayName": "ELEMENT NO",
+      "required": false
+    },
+    {
+      "id": 138,
+      "erpName": "특별 검사 구분",
+      "displayName": "특별 검사 구분",
+      "required": false
+    },
+    {
+      "id": 139,
+      "erpName": "설계 관리정보",
+      "displayName": "설계 관리정보",
+      "required": false
+    },
+    {
+      "id": 140,
+      "erpName": "설계 도면번호",
+      "displayName": "설계 도면번호",
+      "required": false
+    },
+    {
+      "id": 141,
+      "erpName": "선후도금",
+      "displayName": "선후도금",
+      "required": false
+    },
+    {
+      "id": 142,
+      "erpName": "단위블록",
+      "displayName": "단위블록",
+      "required": false
+    },
+    {
+      "id": 143,
+      "erpName": "설치 PLT NO",
+      "displayName": "설치 PLT NO",
+      "required": false
+    },
+    {
+      "id": 144,
+      "erpName": "합짐 PLT NO",
+      "displayName": "합짐 PLT NO",
+      "required": false
+    },
+    {
+      "id": 145,
+      "erpName": "납품 예약 상태",
+      "displayName": "납품 예약 상태",
+      "required": false
+    },
+    {
+      "id": 146,
+      "erpName": "SN_NO",
+      "displayName": "SN_NO",
+      "required": false
+    },
+    {
+      "id": 147,
+      "erpName": "제작기성 확정일",
+      "displayName": "제작기성 확정일",
+      "required": false
+    },
+    {
+      "id": 148,
+      "erpName": "도장P/R 결재ID",
+      "displayName": "도장P/R 결재ID",
+      "required": false
+    },
+    {
+      "id": 149,
+      "erpName": "도장P/O 정산입고결재ID",
+      "displayName": "도장P/O 정산입고결재ID",
+      "required": false
+    },
+    {
+      "id": 150,
+      "erpName": "도장P/O 발행일",
+      "displayName": "도장P/O 발행일",
+      "required": false
+    },
+    {
+      "id": 151,
+      "erpName": "도장P/O 입고 여부",
+      "displayName": "도장P/O 입고 여부",
+      "required": false
+    },
+    {
+      "id": 152,
+      "erpName": "소조번호",
+      "displayName": "소조번호",
+      "required": false
+    },
+    {
+      "id": 153,
+      "erpName": "P/O 삭제",
+      "displayName": "P/O 삭제",
+      "required": false
+    },
+    {
+      "id": 154,
+      "erpName": "구조물성",
+      "displayName": "구조물성",
+      "required": false
+    },
+    {
+      "id": 155,
+      "erpName": "작업지시서 출력일",
+      "displayName": "작업지시서 출력일",
+      "required": false
+    },
+    {
+      "id": 156,
+      "erpName": "작업지시서 번호",
+      "displayName": "작업지시서 번호",
+      "required": false
+    },
+    {
+      "id": 157,
+      "erpName": "사/도급 구분",
+      "displayName": "사/도급 구분",
+      "required": false
+    },
+    {
+      "id": 158,
+      "erpName": "하위 자재 여부",
+      "displayName": "하위 자재 여부",
+      "required": false
+    },
+    {
+      "id": 159,
+      "erpName": "MRP 유형",
+      "displayName": "MRP 유형",
+      "required": false
+    },
+    {
+      "id": 160,
+      "erpName": "창고 납품 자재",
+      "displayName": "창고 납품 자재",
+      "required": false
+    },
+    {
+      "id": 161,
+      "erpName": "불출 IF 실패내용",
+      "displayName": "불출 IF 실패내용",
+      "required": false
+    },
+    {
+      "id": 162,
+      "erpName": "재고실패내용",
+      "displayName": "재고실패내용",
+      "required": false
+    },
+    {
+      "id": 163,
+      "erpName": "MRC",
+      "displayName": "MRC",
+      "required": false
+    },
+    {
+      "id": 164,
+      "erpName": "개별/일괄",
+      "displayName": "개별/일괄",
+      "required": false
+    },
+    {
+      "id": 165,
+      "erpName": "제작 착수 바코드",
+      "displayName": "제작 착수 바코드",
+      "required": false
+    },
+    {
+      "id": 166,
+      "erpName": "F/UP 완료일 바코드",
+      "displayName": "F/UP 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 167,
+      "erpName": "용접 완료일 바코드",
+      "displayName": "용접 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 168,
+      "erpName": "제작 완료검사일 바코드",
+      "displayName": "제작 완료검사일 바코드",
+      "required": false
+    },
+    {
+      "id": 169,
+      "erpName": "제작 완료일 바코드",
+      "displayName": "제작 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 170,
+      "erpName": "도장사 인수일 바코드",
+      "displayName": "도장사 인수일 바코드",
+      "required": false
+    },
+    {
+      "id": 171,
+      "erpName": "도장 착수일 바코드",
+      "displayName": "도장 착수일 바코드",
+      "required": false
+    },
+    {
+      "id": 172,
+      "erpName": "1차도장 완료일 바코드",
+      "displayName": "1차도장 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 173,
+      "erpName": "2차도장 완료일 바코드",
+      "displayName": "2차도장 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 174,
+      "erpName": "도장 완료일 바코드",
+      "displayName": "도장 완료일 바코드",
+      "required": false
+    },
+    {
+      "id": 175,
+      "erpName": "적치사 인수일 바코드",
+      "displayName": "적치사 인수일 바코드",
+      "required": false
+    },
+    {
+      "id": 176,
+      "erpName": "현물 납품일 바코드",
+      "displayName": "현물 납품일 바코드",
+      "required": false
+    },
+    {
+      "id": 177,
+      "erpName": "바코드 입력 일시",
+      "displayName": "바코드 입력 일시",
+      "required": false
+    },
+    {
+      "id": 178,
+      "erpName": "바코드 입력자",
+      "displayName": "바코드 입력자",
+      "required": false
+    },
+    {
+      "id": 179,
+      "erpName": "제작착수 계획일",
+      "displayName": "제작착수 계획일",
+      "required": false
+    },
+    {
+      "id": 180,
+      "erpName": "제작완료 계획일",
+      "displayName": "제작완료 계획일",
+      "required": false
+    },
+    {
+      "id": 181,
+      "erpName": "도장인수 계획일",
+      "displayName": "도장인수 계획일",
+      "required": false
+    },
+    {
+      "id": 182,
+      "erpName": "도장착수 계획일",
+      "displayName": "도장착수 계획일",
+      "required": false
+    },
+    {
+      "id": 183,
+      "erpName": "3D 도면여부",
+      "displayName": "3D 도면여부",
+      "required": false
+    }
+  ],
+  "nextId": 184
+}

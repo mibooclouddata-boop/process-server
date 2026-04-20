@@ -14,17 +14,21 @@ const LOC_FILE = path.join(__dirname, 'location.json');
 const AS_FILE = path.join(__dirname, 'as.json');
 const ERP_FILE = path.join(__dirname, 'erp.json');
 const ERP_COLS_FILE = path.join(__dirname, 'erp_columns.json');
+const COL_MAP_FILE = path.join(__dirname, 'column-mappings.json');
+const PRODUCTS_FILE = path.join(__dirname, 'products.json');
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB
 
 // AS 첨부파일용 디스크 저장
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
+const ALLOWED_EXTS = ['.pdf','.jpg','.jpeg','.png','.gif','.bmp','.webp','.doc','.docx','.xls','.xlsx','.ppt','.pptx','.hwp','.txt','.csv','.zip'];
 const asUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOADS_DIR),
     filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (!ALLOWED_EXTS.includes(ext)) return cb(new Error('허용되지 않는 파일 형식: ' + ext));
       cb(null, Date.now() + '-' + Math.random().toString(36).slice(2,8) + ext);
     }
   }),
@@ -32,8 +36,10 @@ const asUpload = multer({
 });
 
 app.use(cors());
-app.use(express.json());
-app.use(express.static(__dirname)); // dashboard.html 서빙
+app.use(express.json({ limit: '10mb' }));
+// 정적 파일: dashboard.html과 업로드 파일만 서빙 (JSON 데이터 파일 노출 차단)
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── 기준 데이터 초기화 ──
@@ -107,6 +113,49 @@ function loadErp() { return JSON.parse(fs.readFileSync(ERP_FILE, 'utf8')); }
 function saveErp(data) { fs.writeFileSync(ERP_FILE, JSON.stringify(data, null, 2)); }
 function loadErpCols() { return JSON.parse(fs.readFileSync(ERP_COLS_FILE, 'utf8')); }
 function saveErpCols(data) { fs.writeFileSync(ERP_COLS_FILE, JSON.stringify(data, null, 2)); }
+
+// ── 컬럼 매핑 초기화 ──
+const DEFAULT_COLUMNS = [
+  '순번','진행현황','설치/제작','프로젝트','자재코드','블록','자재그룹','자재그룹(물성)','자재그룹명',
+  'BOM 삭제 여부','BOM 삭제일','P/O번호','P/O 품번','제작사','도금사','도장사','적치사',
+  '도장사 이관 예정일 입력자','도장사 이관 예정일 입력일','도장사 이관 예정일','계획도장 검사일',
+  '제작사 인수일','제작 착수일','F/UP 완료일','용접 완료일','제작 완료 검사일','제작완료 검사일 입력자',
+  '제작 완료일','도금 반출일','도금 완료일','도장사 인수일','도장 착수일','1차도장 완료일','2차도장 완료일',
+  '도장 검사 신청일','확정 도장 검사일','확정 도장 검사명칭','도장검사결과','도장 완료일',
+  '현물 납품일','입고일','적치일','적치자','입고 수량','납품 예약번호','최종납품 예약번호',
+  'PLT용기번호','최종납품 PALLET','납품 PALLET1','납품 PALLET2','불출 PALLET','PLT고유번호',
+  '사진유무','자재 신청','적치메모','불출메모','불출일','불출자','불출 수량','공급일','공급자',
+  '제작메모1','제작메모2','도장메모1','도장메모2','YARD메모1','YARD메모2',
+  '입고예정일 입력일','입고예정일 입력자','입고 예정일','불출 신청일','불출 요청일','불출 요청수량',
+  'P/O시 납품 기준일','납품 기준일','L/T 구분','소조 확정일','APS 착수일','APS 완료일',
+  'A3착수일','A3완료일','보류','보류사유','보류 일자','보류 해제일자',
+  '전자 인증일','SHI 승인일','기준계획','12주EPC 계획일정','최초 P/O일','수정 P/O일',
+  'P/R 생성일','추천업체 선정일','사용자','신청자','요청지번','요청장소',
+  '공작 도장1','공작 도장2','도장 내부 SPEC','도장 외부 SPEC1','도장 외부 SPEC2','도장 외부 SPEC3','도장 외부 SPEC4',
+  'ACTIVITY','Actv. 상태','모자재코드','BOM 수량','BOM 수량 단위','BOM 중량(KG)',
+  '단가','P/O금액','P/O 수량','P/O 수량 단위','P/O 중량(KG)',
+  '납품 구분','SAP 입고일자','BOM 확정일자','BOM 개정 코드','개정 원인 코드',
+  '자재 구분','자재내역1','자재내역2','재질','설계 담당자','구매 담당자','조달 담당자',
+  '구매L/T','Stage','M/SHEET 등록 건수','시공W/C','책임W/C','공장BAY',
+  'DI SC.','BOM ID','선지급 P/O','ELEMENT NO','특별 검사 구분',
+  '설계 관리정보','설계 도면번호','선후도금','단위블록','설치 PLT NO','합짐 PLT NO',
+  '납품 예약 상태','SN_NO','제작기성 확정일','도장P/R 결재ID','도장P/O 정산입고결재ID',
+  '도장P/O 발행일','도장P/O 입고 여부','소조번호','P/O 삭제','구조물성',
+  '작업지시서 출력일','작업지시서 번호','사/도급 구분','하위 자재 여부','MRP 유형',
+  '창고 납품 자재','불출 IF 실패내용','재고실패내용','MRC','개별/일괄',
+  '제작 착수 바코드','F/UP 완료일 바코드','용접 완료일 바코드','제작 완료검사일 바코드',
+  '제작 완료일 바코드','도장사 인수일 바코드','도장 착수일 바코드',
+  '1차도장 완료일 바코드','2차도장 완료일 바코드','도장 완료일 바코드',
+  '적치사 인수일 바코드','현물 납품일 바코드','바코드 입력 일시','바코드 입력자',
+  '제작착수 계획일','제작완료 계획일','도장인수 계획일','도장착수 계획일','3D 도면여부'
+];
+
+if (!fs.existsSync(COL_MAP_FILE)) {
+  const mappings = DEFAULT_COLUMNS.map((name, i) => ({ id: i + 1, erpName: name, displayName: name, required: false }));
+  fs.writeFileSync(COL_MAP_FILE, JSON.stringify({ mappings, nextId: DEFAULT_COLUMNS.length + 1 }, null, 2));
+}
+function loadColMap() { return JSON.parse(fs.readFileSync(COL_MAP_FILE, 'utf8')); }
+function saveColMap(data) { fs.writeFileSync(COL_MAP_FILE, JSON.stringify(data, null, 2)); }
 
 // ── 초기 데이터 파일 생성 ──
 if (!fs.existsSync(DATA_FILE)) {
@@ -216,7 +265,7 @@ app.get('/api/tracking', (req, res) => {
 // ── 사용자 목록 (관리자용) ──
 app.get('/api/users', (req, res) => {
   const data = loadData();
-  res.json({ users: data.users.map(u => ({ id: u.id, password: u.password, name: u.name, role: u.role, icon: u.icon || '', allowedSteps: u.allowedSteps || [], department: u.department || '', position: u.position || '', asReview: u.asReview || false, asApprove: u.asApprove || false })) });
+  res.json({ users: data.users.map(u => ({ id: u.id, name: u.name, role: u.role, icon: u.icon || '', allowedSteps: u.allowedSteps || [], department: u.department || '', position: u.position || '', asReview: u.asReview || false, asApprove: u.asApprove || false })) });
 });
 
 // ── 사용자 추가 ──
@@ -370,18 +419,18 @@ app.post('/api/master', (req, res) => {
   res.json({ success: true });
 });
 
-// ── 기준 데이터 삭제 ──
-app.delete('/api/master/:barcode', (req, res) => {
-  const master = loadMaster();
-  master.materials = master.materials.filter(m => m.barcode !== req.params.barcode);
-  saveMaster(master);
+// ── 기준 데이터 전체 삭제 (/:barcode보다 먼저 등록해야 함) ──
+app.delete('/api/master/all', (req, res) => {
+  saveMaster({ materials: [], uidSeq: 0 });
   notifyClients('master');
   res.json({ success: true });
 });
 
-// ── 기준 데이터 전체 삭제 ──
-app.delete('/api/master/all', (req, res) => {
-  saveMaster({ materials: [], uidSeq: 0 });
+// ── 기준 데이터 개별 삭제 ──
+app.delete('/api/master/:barcode', (req, res) => {
+  const master = loadMaster();
+  master.materials = master.materials.filter(m => m.barcode !== req.params.barcode);
+  saveMaster(master);
   notifyClients('master');
   res.json({ success: true });
 });
@@ -760,12 +809,83 @@ app.put('/api/erp/columns/rename', (req, res) => {
   res.json({ success: true });
 });
 
+// ── ERP 칼럼 추가 ──
+app.post('/api/erp/columns/add', (req, res) => {
+  const { names } = req.body;
+  if (!names || !Array.isArray(names) || !names.length) return res.status(400).json({ error: '추가할 칼럼명이 필요합니다.' });
+  const erp = loadErp();
+  const added = [];
+  const duplicates = [];
+  names.forEach(n => {
+    const name = n.trim();
+    if (!name) return;
+    if (erp.columns.includes(name)) { duplicates.push(name); return; }
+    erp.columns.push(name);
+    added.push(name);
+  });
+  if (added.length) saveErp(erp);
+  notifyClients('erp');
+  res.json({ ok: true, added, duplicates, total: erp.columns.length });
+});
+
+// ── ERP 칼럼 삭제 ──
+app.delete('/api/erp/columns/:name', (req, res) => {
+  const target = decodeURIComponent(req.params.name);
+  const erp = loadErp();
+  if (!erp.columns.includes(target)) return res.status(404).json({ error: '칼럼을 찾을 수 없습니다' });
+  erp.columns = erp.columns.filter(c => c !== target);
+  erp.rows.forEach(row => { delete row[target]; });
+  saveErp(erp);
+  const colsCfg = loadErpCols();
+  if (colsCfg.visible) {
+    colsCfg.visible = colsCfg.visible.filter(c => c !== target);
+    saveErpCols(colsCfg);
+  }
+  notifyClients('erp');
+  res.json({ ok: true, total: erp.columns.length });
+});
+
 // ── ERP 데이터 전체 삭제 ──
 app.delete('/api/erp/all', (req, res) => {
   saveErp({ rows: [], columns: [] });
   saveErpCols({ visible: [], rename: {} });
   notifyClients('erp');
   res.json({ success: true });
+});
+
+// ── 컬럼 매핑 설정 API ──
+app.get('/api/column-mappings', (req, res) => {
+  res.json(loadColMap());
+});
+
+app.put('/api/column-mappings', (req, res) => {
+  const { mappings } = req.body;
+  if (!Array.isArray(mappings)) return res.status(400).json({ error: 'mappings 배열 필요' });
+  const nextId = Math.max(0, ...mappings.map(m => m.id || 0)) + 1;
+  saveColMap({ mappings, nextId });
+  res.json({ success: true, count: mappings.length });
+});
+
+app.post('/api/column-mappings', (req, res) => {
+  const { erpName, displayName, required } = req.body;
+  if (!erpName) return res.status(400).json({ error: 'erpName이 필요합니다.' });
+  const data = loadColMap();
+  data.mappings.push({ id: data.nextId++, erpName, displayName: displayName || erpName, required: !!required });
+  saveColMap(data);
+  res.json({ success: true, id: data.nextId - 1 });
+});
+
+app.delete('/api/column-mappings/:id', (req, res) => {
+  const data = loadColMap();
+  data.mappings = data.mappings.filter(m => m.id !== Number(req.params.id));
+  saveColMap(data);
+  res.json({ success: true });
+});
+
+app.post('/api/column-mappings/reset', (req, res) => {
+  const mappings = DEFAULT_COLUMNS.map((name, i) => ({ id: i + 1, erpName: name, displayName: name, required: false }));
+  saveColMap({ mappings, nextId: DEFAULT_COLUMNS.length + 1 });
+  res.json({ success: true, count: mappings.length });
 });
 
 // ── SSE 실시간 알림 ──
@@ -790,7 +910,60 @@ function notifyClients(type) {
   }
 }
 
+// ── 제품명 관리 ──
+function loadProducts() {
+  if (!fs.existsSync(PRODUCTS_FILE)) return [];
+  try { return JSON.parse(fs.readFileSync(PRODUCTS_FILE, 'utf8')); } catch { return []; }
+}
+function saveProducts(list) {
+  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(list, null, 2));
+}
+
+app.get('/api/products', (req, res) => {
+  res.json(loadProducts());
+});
+
+app.post('/api/products', (req, res) => {
+  const { name } = req.body;
+  if (!name || !name.trim()) return res.status(400).json({ error: '제품명을 입력하세요' });
+  const list = loadProducts();
+  if (list.some(p => p.name === name.trim())) return res.status(400).json({ error: '이미 등록된 제품명입니다' });
+  list.push({ name: name.trim(), createdAt: new Date().toISOString() });
+  saveProducts(list);
+  res.json({ ok: true, count: list.length });
+});
+
+app.put('/api/products/:name', (req, res) => {
+  const list = loadProducts();
+  const target = decodeURIComponent(req.params.name);
+  const { newName } = req.body;
+  if (!newName || !newName.trim()) return res.status(400).json({ error: '제품명을 입력하세요' });
+  if (newName.trim() !== target && list.some(p => p.name === newName.trim())) return res.status(400).json({ error: '이미 등록된 제품명입니다' });
+  const item = list.find(p => p.name === target);
+  if (!item) return res.status(404).json({ error: '제품명을 찾을 수 없습니다' });
+  item.name = newName.trim();
+  saveProducts(list);
+  res.json({ ok: true });
+});
+
+app.delete('/api/products/:name', (req, res) => {
+  let list = loadProducts();
+  const target = decodeURIComponent(req.params.name);
+  list = list.filter(p => p.name !== target);
+  saveProducts(list);
+  res.json({ ok: true, count: list.length });
+});
+
+// ── 글로벌 에러 핸들러 ──
+app.use((err, req, res, next) => {
+  console.error('[서버 에러]', err.message);
+  if (err.message && err.message.startsWith('허용되지 않는')) {
+    return res.status(400).json({ error: err.message });
+  }
+  res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
+});
+
 app.listen(PORT, () => {
   console.log(`서버 실행 중: http://localhost:${PORT}`);
-  console.log(`대시보드: http://localhost:${PORT}/dashboard.html`);
+  console.log(`대시보드: http://localhost:${PORT}`);
 });
