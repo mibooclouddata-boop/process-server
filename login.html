@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HANKUK MIBOO — 로그인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+  :root {
+    --toss-blue: #004A93;
+    --toss-blue-hover: #003a75;
+    --toss-blue-light: #e6eef7;
+    --bg: #ffffff;
+    --bg-soft: #f9fafb;
+    --bg-input: #f2f4f6;
+    --text-900: #191f28;
+    --text-700: #333d4b;
+    --text-500: #6b7684;
+    --text-400: #8b95a1;
+    --text-300: #b0b8c1;
+    --border: #e5e8eb;
+    --danger: #f04452;
+    --success: #00c471;
+    --radius-lg: 14px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', sans-serif;
+    color: var(--text-900);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #fff;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid rgba(229,232,235,0.6);
+  }
+  .header-inner {
+    width: 100%;
+    margin: 0;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .logo img {
+    height: 32px;
+    width: auto;
+    display: block;
+  }
+  .nav { display: flex; gap: 28px; align-items: center; }
+  .nav a {
+    color: var(--text-700);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .nav a:hover { color: var(--text-900); }
+  .header-cta {
+    background: var(--bg-input);
+    color: var(--text-900);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .header-cta:hover { background: #e8eaed; }
+
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.04em;
+    color: var(--text-900);
+    margin-bottom: 20px;
+  }
+  .hero h1 .accent { color: var(--toss-blue); }
+
+  .rotator {
+    display: flex !important;
+    flex-direction: column;
+    font-size: 36px !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.05em !important;
+    margin-bottom: 24px !important;
+  }
+  .line {
+    display: block;
+    overflow: visible;
+  }
+  .word {
+    display: inline-block;
+    color: var(--text-900);
+    transition: color 0.5s ease, transform 0.5s ease, text-shadow 0.5s ease;
+    will-change: color, transform;
+  }
+
+  .w1, .w2, .w3 {
+    letter-spacing: 0.24em;
+    margin-right: -0.24em;
+  }
+
+  .w1 { animation: highlight 10.8s infinite; animation-delay: 0s; }
+  .w2 { animation: highlight 10.8s infinite; animation-delay: 3.6s; }
+  .w3 { animation: highlight 10.8s infinite; animation-delay: 7.2s; }
+
+  @keyframes highlight {
+    0%, 100% {
+      color: var(--text-900);
+      transform: translateY(0) scale(1);
+      text-shadow: none;
+    }
+    3%, 30% {
+      color: var(--toss-blue);
+      transform: translateY(-2px) scale(1.02);
+      text-shadow: 0 6px 24px rgba(49,130,246,0.25);
+    }
+    33% {
+      color: var(--text-900);
+      transform: translateY(0) scale(1);
+      text-shadow: none;
+    }
+  }
+  .hero p.lead {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-500);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .stat .num {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-900);
+  }
+  .stat .num em {
+    color: var(--toss-blue);
+    font-style: normal;
+  }
+  .stat .label {
+    font-size: 13px;
+    color: var(--text-500);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .trust {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--bg-soft);
+    border-radius: var(--radius-md);
+    width: fit-content;
+  }
+  .trust .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 4px rgba(0,196,113,0.15);
+  }
+  .trust span {
+    font-size: 13px;
+    color: var(--text-700);
+    font-weight: 600;
+  }
+
+  .form-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 56px 44px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 8px 24px rgba(17,24,39,0.06),
+      0 24px 48px rgba(17,24,39,0.04);
+    border: 1px solid var(--border);
+    max-width: 460px;
+    width: 100%;
+    justify-self: end;
+  }
+
+  .form-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 36px;
+    color: var(--text-900);
+  }
+  .form-subtitle {
+    font-size: 14px;
+    color: var(--text-500);
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+
+  .input-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .input-field {
+    position: relative;
+  }
+  .input-field input {
+    width: 100%;
+    height: 64px;
+    border: 1.5px solid transparent;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    padding: 24px 16px 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-900);
+    font-family: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    outline: none;
+    letter-spacing: -0.01em;
+  }
+  .input-field input:focus {
+    border-color: var(--toss-blue);
+    background: #fff;
+  }
+  .input-field input:focus + label,
+  .input-field input:not(:placeholder-shown) + label {
+    top: 10px;
+    font-size: 11px;
+    color: var(--text-500);
+    font-weight: 600;
+  }
+  .input-field label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-400);
+    font-size: 15px;
+    font-weight: 500;
+    pointer-events: none;
+    transition: top 0.15s ease, font-size 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    background: transparent;
+  }
+  .input-field input:focus + label,
+  .input-field input:not(:placeholder-shown) + label {
+    transform: translateY(0);
+  }
+
+  .toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-400);
+    border-radius: 6px;
+  }
+  .toggle-eye:hover { color: var(--text-700); background: rgba(0,0,0,0.04); }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checkbox input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    background: #fff;
+    transition: all 0.15s ease;
+  }
+  .checkbox input:checked {
+    background: var(--toss-blue);
+    border-color: var(--toss-blue);
+  }
+  .checkbox input:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px; top: 1px;
+    width: 5px; height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .checkbox span { font-size: 14px; color: var(--text-700); font-weight: 500; }
+
+  .link-ghost {
+    background: none;
+    border: none;
+    color: var(--text-500);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 0;
+  }
+  .link-ghost:hover { color: var(--toss-blue); }
+
+  .btn-primary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 60px;
+    background: var(--toss-blue);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+    transition: background 0.15s ease, transform 0.05s ease;
+  }
+  .btn-primary:hover { background: var(--toss-blue-hover); }
+  .btn-primary:active { transform: scale(0.995); }
+  .btn-primary:disabled {
+    background: var(--bg-input);
+    color: var(--text-300);
+    cursor: not-allowed;
+  }
+
+  /* ===== 로그인 버튼 → 스피너 모핑 ===== */
+  .btn-primary.is-loading {
+    color: transparent;
+    pointer-events: none;
+    background: var(--toss-blue);
+  }
+  .btn-primary.is-loading::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .btn-primary.is-error {
+    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ===== 카드/히어로 페이드아웃 (성공 시) ===== */
+  .form-card.is-leaving {
+    animation: cardOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  .hero.is-leaving {
+    animation: heroOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes cardOut {
+    to { opacity: 0; transform: translateY(-12px); }
+  }
+  @keyframes heroOut {
+    to { opacity: 0; }
+  }
+
+  /* ===== 성공 인사 메시지 ===== */
+  .greeting {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 5;
+    padding: 0 24px;
+  }
+  .greeting.is-active {
+    animation: greetingIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  }
+  .greeting-text {
+    color: var(--text-900);
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-align: center;
+    text-shadow: 0 4px 24px rgba(255,255,255,0.6);
+  }
+  .greeting-text em {
+    color: var(--toss-blue);
+    font-style: normal;
+  }
+  @keyframes greetingIn {
+    0%   { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 900px) {
+    .greeting-text { font-size: 30px; }
+  }
+
+  .form-footer {
+    margin-top: 36px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-500);
+    font-weight: 500;
+  }
+  .form-footer a {
+    color: var(--toss-blue);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .form-footer a:hover { text-decoration: underline; }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg-soft);
+    padding: 32px 24px;
+    font-size: 13px;
+    color: var(--text-500);
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--text-500); text-decoration: none; }
+  .footer-links a:hover { color: var(--text-900); }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero > * { animation: fadeSlideUp 0.5s ease both; }
+  .hero > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero > *:nth-child(2) { animation-delay: 0.12s; }
+  .hero > *:nth-child(3) { animation-delay: 0.18s; }
+  .hero > *:nth-child(4) { animation-delay: 0.24s; }
+  .form-card { animation: fadeSlideUp 0.5s ease 0.1s both; }
+
+  @media (max-width: 900px) {
+    .main {
+      grid-template-columns: 1fr;
+      padding: 32px 20px 60px;
+      gap: 32px;
+    }
+    .hero h1 { font-size: 34px; }
+    .rotator { font-size: 36px !important; }
+    .hero p.lead { font-size: 16px; }
+    .form-card { justify-self: stretch; max-width: 100%; padding: 32px 24px; }
+    .stats { gap: 20px; }
+    .stat .num { font-size: 22px; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <img src="miboo_logo.png" alt="HANKUK MIBOO" />
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section class="hero">
+      <h1 class="rotator" aria-label="대한민국 조선산업 수호기업">
+        <span class="line"><span class="word w1">대한민국</span></span>
+        <span class="line"><span class="word w2">조선산업</span></span>
+        <span class="line"><span class="word w3">수호기업</span></span>
+      </h1>
+      <p class="lead">
+        무슨 일이든 할 수 있다고<br/>
+        생각하는 사람이 해내는 법이다.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="num"><em>50</em>년+</div>
+          <div class="label">업계 경력</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>5</em>개</div>
+          <div class="label">계열사</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>3</em>개국</div>
+          <div class="label">글로벌 거점</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="form-card" aria-label="로그인 폼">
+      <h2 class="form-title">시스템 로그인</h2>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div class="input-stack">
+
+          <div class="input-field">
+            <input
+              id="identifier"
+              name="identifier"
+              type="text"
+              placeholder=" "
+              autocomplete="username"
+              required
+            />
+            <label for="identifier">아이디</label>
+          </div>
+
+          <div class="input-field">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder=" "
+              autocomplete="current-password"
+              required
+            />
+            <label for="password">비밀번호</label>
+            <button type="button" class="toggle-eye" id="togglePw" aria-label="비밀번호 표시">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <label class="checkbox">
+            <input type="checkbox" id="keep" />
+            <span>로그인 상태 유지</span>
+          </label>
+          <button type="button" class="link-ghost">비밀번호 찾기</button>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">로그인</button>
+
+        <p class="form-footer">
+          <a href="#">관리자 문의</a>
+        </p>
+      </form>
+    </aside>
+  </main>
+
+  <!-- 로그인 성공 인사 메시지 -->
+  <div class="greeting" id="greeting" aria-hidden="true">
+    <div class="greeting-text">안녕하세요, <em id="greetingName">OO</em>님</div>
+  </div>
+
+  <script>
+  const pw = document.getElementById('password');
+  const toggle = document.getElementById('togglePw');
+  toggle.addEventListener('click', () => {
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  });
+
+  const form = document.getElementById('loginForm');
+  const idInput = document.getElementById('identifier');
+  const btn = document.getElementById('submitBtn');
+
+  function validate() {
+    btn.disabled = !(idInput.value.trim().length > 0 && pw.value.length >= 4);
+  }
+  [idInput, pw].forEach(el => el.addEventListener('input', validate));
+  validate();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.classList.remove('is-error');
+    btn.classList.add('is-loading');
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: idInput.value.trim(),
+          password: pw.value
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.success) {
+        const storage = document.getElementById('keep').checked ? localStorage : sessionStorage;
+        storage.setItem('currentUser', JSON.stringify(data.user));
+        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+
+        // 사용자 이름
+        const displayName = (data.user && data.user.name) ? data.user.name : idInput.value.trim();
+        document.getElementById('greetingName').textContent = displayName;
+
+        // 카드 + 히어로 페이드아웃
+        document.querySelector('.form-card').classList.add('is-leaving');
+        document.querySelector('.hero').classList.add('is-leaving');
+
+        // 인사 메시지 등장
+        setTimeout(() => {
+          document.getElementById('greeting').classList.add('is-active');
+        }, 300);
+
+        // 대시보드로 이동
+        setTimeout(() => {
+          window.location.href = '/dashboard.html';
+        }, 5000);
+      } else {
+        btn.classList.remove('is-loading');
+        btn.classList.add('is-error');
+        setTimeout(() => {
+          btn.classList.remove('is-error');
+          btn.disabled = false;
+        }, 500);
+      }
+    } catch (err) {
+      btn.classList.remove('is-loading');
+      btn.classList.add('is-error');
+      setTimeout(() => {
+        btn.classList.remove('is-error');
+        btn.disabled = false;
+      }, 500);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -37,9 +37,13 @@ const asUpload = multer({
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-// 정적 파일: dashboard.html과 업로드 파일만 서빙 (JSON 데이터 파일 노출 차단)
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+// 정적 파일: login.html, dashboard.html, 로고, 업로드 파일만 서빙 (JSON 데이터 파일 노출 차단)
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/miboo_logo.png', (req, res) => res.sendFile(path.join(__dirname, 'miboo_logo.png')));
+app.get('/login-bg.png', (req, res) => res.sendFile(path.join(__dirname, 'login-bg.png')));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── 기준 데이터 초기화 ──
@@ -49,9 +53,10 @@ if (!fs.existsSync(MASTER_FILE)) {
 function _generateUid(seq) {
   const prefixIdx = Math.floor(seq / 1000);
   const suffix = String(seq % 1000).padStart(3, '0');
-  const c1 = String.fromCharCode(65 + Math.floor(prefixIdx / 26));
-  const c2 = String.fromCharCode(65 + (prefixIdx % 26));
-  return c1 + c2 + '-' + suffix;
+  const c1 = String.fromCharCode(65 + Math.floor(prefixIdx / (26 * 26)));
+  const c2 = String.fromCharCode(65 + Math.floor((prefixIdx % (26 * 26)) / 26));
+  const c3 = String.fromCharCode(65 + (prefixIdx % 26));
+  return c1 + c2 + c3 + '-' + suffix;
 }
 function loadMaster() {
   const data = JSON.parse(fs.readFileSync(MASTER_FILE, 'utf8'));
@@ -707,6 +712,7 @@ app.post('/api/erp/upload', upload.single('file'), (req, res) => {
     // 기존 데이터 병합 (BOM ID 기준) + UID 발행
     const erp = loadErp();
     if (!erp.uidSeq) erp.uidSeq = 0;
+    const _now = new Date().toISOString();
     let dupProcessed = 0, newProcessed = 0, skipped = 0;
     if (bomIdCol) {
       const map = {};
@@ -716,24 +722,28 @@ app.post('/api/erp/upload', upload.single('file'), (req, res) => {
         if (key) {
           if (map[key]) {
             if (dupMode === 'skip') { skipped++; return; }
-            // 덮어쓰기 (UID 유지)
+            // 덮어쓰기 (UID 및 _addedAt 유지)
             const uid = map[key]._uid;
+            const addedAt = map[key]._addedAt;
             Object.assign(map[key], r);
             if (uid) map[key]._uid = uid;
+            if (addedAt) map[key]._addedAt = addedAt;
             dupProcessed++;
           } else {
             r._uid = _generateUid(erp.uidSeq++);
+            r._addedAt = _now;
             map[key] = r;
             newProcessed++;
           }
         } else {
           r._uid = _generateUid(erp.uidSeq++);
+          r._addedAt = _now;
           erp.rows.push(r);
         }
       });
       erp.rows = Object.values(map);
     } else {
-      normalized.forEach(r => { r._uid = _generateUid(erp.uidSeq++); });
+      normalized.forEach(r => { r._uid = _generateUid(erp.uidSeq++); r._addedAt = _now; });
       erp.rows = erp.rows.concat(normalized);
     }
 
@@ -792,6 +802,7 @@ app.put('/api/erp/columns/rename', (req, res) => {
   const newRows = erp.rows.map(row => {
     const obj = {};
     erp.columns.forEach(c => { obj[rename[c] || c] = row[c]; });
+    if (row._addedAt) obj._addedAt = row._addedAt;
     return obj;
   });
   erp.columns = newColumns;
