@@ -115,9 +115,37 @@ if (!fs.existsSync(ERP_COLS_FILE)) {
   fs.writeFileSync(ERP_COLS_FILE, JSON.stringify({ visible: [] }, null, 2));
 }
 function loadErp() { return JSON.parse(fs.readFileSync(ERP_FILE, 'utf8')); }
-function saveErp(data) { fs.writeFileSync(ERP_FILE, JSON.stringify(data, null, 2)); }
+// ERP 데이터는 대용량이라 pretty-print 제거 (파일 크기·쓰기 시간 단축)
+function saveErp(data) { fs.writeFileSync(ERP_FILE, JSON.stringify(data)); }
 function loadErpCols() { return JSON.parse(fs.readFileSync(ERP_COLS_FILE, 'utf8')); }
 function saveErpCols(data) { fs.writeFileSync(ERP_COLS_FILE, JSON.stringify(data, null, 2)); }
+
+// 엑셀 헤더 정규화 헬퍼: raw key → 정규화 key 매핑을 1회만 계산
+function _buildNormKeyMap(rawKeys) {
+  const m = Object.create(null);
+  for (let i = 0; i < rawKeys.length; i++) {
+    const k = rawKeys[i];
+    m[k] = k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  return m;
+}
+// rows × keyMap 기반 정규화 (per-row regex 제거 → O(cells) lookup)
+function _normalizeRows(rows, keyMap) {
+  const n = rows.length;
+  const out = new Array(n);
+  for (let i = 0; i < n; i++) {
+    const r = rows[i];
+    const obj = {};
+    for (const k in r) {
+      const v = r[k];
+      if (v === null || v === undefined) { obj[keyMap[k]] = ''; }
+      else if (typeof v === 'string') { obj[keyMap[k]] = v.trim(); }
+      else { obj[keyMap[k]] = String(v).trim(); }
+    }
+    out[i] = obj;
+  }
+  return out;
+}
 
 // ── 컬럼 매핑 초기화 ──
 const DEFAULT_COLUMNS = [
@@ -628,53 +656,54 @@ app.delete('/api/as/:id', (req, res) => {
 app.post('/api/erp/preview', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: '파일이 필요합니다.' });
   try {
+    const t0 = Date.now();
     const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { defval: '', raw: false });
     if (!rows.length) return res.status(400).json({ error: '데이터가 비어 있습니다.' });
 
-    const rawColumns = Object.keys(rows[0]);
-    const columns = rawColumns.map(k => k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim());
-    // 원본 → 인식 매핑
-    const columnMapping = rawColumns.map((raw, i) => ({ index: i+1, raw, recognized: columns[i] }));
-    const preview = rows.slice(0, 30).map(r => {
-      const obj = {};
-      Object.entries(r).forEach(([k, v]) => {
-        obj[k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()] = (v === null || v === undefined) ? '' : String(v).trim();
-      });
-      return obj;
-    });
+    // 헤더 정규화 1회만 계산
+    const rawKeys = Object.keys(rows[0]);
+    const keyMap = _buildNormKeyMap(rawKeys);
+    const columns = rawKeys.map(k => keyMap[k]);
+    const columnMapping = rawKeys.map((raw, i) => ({ index: i+1, raw, recognized: columns[i] }));
+    const preview = _normalizeRows(rows.slice(0, 30), keyMap);
 
-    // BOM 수량 / BOM 중량 SUM 계산
+    // BOM 수량 / BOM 중량 / BOM ID 칼럼 탐색 (정규화 후 이름으로)
     const norm = s => s.replace(/\s/g, '');
     const bomQtyCol = columns.find(c => norm(c) === 'BOM수량');
     const bomWtCol = columns.find(c => /BOM.*중량/i.test(norm(c)));
     const bomIdCol = columns.find(c => norm(c) === 'BOMID');
-    let bomQtySum = 0, bomWeightSum = 0;
-    const allNorm = rows.map(r => {
-      const obj = {};
-      Object.entries(r).forEach(([k, v]) => { obj[k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()] = (v === null || v === undefined) ? '' : String(v).trim(); });
-      return obj;
-    });
-    allNorm.forEach(r => {
-      if (bomQtyCol) bomQtySum += parseFloat(r[bomQtyCol]) || 0;
-      if (bomWtCol) bomWeightSum += parseFloat(r[bomWtCol]) || 0;
-    });
 
-    // BOM ID 중복 건수 계산
-    let dupCount = 0, newCount = 0;
+    // raw key 역매핑 (정규화 이름 → raw 키)
+    const rawBomQtyKey = bomQtyCol ? rawKeys[columns.indexOf(bomQtyCol)] : null;
+    const rawBomWtKey  = bomWtCol  ? rawKeys[columns.indexOf(bomWtCol)]  : null;
+    const rawBomIdKey  = bomIdCol  ? rawKeys[columns.indexOf(bomIdCol)]  : null;
+
+    // SUM 및 중복 카운트: raw rows 한 번만 순회
+    let bomQtySum = 0, bomWeightSum = 0, dupCount = 0, newCount = 0;
+    let existingIds = null;
     if (bomIdCol) {
       const erp = loadErp();
-      const existingIds = new Set();
-      erp.rows.forEach(r => { if (r[bomIdCol]) existingIds.add(r[bomIdCol]); });
-      allNorm.forEach(r => {
-        if (r[bomIdCol] && existingIds.has(r[bomIdCol])) dupCount++;
-        else newCount++;
-      });
-    } else {
-      newCount = rows.length;
+      existingIds = new Set();
+      for (let i = 0; i < erp.rows.length; i++) {
+        const v = erp.rows[i][bomIdCol];
+        if (v) existingIds.add(v);
+      }
     }
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (rawBomQtyKey) { const v = r[rawBomQtyKey]; const n = parseFloat(v); if (!isNaN(n)) bomQtySum += n; }
+      if (rawBomWtKey)  { const v = r[rawBomWtKey];  const n = parseFloat(v); if (!isNaN(n)) bomWeightSum += n; }
+      if (existingIds) {
+        const v = r[rawBomIdKey];
+        const id = (v === null || v === undefined) ? '' : (typeof v === 'string' ? v.trim() : String(v).trim());
+        if (id && existingIds.has(id)) dupCount++; else newCount++;
+      }
+    }
+    if (!bomIdCol) newCount = rows.length;
 
+    console.log(`[ERP preview] ${rows.length} rows in ${Date.now() - t0}ms`);
     res.json({ success: true, columns, columnMapping, preview, totalRows: rows.length, bomQtySum, bomWeightSum, bomIdCol: bomIdCol || null, dupCount, newCount });
   } catch(e) {
     res.status(500).json({ error: '엑셀 파싱 실패: ' + e.message });
@@ -685,22 +714,19 @@ app.post('/api/erp/preview', upload.single('file'), (req, res) => {
 app.post('/api/erp/upload', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: '파일이 필요합니다.' });
   try {
+    const t0 = Date.now();
     const wb = XLSX.read(req.file.buffer, { type: 'buffer', cellDates: true });
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { defval: '', raw: false });
     if (!rows.length) return res.status(400).json({ error: '데이터가 비어 있습니다.' });
 
-    // 칼럼명 추출 (줄바꿈 제거하여 정규화)
-    const columns = Object.keys(rows[0]).map(k => k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim());
+    // 헤더 정규화 1회만 계산
+    const rawKeys = Object.keys(rows[0]);
+    const keyMap = _buildNormKeyMap(rawKeys);
+    const columns = rawKeys.map(k => keyMap[k]);
 
-    // 행 데이터도 칼럼명 정규화 적용
-    const normalized = rows.map(r => {
-      const obj = {};
-      Object.entries(r).forEach(([k, v]) => {
-        obj[k.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()] = (v === null || v === undefined) ? '' : String(v).trim();
-      });
-      return obj;
-    });
+    // 행 정규화 (regex 캐시 사용)
+    const normalized = _normalizeRows(rows, keyMap);
 
     // BOM ID 칼럼 찾기 (띄어쓰기 무시)
     const norm = s => s.replace(/\s/g, '');
@@ -715,24 +741,31 @@ app.post('/api/erp/upload', upload.single('file'), (req, res) => {
     const _now = new Date().toISOString();
     let dupProcessed = 0, newProcessed = 0, skipped = 0;
     if (bomIdCol) {
-      const map = {};
-      erp.rows.forEach(r => { if (r[bomIdCol]) map[r[bomIdCol]] = r; });
-      normalized.forEach(r => {
+      // Map을 사용해 lookup O(1) + 대용량에서 성능 우수
+      const map = new Map();
+      for (let i = 0; i < erp.rows.length; i++) {
+        const r = erp.rows[i];
+        const key = r[bomIdCol];
+        if (key) map.set(key, r);
+      }
+      for (let i = 0; i < normalized.length; i++) {
+        const r = normalized[i];
         const key = r[bomIdCol];
         if (key) {
-          if (map[key]) {
-            if (dupMode === 'skip') { skipped++; return; }
+          const existing = map.get(key);
+          if (existing) {
+            if (dupMode === 'skip') { skipped++; continue; }
             // 덮어쓰기 (UID 및 _addedAt 유지)
-            const uid = map[key]._uid;
-            const addedAt = map[key]._addedAt;
-            Object.assign(map[key], r);
-            if (uid) map[key]._uid = uid;
-            if (addedAt) map[key]._addedAt = addedAt;
+            const uid = existing._uid || existing.UID;
+            const addedAt = existing._addedAt;
+            Object.assign(existing, r);
+            if (uid) { existing._uid = uid; }
+            if (addedAt) existing._addedAt = addedAt;
             dupProcessed++;
           } else {
             r._uid = _generateUid(erp.uidSeq++);
             r._addedAt = _now;
-            map[key] = r;
+            map.set(key, r);
             newProcessed++;
           }
         } else {
@@ -740,10 +773,13 @@ app.post('/api/erp/upload', upload.single('file'), (req, res) => {
           r._addedAt = _now;
           erp.rows.push(r);
         }
-      });
-      erp.rows = Object.values(map);
+      }
+      erp.rows = Array.from(map.values());
     } else {
-      normalized.forEach(r => { r._uid = _generateUid(erp.uidSeq++); r._addedAt = _now; });
+      for (let i = 0; i < normalized.length; i++) {
+        normalized[i]._uid = _generateUid(erp.uidSeq++);
+        normalized[i]._addedAt = _now;
+      }
       erp.rows = erp.rows.concat(normalized);
     }
 
@@ -752,10 +788,14 @@ app.post('/api/erp/upload', upload.single('file'), (req, res) => {
       erp.columns = ['UID', ...columns.filter(c => c !== 'UID')];
     }
 
-    // _uid를 UID 칼럼으로 매핑
-    erp.rows.forEach(r => { if (r._uid) { r['UID'] = r._uid; delete r._uid; } });
+    // _uid를 UID 칼럼으로 매핑 (신규 행만 대상)
+    for (let i = 0; i < erp.rows.length; i++) {
+      const r = erp.rows[i];
+      if (r._uid) { r['UID'] = r._uid; delete r._uid; }
+    }
 
     saveErp(erp);
+    console.log(`[ERP upload] ${rows.length} rows in ${Date.now() - t0}ms (dup=${dupProcessed}, new=${newProcessed}, skip=${skipped})`);
 
     // 기본 visible 칼럼이 없으면 첫 15개 설정
     const colsCfg = loadErpCols();
