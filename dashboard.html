@@ -10,11 +10,73 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --teal:#2563eb;--teal-light:#eff6ff;
+  /* ── Brand (Toss Navy) ── */
+  --brand:#004A93; --brand-hover:#003a75; --brand-pressed:#002a54;
+  --brand-soft:#e6eef7; --brand-softer:#f2f6fb; --brand-ring:rgba(0,74,147,0.12);
+  /* 레거시 호환 */
+  --teal:#004A93; --teal-light:#e6eef7;
+
+  /* ── Workflow (공정 단계) ── */
   --incoming:#86efac;--inspect_wait:#4ade80;--inspect_done:#22c55e;--paint_wait:#16a34a;--paint_done:#15803d;--deliver_wait:#166534;--deliver_done:#14532d;
-  --bg:#f2f2f7;--card:#fff;--border:#e2e8f0;--text:#0f172a;--text2:#64748b;
-  --radius:16px;--shadow:0 1px 3px rgba(0,0,0,0.04);
+
+  /* ── Neutrals (토스 그레이 스케일) ── */
+  --bg:#f8f9fa;
+  --card:#fff;
+  --surface-muted:#f9fafb;
+  --surface-subtle:#f2f4f6;
+  --border:#f1f3f5;
+  --border-strong:#e5e8eb;
+  --border-stronger:#d1d6db;
+  --text:#191f28;
+  --text-strong:#0f172a;
+  --text-body:#333d4b;
+  --text2:#6b7684;
+  --text-muted:#8b95a1;
+  --text-faint:#b0b8c1;
+
+  /* ── Status ── */
+  --success:#16a34a; --success-strong:#15803d; --success-bg:#ecfdf5; --success-border:#bbf7d0;
+  --warning:#d97706; --warning-strong:#b45309; --warning-bg:#fffbeb; --warning-border:#fde68a;
+  --danger:#dc2626;  --danger-strong:#b91c1c;  --danger-bg:#fef2f2;  --danger-border:#fecaca;
+  --info:#004A93;    --info-bg:#e6eef7;        --info-border:#bfdbfe;
+
+  /* ── Radii ── */
+  --r-xs:6px; --r-sm:8px; --r-md:10px; --r-lg:12px; --r-xl:16px; --r-2xl:20px; --r-pill:999px;
+
+  /* ── Shadows ── */
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.02);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md:0 8px 24px rgba(17,24,39,0.06),0 2px 4px rgba(17,24,39,0.04);
+  --shadow-lg:0 16px 48px rgba(0,0,0,.12);
+  --shadow-focus:0 0 0 3px var(--brand-ring);
+
+  /* ── Motion ── */
+  --ease:.15s cubic-bezier(.4,0,.2,1);
+  --ease-smooth:.2s cubic-bezier(.16,1,.3,1);
+
+  /* 레거시 호환 */
+  --radius:16px;
+  --shadow:var(--shadow-sm);
 }
+
+/* ── 전역 접근성 & 상호작용 기본 ── */
+button,[role="button"],a,summary,label[for]{cursor:pointer}
+button:disabled,[disabled]{cursor:not-allowed}
+:focus{outline:none}
+button:focus-visible,[role="button"]:focus-visible,a:focus-visible,
+input:focus-visible,select:focus-visible,textarea:focus-visible,
+[tabindex]:focus-visible{
+  outline:2px solid var(--brand);outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
 body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,'Noto Sans KR',Roboto,'Helvetica Neue',sans-serif;letter-spacing:-0.01em;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 /* ── 로그인 ── */
@@ -25,31 +87,32 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFo
 .field-wrap{margin-bottom:22px}
 .field-label{font-size:13px;font-weight:700;color:#334155;margin-bottom:8px;display:block;letter-spacing:.2px}
 .field-input{width:100%;padding:15px 18px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:15px;color:var(--text);background:#fff;outline:none;transition:all .2s;font-family:inherit}
-.field-input:focus{border-color:#0f172a;background:#fff;box-shadow:0 0 0 3px rgba(15,23,42,0.06)}
-.field-input::placeholder{color:#94a3b8}
-.login-btn{width:100%;padding:18px;border-radius:14px;border:none;background:#00b894;color:#fff;font-size:17px;font-weight:800;cursor:pointer;margin-top:32px;letter-spacing:.5px;transition:all .2s;font-family:inherit}
-.login-btn:hover{background:#00a383;box-shadow:0 4px 16px rgba(0,184,148,0.3)}
+.field-input:focus{border-color:var(--brand);background:#fff;box-shadow:var(--shadow-focus)}
+.field-input::placeholder{color:var(--text-muted)}
+.login-btn{width:100%;padding:18px;border-radius:var(--r-lg);border:none;background:var(--brand);color:#fff;font-size:17px;font-weight:800;cursor:pointer;margin-top:32px;letter-spacing:.3px;transition:background var(--ease),box-shadow var(--ease);font-family:inherit}
+.login-btn:hover{background:var(--brand-hover);box-shadow:0 4px 16px rgba(0,74,147,0.25)}
 .login-error{color:#dc2626;font-size:13px;text-align:center;margin-top:14px;display:none;background:#fef2f2;padding:12px;border-radius:10px;border:1px solid #fecaca}
 
 /* ── 탑바 ── */
 #dashboard{display:none}
 .topbar{
   background:#fff;
-  padding:0 24px;display:flex;align-items:center;gap:20px;height:64px;
-  box-shadow:0 1px 4px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100;
-  border-bottom:1px solid #e2e8f0;
+  padding:0 24px;display:flex;align-items:center;gap:12px;height:64px;
+  box-shadow:0 1px 4px rgba(17,24,39,0.04);position:sticky;top:0;z-index:100;
+  border-bottom:1px solid var(--border);
 }
 .topbar-title img{height:32px !important;width:auto !important;display:block}
-.topbar-title{font-size:17px;font-weight:800;flex:1;color:#0f172a;letter-spacing:-.3px;display:flex;align-items:center;gap:10px;font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.topbar-title{font-size:17px;font-weight:800;flex:1;color:var(--text);letter-spacing:-.02em;display:flex;align-items:center;gap:10px;font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 .topbar-title span{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 .topbar-title::before{display:none}
-.topbar-user{font-size:13px;color:#64748b;font-weight:500;padding:6px 14px;background:#f1f5f9;border-radius:8px}
-.logout-btn{padding:8px 18px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#64748b;transition:all .2s;letter-spacing:.3px}
-.logout-btn:hover{background:#f8fafc;color:#0f172a}
+.topbar-user{font-size:13px;color:var(--text2);font-weight:500;padding:6px 14px;background:var(--surface-subtle);border-radius:var(--r-sm)}
+.logout-btn{padding:8px 18px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:background var(--ease),color var(--ease);letter-spacing:-.01em;white-space:nowrap}
+.logout-btn:hover{background:var(--surface-muted);color:var(--text)}
+.topbar-sep{width:1px;height:20px;background:var(--border-strong);flex-shrink:0;margin:0 4px}
 
 /* ── 레이아웃 ── */
 .layout{display:flex;min-height:calc(100vh - 64px)}
-.sidebar{width:220px;background:#fff;padding:24px 0;display:flex;flex-direction:column;gap:4px;flex-shrink:0;border-right:1px solid #e2e8f0}
+.sidebar{width:220px;background:#fff;padding:24px 0;display:flex;flex-direction:column;gap:4px;flex-shrink:0;border-right:1px solid var(--border)}
 .main{flex:1;padding:28px 32px;max-width:1600px;overflow-y:auto}
 
 /* 통계 */
@@ -58,59 +121,59 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFo
 @media (max-width: 900px){.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width: 560px){.stats-row{grid-template-columns:1fr}}
 .stat-card{
-  background:#fff;border-radius:16px;padding:24px 22px;
-  border:1px solid #f1f3f5;box-shadow:0 1px 2px rgba(0,0,0,0.02);
-  transition:transform .15s ease, box-shadow .15s ease;position:relative;overflow:hidden;color:#191f28;
+  background:var(--card);border-radius:var(--r-xl);padding:24px 22px;
+  border:1px solid var(--border);box-shadow:var(--shadow-xs);
+  transition:transform var(--ease), box-shadow var(--ease);position:relative;overflow:hidden;color:var(--text);
 }
 .stat-card::before{display:none}
 .stat-card::after{display:none}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(17,24,39,0.06),0 2px 4px rgba(17,24,39,0.04);border-color:#e5e8eb}
-.stat-label{font-size:13px;color:#6b7684;font-weight:500;margin-bottom:10px;letter-spacing:-0.01em;text-transform:none}
-.stat-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:#191f28}
-.stat-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:24px;opacity:.12;color:#8b95a1}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
+.stat-label{font-size:13px;color:var(--text2);font-weight:500;margin-bottom:10px;letter-spacing:-0.01em;text-transform:none}
+.stat-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text)}
+.stat-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:24px;opacity:.12;color:var(--text-muted)}
 
 /* 사이드 탭 */
 .tabs{display:flex;flex-direction:column;gap:2px;padding:0 12px}
-.tab{padding:11px 18px;border:none;background:none;cursor:pointer;font-size:13px;color:#64748b;font-weight:600;border-radius:10px;transition:all .2s;letter-spacing:.2px;text-align:left;display:flex;align-items:center;gap:10px}
-.tab.on{background:#f1f5f9;color:#0f172a;font-weight:700}
-.tab:not(.on):hover{color:#0f172a;background:#f8fafc}
+.tab{padding:11px 18px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text2);font-weight:600;border-radius:var(--r-md);transition:background var(--ease),color var(--ease);letter-spacing:-.01em;text-align:left;display:flex;align-items:center;gap:10px}
+.tab.on{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.tab:not(.on):hover{color:var(--text);background:var(--surface-muted)}
 
 /* 검색 */
 .search-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-start}
 .search-textarea{
-  flex:1;min-width:240px;padding:11px 16px;border:2px solid #e2e8f0;border-radius:12px;
+  flex:1;min-width:240px;padding:11px 16px;border:1.5px solid var(--border-strong);border-radius:var(--r-lg);
   font-size:14px;color:var(--text);background:#fff;outline:none;
-  transition:all .2s;font-family:inherit;resize:vertical;min-height:44px;height:44px;line-height:1.5;
+  transition:border-color var(--ease),box-shadow var(--ease);font-family:inherit;resize:vertical;min-height:44px;height:44px;line-height:1.5;
 }
-.search-textarea:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.search-textarea:focus{border-color:var(--brand);background:#fff;box-shadow:var(--shadow-focus)}
 .search-textarea.multi{height:88px}
-.search-textarea::placeholder{color:#94a3b8}
+.search-textarea::placeholder{color:var(--text-muted)}
 .filter-select{
-  padding:11px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;color:var(--text);
-  background:#fff;outline:none;height:44px;cursor:pointer;transition:all .2s;
+  padding:11px 16px;border:1.5px solid var(--border-strong);border-radius:var(--r-lg);font-size:14px;color:var(--text);
+  background:#fff;outline:none;height:44px;cursor:pointer;transition:border-color var(--ease),box-shadow var(--ease);
   -webkit-appearance:none;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7684' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;
 }
-.filter-select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.filter-select:focus{border-color:var(--brand);box-shadow:var(--shadow-focus)}
 .search-btn{
-  padding:11px 28px;border:none;border-radius:12px;
-  background:#fff;color:#0f172a;border:1px solid #e2e8f0;font-size:14px;font-weight:700;
-  cursor:pointer;transition:all .2s;height:44px;white-space:nowrap;letter-spacing:.3px;
+  padding:11px 28px;border:1.5px solid var(--border-strong);border-radius:var(--r-lg);
+  background:#fff;color:var(--text);font-size:14px;font-weight:700;
+  cursor:pointer;transition:background var(--ease),border-color var(--ease);height:44px;white-space:nowrap;letter-spacing:-.01em;
 }
-.search-btn:hover{background:#f1f5f9;border-color:#cbd5e1}
+.search-btn:hover{background:var(--surface-muted);border-color:var(--border-stronger)}
 .search-btn:active{transform:translateY(0)}
-.search-count{font-size:12px;color:#3b82f6;font-weight:600;margin-bottom:10px;padding-left:2px}
+.search-count{font-size:12px;color:var(--brand);font-weight:600;margin-bottom:10px;padding-left:2px}
 
 /* 카드/테이블 */
-.card{background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.card{background:var(--card);border-radius:var(--r-xl);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-xs)}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{padding:14px 18px;text-align:left;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #f1f5f9;background:#f8fafc}
-td{padding:14px 18px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+th{padding:14px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:none;letter-spacing:-.01em;border-bottom:1px solid var(--border);background:var(--surface-muted)}
+td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text-body)}
 tr:last-child td{border-bottom:none}
-tbody tr{transition:background .15s}
-tbody tr:hover td{background:#f8fafc}
+tbody tr{transition:background var(--ease)}
+tbody tr:hover td{background:var(--surface-muted)}
 
 /* 공정 배지 */
 .step-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px}
@@ -151,22 +214,23 @@ tbody tr:hover td{background:#f8fafc}
 .step-user{font-weight:700;color:var(--text)}
 
 /* 스캔 결과 카드 */
-.scan-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-.scan-card.found{border-left:4px solid #22c55e}
-.scan-card.not-found{border-left:4px solid #cbd5e1;background:#f8fafc}
-.scan-barcode{font-size:16px;font-weight:800;font-family:monospace;color:#0f172a;margin-bottom:10px}
+.scan-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.scan-card.found{border-left:4px solid var(--success)}
+.scan-card.not-found{border-left:4px solid var(--border-stronger);background:var(--surface-muted)}
+.scan-barcode{font-size:16px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text);margin-bottom:10px;letter-spacing:-.01em}
 .scan-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
 .scan-field{font-size:12px}
-.scan-field-label{color:#94a3b8;font-weight:600;margin-bottom:2px}
-.scan-field-val{color:#0f172a;font-weight:700;font-size:13px}
-.scan-alert{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:#fef2f2;color:#dc2626;font-size:13px;font-weight:600;border:1px solid #fecaca}
+.scan-field-label{color:var(--text-muted);font-weight:600;margin-bottom:2px}
+.scan-field-val{color:var(--text);font-weight:700;font-size:13px}
+.scan-alert{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r-sm);background:var(--danger-bg);color:var(--danger);font-size:13px;font-weight:600;border:1px solid var(--danger-border)}
 .scan-alert-icon{font-size:16px}
-.del-btn{padding:4px 10px;border:1px solid #fecaca;border-radius:6px;background:#fef2f2;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.del-btn{padding:4px 10px;border:1px solid var(--danger-border);border-radius:var(--r-xs);background:var(--danger-bg);color:var(--danger);font-size:11px;font-weight:600;cursor:pointer;transition:background var(--ease)}
 .del-btn:hover{background:#fee2e2}
 
 /* 빈 상태 */
-.empty{padding:72px 20px;text-align:center;color:#94a3b8}
-.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.empty{padding:72px 20px;text-align:center;color:var(--text-muted)}
+.empty-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;margin:0 auto 16px;border-radius:var(--r-xl);background:var(--surface-subtle);color:var(--text-muted);opacity:.9}
+.empty-icon svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8}
 .empty p{font-size:14px;font-weight:500}
 
 /* ── 관리자 탭 ── */
@@ -174,61 +238,61 @@ tbody tr:hover td{background:#f8fafc}
 .admin-section-title{font-size:15px;font-weight:700;color:#191f28;margin-bottom:16px;display:flex;align-items:center;gap:10px;letter-spacing:-0.02em}
 .admin-section-title::before{content:'';display:inline-block;width:3px;height:16px;background:#004A93;border-radius:2px}
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:16px}
-.step-check-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;cursor:pointer;font-size:13px;font-weight:600;color:#334155;transition:all .18s;user-select:none}
-.step-check-label:hover{border-color:#93c5fd;background:#eff6ff}
-.step-check-label input[type="checkbox"]{width:16px;height:16px;accent-color:#2563eb;cursor:pointer;flex-shrink:0}
-.step-check-label.checked{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
-.admin-btn{padding:10px 22px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.2px}
-.admin-btn-primary{background:#2563eb;color:#fff}
-.admin-btn-primary:hover{background:#1d4ed8;box-shadow:0 4px 12px rgba(37,99,235,0.25)}
-.admin-btn-secondary{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
-.admin-btn-secondary:hover{background:#e2e8f0}
-.admin-btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.step-check-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r-md);border:1.5px solid var(--border-strong);background:var(--surface-muted);cursor:pointer;font-size:13px;font-weight:600;color:var(--text-body);transition:border-color var(--ease),background var(--ease),color var(--ease);user-select:none}
+.step-check-label:hover{border-color:var(--brand);background:var(--brand-softer)}
+.step-check-label input[type="checkbox"]{width:16px;height:16px;accent-color:var(--brand);cursor:pointer;flex-shrink:0}
+.step-check-label.checked{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.admin-btn{padding:10px 22px;border:none;border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;transition:background var(--ease),color var(--ease),box-shadow var(--ease);letter-spacing:-.01em}
+.admin-btn-primary{background:var(--brand);color:#fff}
+.admin-btn-primary:hover{background:var(--brand-hover);box-shadow:0 4px 12px rgba(0,74,147,0.22)}
+.admin-btn-secondary{background:var(--surface-subtle);color:var(--text-body);border:1px solid var(--border-strong)}
+.admin-btn-secondary:hover{background:var(--border-strong)}
+.admin-btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
 .admin-btn-danger:hover{background:#fee2e2}
-.admin-btn-edit,.admin-btn-del{width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center}
-.admin-btn-edit{background:#f1f5f9;color:#64748b}
-.admin-btn-edit:hover{background:#e2e8f0;color:#0f172a}
-.admin-btn-del{background:#f1f5f9;color:#94a3b8}
-.admin-btn-del:hover{background:#fef2f2;color:#dc2626}
-.user-step-tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:#475569}
+.admin-btn-edit,.admin-btn-del{width:32px;height:32px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:background var(--ease),color var(--ease);display:inline-flex;align-items:center;justify-content:center}
+.admin-btn-edit{background:var(--surface-subtle);color:var(--text2)}
+.admin-btn-edit:hover{background:var(--border-strong);color:var(--text)}
+.admin-btn-del{background:var(--surface-subtle);color:var(--text-muted)}
+.admin-btn-del:hover{background:var(--danger-bg);color:var(--danger)}
+.user-step-tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--text-body)}
 .user-step-tag-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.role-badge{display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700}
-.role-badge-sysadmin{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
-.role-badge-admin{background:#fef9c3;color:#854d0e;border:1px solid #fde68a}
-.role-badge-worker{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
-.admin-msg{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-top:10px;display:none}
-.admin-msg.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
-.admin-msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.role-badge{display:inline-block;padding:4px 10px;border-radius:var(--r-pill);font-size:11px;font-weight:700;letter-spacing:-.01em}
+.role-badge-sysadmin{background:#f5f3ff;color:#6d28d9}
+.role-badge-admin{background:var(--warning-bg);color:var(--warning-strong)}
+.role-badge-worker{background:var(--success-bg);color:#047857}
+.admin-msg{padding:10px 14px;border-radius:var(--r-md);font-size:13px;font-weight:600;margin-top:10px;display:none}
+.admin-msg.success{background:var(--success-bg);color:#047857;border:1px solid var(--success-border)}
+.admin-msg.error{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
 
 /* 모달 */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
 .modal-box{background:#fff;border-radius:20px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:modalIn .25s ease;overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
 .modal-header{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between}
-.modal-header h3{font-size:17px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px}
-.modal-header h3::before{content:'';display:inline-block;width:4px;height:20px;background:#2563eb;border-radius:2px}
+.modal-header h3{font-size:17px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px}
+.modal-header h3::before{content:'';display:inline-block;width:4px;height:20px;background:var(--brand);border-radius:2px}
 .modal-close{width:32px;height:32px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:18px;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .modal-close:hover{background:#e2e8f0;color:#0f172a}
 .modal-body{padding:20px 28px 28px;overflow-y:auto;flex:1;min-height:0}
 .modal-field{margin-bottom:16px}
 .modal-field label{display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;letter-spacing:.2px}
-.modal-field input,.modal-field select{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;color:#0f172a;outline:none;transition:border .2s;font-family:inherit;background:#fff}
-.modal-field input:focus,.modal-field select:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.modal-field input,.modal-field select{width:100%;padding:12px 14px;border:1.5px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;color:var(--text);outline:none;transition:border-color var(--ease),box-shadow var(--ease);font-family:inherit;background:#fff}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--brand);box-shadow:var(--shadow-focus)}
 .modal-field input:disabled{background:#f8fafc;color:#94a3b8}
 .modal-field .hint{font-weight:400;color:#94a3b8;font-size:11px}
 .modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-steps{display:flex;flex-direction:column;gap:6px;margin-top:4px}
-.modal-step-item{display:flex;align-items:center;padding:11px 16px;border-radius:10px;border:1.5px solid #e2e8f0;cursor:pointer;font-size:13px;font-weight:600;color:#64748b;user-select:none;background:#fff;transition:border-color .15s,background .15s,color .15s}
-.modal-step-item:hover{background:#f8fafc}
-.modal-step-item.on{color:#0f172a;border-color:var(--tc);background:color-mix(in srgb,var(--tc) 5%,#fff)}
-.mst-sw{display:inline-block;width:34px;height:18px;border-radius:9px;background:#dde1e7;margin-right:12px;vertical-align:middle;position:relative;flex-shrink:0;transition:background .15s}
-.mst-sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .15s cubic-bezier(.4,.0,.2,1)}
+.modal-step-item{display:flex;align-items:center;padding:11px 16px;border-radius:var(--r-md);border:1.5px solid var(--border-strong);cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);user-select:none;background:var(--card);transition:border-color var(--ease),background var(--ease),color var(--ease)}
+.modal-step-item:hover{background:var(--surface-muted)}
+.modal-step-item.on{color:var(--text);border-color:var(--tc);background:color-mix(in srgb,var(--tc) 5%,#fff)}
+.mst-sw{display:inline-block;width:36px;height:20px;border-radius:var(--r-pill);background:var(--border-stronger);margin-right:12px;vertical-align:middle;position:relative;flex-shrink:0;transition:background var(--ease);pointer-events:none}
+.mst-sw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:var(--shadow-xs),0 1px 2px rgba(0,0,0,.14);transition:transform .15s cubic-bezier(.4,.0,.2,1)}
 .modal-step-item.on .mst-sw{background:var(--tc)}
 .modal-step-item.on .mst-sw::after{transform:translateX(16px)}
 .mst-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:10px;vertical-align:middle;flex-shrink:0;opacity:.5;transition:opacity .15s}
 .modal-step-item.on .mst-dot{opacity:1}
 .mst-txt{flex:1}
-.modal-footer{padding:0 28px 24px;display:flex;gap:10px;justify-content:flex-end}
+.modal-footer{padding:0 28px 24px;display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
 .modal-footer .admin-btn{min-width:100px}
 .modal-msg{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin:0 28px 16px;display:none}
 .modal-msg.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:block}
@@ -240,20 +304,20 @@ tbody tr:hover td{background:#f8fafc}
 .user-summary span{color:#0f172a;font-weight:800}
 .user-perm-table{width:100%;border-collapse:collapse;font-size:12px}
 .user-perm-table thead{position:sticky;top:0;z-index:1}
-.user-perm-table th{padding:8px 10px;text-align:center;white-space:nowrap;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e2e8f0;background:#f8fafc}
+.user-perm-table th{padding:8px 10px;text-align:center;white-space:nowrap;font-size:11px;font-weight:700;color:var(--text2);text-transform:none;letter-spacing:-.01em;border-bottom:1px solid var(--border);background:var(--surface-muted)}
 .user-perm-table th.ut-fixed{text-align:left}
 .user-perm-table .ut-perm{width:62px;min-width:62px}
-.user-perm-table td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid #f1f5f9}
+.user-perm-table td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid var(--border)}
 .user-perm-table tbody tr:nth-child(even) td{background:#fafbfc}
-.user-perm-table tbody tr:hover td{background:#f0f4ff}
+.user-perm-table tbody tr:hover td{background:var(--brand-softer)}
 .ut-no{color:#b0b8c4;font-size:11px;font-variant-numeric:tabular-nums;text-align:center;width:32px}
-.user-stat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;transition:all .2s;cursor:pointer}
-.user-stat-dot{width:7px;height:7px;border-radius:50%;transition:transform .2s}
+.user-stat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:var(--r-pill);font-size:11px;font-weight:700;background:var(--surface-muted);border:1px solid var(--border-strong);color:var(--text);transition:background var(--ease),border-color var(--ease);cursor:pointer}
+.user-stat-dot{width:7px;height:7px;border-radius:50%;transition:transform var(--ease-smooth)}
 .user-stat-pill:hover .user-stat-dot{transform:scale(1.4)}
-.ut-cat{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block}
-.ut-cat-sysadmin{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.ut-cat-admin{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
-.ut-cat-worker{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.ut-cat{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--r-pill);display:inline-block;letter-spacing:-.01em}
+.ut-cat-sysadmin{background:var(--danger-bg);color:var(--danger-strong)}
+.ut-cat-admin{background:#f5f3ff;color:#6d28d9}
+.ut-cat-worker{background:var(--success-bg);color:#047857}
 .ut-name{font-weight:700;font-size:13px;color:#0f172a}
 .ut-id{font-size:12px;color:#475569}
 .ut-perm-cell{text-align:center}
@@ -266,11 +330,11 @@ tbody tr:hover td{background:#f8fafc}
 /* 환영 오버레이 */
 #welcomeOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:24px}
 #welcomeOverlay.show{display:flex}
-.welcome-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;font-weight:800;box-shadow:0 8px 32px rgba(37,99,235,0.25);opacity:0;transform:scale(0.5);animation:welcomePop .5s ease forwards}
-.welcome-text{font-size:24px;font-weight:800;color:#0f172a;opacity:0;animation:welcomeFadeIn .5s ease .3s forwards}
-.welcome-sub{font-size:14px;color:#64748b;font-weight:500;opacity:0;animation:welcomeFadeIn .5s ease .5s forwards}
-.welcome-bar-wrap{width:200px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-top:8px;opacity:0;animation:welcomeFadeIn .3s ease .6s forwards}
-.welcome-bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:4px;animation:welcomeProgress 2s ease .7s forwards}
+.welcome-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#1a6fb8);display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;font-weight:800;box-shadow:0 8px 32px rgba(0,74,147,0.25);opacity:0;transform:scale(0.5);animation:welcomePop .5s ease forwards}
+.welcome-text{font-size:24px;font-weight:800;color:var(--text);opacity:0;animation:welcomeFadeIn .5s ease .3s forwards}
+.welcome-sub{font-size:14px;color:var(--text2);font-weight:500;opacity:0;animation:welcomeFadeIn .5s ease .5s forwards}
+.welcome-bar-wrap{width:200px;height:4px;background:var(--border-strong);border-radius:4px;overflow:hidden;margin-top:8px;opacity:0;animation:welcomeFadeIn .3s ease .6s forwards}
+.welcome-bar{height:100%;width:0;background:linear-gradient(90deg,var(--brand),#1a6fb8);border-radius:4px;animation:welcomeProgress 2s ease .7s forwards}
 @keyframes welcomePop{to{opacity:1;transform:scale(1)}}
 @keyframes welcomeFadeIn{to{opacity:1}}
 @keyframes welcomeProgress{to{width:100%}}
@@ -290,8 +354,8 @@ tbody tr:hover td{background:#f8fafc}
 .map-toolbar label{font-size:12px;font-weight:600;color:#64748b}
 .map-toolbar input,.map-toolbar select{padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:inherit}
 .map-btn{padding:7px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.map-btn-primary{background:#2563eb;color:#fff}
-.map-btn-primary:hover{background:#1d4ed8}
+.map-btn-primary{background:var(--brand);color:#fff}
+.map-btn-primary:hover{background:var(--brand-hover)}
 .map-btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
 .map-btn-danger:hover{background:#fee2e2}
 .map-btn-secondary{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
@@ -302,7 +366,7 @@ tbody tr:hover td{background:#f8fafc}
 .map-sidebar-title{font-size:13px;font-weight:700;color:#191f28;margin-bottom:12px;letter-spacing:-0.01em}
 .map-sidebar-item{padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:6px;font-size:12px;cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center}
 .map-sidebar-item:hover{background:#f8fafc}
-.map-sidebar-item.active{border-color:#2563eb;background:#eff6ff}
+.map-sidebar-item.active{border-color:var(--brand);background:var(--brand-soft)}
 .map-assign-modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .map-assign-modal.open{display:flex}
 
@@ -314,27 +378,27 @@ tbody tr:hover td{background:#f8fafc}
 .svg-zone.selected rect{stroke-width:2;stroke-dasharray:5,3}
 .recent-loc{padding:6px 8px;border-radius:6px;background:#f8fafc;margin-bottom:4px;font-size:11px;border:1px solid #f1f5f9}
 .recent-loc-barcode{font-weight:700;font-family:monospace;color:#0f172a}
-.recent-loc-area{color:#2563eb;font-weight:600}
+.recent-loc-area{color:var(--brand);font-weight:600}
 .recent-loc-time{color:#94a3b8;font-size:10px}
 
 /* 도면 편집기 */
 .editor-tool{display:flex;align-items:center;gap:5px;padding:6px 12px;border:none;border-radius:8px;background:transparent;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;transition:all .15s;font-family:inherit}
 .editor-tool:hover{background:#e2e8f0;color:#334155}
-.editor-tool.active{background:#2563eb;color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.editor-tool.active{background:var(--brand);color:#fff;box-shadow:0 2px 8px rgba(0,74,147,.22)}
 .toolbar-sep{width:1px;height:28px;background:#e2e8f0;flex-shrink:0}
 .color-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all .12s}
 .color-dot:hover{transform:scale(1.15)}
-.color-dot.active{border-color:#0f172a;box-shadow:0 0 0 2px #fff,0 0 0 4px currentColor}
-.svg-handle{fill:#fff;stroke:#2563eb;stroke-width:1;cursor:pointer;r:4}
-.svg-handle:hover{fill:#dbeafe}
+.color-dot.active{border-color:var(--text);box-shadow:0 0 0 2px #fff,0 0 0 4px currentColor}
+.svg-handle{fill:#fff;stroke:var(--brand);stroke-width:1;cursor:pointer;r:4}
+.svg-handle:hover{fill:var(--brand-soft)}
 .svg-wall{stroke:#475569;stroke-width:3;stroke-linecap:square;cursor:pointer}
 .svg-wall:hover{stroke:#334155;stroke-width:4}
-.svg-wall.selected{stroke:#2563eb;stroke-width:3;stroke-dasharray:6,3}
+.svg-wall.selected{stroke:var(--brand);stroke-width:3;stroke-dasharray:6,3}
 .prop-editor{position:absolute;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid #e2e8f0;padding:16px;z-index:100;min-width:220px}
 .prop-editor label{display:block;font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px;margin-top:10px}
 .prop-editor label:first-child{margin-top:0}
 .prop-editor input{width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit}
-.prop-editor input:focus{border-color:#2563eb;outline:none}
+.prop-editor input:focus{border-color:var(--brand);outline:none;box-shadow:var(--shadow-focus)}
 .prop-editor-actions{display:flex;gap:6px;margin-top:12px}
 
 /* 반응형 */
@@ -360,10 +424,14 @@ tbody tr:hover td{background:#f8fafc}
 }
 @media(max-width:768px){
   .layout{flex-direction:column}
-  .sidebar{width:100%;flex-direction:row;padding:12px 0;gap:0;border-right:none;border-bottom:1px solid #e2e8f0}
+  .sidebar{width:100%;flex-direction:row;padding:12px 0;gap:0;border-right:none;border-bottom:1px solid var(--border-strong)}
   .sidebar>div:first-child{display:none}
-  .tabs{flex-direction:row;padding:0 12px;overflow-x:auto;flex-wrap:nowrap}
+  .tabs{flex-direction:row;padding:0 12px;overflow-x:auto;flex-wrap:nowrap;align-items:center}
   .tab{white-space:nowrap;text-align:center;padding:8px 16px}
+  /* 모바일 가로 탭: 서브메뉴는 인라인 플로우로 전환 */
+  .as-submenu{max-height:none;opacity:1;overflow:visible;padding-left:0;display:contents}
+  .as-submenu .tab-sub{display:inline-flex;align-items:center;transform:none;opacity:1;white-space:nowrap;font-size:11px;padding:6px 12px;border-radius:var(--r-pill);border:1px solid var(--border-strong);background:var(--card);margin:0 2px}
+  .as-submenu .tab-sub.on{background:var(--brand-soft);color:var(--brand);border-color:var(--brand)}
   .main{padding:16px}
   .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
   .topbar{padding:0 16px;height:56px}
@@ -380,20 +448,20 @@ tbody tr:hover td{background:#f8fafc}
 /* ── AS 접수 ERP ── */
 .as-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
 .as-kpi-card{
-  background:#fff;border-radius:8px;border:1px solid var(--border);
+  background:var(--card);border-radius:var(--r-sm);border:1px solid var(--border);
   padding:10px 12px;display:flex;align-items:center;gap:10px;
-  box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-xs);cursor:pointer;transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease);position:relative;overflow:hidden;
 }
 .as-kpi-card::after{display:none}
 .as-kpi-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .as-kpi-card.active-filter{box-shadow:0 0 0 2px currentColor}
 .as-kpi-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .as-kpi-icon svg{width:15px;height:15px}
-.as-kpi-label{font-size:11px;font-weight:700;color:#475569;letter-spacing:.2px;margin-bottom:2px}
-.as-kpi-value{font-size:20px;font-weight:800;line-height:1;letter-spacing:-0.5px;color:#0f172a}
-.as-kpi-total .as-kpi-icon{background:#eff6ff}
-.as-kpi-total::after{background:#2563eb}
-.as-kpi-total .as-kpi-value{color:#1d4ed8}
+.as-kpi-label{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.2px;margin-bottom:2px}
+.as-kpi-value{font-size:20px;font-weight:800;line-height:1;letter-spacing:-0.5px;color:var(--text)}
+.as-kpi-total .as-kpi-icon{background:var(--brand-soft)}
+.as-kpi-total::after{background:var(--brand)}
+.as-kpi-total .as-kpi-value{color:var(--brand)}
 .as-kpi-open .as-kpi-icon{background:#f8fafc}
 .as-kpi-open::after{background:#64748b}
 .as-kpi-open .as-kpi-value{color:#334155}
@@ -434,14 +502,14 @@ tbody tr:hover td{background:#f8fafc}
   border:1px solid #e2e8f0;white-space:nowrap;font-family:inherit;background:#fff;color:#475569;
 }
 .as-tb-btn:hover{background:#f8fafc;border-color:#cbd5e1}
-.as-tb-btn-search{background:#2563eb;color:#fff;border-color:#2563eb}
-.as-tb-btn-search:hover{background:#1d4ed8;box-shadow:0 2px 8px rgba(37,99,235,.25)}
-.as-tb-btn-secondary{background:#fff;color:#475569;border-color:#e2e8f0}
-.as-tb-btn-secondary:hover{background:#f8fafc;border-color:#cbd5e1}
-.as-tb-btn-excel{background:#fff;color:#16a34a;border-color:#d1fae5}
-.as-tb-btn-excel:hover{background:#f0fdf4}
-.as-tb-btn-new{background:#2563eb;color:#fff;border-color:#2563eb}
-.as-tb-btn-new:hover{background:#1d4ed8;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.as-tb-btn-search{background:var(--brand);color:#fff;border-color:var(--brand)}
+.as-tb-btn-search:hover{background:var(--brand-hover);border-color:var(--brand-hover);box-shadow:0 2px 8px rgba(0,74,147,.22)}
+.as-tb-btn-secondary{background:#fff;color:var(--text-body);border-color:var(--border-strong)}
+.as-tb-btn-secondary:hover{background:var(--surface-muted);border-color:var(--border-stronger)}
+.as-tb-btn-excel{background:#fff;color:var(--success);border-color:#d1fae5}
+.as-tb-btn-excel:hover{background:var(--success-bg)}
+.as-tb-btn-new{background:var(--brand);color:#fff;border-color:var(--brand)}
+.as-tb-btn-new:hover{background:var(--brand-hover);border-color:var(--brand-hover);box-shadow:0 2px 8px rgba(0,74,147,.22)}
 .as-tb-btn-danger{background:#fff;color:#94a3b8;border-color:#e2e8f0}
 .as-tb-btn-danger:hover{background:#fef2f2;color:#dc2626;border-color:#fecaca}
 
@@ -451,7 +519,7 @@ tbody tr:hover td{background:#f8fafc}
 .as-table-title{font-size:12px;font-weight:700;color:#334155}
 .as-result-count{font-size:11px;color:#94a3b8;font-weight:600}
 .col-resize-handle{position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;user-select:none;z-index:2}
-.col-resize-handle:hover,.col-resize-handle.active{background:#2563eb;opacity:.3}
+.col-resize-handle:hover,.col-resize-handle.active{background:var(--brand);opacity:.3}
 .as-erp-table{width:100%;border-collapse:collapse;font-size:12px}
 .as-erp-table thead th{
   padding:8px 10px;text-align:left;font-size:11px;font-weight:700;
@@ -462,8 +530,8 @@ tbody tr:hover td{background:#f8fafc}
 }
 .as-erp-table thead th:last-child{border-right:none}
 .as-erp-table thead th:hover{color:#334155}
-.as-erp-table thead th.sort-asc::after{content:' ↑';color:#2563eb}
-.as-erp-table thead th.sort-desc::after{content:' ↓';color:#2563eb}
+.as-erp-table thead th.sort-asc::after{content:' ↑';color:var(--brand)}
+.as-erp-table thead th.sort-desc::after{content:' ↓';color:var(--brand)}
 .as-erp-table thead th.no-sort{cursor:default}
 .as-erp-table thead th.no-sort:hover{color:#64748b}
 .as-erp-table tbody td{
@@ -473,8 +541,8 @@ tbody tr:hover td{background:#f8fafc}
 .as-erp-table tbody td:last-child{border-right:none}
 .as-erp-table tbody tr{cursor:pointer;transition:background .08s}
 .as-erp-table tbody tr:nth-child(even) td{background:#fafbfc}
-.as-erp-table tbody tr:hover td{background:#eff6ff!important}
-.as-erp-table tbody tr.selected td{background:#dbeafe!important}
+.as-erp-table tbody tr:hover td{background:var(--brand-softer)!important}
+.as-erp-table tbody tr.selected td{background:var(--brand-soft)!important}
 .as-erp-table tbody tr:last-child td{border-bottom:none}
 .as-erp-table .as-no-col{width:32px;text-align:center;color:#b0b8c4;font-size:11px;font-variant-numeric:tabular-nums}
 .as-erp-table .col-file{text-align:center}
@@ -482,23 +550,23 @@ tbody tr:hover td{background:#f8fafc}
 /* ── Toss-style overrides scoped to #tabTracking ── */
 #tabTracking .toss-toolbar{background:transparent;padding:0;border:none;box-shadow:none;margin-bottom:16px}
 #tabTracking .toss-toolbar .as-toolbar-row{gap:8px}
-#tabTracking .toss-search{height:44px!important;padding:0 16px 0 42px!important;border-radius:12px!important;background-color:#fff!important;background-image:none!important;border:1.5px solid transparent!important;font-size:14px!important;font-weight:500;color:#191f28;letter-spacing:-0.01em;width:100%;min-width:0;outline:none;transition:background-color .2s cubic-bezier(.16,1,.3,1),border-color .2s cubic-bezier(.16,1,.3,1),box-shadow .2s cubic-bezier(.16,1,.3,1),transform .15s cubic-bezier(.16,1,.3,1);font-family:inherit;box-sizing:border-box}
-#tabTracking .toss-search::placeholder{color:#8b95a1;transition:color .2s}
-#tabTracking .toss-search:hover{background-color:#f9fafb!important}
-#tabTracking .toss-search:focus{background-color:#fff!important}
+#tabTracking .toss-search{height:44px!important;padding:0 16px 0 42px!important;border-radius:var(--r-lg)!important;background-color:var(--card)!important;background-image:none!important;border:1.5px solid var(--border-strong)!important;font-size:14px!important;font-weight:500;color:var(--text);letter-spacing:-0.01em;width:100%;min-width:0;outline:none;transition:background-color var(--ease-smooth),border-color var(--ease-smooth),box-shadow var(--ease-smooth);font-family:inherit;box-sizing:border-box}
+#tabTracking .toss-search::placeholder{color:var(--text-muted);transition:color .2s}
+#tabTracking .toss-search:hover{background-color:var(--surface-muted)!important;border-color:var(--border-stronger)!important}
+#tabTracking .toss-search:focus{background-color:var(--card)!important;border-color:var(--brand)!important;box-shadow:var(--shadow-focus)!important}
 #tabTracking .toss-search-wrap{display:flex;align-items:center}
 #tabTracking .toss-dd{position:relative;flex-shrink:0}
-#tabTracking .toss-dd-btn{height:44px;padding:0 14px;border:1.5px solid #e5e8eb;border-radius:12px;background:#fff;display:inline-flex;align-items:center;gap:8px;min-width:120px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}
-#tabTracking .toss-dd-btn:hover{border-color:#d1d6db}
-#tabTracking .toss-dd.is-open .toss-dd-btn{border-color:#004A93}
-#tabTracking .toss-dd-label{flex:1;text-align:left;font-size:13px;font-weight:700;color:#191f28;letter-spacing:-0.02em;white-space:nowrap}
-#tabTracking .toss-dd-chev{width:16px;height:16px;color:#8b95a1;flex-shrink:0;transition:transform .2s}
-#tabTracking .toss-dd.is-open .toss-dd-chev{transform:rotate(180deg);color:#004A93}
-#tabTracking .toss-dd-panel{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:#fff;border:1px solid #e5e8eb;border-radius:12px;box-shadow:0 8px 24px rgba(17,24,39,0.08),0 2px 4px rgba(17,24,39,0.04);padding:6px;z-index:20;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s ease,transform .15s ease}
+#tabTracking .toss-dd-btn{height:44px;padding:0 14px;border:1.5px solid var(--border-strong);border-radius:var(--r-lg);background:var(--card);display:inline-flex;align-items:center;gap:8px;min-width:120px;cursor:pointer;font-family:inherit;transition:border-color var(--ease),background var(--ease)}
+#tabTracking .toss-dd-btn:hover{border-color:var(--border-stronger)}
+#tabTracking .toss-dd.is-open .toss-dd-btn{border-color:var(--brand)}
+#tabTracking .toss-dd-label{flex:1;text-align:left;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.02em;white-space:nowrap}
+#tabTracking .toss-dd-chev{width:16px;height:16px;color:var(--text-muted);flex-shrink:0;transition:transform .2s}
+#tabTracking .toss-dd.is-open .toss-dd-chev{transform:rotate(180deg);color:var(--brand)}
+#tabTracking .toss-dd-panel{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--card);border:1px solid var(--border-strong);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:6px;z-index:20;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s ease,transform .15s ease}
 #tabTracking .toss-dd.is-open .toss-dd-panel{opacity:1;transform:translateY(0);pointer-events:auto}
-#tabTracking .toss-dd-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#333d4b;letter-spacing:-0.01em;cursor:pointer;white-space:nowrap;transition:background .12s}
-#tabTracking .toss-dd-item:hover{background:#f9fafb;color:#191f28}
-#tabTracking .toss-dd-item.is-selected{color:#004A93;font-weight:700;background:#f2f6fb}
+#tabTracking .toss-dd-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:var(--r-sm);font-size:13px;font-weight:600;color:var(--text-body);letter-spacing:-0.01em;cursor:pointer;white-space:nowrap;transition:background var(--ease)}
+#tabTracking .toss-dd-item:hover{background:var(--surface-muted);color:var(--text)}
+#tabTracking .toss-dd-item.is-selected{color:var(--brand);font-weight:700;background:var(--brand-softer)}
 #tabTracking .toss-dd-item-check{width:16px;height:16px;flex-shrink:0;opacity:0}
 #tabTracking .toss-dd-item.is-selected .toss-dd-item-check{opacity:1}
 #tabTracking .toss-btn{height:44px!important;padding:0 16px!important;border-radius:12px!important;font-size:13px!important;font-weight:700!important;letter-spacing:-0.02em;border:1.5px solid transparent!important;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease,transform .05s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px!important;font-family:inherit;white-space:nowrap;line-height:1}
@@ -506,12 +574,12 @@ tbody tr:hover td{background:#f8fafc}
 #tabTracking .toss-btn svg{flex-shrink:0;width:18px;height:18px}
 #tabTracking .toss-btn-icon{width:44px!important;padding:0!important;justify-content:center}
 #tabTracking .toss-btn-icon svg{width:16px!important;height:16px!important}
-#tabTracking .toss-btn-primary{background:#004A93!important;color:#fff!important;border-color:#004A93!important}
-#tabTracking .toss-btn-primary:hover{background:#003a75!important;border-color:#003a75!important;box-shadow:0 4px 12px rgba(0,74,147,0.2)}
-#tabTracking .toss-btn-secondary{background:#fff!important;color:#333d4b!important;border-color:#e5e8eb!important}
-#tabTracking .toss-btn-secondary:hover{background:#f9fafb!important;color:#191f28!important;border-color:#d1d6db!important}
-#tabTracking .toss-btn-danger{background:#fff!important;color:#6b7684!important;border-color:#e5e8eb!important}
-#tabTracking .toss-btn-danger:hover{background:#fef2f2!important;color:#dc2626!important;border-color:#fecaca!important}
+#tabTracking .toss-btn-primary{background:var(--brand)!important;color:#fff!important;border-color:var(--brand)!important}
+#tabTracking .toss-btn-primary:hover{background:var(--brand-hover)!important;border-color:var(--brand-hover)!important;box-shadow:0 4px 12px var(--brand-ring)}
+#tabTracking .toss-btn-secondary{background:var(--card)!important;color:var(--text-body)!important;border-color:var(--border-strong)!important}
+#tabTracking .toss-btn-secondary:hover{background:var(--surface-muted)!important;color:var(--text)!important;border-color:var(--border-stronger)!important}
+#tabTracking .toss-btn-danger{background:var(--card)!important;color:var(--text2)!important;border-color:var(--border-strong)!important}
+#tabTracking .toss-btn-danger:hover{background:var(--danger-bg)!important;color:var(--danger)!important;border-color:var(--danger-border)!important}
 
 #tabTracking .toss-table-card{border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);overflow:hidden;background:#fff}
 #tabTracking .toss-table-header{padding:18px 20px;border-bottom:1px solid #f1f3f5;background:#fff}
@@ -544,30 +612,53 @@ tbody tr:hover td{background:#f8fafc}
 
 /* Toss KPI Card */
 .toss-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,280px));gap:12px}
-.toss-kpi-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;padding:22px 22px 20px;box-shadow:0 1px 2px rgba(0,0,0,0.02);position:relative;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease}
-.toss-kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(17,24,39,0.06),0 2px 4px rgba(17,24,39,0.04);border-color:#e5e8eb}
-.toss-kpi-label{font-size:13px;font-weight:500;color:#6b7684;letter-spacing:-0.01em;margin-bottom:10px}
-.toss-kpi-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:#191f28;display:flex;align-items:baseline;gap:4px}
-.toss-kpi-unit{font-size:15px;font-weight:700;color:#6b7684;letter-spacing:-0.02em;margin-left:2px}
-.toss-kpi-accent{width:32px;height:3px;border-radius:2px;background:#004A93;margin-top:12px;opacity:.85}
+.toss-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:22px 22px 20px;box-shadow:var(--shadow-xs);position:relative;overflow:hidden;transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
+.toss-kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
+.toss-kpi-label{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;margin-bottom:10px}
+.toss-kpi-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text);display:flex;align-items:baseline;gap:4px}
+.toss-kpi-unit{font-size:15px;font-weight:700;color:var(--text2);letter-spacing:-0.02em;margin-left:2px}
+.toss-kpi-accent{width:32px;height:3px;border-radius:2px;background:var(--brand);margin-top:12px;opacity:.85}
 .toss-col-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);padding:20px 22px}
 .toss-col-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
 
 .toss-btn-mini{height:36px;padding:0 14px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:-0.01em;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1.5px solid transparent;font-family:inherit;transition:background .15s,border-color .15s,color .15s,transform .05s}
 .toss-btn-mini svg{width:14px;height:14px;flex-shrink:0}
 .toss-btn-mini:active{transform:scale(0.97)}
-.toss-btn-mini-primary{background:#004A93;color:#fff;border-color:#004A93}
-.toss-btn-mini-primary:hover{background:#003a75;border-color:#003a75}
-.toss-btn-mini-secondary{background:#fff;color:#333d4b;border-color:#e5e8eb}
-.toss-btn-mini-secondary:hover{background:#f9fafb;color:#191f28;border-color:#d1d6db}
+.toss-btn-mini-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.toss-btn-mini-primary:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
+.toss-btn-mini-secondary{background:#fff;color:var(--text-body);border-color:var(--border-strong)}
+.toss-btn-mini-secondary:hover{background:var(--surface-muted);color:var(--text);border-color:var(--border-stronger)}
+.toss-btn-mini-success{background:var(--success);color:#fff;border-color:var(--success)}
+.toss-btn-mini-success:hover{background:var(--success-strong);border-color:var(--success-strong)}
 .toss-btn-mini-icon{width:36px;padding:0!important;justify-content:center}
 .toss-btn-mini-icon svg{width:15px;height:15px}
 
-#erpColGrid .erp-col-cell{border-color:#f1f3f5!important;background:#f9fafb!important;min-height:36px!important;padding:8px 12px!important;border-radius:10px!important;font-size:12px}
-#erpColGrid .erp-col-cell:hover{background:#f2f4f6!important;border-color:#e5e8eb!important}
-#erpColGrid .erp-col-cell.erp-col-changed{border-color:#f59e0b!important;background:#fffbeb!important}
-#erpColGrid .erp-col-cell span:first-child{color:#8b95a1!important;font-weight:700;font-variant-numeric:tabular-nums}
-#erpColGrid .erp-col-cell input{font-size:12px!important;color:#191f28!important;font-weight:500!important}
+#erpColGrid .erp-col-cell{display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;border:1px solid var(--border);background:var(--surface-muted);border-radius:var(--r-md);transition:background .15s,border-color .15s;font-family:'Pretendard Variable',Pretendard,sans-serif;cursor:default}
+#erpColGrid.is-editing .erp-col-cell{background:#fff;cursor:text}
+#erpColGrid .erp-col-cell:hover{background:var(--surface-subtle);border-color:var(--border-strong)}
+#erpColGrid.is-editing .erp-col-cell:hover{background:#fff;border-color:var(--brand)}
+#erpColGrid .erp-col-cell.erp-col-changed{border-color:#f59e0b;background:#fffbeb}
+#erpColGrid .erp-col-cell.erp-col-changed:hover{border-color:#f59e0b;background:#fffbeb}
+#erpColGrid .erp-col-no{font-size:11px;font-weight:700;color:var(--text-faint);min-width:24px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;flex-shrink:0}
+#erpColGrid .erp-col-input{flex:1;min-width:0;padding:0;border:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--text);letter-spacing:-0.02em;outline:none;background:transparent;cursor:inherit;text-overflow:ellipsis;width:100%}
+#erpColGrid .erp-col-input[readonly]{pointer-events:none}
+#erpColGrid .erp-col-del{width:22px;height:22px;border:none;background:transparent;color:var(--text-faint);font-size:18px;line-height:1;padding:0;border-radius:var(--r-xs);cursor:pointer;flex-shrink:0;visibility:hidden;opacity:0;transition:opacity .18s ease,color .12s,background .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center}
+#erpColGrid.is-editing .erp-col-del{visibility:visible;opacity:1}
+#erpColGrid .erp-col-del:hover{color:var(--danger);background:var(--danger-bg)}
+
+/* 제품명 관리 — 칼럼 현황과 동일 스타일 적용 */
+#productListBody .erp-col-cell{display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;border:1px solid var(--border);background:var(--surface-muted);border-radius:var(--r-md);transition:background .15s,border-color .15s;font-family:'Pretendard Variable',Pretendard,sans-serif;cursor:default}
+#productListBody.is-editing .erp-col-cell{background:#fff;cursor:text}
+#productListBody .erp-col-cell:hover{background:var(--surface-subtle);border-color:var(--border-strong)}
+#productListBody.is-editing .erp-col-cell:hover{background:#fff;border-color:var(--brand)}
+#productListBody .erp-col-cell.erp-col-changed{border-color:#f59e0b;background:#fffbeb}
+#productListBody .erp-col-cell.erp-col-changed:hover{border-color:#f59e0b;background:#fffbeb}
+#productListBody .erp-col-no{font-size:11px;font-weight:700;color:var(--text-faint);min-width:24px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;flex-shrink:0}
+#productListBody .erp-col-input{flex:1;min-width:0;padding:0;border:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--text);letter-spacing:-0.02em;outline:none;background:transparent;cursor:inherit;text-overflow:ellipsis;width:100%}
+#productListBody .erp-col-input[readonly]{pointer-events:none}
+#productListBody .erp-col-del{width:22px;height:22px;border:none;background:transparent;color:var(--text-faint);font-size:18px;line-height:1;padding:0;border-radius:var(--r-xs);cursor:pointer;flex-shrink:0;visibility:hidden;opacity:0;transition:opacity .18s ease,color .12s,background .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center}
+#productListBody.is-editing .erp-col-del{visibility:visible;opacity:1}
+#productListBody .erp-col-del:hover{color:var(--danger);background:var(--danger-bg)}
 
 /* ── Toss-style AS 접수 목록 ── */
 #tabAs .as-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
@@ -585,30 +676,89 @@ tbody tr:hover td{background:#f8fafc}
 
 #tabAs .as-toolbar{background:transparent!important;padding:0!important;border:none!important;box-shadow:none!important;margin-bottom:16px}
 #tabAs .as-toolbar-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#tabAs .as-toolbar-divider{background:#f1f3f5!important;margin:12px 0!important}
-#tabAs .as-toolbar-sep{height:24px!important;background:#e5e8eb!important;margin:0 4px!important}
-#tabAs .as-toolbar-label{font-size:12px!important;font-weight:700!important;color:#8b95a1!important;letter-spacing:-0.01em!important;text-transform:none!important;margin-right:4px!important}
+#tabAs .as-toolbar-divider{background:var(--border)!important;margin:12px 0!important}
+#tabAs .as-toolbar-sep{height:24px!important;background:var(--border-strong)!important;margin:0 4px!important}
+#tabAs .as-toolbar-label{font-size:12px!important;font-weight:700!important;color:var(--text-muted)!important;letter-spacing:-0.01em!important;text-transform:none!important;margin-right:4px!important}
 
-#tabAs .as-search-input{height:40px!important;padding:0 14px!important;border-radius:10px!important;background-color:#fff!important;background-image:none!important;border:1.5px solid #e5e8eb!important;font-size:13px!important;font-weight:500!important;color:#191f28!important;letter-spacing:-0.01em!important;outline:none;transition:border-color .15s;box-sizing:border-box;font-family:inherit}
-#tabAs .as-search-input::placeholder{color:#8b95a1}
-#tabAs .as-search-input:hover{border-color:#d1d6db!important}
-#tabAs .as-search-input:focus{border-color:#004A93!important}
+#tabAs .as-search-input{height:40px!important;padding:0 14px!important;border-radius:var(--r-md)!important;background-color:var(--card)!important;background-image:none!important;border:1.5px solid var(--border-strong)!important;font-size:13px!important;font-weight:500!important;color:var(--text)!important;letter-spacing:-0.01em!important;outline:none;transition:border-color var(--ease),box-shadow var(--ease);box-sizing:border-box;font-family:inherit}
+#tabAs .as-search-input::placeholder{color:var(--text-muted)}
+#tabAs .as-search-input:hover{border-color:var(--border-stronger)!important}
+#tabAs .as-search-input:focus{border-color:var(--brand)!important;box-shadow:var(--shadow-focus)!important}
 
-#tabAs .as-filter-select{height:40px!important;padding:0 34px 0 14px!important;border-radius:10px!important;border:1.5px solid #e5e8eb!important;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238b95a1' stroke-width='2.4' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center!important;font-size:13px!important;font-weight:600!important;color:#333d4b!important;letter-spacing:-0.01em;cursor:pointer;font-family:inherit;transition:border-color .15s}
-#tabAs .as-filter-select:hover{border-color:#d1d6db!important}
-#tabAs .as-filter-select:focus{border-color:#004A93!important;outline:none}
+#tabAs .as-filter-select{height:40px!important;padding:0 34px 0 14px!important;border-radius:var(--r-md)!important;border:1.5px solid var(--border-strong)!important;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238b95a1' stroke-width='2.4' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center!important;font-size:13px!important;font-weight:600!important;color:var(--text-body)!important;letter-spacing:-0.01em;cursor:pointer;font-family:inherit;transition:border-color var(--ease)}
+#tabAs .as-filter-select:hover{border-color:var(--border-stronger)!important}
+#tabAs .as-filter-select:focus{border-color:var(--brand)!important;outline:none;box-shadow:var(--shadow-focus)}
 
-#tabAs .as-tb-btn{height:40px!important;padding:0 14px!important;border-radius:10px!important;font-size:13px!important;font-weight:700!important;letter-spacing:-0.01em;border:1.5px solid #e5e8eb!important;background:#fff!important;color:#333d4b!important;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background .15s,border-color .15s,color .15s,transform .05s}
-#tabAs .as-tb-btn:hover{background:#f9fafb!important;color:#191f28!important;border-color:#d1d6db!important}
+/* ── AS 탭 Toss 스타일 커스텀 드롭다운 (#tabTracking과 크기만 다름: 40px / r-md) ── */
+#tabAs .toss-dd{position:relative;flex-shrink:0}
+#tabAs .toss-dd-btn{height:40px;padding:0 12px;border:1.5px solid var(--border-strong);border-radius:var(--r-md);background:var(--card);display:inline-flex;align-items:center;gap:8px;min-width:110px;cursor:pointer;font-family:inherit;transition:border-color var(--ease),background var(--ease)}
+#tabAs .toss-dd-btn:hover{border-color:var(--border-stronger)}
+#tabAs .toss-dd.is-open .toss-dd-btn{border-color:var(--brand)}
+#tabAs .toss-dd-label{flex:1;text-align:left;font-size:13px;font-weight:600;color:var(--text-body);letter-spacing:-0.01em;white-space:nowrap}
+#tabAs .toss-dd-chev{width:14px;height:14px;color:var(--text-muted);flex-shrink:0;transition:transform .2s}
+#tabAs .toss-dd.is-open .toss-dd-chev{transform:rotate(180deg);color:var(--brand)}
+#tabAs .toss-dd-panel{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--card);border:1px solid var(--border-strong);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:6px;z-index:20;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s ease,transform .15s ease}
+#tabAs .toss-dd.is-open .toss-dd-panel{opacity:1;transform:translateY(0);pointer-events:auto}
+#tabAs .toss-dd-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:var(--r-sm);font-size:13px;font-weight:600;color:var(--text-body);letter-spacing:-0.01em;cursor:pointer;white-space:nowrap;transition:background var(--ease)}
+#tabAs .toss-dd-item:hover{background:var(--surface-muted);color:var(--text)}
+#tabAs .toss-dd-item.is-selected{color:var(--brand);font-weight:700;background:var(--brand-softer)}
+#tabAs .toss-dd-item-check{width:14px;height:14px;flex-shrink:0;opacity:0}
+#tabAs .toss-dd-item.is-selected .toss-dd-item-check{opacity:1}
+
+/* ── AS 탭 Toss 스타일 날짜 범위 (커스텀 캘린더) ── */
+#tabAs .toss-date-range{position:relative;display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border:1.5px solid var(--border-strong);border-radius:var(--r-md);background:var(--card);height:40px;box-sizing:border-box;transition:border-color var(--ease),box-shadow var(--ease);cursor:pointer}
+#tabAs .toss-date-range:hover{border-color:var(--border-stronger)}
+#tabAs .toss-date-range.is-open{border-color:var(--brand);box-shadow:var(--shadow-focus)}
+#tabAs .toss-date-range .toss-date-icon{width:16px;height:16px;color:var(--text-muted);flex-shrink:0;pointer-events:none;transition:color var(--ease)}
+#tabAs .toss-date-range.is-open .toss-date-icon{color:var(--brand)}
+#tabAs .toss-date-btn{height:30px;padding:0 4px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--text-body);letter-spacing:-0.01em;outline:none;font-family:inherit;cursor:pointer;width:108px;box-sizing:border-box;text-align:left;white-space:nowrap;transition:color var(--ease)}
+#tabAs .toss-date-btn[data-empty="1"]{color:var(--text-muted);font-weight:500}
+#tabAs .toss-date-btn.is-active{color:var(--brand);font-weight:700}
+#tabAs .toss-date-sep{font-size:13px;font-weight:600;color:var(--text-muted);user-select:none;padding:0 2px;flex-shrink:0}
+
+/* 캘린더 팝오버 */
+#tabAs .toss-cal-pop{position:absolute;top:calc(100% + 8px);left:0;width:320px;background:var(--card);border:1px solid var(--border-strong);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:16px;z-index:100;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s var(--ease-smooth),transform .18s var(--ease-smooth);cursor:default}
+#tabAs .toss-cal-pop.is-open{opacity:1;transform:translateY(0);pointer-events:auto}
+#tabAs .toss-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+#tabAs .toss-cal-title{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.02em;flex:1;text-align:center}
+#tabAs .toss-cal-nav{width:32px;height:32px;border:none;background:var(--surface-muted);border-radius:var(--r-md);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);transition:background var(--ease),color var(--ease);flex-shrink:0}
+#tabAs .toss-cal-nav:hover{background:var(--border-strong);color:var(--text)}
+#tabAs .toss-cal-nav svg{width:16px;height:16px}
+#tabAs .toss-cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+#tabAs .toss-cal-weekday{text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:-0.01em;padding:8px 0}
+#tabAs .toss-cal-weekday.sun{color:#e35d5d}
+#tabAs .toss-cal-weekday.sat{color:var(--brand)}
+#tabAs .toss-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px}
+#tabAs .toss-cal-cell{height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-body);cursor:pointer;user-select:none;position:relative;border-radius:var(--r-sm);transition:background var(--ease),color var(--ease)}
+#tabAs .toss-cal-cell.out{color:var(--text-faint);cursor:default}
+#tabAs .toss-cal-cell.out:hover{background:transparent;color:var(--text-faint)}
+#tabAs .toss-cal-cell:not(.out):hover{background:var(--brand-softer);color:var(--brand)}
+#tabAs .toss-cal-cell.today{font-weight:800}
+#tabAs .toss-cal-cell.today::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--brand)}
+#tabAs .toss-cal-cell.in-range{background:var(--brand-softer);color:var(--brand);border-radius:0}
+#tabAs .toss-cal-cell.range-start,#tabAs .toss-cal-cell.range-end,#tabAs .toss-cal-cell.single{background:var(--brand);color:#fff;font-weight:800}
+#tabAs .toss-cal-cell.range-start{border-radius:var(--r-sm) 0 0 var(--r-sm)}
+#tabAs .toss-cal-cell.range-end{border-radius:0 var(--r-sm) var(--r-sm) 0}
+#tabAs .toss-cal-cell.range-start.range-end,#tabAs .toss-cal-cell.single{border-radius:var(--r-sm)}
+#tabAs .toss-cal-cell.range-start.today::after,#tabAs .toss-cal-cell.range-end.today::after,#tabAs .toss-cal-cell.single.today::after{background:#fff}
+#tabAs .toss-cal-cell.in-range.today::after{background:var(--brand)}
+#tabAs .toss-cal-quick{display:flex;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+#tabAs .toss-cal-quick-btn{flex:1;min-width:0;padding:8px 4px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--card);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;letter-spacing:-0.01em;transition:background var(--ease),border-color var(--ease),color var(--ease);font-family:inherit}
+#tabAs .toss-cal-quick-btn:hover{background:var(--surface-muted);border-color:var(--border-stronger);color:var(--text)}
+#tabAs .toss-cal-quick-btn.reset{color:var(--text-muted)}
+#tabAs .toss-cal-quick-btn.reset:hover{color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg)}
+
+#tabAs .as-tb-btn{height:40px!important;padding:0 14px!important;border-radius:var(--r-md)!important;font-size:13px!important;font-weight:700!important;letter-spacing:-0.01em;border:1.5px solid var(--border-strong)!important;background:var(--card)!important;color:var(--text-body)!important;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background var(--ease),border-color var(--ease),color var(--ease),transform .05s}
+#tabAs .as-tb-btn:hover{background:var(--surface-muted)!important;color:var(--text)!important;border-color:var(--border-stronger)!important}
 #tabAs .as-tb-btn:active{transform:scale(0.98)}
-#tabAs .as-tb-btn-search{background:#004A93!important;color:#fff!important;border-color:#004A93!important}
-#tabAs .as-tb-btn-search:hover{background:#003a75!important;border-color:#003a75!important;color:#fff!important}
-#tabAs .as-tb-btn-new{background:#004A93!important;color:#fff!important;border-color:#004A93!important}
-#tabAs .as-tb-btn-new:hover{background:#003a75!important;border-color:#003a75!important;color:#fff!important}
-#tabAs .as-tb-btn-excel{background:#fff!important;color:#16a34a!important;border-color:#d1fae5!important}
-#tabAs .as-tb-btn-excel:hover{background:#f0fdf4!important;color:#15803d!important;border-color:#bbf7d0!important}
-#tabAs .as-tb-btn-danger{background:#fff!important;color:#8b95a1!important;border-color:#e5e8eb!important}
-#tabAs .as-tb-btn-danger:hover{background:#fef2f2!important;color:#dc2626!important;border-color:#fecaca!important}
+#tabAs .as-tb-btn-search{background:var(--brand)!important;color:#fff!important;border-color:var(--brand)!important}
+#tabAs .as-tb-btn-search:hover{background:var(--brand-hover)!important;border-color:var(--brand-hover)!important;color:#fff!important}
+#tabAs .as-tb-btn-new{background:var(--brand)!important;color:#fff!important;border-color:var(--brand)!important}
+#tabAs .as-tb-btn-new:hover{background:var(--brand-hover)!important;border-color:var(--brand-hover)!important;color:#fff!important}
+#tabAs .as-tb-btn-excel{background:var(--card)!important;color:var(--success)!important;border-color:var(--success-border)!important}
+#tabAs .as-tb-btn-excel:hover{background:var(--success-bg)!important;color:var(--success-strong)!important;border-color:var(--success-border)!important}
+#tabAs .as-tb-btn-danger{background:var(--card)!important;color:var(--text-muted)!important;border-color:var(--border-strong)!important}
+#tabAs .as-tb-btn-danger:hover{background:var(--danger-bg)!important;color:var(--danger)!important;border-color:var(--danger-border)!important}
 
 #tabAs .as-table-card{background:#fff!important;border:1px solid #f1f3f5!important;border-radius:16px!important;box-shadow:0 1px 2px rgba(0,0,0,0.02)!important;overflow:hidden}
 #tabAs .as-table-header{padding:18px 20px!important;border-bottom:1px solid #f1f3f5!important;background:#fff!important}
@@ -647,12 +797,12 @@ tbody tr:hover td{background:#f8fafc}
 #tabUsers .toss-user-new-btn svg{width:16px;height:16px;flex-shrink:0}
 
 #tabUsers .toss-user-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
-#tabUsers .toss-user-kpi{background:#fff;border:1px solid #f1f3f5;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;gap:12px;transition:transform .15s,box-shadow .15s}
-#tabUsers .toss-user-kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(17,24,39,0.06),0 2px 4px rgba(17,24,39,0.04);border-color:#e5e8eb}
-#tabUsers .toss-user-kpi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#tabUsers .toss-user-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px 20px;box-shadow:var(--shadow-xs);display:flex;align-items:center;gap:12px;transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
+#tabUsers .toss-user-kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
+#tabUsers .toss-user-kpi-icon{width:40px;height:40px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 #tabUsers .toss-user-kpi-icon svg{width:20px;height:20px}
-#tabUsers .toss-user-kpi-label{font-size:13px;font-weight:500;color:#6b7684;letter-spacing:-0.01em;margin-bottom:4px}
-#tabUsers .toss-user-kpi-value{font-size:24px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:#191f28}
+#tabUsers .toss-user-kpi-label{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;margin-bottom:4px}
+#tabUsers .toss-user-kpi-value{font-size:24px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text)}
 
 #tabUsers .toss-user-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);overflow:hidden}
 
@@ -680,53 +830,53 @@ tbody tr:hover td{background:#f8fafc}
 .as-table-footer{padding:8px 14px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;font-size:11px;color:#64748b;font-weight:600}
 /* resizer handle */
 .as-col-resizer{position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:2;background:transparent;transition:background .15s}
-.as-col-resizer:hover,.as-col-resizer.active{background:#2563eb;opacity:.4}
+.as-col-resizer:hover,.as-col-resizer.active{background:var(--brand);opacity:.4}
 /* custom confirm */
 .as-confirm-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
 .as-confirm-overlay.show{opacity:1}
 .as-confirm-box{background:#fff;border-radius:16px;padding:32px 28px 24px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.18);transform:scale(.92);transition:transform .25s cubic-bezier(.34,1.56,.64,1);text-align:center}
 .as-confirm-overlay.show .as-confirm-box{transform:scale(1)}
 .as-confirm-icon{width:52px;height:52px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
-.as-confirm-icon.info{background:#eff6ff;color:#2563eb}
-.as-confirm-icon.success{background:#f0fdf4;color:#16a34a}
-.as-confirm-icon.danger{background:#fef2f2;color:#dc2626}
-.as-confirm-icon.error{background:#fef2f2;color:#dc2626}
-.as-confirm-icon.warn{background:#fffbeb;color:#d97706}
-.as-confirm-msg{font-size:15px;font-weight:600;color:#0f172a;line-height:1.5;margin-bottom:24px;white-space:pre-line}
+.as-confirm-icon.info{background:var(--brand-soft);color:var(--brand)}
+.as-confirm-icon.success{background:var(--success-bg);color:var(--success)}
+.as-confirm-icon.danger{background:var(--danger-bg);color:var(--danger)}
+.as-confirm-icon.error{background:var(--danger-bg);color:var(--danger)}
+.as-confirm-icon.warn{background:var(--warning-bg);color:var(--warning)}
+.as-confirm-msg{font-size:15px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:24px;white-space:pre-line}
 .as-confirm-btns{display:flex;gap:10px;justify-content:center}
-.as-confirm-btn{padding:10px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;letter-spacing:.2px}
-.as-confirm-btn.cancel{background:#f1f5f9;color:#64748b}
-.as-confirm-btn.cancel:hover{background:#e2e8f0;color:#334155}
-.as-confirm-btn.ok-info{background:#2563eb;color:#fff}
-.as-confirm-btn.ok-info:hover{background:#1d4ed8}
-.as-confirm-btn.ok-success{background:#16a34a;color:#fff}
-.as-confirm-btn.ok-success:hover{background:#15803d}
-.as-confirm-btn.ok-danger{background:#dc2626;color:#fff}
-.as-confirm-btn.ok-danger:hover{background:#b91c1c}
+.as-confirm-btn{padding:10px 28px;border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:background var(--ease),color var(--ease);letter-spacing:-.01em}
+.as-confirm-btn.cancel{background:var(--surface-subtle);color:var(--text-body)}
+.as-confirm-btn.cancel:hover{background:var(--border-strong);color:var(--text)}
+.as-confirm-btn.ok-info{background:var(--brand);color:#fff}
+.as-confirm-btn.ok-info:hover{background:var(--brand-hover)}
+.as-confirm-btn.ok-success{background:var(--success);color:#fff}
+.as-confirm-btn.ok-success:hover{background:var(--success-strong)}
+.as-confirm-btn.ok-danger{background:var(--danger);color:#fff}
+.as-confirm-btn.ok-danger:hover{background:var(--danger-strong)}
 
 .as-cat-badge{font-size:11px;font-weight:600;white-space:nowrap}
-.as-cat-internal{color:#2563eb}
-.as-cat-external{color:#dc2626}
+.as-cat-internal{color:var(--brand)}
+.as-cat-external{color:var(--danger)}
 .as-cat-etc{color:#78716c}
 .as-status-badge{font-size:11px;font-weight:600;white-space:nowrap}
 .as-status-open{color:#475569}
-.as-status-review-wait{color:#d97706}
+.as-status-review-wait{color:var(--warning)}
 .as-status-approve-wait{color:#7c3aed}
-.as-status-progress{color:#b45309}
+.as-status-progress{color:var(--warning-strong)}
 .as-status-approved{color:#059669}
-.as-status-done{color:#15803d}
+.as-status-done{color:var(--success-strong)}
 
 
-.as-code{font-family:inherit;font-size:12px;font-weight:700;color:#0f172a;letter-spacing:0}
-.as-text-muted{color:#94a3b8;font-size:11px}
+.as-code{font-family:inherit;font-size:12px;font-weight:700;color:var(--text);letter-spacing:0}
+.as-text-muted{color:var(--text-muted);font-size:11px}
 .as-truncate{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.as-file-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:5px;background:#eff6ff;color:#2563eb;font-size:10px;font-weight:700;border:1px solid #bfdbfe;cursor:pointer;transition:all .15s}
-.as-file-badge:hover{background:#dbeafe}
+.as-file-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:var(--r-xs);background:var(--brand-soft);color:var(--brand);font-size:10px;font-weight:700;border:1px solid var(--info-border);cursor:pointer;transition:background var(--ease)}
+.as-file-badge:hover{background:var(--brand-softer)}
 .as-row-actions{display:flex;gap:4px;justify-content:flex-end}
 .as-icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;color:#64748b}
-.as-icon-btn:hover{border-color:#cbd5e1;background:#f8fafc;color:#0f172a}
-.as-icon-btn.del:hover{border-color:#fecaca;background:#fef2f2;color:#dc2626}
-.as-icon-btn.print:hover{border-color:#bfdbfe;background:#eff6ff;color:#2563eb}
+.as-icon-btn:hover{border-color:var(--border-stronger);background:var(--surface-muted);color:var(--text)}
+.as-icon-btn.del:hover{border-color:var(--danger-border);background:var(--danger-bg);color:var(--danger)}
+.as-icon-btn.print:hover{border-color:var(--info-border);background:var(--brand-soft);color:var(--brand)}
 
 .as-pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid #f1f5f9;background:#f8fafc}
 .as-page-info{font-size:11px;color:#94a3b8;font-weight:600}
@@ -736,18 +886,18 @@ tbody tr:hover td{background:#f8fafc}
   background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;
   transition:all .15s;display:inline-flex;align-items:center;justify-content:center;
 }
-.as-page-btn:hover:not(:disabled){background:#f1f5f9;border-color:#cbd5e1}
-.as-page-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.as-page-btn:hover:not(:disabled){background:var(--surface-subtle);border-color:var(--border-stronger)}
+.as-page-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 .as-page-btn:disabled{opacity:.4;cursor:not-allowed}
 
 .as-empty{padding:48px 20px;text-align:center;color:#94a3b8}
 .as-empty-icon{margin-bottom:12px;opacity:.3}
 .as-empty p{font-size:13px;font-weight:500}
 
-.as-checkbox{width:14px;height:14px;accent-color:#2563eb;cursor:pointer}
+.as-checkbox{width:16px;height:16px;accent-color:var(--brand);cursor:pointer;flex-shrink:0}
 .as-bulk-bar{
-  display:none;padding:8px 16px;background:#eff6ff;border-bottom:1px solid #bfdbfe;
-  font-size:12px;font-weight:600;color:#1d4ed8;align-items:center;gap:12px;
+  display:none;padding:8px 16px;background:var(--brand-soft);border-bottom:1px solid var(--info-border);
+  font-size:12px;font-weight:600;color:var(--brand);align-items:center;gap:12px;
 }
 .as-bulk-bar.show{display:flex}
 .as-label-sep{color:#cbd5e1;font-size:10px}
@@ -759,44 +909,56 @@ tbody tr:hover td{background:#f8fafc}
 @media(max-width:768px){
   .as-kpi-row{grid-template-columns:repeat(2,1fr);gap:6px}
   .as-toolbar{flex-direction:column;align-items:stretch}
+  .as-toolbar-row{flex-wrap:wrap;gap:6px}
+  .as-toolbar-sep{display:none}
   .as-toolbar-group{width:100%}
   .as-search-input{min-width:0;flex:1}
   .as-tb-btn-new{margin-left:0}
 }
 
-/* ── ERP 칼럼 그리드 ── */
-.erp-col-cell{transition:all .15s;cursor:default}
-.erp-col-cell:not(.erp-col-changed):hover{background:#f8fafc!important;border-color:#94a3b8!important}
+/* ── ERP 칼럼 그리드 (셀 스타일은 #erpColGrid 스코프에서 정의) ── */
 
 /* ── AS 서브메뉴 ── */
 .as-submenu{transition:max-height .3s cubic-bezier(.4,0,.2,1),opacity .25s ease;max-height:0;opacity:0;overflow:hidden;padding-left:18px}
 .as-submenu.open{max-height:120px;opacity:1}
-.tab-sub{padding:8px 16px;border:none;background:none;cursor:pointer;font-size:12px;color:#94a3b8;font-weight:600;border-radius:8px;transition:all .15s,transform .2s ease,opacity .2s ease;text-align:left;width:100%;display:block;transform:translateX(-8px);opacity:0}
+.tab-sub{padding:8px 16px;border:none;background:none;cursor:pointer;font-size:12px;color:var(--text-muted);font-weight:600;border-radius:var(--r-sm);transition:background var(--ease),color var(--ease),transform .2s ease,opacity .2s ease;text-align:left;width:100%;display:block;transform:translateX(-8px);opacity:0;letter-spacing:-.01em}
 .as-submenu.open .tab-sub{transform:translateX(0);opacity:1}
 .as-submenu.open .tab-sub:nth-child(1){transition-delay:.05s}
 .as-submenu.open .tab-sub:nth-child(2){transition-delay:.1s}
-.tab-sub.on{color:#0f172a;background:#f1f5f9}
-.tab-sub:not(.on):hover{color:#0f172a;background:#f8fafc}
+.tab-sub.on{color:var(--brand);background:var(--brand-soft);font-weight:700}
+.tab-sub:not(.on):hover{color:var(--text);background:var(--surface-muted)}
 
 /* ── 알림벨 ── */
 @keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(15deg)}30%{transform:rotate(-12deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(5deg)}}
-.noti-bell{position:relative;cursor:pointer;padding:6px;border-radius:8px;transition:background .15s;display:flex;align-items:center;justify-content:center}
-.noti-bell:hover{background:#f1f5f9}
+.noti-bell{position:relative;cursor:pointer;padding:6px;border-radius:var(--r-sm);transition:background var(--ease);display:flex;align-items:center;justify-content:center}
+.noti-bell:hover{background:var(--surface-subtle)}
 .noti-bell.ring svg{animation:bellRing .6s ease}
-.noti-badge-bell{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1}
-.noti-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;width:340px;max-height:420px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.12);z-index:9999;flex-direction:column;overflow:hidden;animation:notiDropIn .25s ease}
+.noti-badge-bell{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:var(--r-sm);background:#ef4444;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1}
+.noti-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;width:340px;max-height:420px;background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);z-index:9999;flex-direction:column;overflow:hidden;animation:notiDropIn .25s ease}
 .noti-dropdown.open{display:flex}
-.noti-header{padding:14px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
-.noti-header-title{font-size:13px;font-weight:800;color:#0f172a}
+.noti-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.noti-header-title{font-size:13px;font-weight:800;color:var(--text)}
 .noti-list{flex:1;overflow-y:auto;padding:4px 0}
-.noti-item{padding:10px 18px;border-bottom:1px solid #f8fafc;transition:all .25s;cursor:default}
-.noti-item:hover{background:#f8fafc}
+.noti-item{padding:10px 18px;border-bottom:1px solid var(--surface-muted);transition:background var(--ease);cursor:default}
+.noti-item:hover{background:var(--surface-muted)}
 .noti-item.removing{opacity:0;transform:translateX(40px);max-height:0;padding-top:0;padding-bottom:0;overflow:hidden}
-.noti-item-title{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:2px}
-.noti-item-msg{font-size:11px;color:#64748b;line-height:1.4;white-space:pre-line}
-.noti-item-time{font-size:10px;color:#cbd5e1;margin-top:3px}
+.noti-item-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.noti-item-msg{font-size:11px;color:var(--text2);line-height:1.4;white-space:pre-line}
+.noti-item-time{font-size:10px;color:var(--text-muted);margin-top:3px}
 @keyframes notiSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes notiDropIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── 페이지 제목 통일 (모든 탭 공통) ── */
+.page-title-wrap{margin-bottom:28px}
+.page-title-wrap.with-action{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.page-title-wrap.with-action > *:last-child{flex-shrink:0}
+.page-title{font-size:32px;font-weight:800;letter-spacing:-0.03em;color:var(--text);margin:0 0 6px 0;line-height:1.2}
+.page-subtitle{font-size:15px;font-weight:500;color:var(--text2);margin:0;letter-spacing:-0.01em}
+@media(max-width:768px){
+  .page-title{font-size:24px}
+  .page-subtitle{font-size:13px}
+  .page-title-wrap{margin-bottom:20px}
+}
 </style>
 </head>
 <body>
@@ -833,6 +995,7 @@ tbody tr:hover td{background:#f8fafc}
   <div class="topbar">
     <span class="topbar-title"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4EAAAGeCAYAAACabHcpAAAACXBIWXMAAAsSAAALEgHS3X78AAAgAElEQVR4nOzdS3IbWZYm4ONlOad6BWStgOoVEDVtDMRaAb3mMAvmCoK1glBZYx7QCpIxwDihFZS0gqJW0MEVoAe4CJGSKL7ccdyvf58ZLUKPkH5lUnTgnsdt4v/831nA891s14ub7BAwVM18+SYi3mbnYJy268UmOwMAAAAAAOP1t4j4Z3YIRulLRJxkh4ABex8RF9khGK0mO0Cfmvlym52BV/m4XS9m2SH60syXs/D6GCJ2r/dvnvDzNj/4vptv/ts/t+vFp1cnAuA7zXz5NiLelG+exP2zmrs/Fnd+znFHv/3niPjzm++7ifvPgLvfNlAAQER89/z69nk1+8F/chLdPb8+/uD7buL+8+tTfH3GfdquF98+72AU/pYdgNE6bubLmWk1+F6ZAj7PzgEA8ArH8bRDlrOn/GLNfHn3m/tDlz9jd7gS8fWQxQELQFGa0yK+HobvD8nfRMRpQqRv/SjDT58Ld54H+wLyTfnYPxM0DgGM3A+eX/t/nkR3hdzX+NGz6qnPr/17mZtvPjy/GCRFYF7jMn7c+Q9Tdx4RR9khAAAG6u4By7tvf7AcsOyLA5soBysaUIEalYPy/XVCJ+XjbdT/nnJfQP7u0L08B25jVxS+KR+bcMAOMBjl+XUSX59bb+KJDaIjd/bNP/9Snl/7jUr7JtdN2IRBoib+z/+1kpHX+FdfwOC+Zr78FMPoymaktuuFddAMmXXQQKYvsTtQ+RS7AxWTw8AoNPPlSewOye9+DGEaaow+x9cD9k04XAfoTVnbvG9UmsVwpnnH6GPcb27yXobemQTmtdqIuErOAINRigcKwAAA/divqX4XEb9GRDTz5ef4WgjYKAQA2UrBdxZfi71TmIw6pNPycfdZsJ8c3pR/fvI8AHieOwVfz69+nMXX/033zy9NrvRKEZjXakMRGO5qswMAAEzMvhhwEfHXQcqmfFw7RAH6VpqB9x9TWOU8REdx/3D97sH6JnaH6puUZAAD1MyXb+Lrc2sWCr5ZftTkun8/8yl2Ta6uQuDFrIOmC/+xXS9W2SEgW3nx9P+yczB+1kEzcNZBA2PzOb4WhDe5UYAafFP0dWg+Lh/j6+aITW4UgMO5U/Tdf9hkOB638bXJVVGYZzEJTBfaiFglZ4AhaLMDAADwnf2k8C9lXeh17ArC17mxgLEo6zHPQ9G3Bvtp4V+b+TIi4o9wqA5UqjQt7Z9fir7jdRS7SeF3EX9dgbCJ3fsa1+HwUyaB6cq/+mLD1DXz5U3s1nfAq5gEZuBMAgM1+SO+FoWtjQYi4q9pqf2h+XlY7zwV+/Wb+0N1zwVgVO7cSX8epWDIJHyJr88uja7cYxKYrlyWD5ikUjRQAAYAGJd9R/37Zr40IQwTVg7Oz2O34cm01DQdx+5++f0d8/tGIVNWwGDd2VZxHp5fU3UcEb/E181Hm9DoSmESmK7cRsSJLypMVTk01GFHJ0wCM3AmgYHa3cbuupv3Dv2hbuXgvA1rMnnc59g9G649G4Bsd55f52EohZ+z+WjiTALTlaPYPXRWyTng4ErHuAIwAEAdjuJrJ/3HiFht14tVbiSgK3cmfi/DwTlPdxoRv0XEb818qSAMHJzCLy+033z0+50NFwrCE6IITJcuQxGYaWqzAwAA0IuziDhr5sv3YToYRqvc8duGVc90425B2IE60BuNS3Ts24LwylU49bMOmq797+168Sk7BBxSM1/ehBdidMg6aAbOOmhg6j7E7sBkkx0E+Llmvtzf8WtzE327jV0x2PMBeJXSuLR/fp3lpmEC9lfhrNR16mQSmK5dhqlIJqQcKigAAwBMx0VEXJRV0VcO+2FYytTU/mziKDUMU3IUX58PXyLifVgXDTxDWfd8GbsCsOcXh3L3KpzP8fX5ZbtFJUwC04f/5YsEU9HMl5vQlUfHTAIzcCaBAe77Erti8Co7CExZM1+2YWqK4bE9AnjQnanfy3BdAcOx327x3nTw+JkEpg9t7DpGoGqlw9wBAwDAtB3H7l6tq4i4dK8WHE45PN9P/drQxBDdnQ6+CtNVQNhaweDd3W7xMXbNTKvcSLyUIjB9uAxFYKbhMjsAAACDcRwR/7AmGvpXDs+vYndACWNwHBG/R8T7Zr5cxW666iY1EXBwZfPUZbirnvE4i4iz0vC6it3zSzPTiPxLdgCqdFweaFC7NjsAAACDcxYR/2zmy0252w3oSDNfzsqVPP8TCsCM0/7uxf9p5suV5wRMQzNftuX59c9QAGacjiPi14i4Kc+vk+Q8PJEiMH0xIUnVyn1T1rUAAPCQs4j473JI8iY7DIxZOTz/FLvDc1fyUIuL2D0nNoYpoE7l+XUTu00Anl/UYL8q+n8Ug8dBEZi+vPMFgMq12QEAABiFi9h1zGuUhWf65vD8NDkO9OXuBolZdhjgdZr58k0zX17deX65s55a7YvBnl8DpghMn9rsANCHsq5J9x4AAE91FBG/NfPlJwck8Lhvir8Oz5kKxWAYsX3xNyJuYrc21/OLqfD8GjBFYPrUZgeAnpjiAADgJU5jd0Dy3opo+J7iL0SEw3QYnbLx5SZ2xV/XxzFVnl8DpAhMn47LvalQjXJYd56dAwCAUfslIkwFQ9HMl+eKv/Adh+kwcHeal34LxV/Y2z+/3Bk8AIrA9K3NDgAdOw8v6gAAeL3jMBXMxDXz5ayZLzcR8Y9Q/IWH7A/Trx2mwzBoXoIn2d8ZvPJ+J48iMH078wKVylgFDQBAl0wFMznNfHnSzJfXEfHP2BW4gMe9i91huuYhSKJ5CV7kIiJumvnyyvPr8BSBOQRFM6pQDuZOs3MAAFCd/VTwVXYQ6FMzX74pn+f/E7uCFvB8v0Q5TM8OAlNRmpdWoXkJXuoodndmf3KF6GEpAnMIrQ4PKtFmBwAAoGq/lrsfT7KDQNfKgd9N7A4Agdc5it0z48YmCehXabj4FLtpRuB1jiPi9/Ke5212mClQBOYQjmJ3jyqMVmlk8GIPAIC+nYX10FSkmS/fltWZv8fufADozn6ThPuCoWNl9fNN7JqXPL+gW2cR8d+uOOifIjCHYiU0Y9dmBwAAYDKOwnpoRq6sfn4fEf8dVmdC397FroHoKjsIjF15fu3vrXfvL/Rrf8WBIcKeKAJzKKfG+xk5jQwAABzar2W6S3c8o1Im2T/F7mAPOIz9iuhPzuDgZZr58jJ2Vxe4tx4O5ygi/uFanH4oAnNIimiMUjnA0PkHAECGdxHhQIRRMD0Fg3AaVmzCszTz5Um5uuC3sPoZsuyvxVFH6pAiMId04cUnI+XBAwBAptPYHYiY7GKwyhq/mzA9BUPxS7hjHh5VCk6fwtUFMARHEfGbqeDuKAJzaG12AHiO8rBxiAEAQLaj2E12tdlB4K4707//CNNTMDTHsbtj/n12EBga078waKaCO6IIzKH5S8vYtNkBAADgjt8VghmKMmF4ExpnYeh+cVcwfFVeS5n+hWEzFdwBRWAO7dgaGkamzQ4AAADf+L2ZL1fZIZi2Mln4zzA9BWOxvyvYgAaTdWd7xe/h+QVjsZ8KPs8OMkaKwGTwYpNRKA+W4+wcAADwAxcKwWRo5su3zXz5KXb3jQLjs5+qepMdBA6pDCZ9CtsrYIyOIuIfzXy58vx6HkVgMrwzvs9IaFgAAGDIFII5qLI+cxO7iUJgvM4i4sa2PqaimS+vYre9wrAHjNtFRGxcb/B0isBkabMDwM+URgX3ggAAMHQKwfSurM9chfWZUJOjiPhnKY5BlcrzaxMRv2ZnATpzGrtCcJsdZAwUgcnSZgeAR5gCBgBgLBSC6U1pkN3EbvICqM+v1kNTozIpeBOGPKBGRxHxu/dAj1MEJsuxTg0Grs0OAAAAz6AQTOea+fI8dvcnWv8MdTuLiE/Wa1KLcu7832F7BdTuopkvP7l+9GGKwGRqswPAj5QXil4kAgAwNgrBdKasiP1HeG8EU3Ec1mtSgTvXFwDTcBq7RqZZdpAhUgQm05kODQaqzQ4AAAAvpBDMq9y5/9f9iTA9+/Wa77ODwHOV59encH0BTNH+nvs2O8jQKAKTzb2rDEpZfeSuEAAAxuzCAQgvUe4E3YQDdJi6X5r58to9wYxFOc9zfQHgnuBvKAKTrfWCkoHRmAAAQA1+VwjmOcoB+k04QAd23sVuPbRzOwat3F+/id1Kc4CLZr70/CoUgcl2FBHn2SEg4q+ud5+PAADU4vdS2IOfunOA7v5f4K7TiLjxLGGoSsOb++uBb52FRqaIUARmGExeMhTn4UUjAAB12TTz5Ul2CIbLATrwiKPYPUtm2UHgrnJ39e/ZOYDB0sgUisAMw+nU/yIyGBoSAACozVFEuNeRH2rmy6twgA487igi/umaAYai3Pn5S3YOYPD2jUyTrT8pAjMUim+kKh2t7r4CAKBGpxGxyg7BsJQD9F+zcwCj4r55UjXz5ZtmvryOiIvsLMBo7AvBbXaQDIrADMW5znSStdkBAACgR+/K1CfsC8AO0IGX+L2s4YWDKmfHm4h4lxwFGJ+jmGgjkyIwQ3EUinAkKS8iHYAAAFC7X5v58jw7BHnKBNUqvP8BXueX8rUEDuJOAdgWP+A1JlcIVgRmSKyEJkubHQAAAA5k1cyXJ9khOLw7B+gKwEAXLhSCOQQFYKBjkyoEKwIzJMflXlY4NA0IAABMxVFEXGeH4LAcoAM9UQimV55fQE8mUwhWBGZo2uwATEtpPDjOzgEAAAd06j7H6XCADvRMIZheeH4BPZtEIVgRmKG5sJqMAzMFDADAFP3ifuD6OUAHDkQhmE55fgEHUn0hWBGYIWqzAzANpeHgXXYOAABIsiqHrNRrEw7QgcNQCKYTCsDAgVVdCFYEZoja7ABMRpsdAAAAEh1FxCo7BP0oxRgH6MAhKQTzKgrAQJJqC8GKwAzRsbVkHEibHQAAAJK9a+ZLV6RUphRhLrJzAJN04bnCSygAA8mqLAQrAjNUXizSq9JocJydAwAABuCqXJVCBRSAgQH4rcaDdHq3CgVgINfvzXw5yw7RJUVghurMIQQ902gAAAA7RxHxPjsEr9fMl1ehAAwMQ5UTVfSjNDC9y84BEBHXzXz5NjtEVxSBGTJFOnpRGgzOsnMAAMCAvHMtz7iVYsuv2TkA7vi9poN0+mGDBTAwRxGxqeX5pQjMkLXZAaiWBgMAAPjeqtzHx8iUAv7v2TkAfqCag3S6VxqYFICBoTmKSt4bKQIzZEfWxtCTNjsAAAAM0FFEXGWH4HlKcWWVnQPgAUexW605+oN0uqWBCRi409g1Mo36+aUIzNCZ2KRTpbHgKDsHAAAM1C/l+hRGoBxKbcJ7HGDYjqOCg3S6o4EJGInTiHifHeI1FIEZulMrY+hYmx0AAAAGbpUdgMcpAAMjM/qDdLrh+QWMzEUzX15lh3gpRWDGwDQwnSgNBWfZOQAAYODOmvlylh2CR72PXVEFYCxGfZDO6ykAAyP161ivLlUEZgzOrYuhIxoKAADgaVbZAXhYKaJcZOcAeIFfy12wTJMGJmCs3o9xa60iMGNwFFb48kqlkcCbDAAAeJrjsXa7164UT37NzgHwCqsxHqTzOs18eRkamIDxOoqI67ENLCoCMxYmOHmt87BqBgAAnuMqOwD3NfPlSZjSBsbvKHaF4FEdpPNy5ZqJ37JzALzScURcZ4d4DkVgxuLYnVS8kkYCAAB4HtPAA1KKJdehuRWow2loapmEO88vgBqcNfPl++wQT6UIzJi02QEYp9JA4L4RAAB4vqvsAPzFPYpAbd6VFcHUbRMamIC6/DKW++0VgRmTi7L6Cp6rzQ4AAAAjZRp4AMr/B+5RBGr0m+1/9SrTchqYgBqtxlCvUgRmbNrsAIxLWTnjsAQAAF7uKjvAlDXz5dvYTQED1Ora/cD1KVNyv2TnAOjJUYxg1b0iMGPTZgdgdNrsAAAAMHLHprRylKLIKqzRBOp2FO4Hrsqd5xdAzU6Hfj+wIjBjczyWXesMhrtlAADg9a6yA0zUVVijCUyD+4Hrch0amIBp+GXIDbOKwIyRF4Q8Sfnie5ydAwAAKnA2hjuvamKNJjBBv5UV+IxYM19eRcRZdg6AAxrstQaKwIyRwweeSsMAAAB0x+vrA7FGE5iwVXYAXq4U8X/NzgFwYIO91kARmLFy+MBPlUaBd9k5AACgIm12gAmxRhOYqsHfr8iPaWACJm6Q1xooAjNWbXYABq/NDgAAAJU5aubLNjtE7crhkTWawJQN+n5FHnQV7rEHpu1qaFtsFYEZK4cPPKbNDgAAABVqswPUrBwaXSXHABiC1VDvV+R7pWjvHntg6ga3FloRmDEb3Gg9w9DMl+cRcZydAwAAKnQ2tO72yqzCGmiAiN25zlV2CB5nDTTAPWdDWgutCMyYnTbz5dvsEAzSYL7IAgBAhc6zA9TIGmiA71gLPQ5XYRgD4K7BrIVWBGbsFPu4p3xxdXACAAD9abMD1MYaaIAHWQs9YNZAA/zQYNZCKwIzdudeCPINjQEAANCv06F0tlfkfVgDDfAjx+GsZ8jeZwcAGKizZr5ss0MoAjN2R6ELnfva7AAAADABVkJ3pJkvzyPiXXYOgAH71ZVww9PMl1cRcZqdA2DA3mcPMSoCUwPdgEREROms0T0PAAD9a7MD1KAcCq2ycwCMgInTASkbQX7NzgEwcEeR/PxSBKYGx+X+CWizAwAAwEScZne1V+IqNLICPMVZM18aBBmOVXYAgJG4yKxfKQJTizY7ALnKWqCz7BwAADAhVkK/QnkP80t2DoARudKAlK9cY+AMDuDpVlm/sSIwtbgoa0iYLt2gAABwWLPsACNntSnA86Sv1Zy6UoT3/wHA8xyXe9QPThGYmrTZAchRXoCaQgAAgMOaZQcYq2a+bMMUFcBLpK7VJC4j4jg7BMAIXWZss1AEpiZtdgDSnId7tAAA4NCObWR6PlNUAK92lR1gisoz/9fsHAAjlbLNQhGYmhyXOymYHqugAQAgxyw7wAhdhiZWgNc4KxsVOCwNTACvc/BtForA1EYxcGLKF83T7BwAADBRs+wAY2KKCqAzVxlrNaeqnL+9y84BUIGrQ/5mfzvkbwYHcNbMlyfb9eImOwgH02YHAAAG5XNE/JkdohLuK+Up3mYHGJmr7AAAlTiO3TDIVXKOqTAFDNCNs2a+PN+uF9eH+M0UganRZZgInoTS8XmRnQMAGJTL7XqxyQ5Rk2a+fBsRb2I38fm2fBxnZmJQTpv58s12vdB88YgyReX9C0B3Lpv58r1nUL/K6m1b+AC68z4iFIHhhdpQBJ6KNjsAAEDttuvFp/Kvm/33lZW2s4g4D6sB2TUGbLJDjMBVdgCAyhzF7iC9Tc5Ru6vsAACVOW7my8vtetH7lgV3AlOjo9KhRv0U+wEAEmzXi5vterHarhfnEfG/IuI/YreKm2maZQcYujIFbMU6QPcuSnMaPWjmy8uwAQagDwe5214RmFopDlauHKJ4EQoAkGy7XvxZCsJvI+LfIuJjdiYO7iQ7wAi4SxGgP1fZAWpUihNX2TkAKnUUB6hjKQJTq9Nydxn1UugHABiY7Xqx2a4Xs9gVg78kx+FwvPf6CXcpAvTONHA/LmNXpACgH5d9TwMrAlMzRcJKlRf27p4DABioUgw+iYj/zM7CQShw/txVdgCACbjKDlCTUpRwtgrQr96ngRWBqdn5IXaqk6LNDgAAwOO268VV7KaCb5Oj0DMTWD9WpoBdYwPQv4tydRjdMAUMcBi9TgMrAlOzo1AsrFWbHQAAgKfZrheb2K0L/pwchX6dZAcYqKvsAAAT0mYHqIEpYICD6nUaWBGY2nnBUplmvjwPnfQAAKOyXS9uImIWCsE1m2UHGBpTwAAH527gbpgCBjis3qaBFYGp3bFVMNVR2AcAGKHtevFn7AqFX5KjwKFcZQcAmKCr7ABjZgoYIEVv08CKwExBmx2AbpRuzrPsHAAAvEwpBJ+HO4JrNMsOMCSlGdkUMMDhmQZ+HVPAADl6mQZWBGYKvPirh05EAICR264Xn8LrOup3lR0AYMKusgOMWJsdAGCijqKHr8GKwExFmx2ATrTZAQAAeL3terGKiD+yc9Cpt9kBhqJMAdtgBJDnoq+7FWvmLnuAdJ03SysCMxVtdgBep7wQtY4GAKAebVgLXROv1b9qswMAYOvIC1xlBwCYuONSB+mMIjBTcdzMl+fZIXiVNjsAAADdKfcDv8/OQXdMXUWUq4gusnMAoAj8HO6yBxiMTp9fisBMiRd/I9XMl2/DOjUAgBq9D9PANbES2vtOgKE46nqaqnJX2QEAiIiI09KY0wlFYKbkrHRlMz4OUgAAKmQamJqUSeg2OwcAf7nKDjAG5bzU8AXAcLRd/UKKwEyNYuLIlIMUq7wBAOq1yg4AHTkPdyMDDMlxl9NUFbvKDgDAPRddDTQqAjM1bXYAns1BCgBAxbbrxU1E/JGdg06cZAdIdpUdAIDvtNkBhszwBcBgtV38IorATI37QMbH9DYAQP2uswPQiZPsAFnKpNlxdg4AvtPZNFWlDF8ADFMndRFFYKZIUXEkykHKaXYOAAB6pwjM2LXZAQB4UJsdYMCckwIMUycDjYrATNFpM1++zQ7Bk7TZAQAA6N92vfgzIj5n54CXKKs0L7JzAPCgNjvAEJXzUcMXAMPVvvYXUARmqnS5DZyDFACAydlkB4AXarMDAPBTx8186d7b7zkfBRi2s9deaaAIzFSdlyIjw9VmBwAA4KA+ZQeAF3KIDjB8isB3lHNR/5sADF/7mv/4bx2FgLE5it1fnvfJOXiYgxQAgGlRBGZ0yirN4+wc8AS3cf/r7KeI+POFv9ZJ+dh7G7tzFhiyi2a+vCxXULArAPt7yxh8iYibO9/evOLXOon7z6+zV/xacChtRFy99D9WBGbKLkMReJCa+XIWDlIAACZlu158aubL7BjwXJpXGYr9IfmmfHsTEbFdLzY//Nk9KJOFb8s3ZxGx//ZJeI/PMJxHxCo7xEC02QGg+By7pqRN+eeniIM/v05i96y6+9w6CU1ODMNxM1/OXvp3QhGYKXvVXx565SAFAGCabsNBy5jNsgMksEqTDB9jd0j+KSJuhnKuUSYsN+Wbm29/vDR8v73zcXqgaLB3GYrA+4KXCUgy3H1+fdquF4PYBLRdL27i67Tx9d0fu9PgNItdYXgWGps4vDZeOAWvCMzUtfG6FRJ0rLwQfZedAwCAFJ/CoSQj0cyXVmlyKB9jd3axGUrB9yVK9s3+298crM/C13/6d9rMlyel4DNlGpg4hNsoz67YPb8GUfB9rjsNTpv995Xn1+zOh6Ym+nbezJdvXnKlgSIwU3fRzJdXXvwNSpsdAAAA4AkcotOXL7GbRLoec9H3Md8erN85VD8Pk1b0p41X3K1YiTY7ANX6HF+fX6Ms+j5FeX5dl4/982v/7NIkSB+O4oVXGigCgxd/Q9NmBwAAIM2zO5shQznsu8jOQVX2hd9VzQfnP/ODQ/W3sTsjOA8FYbrTxoTPAcvfK1OLdOlz7ApT11MdtCrPr1X52G+L2X8oCNMVRWB4oTYm/OJvSMoD0hs7AIDp+hSuBhmzKRXxTQHThdvYFTzfT7Xw+zPlf5PLiLi8c6Cu+YLXOm7my7cT/jvXZgegCvvGpfdTLfz+zHa9uNvQdB67v3fe4/Ba716yEvpf+koDI3JcvhiT7zI7AAAA8GJTOlD3HpLX+BwR/xERJ9v1op1wMerJtuvF9Xa9aCPif0XE32NXgICXarMDJPL84jU+RsS/b9eLk+16cakA/Ljy/DqPiH+NiP+MXQMYvNSzv4abBIadyyjdOeRo5suTiDjLzgEAAPAzZRW0aQ5e4mNEXNV8z2/fyvTL+4h438yXbeyKec4SeK7zmOAgQlkFbQMfL/Ehds+vm+wgY1X+t7uKiKvy/LoKfx95vmevhDYJDDtnpQhJnsm9+AYAAEbJFBXP9SEi/nW7XswUgLuzXS9W2/ViFhH/FrsCOzzVcSmITk2bHYDR2T+/WgXg7pTn10nstoLYbMFzvCsNqU+mCAxfKULmarMDAAAAPIEiME/1MSL+zeF5v7brxeZOMfhzchzGo80OkGCWHYDRUPw9AMVgXuhZ70UUgeGrNjvAVJUVGEfZOQAASDfFqRzGZ5YdgMH7Ervir8nfAyrF4LexO0x35yKPmWUHOKSyAfE0OweDp3kpwZ1isDuDeQpFYHiho1KM5PBMYQMAEBHxrNVWcGjNfHkeGlh52G1E/Od2vThR/M2zXS9WEXESEf+Vm4SBO53Y1XC2WPAztxHxH5qXcm3Xi6vYNcX+kRyFYZs95ycrAsN9ipEHVu5g0YkIAACMgUN0HvIxIt6WA1ySbdeLP7frxWVYEc3PTelr+pT+rDzPHxFxUhpoSLZdL26268V5RPx7mArmx45KY+qTKALDfaelKMnhKLwDALDntfi43WQHOIBZdgAG6e9leuomOwj3lYm2WZgK5sdm2QEOoZkv30TEWXYOBuc2Iv59u16cb9eLP7PDcN92vbiO3VYLU8H8yOypP1ERGL6nKHkg5UWoTkQAAPas2R23m+wAfSoNw8fZORiUzxHxv7frxfvsIDzsm6lgU1Xc9a6cTdXO2Rvf2m+vuM4OwsPK8+s83HXP90wCwyucT+QF4BC4TwsAgIiIaObLWXYGeMQsOwCD8iEiZtv14lN2EJ6mTAWfhPXQ3DfLDnAAs+wADMp/2V4xLmVV9yw8v/jq+Kn32isCw/eOIqLNDjERV9kBAAAYjJPsAPAIk1Ts/X27XrTWZ45Pmap6G7siPkRM42v7FP6MPO42Iv6jbEZgZErT2Sysh+arJ31tVwSGH/Mw7FmZ9LBKDQCAvVl2AF6t2olI9ylS7O9PtP555LbrRRu79Zowyw7Qp3KVgS183MZue8UqOwgvd2c9tEYmIp74/FIEhh87to6ud212AAAABmWWHYDXqXwqcpYdgHT7A3T3J1aiFEPcs9qgAwsAACAASURBVMiTV2qO1Cw7AOk+x+7+32qb9aZGIxPFu6f8JEVgeFibHaBWpYv+IjsHAADDUA5fbYlhyGbZAUi1LwA7QK/MnXsWFYKnreZ1yTX/2Xjc59g9v26yg9CtO41MTNhTBhkVgeFhF5V3AmZqswMAADAoDijH73N2gJ7NsgOQZn+ArgBcqTv3LCoET9csO0CPXGUwXfvnV82bWiZNIZh4wvNLERh+rs0OUCl3LgMAcFebHYBXq/aAsWwyOs3OQYrbiGgVgOunEDx5s+wAfXDV3aQpAE+EQvDkzR77CYrA8HNtdoDaNPPleVj1BwBAUbbvKLCN3012gB7NsgOQwgroiblTCGZ6jpr58m12iB7MsgOQQgF4YhSCJ+3RbQ+KwPBzx6VoSXfa7AAAAAyKLTF1uMkO0KNZdgAOTgF4osr/5w7Sp2mWHaAHs+wAHNz++aUAPDGlEPz37Bwc3mNbHxSB4XEOpTpSpjzeZecAAGAYyprdNjsHnbjJDtCjWXYADs4K6AlzkD5Zs+wAPXAf8LQoAE/cdr14HxEfsnNwcLOf/aAiMDzurBQveb02OwAAAINyGRFH2SHoxE12gD64D3iS/r5dL66zQ5DLQfokVbUO2n3Ak6SBidiuF23sVoIzHbOf/aAiMDyNaeButNkBAAAYhtJo+Wt2DjpT66HjLDsAB/WhFP/AQfr0HFc2BFJVUZtH/acGJu6YxW4ynGn46dYHRWB4mjY7wNg182UbEcfZOQAAGIxVdgC6U/HqQYfo0/E5NIDzvfNwkD4ls+wAHZplB+BgPm7Xi6vsEAxHeV0+y87B4TTz5YPvWRSB4WmOShGTl2uzAwAAMAzNfHkZ7qmrycfsAD2aZQfgYNqKmxl4oe16cRPOM6akpsafmv4sPOw2ds0qcE9ZDf6f2Tk4mNlDP6AIDE+nI/iFyjodh3wAAOy7lH/LzkGnbrID9Mj7mGn4u3sUeUhZsep+4GmYZQfoQjmHs41vGjQw8aAyIV5zsyZfmQSGDpz+bKyen1JABwBgXwDeZOegczfZAfrg/d9kfHQPME9wGRFfskPQu9PsAB3x/JqG/3IPME/QhmsNpmD20A8oAsPzKGa+TJsdAACAXHcKwEfJUejeJjtATxyi1+82vF/lCcqkXZudg/418+UsO0MHPL/q9yUirrJDMHzlWoOr5Bj077iZL9/86AcUgeF5zh/6y8SPlbuUHfQBAEyYAnD1al2j6xC9fu/L4Sg8artebCLij+wc9K6Gr/2z7AD07tIaaJ6qbDz5nJ2D3v3w+aUIDM9zFBHn2SFGxvQ0AMCElabATSgA1+pLxYeQNRQCeNiXclcePEcb1mrWroav/TX8GXjYR2ugeYE2OwC9m/3oOxWB4fmusgOMRZn4qOU+FQAAnqGZL9808+V1RPweCsA1q3UKOCLiLDsAvWqzAzA+penFHdJ1G3UBtZkvT8Lrrtq12QEYn+168SkiPmTnoFcmgaEjx5XcD3IIpoABACaoTP/eRMS73CQcwCY7QB9KQyv1+lhW+8KzlQnyL9k56M3Yhxk8v+r2X64x4BUuwzaLmp386DsVgeFl2uwAQ1fuTrY6GwBgQpr5sm3my5sw/Tslm+wAPTnJDkCvNCzzWlfZAejPyBuBxpydn7sNX3t4BdssqvfDJiZFYHiZi1Lk5GHn4eAPAKB6zXx50syXV3eKv8fJkTigslquRg7R6/Wh4s9bDmS7XqzCNHDNxvwMGHN2fu59KeLBa7wP08DV+tEG278l5IBaXIbuq5+5yg4AAEA/ypvLWewa/8a+NpGX+5gdoEez7AD05io7ANW4il3zE/U5yQ7wCorAdboNE5x0YLte/NnMl+8j4tfsLPTi5NvvUASGl2vDm8cfKoeCJkAAAEaurEN8E7sDxZPyz7PMTAzKdXaAHp1kB6AXH9ylSFe268WqmS+vwvlHjWbZAV7B52OdTAHTpfexG3CzxbM+3zUCKQLDyx038+X5dr2o+eDjpdrsAAAAQ9HMl5vsDM/0NhwI8DSb7AA9coheJ1NUdO0qTAPX6CQ7wEv8aA0oVTAFTKdMA1dNERg61kbd3e/PVu5KvsjOAQAwICZnqdFtrfeqOkSv1sdaP2fJYxq4WmP9//MkOwC9uDYFTA8Uget08u13/EtCCKjJu2a+PMkOMTBtdgAAAKB3NTfDnmQHoBemqOjLKjsA3RtpQ9BJdgB6cZUdgPqUxoIP2Tno3HdNTIrA8HqX2QEGxv8eAABQv012gB6dZAegc19c5USPNBjU6SQ7wAt8twaU0fvoLnt65PlVoW+bmBSB4fXa7ABD0cyX5zHelTkAAMDT1VxQc4hen1V2AOplmqpaJ9kBXuAkOwCdW2UHoF7lmozP2Tno3MndbygCw+sdNfNlmx1iINrsAAAAQO/+qPxuupPsAHRulR2A6q2yA9C5MTYEnWYHoFO32/VilR2C6pkGrs/J3W8oAkM32uwA2crdyO+ycwAAAL2reQo4wiF6bf6wSpO+bdeLTUR8yc5Bp95kB3iOci5HXVbZAZiE2l/XT9G9JiZFYOjGWTNfjrFDsEttdgAAAOAgqj0scohepWo/Xxkcn2t1OcsO8Ewn2QHo3Co7APUr233+yM5Bp+41MSkCQ3cuswMka7MDAAAAvbMKmrFRmONQVtkB6FYzX45pGnjqwym1+VLua4VD8FqpLiaBoSfnI3tx2JlyJ/Jxdg4AAKB3tR8SnWQHoFO1Ny0wIKVgYyV0XcZUWJ3kmWTFan+9xbD4fKvL0d1vKAJDd44i4jw7RJI2OwAAANC726j/kOgkOwCdqv3zleHxOVeXMRVWx1Sw5nGr7ABMh5XQ9Wnmy9n+3xWBoVtX2QEOrdyZNbZ7UgAAgOe7nsBU5Ul2ADqlIMehrbID0KkxFVbHVLDm56yCJoPXTJVSBIZuHd/tspiIqd+FDAAAU7HKDnAAJ9kB6MzHCTQtMDClcHObnYPOjKmwOqaCNT+3yQ7AJCkC12W2/xdFYOhemx3gwNrsAAAAQO++bNeLTXaIAxjTgT8/5zCTLD736jGmwurR4z+FkfA1hIMrjXOfs3PQPUVg6N5FM19O4uCgmS/b8CITAACm4Co7wIGcZgegM5vsAEzWJjsA01KuaqMem+wATNYmOwCd+auJSREY+jGVFclT+XMCAMCU3YapFMbl1n2KJNpkB6AzZ9kBnugkOwCd+ewqAxJ5vV+Pv4YUFYGhH212gL418+Xb0CUPAABTsJrCgWQzX86yM9CZTXYApmu7XtxExJfsHEzKJDYSTsQmOwDTNZGrX6biZP8visDQj+NmvjzPDtEzU8AAADAN77MDwDNtsgMweZvsAHRjJKuWx3R3MT+3yQ7A5H3MDkAnjvf/ogg8fn+PiH8rH/+ZnIX72uwAfSl3Htde5AYAACI+lKm2KTjJDkBnrIIm2yY7AJ05yQ7ApGyyAzB5XkNVRhF4/D5t14tN+biK3V1NDMO7kXQLvsR5RBxlh+Ceuw0hH5KzAABQj6vsAAd0kh2AblhnyAA4ROeQTrID0IkvU7h+g8HbZAegG+U6T0XgCrm8e1hqXZl8lR2Ae75s14v3+4aQiLhJzgMAQB3+mNAUMPX4nB0AtuuFInA9xrBq+SQ7AJ3YZAeA0MRUkzcRisA1clfTsLTZAbrWzJezuLNTnkFYZQcAAKBKV9kBDmwMB/08zuElQ+FexTq8yQ7AZNxkB4DSAGrbbEUUgStTOg11vQ7HUTNfttkhOtZmB+A7q+wAAABU58MEJ9kc9Ndhap+3DJfPRQ5FE1MdNtkBoPD8qsMsQhG4VqvsANzTZgfoSjNfvomIi+wc3PPRij4AAHpwlR0AXsjBJUNxkx2AToyhwHqUHYBOeH4xFJvsAHRHEbhOq+wA3HO2v4S7Am12AL6zyg4AAEB1Pky00fAkOwCdcIjOUPhcrIMtERzC7Xa9+DM7BBQ32QHojiJwhcoD40N2Du65zA7QkVr+HLW43a4Xq+wQAABU5TamOwV8nB2AV3OIzpAoAtO7srWP8fP1giG5yQ5AJ95GKALXbJUdgHvOx/6irJkvz8OhyNCssgMAAFCd9xOdAqYODtEZjNKQcJudg1cb+nleLdsHp87ziyHx+ViHNxGKwNXarhebiPiSnYO/HEXEeXaIV2qzA/CdVXYAAACq8iUi3meHgFe4yQ4A33CQPn6n2QGYBFssGAxbVeqiCFy3VXYA7rnKDvBSzXx5EhHvsnNwz+fteuHNJAAAXbqc6qFPM1/OsjPQiZvsAPCNm+wAwChssgPANz5mB6AbisB1W2UH4J7jER8stNkB+I4JDQAAuvRxu15cZ4eAV9Ioy9DcZAegekNfVw2M0yQbQyvjTuDalXuc/sjOwT1tdoAXarMDcM9tRDigAwCgK7fhNT91cGDJ0PicpG/uBK5AudoRhkRj3fgdRSgCT4FC0bBcNPPlqDr0mvmyjYjj7Bzccz3VNX0AAPTiqjQRw9jdZAeAbzhEr8CIN/sBMHGKwJXbrher2HV1MxyX2QGeqc0OwHesggYAoCuft+uF15fWaVZBMwMAI/Q5OwD8wCY7AN1QBJ6GVXYA7mmzAzxVM1+eRMRZdg7u+bJdL3QSAwDQlTY7wEBYpwl0zopX4Als+wN6owg8Dbq6h+W4mS/Ps0M80dimlqfA32cAALrydw2GVORjdgAAgEpoTqhAM1+eKAJPQFmHZK3EsLTZAZ6ozQ7Ad1bZAQAAqMJHa6ABYPRsshg/DXkMjkbRaigCT4g398PyrqxaHqxmvmwj4ig7B/d82K4XurAAAHit24gYy3YigLEzpU6f3Gk/fs76gN4oAk/Hdeze6DMcQ1+1PPR8U3SdHQAAgCq811xIhUysAH2ZZQcAgJdQBJ6I8gZfAWlY2uwAD2nmy7cRcZqdg3u+bNcLf4cBAOjCr818qemT2mhsAADozpfsALyeIvC0rLIDcM9RWbk8RA6EhmeVHQAAgKr81syXq+wQAAATt8kOAA+4yQ7A6ykCT8h2vdiE7o2habMDfKuZL9+E+8GGaJUdAACA6lw08+Wn8h5g6k6yAwDVsqocAEihCDw977MDcM9ZWb08JOcRcZQdgnv+2K4XN9khAACo0mlEbAb4vuTQTrIDANWyqhwASKEIPD2r7AB8Z2irl6+yA/AddwEDANAnhWAAAIDKKAJPzHa9+DMi/sjOwT3nQ1m/1syXs4g4zs7BPbfb9WKVHQIAgOodxa4Q7GoYxmqTHQAAAIZEEXiaVtkBuOcohnMHb5sdgO+ssgMAADAZRxHxj2a+bLODAAAA8DqKwBO0XS+uI+JLdg7uucoOUKaRL7Jz8B33eAMAcGi/KwQDAACMmyLwdK2yA3DPcVnFnKlN/v353uftenGTHQIAgElSCAYAABgxReDpWmUH4Dtt8u9/mfz78z1TwAAAZFIIBgAAGClF4Ikq04Ufs3Nwz0VZyXxwzXx5HhHHGb83D7qNiOvsEAAATJ5CMAAAwAgpAk/bKjsA38maxm2Tfl8edr1dL/7MDgEAAKEQDAAAMDqKwBO2XS9WsZs2ZDjaQ/+GzXx5EhHvDv378iiroAEAGJL3zXz5NjsEAAAAT6MIjHWzw3JcVjMfUnvg34/HfdmuF5+yQwAAwB1HEbFRCGbATrIDAADAkCgCY9pweNrKfz8e5+8lAABDdBQR1818+SY7CPzASXYAAAAYEkXgiSvThp+zc3DPu7KiuXflXq/jQ/xePMsqOwAAADzgOHYTwbUVgv/MDgAAANAlRWAiTB0O0eWBfp/2QL8PT/dhu144gAIAYMhOo773ka5jAfoyyw4AAEyTIjAR7gUeorbv36BMG5/1/fvwbP4+AgAwBhfNfHmo5lUAgFqdZAcA6qUITJSpww/ZObjnqKxq7pMDm+H5sl0vFIEBABiL35r5cpYdAgBgxE6yA8ADDJBVQBGYvVV2AL7TjvzX5/lW2QEAAOCZriu8H5hxmmUHAKrlygAARkkRmIiI2K4Xm4j4kp2De86a+fJtH79wmTI+6uPX5lVW2QEAAOCZjsKVJgA/08vZDgf1Z3YAAHgJRWDuWmUH4Dt9rWy2Cnp4/tiuFzfZIQAA4AXOmvnyKjsEwEBpwqdPm+wAvJpGEQanmS9PsjPQiT8VgblrlR2A75x3vVqtTBefdvlr0gnTEwAAjNmvfW0ygify+QfAGLlWgyE6yQ7A623Xi0+KwPylTCH+kZ2De44i4rzjX9MU8PDcbteLVXYIAAB4pdWI7wd23+P4mbZkcDTHAACZFIH51io7AN+56uoXKgcyXReVeb1VdgAAAOjAaXT4/uXA3PcI9GGsjTHA4ZxlB4Af0MRUCUVg7tmuF9cRcZudg3uOm/ly1tGvdR66o4fofXYAAADoyC8dvn+BZ/G5xwApAtfBtghgajy/KqEIzI+ssgPwnbajX+eqo1+H7nwuq9gBAKAWmhwBdkxSVWC7Xgx5W8RNdgBez+p4BugkOwDdUATmR7xhH56L196tVTqij7uJQ4f8fQMAoDanzXx5lR2CSZplB4BvmKSibzfZAeiErxUMzUl2AF7tY4QiMD9QphI/Z+fgO5ev/O/bLkLQqduIuM4OAQAAPbhs5suT7BBPtV0vNtkZgCqZ7gOewtcKhuYkOwDdUATmIaYTh6d96X9YpogvuotCR64HvlIIAABe6ii8r+TwZtkB4Bsn2QF4tS/ZAZgEk8AMjY2ilVAE5iHXsZtSZDiOm/ny/IX/bdtlEDrjUAwAgJq9K9fSwKE4RGdoHKKP3012gEd8yg5AJ2bZAWDPHdV1UQTmh8p0ojW1w9O+8L977Sppuvd5u154oQ4AQO2usgM8g0bo8TvNDgB7DtE5BBvmqqGJiSE5yQ5AJzYRisD8nCnF4Xn33Hu1yvSwztPhWWUHAACAAzhr5ss2O8QTadKsgMIbA3KSHQAYDU1MDInXUhVRBOZBZUrRvRfD89yp3raPELzaKjsAAAAcyFV2ACblJDsAFA7R67DJDvAENllUQBMTA+JzsSKKwDzGNPDwtE/9iWVq+F1vSXipD9b1AAAwIccjmQb2Gr0ODi4ZCp+LHIpNFnXwNYOhOMkOQCc+RSgC87hVdgC+c/SMA5Sn/jwOa5UdAAAADuwqO8ATOESvwyw7ABQKOsBz+JrBUFhPXoc/IxSBeUSZVvyQnYPvtB3/PA7ny3a92GSHAACAAxvLNDDj5xCddM18+SYijrNz0IlNdoAnuMkOQCc8v0jXzJez7Ax0SxGYp7jODsB3zh67J6IcsHjDMTyr7AAAAJDkKjvAI26yA9CJo3I1EmSaZQdgUm6yA9CJs+wAEJ5f1dgPoikC86jtenEdEV+yc/Cdy0d+vD1ECJ5tlR0AAACSDH0a+CY7AJ2ZZQdg8kz01cN98RyMKUwGwPOrMorAPNUqOwDfOS/rhb5Tup51jw3PH9v14iY7BAAAJGqzAzAJs+wATN4sOwDd2K4XY7gvfpMdgM4owJFtlh2ATvw11KkIzFOtsgPwnaOIOH/gxx6bEibHKjsAAAAkOxvqlMt+ZRpVmGUHYPI05gMvMcsOwHSV6yePsnPQiZv9vygC8yRlevFjdg6+c/XA97cHzMDT3JbV6gAAMHVtdgCqd+xeYLIMtdGFFxnLWehNdgA6M8sOwKTNsgPQvb9lB2BUVqGTcWiOm/nyfdy/n+QkdOwM0So7AAAADMRFM19ebteLId6z+DkiTrND0IlZeB9Gjoe2tkEvtuvFTTNfZsegG0fNfPl2JGvIqc8sOwCd2ez/xSQwT7ZdL1YRcZudg+/8EhG/3vm4yI3DA95nBwAAgAFpswM8YIiFaV5mlh2AyZplB6AzYyrEfXn8pzASGknIMssOQPcUgXmuVXYAGKGPZaU6AACwc5kd4AFjOvDn5xyic3BlDbltAvUYU2PQTXYAOuP5xcGVqwxsF63HZv8visA81yo7AIzQKjsAAAAMzHEzX77NDvEDYzrw5+eO3M1Kgll2ADo1psagm+wAdObUvfYk0HxQKUVgnqXcR/A5OweMyG1EXGeHAACAARriNPCYDvx5nANNDs3nXF3G1Bh0kx2ATs2yAzA5nl8V2a4Xm/2/KwLzEu42hae73q4XY3rTAAAAhzLEwyav3esyxM8xKtXMl28i4l12Djo1psagm+wAdMrzi4Mp23mOs3PQD0VgXsJUIzydpgkAAPixo2a+HNoh55gO/HncUNeOU6ehfT3jlUbW1H+THYBOvSuNJXAIbXYAOvXx7jcUgXm28gLoQ3YOGIHPZYU6AADwY4MqmozswJ+nGeLacerUZgegUx8f/ymD4vypPm12ACZjUK/HebV772cUgXmpVXYAGIFVdgAAABi4IR46je3gn58b4ucYlWnmy5OIOMvOQadG1RSkialKbXYA6le28lgFXZd7TUGKwLxIuVj6S3YOGLhVdgAAABi4Ia6EdpBel6NmvmyzQ1C9NjsAnRvjZK0mprqcutKAAxja63Be7+buNxSBeQ13ncLDPujCBACAJ5llB/jGGA/++bk2OwDVa7MD0Lmb7AAv4ByqPm12AOpV7p2+yM5B527ufkMRmNe4zg4AA7bKDgAAACMxtAkEReD6nJV1vdA5qzSrdZMd4AU8v+rTlkId9KHNDkD3yhbfvygC82Lb9eImIv7IzgED9OXbL7YAAMCDjgdWoLvJDkAvrrIDUK3L7AB0b6TnOorA9TmK4TXLUQ/Pr/rcfvsdisC81io7AAzQKjsAAACMzGAOOLfrhUP0Op2bpqJrpYHlLDsHnfuSHeCFbrID0Iur7ADUp5kv27DFokbfvY/5W0YK6rFdL66b+fI2dl1JwM4qOwAAMBzb9aLJzjAE5aD8JCLeRMTbOx8OH4jY3Qv8PjvEHZ8j4jQ7BJ06it3Ey1VyDupylR2AXtxkB3iJ7XrxqZkvs2PQveNmvmy368UqOwhVabMD0AtFYHqxiohfskPAQPxRVqUDAHBHeY10U755vf/+Mpk3i90k6HloMJ2qWXaAb9yEInCNLpv58v12vfgzOwjjV5qbLrJz0ItNdoBX0MRUpzYMndCRZr6chS0Wtbr59jusg6YLQ+rWhmyr7AAAAGOyXS/+3K4X19v1ot2uF28i4t8j4o/sXBzcUTNfvs0OcYeV0HXaTwNDF66yA9Cbm+wAr+D5VaezUriDLlxlB6A33z0DFIF5tdLR/zE7BwzA7Xa9uH78pwEA8JBSED6PiH+NiA/ZeTioWXaAOzbZAejNpbuBeS1TwNUbcyH1JjsAvTGIxauZAq7bdr3YfPt9isB0ZZUdAAZglR0AAKAW2/XiZrtetLErBpsMnoZZdoA7brID0BvTwHRBMaZi2/VizEXgTXYAenPazJdtdghGz/OrXl9+9J2KwHTlOiJus0NAMg9RAICOlWLweezWRHvPUbfBrIMuG698vtXrskxywrOVKap32TnozefsAK805gI2j7vKDsB4lSYCd4bX64df/xWB6cR2vfgzdoVgmKqP5aAIAIAelGs33sb4D2d52PHACnMO0ut1FA7Sebmr7AD0atRf+8sZ7Q+nwajCcTNfXmWHYHzKVRgGmOqmCEzvfBFhylbZAQAAalea7mZhPXTNBjMNHFZq1u6iTHTCkzXz5WW4S7F2oy4CFzX8GXiYbRa8xFXsmuCo1+ZH36kITGfKfRm68pmi2zAJDwBwENv14s+yHvpDdhZ6MaQisEP0+mlm58nKFNVVdg56V8PX/hr+DDzsKAyj8AzNfPk2In7JzkHvTAJzEKvsAJDguqzbAQDgQLbrRRuaUGukCMwhnVqryTOswhRV9bbrxSY7Qwc22QHo3VkzX55nh2A0VtkB6N2Xh+oTisB0bZUdABLoHgcAyDEL997VZjBF4LJ+3OdX/X4tEzLwoFJseZedg95V0VxWSSGbx63KhgJ4UGl2O83OQe82D/2AIjCdKt0G1rIxJZ/LKnQAAA6svP8wBVGX4+wA3/BafxocpPOgcvfmKjkGh7HJDtChKgra/NRRuJ6OnyhNbr9m5+AgHnzPoghMHzx8mBJTwAAAiUpD3n9m56A7zXw5y85wxyY7AAdxGt7b8bBVWAM9FTU1/myyA3AQZ818eZkdguEpzW3qNNOxeegHFIHp3Ha9uA4rs5gOD1MAgHzvw3uQmpxkB7hjkx2Ag7lo5ss2OwTDUtZonmXn4GA22QE6VFNBm5/7zbUG/MAqhrdhh578bFOpIjB9WWUHgAP48NCF6wAAHE55TXaVnYPOnGQH2HP1y+S8d5DOXrkH2BrN6fhS7oKvxSY7AAe1ca0Be2U63D320/HxZz+oCExfVtkB4ABW2QEAANjZrherMA1ci6EV4X56sEJVjiLi2kE6pRlglZ2Dg6qq6acUtL0umo6jUPgn/mpg+i07Bwe1+dkPKgLTi/JC44/sHNCjL9v1YpMdAgCAe66yA9CJoRXgNtkBOKjjMFE1aXfuUXQP8LRssgP0YJMdgIM6bebLVXYI8mhgmqzNz35QEZg+uSuVmr3PDgAAwHeuI+I2OwSvNrRJ4E12AA7uNLznm6RSAN6EexSnaJMdoAeb7AAc3IVC8DQ18+VJ7P7Oa2CamMcG1RSB6U1Zx+YAhlppcgAAGJhyN7DXaeM3qMMrG4Amy0H6xNwpAJ8mR+Hwbiu9A36THYAUF8182WaH4HBssJi0R6+tUQSmb6vsANCDP8rKcwAAhkcRuAJlnd2QuBd4mhSCJ0IBePKqfO3gXuBJ+10heBo8vyZv89hPUASmb6vsANCDVXYAAAB+bLteVHmQO0FDu4/V59V0KQRXzgE6UffE7CY7AGkUgivn+UUoApOtrFL5nJ0DOvTFwSIAwOCZ2hy/oRWBN9kBSKUQXCkH6BSb7AA92mQHINXvzXzpjvsKla05m/D8mrLbp1xbowjMIXjQUBMFYACA4dtkB+DVBrUOujQ432bnINVFM19uStGQCjTz5Uk4QGfX7H+THaJHzrH4RSNTXRSAp2PWuwAAH2FJREFUKTZP+UmKwBzCdXizTD00NQAADN+n7ABUyUE6ZxGxKcVDRqwcoH8KB+hU/rV9u178GbY0opGpGmXF9yYijnKTMACbp/wkRWB6V15sVP2Cisn4WHl3KABALRSBx2+Ih5Sb7AAMwmlEfGrmy1l2EF6mHKD/dzhAZ2eTHeAAnMsSsWtk+lSaYBihZr68iojfw/OLnSd9bVcE5lBW2QGgA6vsAAAAPE7jXhWGeEDpEJ29o4j4ZzmMZSSa+fJNWYn6e3YWhmO7Xkzha/sU/ow8zXHsNlq02UF4uvL82kTEr9lZGIwnX2WgCMxBlAuqv2TngFe43a4Xq+wQAAA8mdWHdKpsufqYnYNB+bWs1zzJDsLP3bk/8SI5CsPyR3aAQ3CvPd84iojfm/ny2nro4SubR25iN8kNe09u7lEE5pDcpcqY6ZoEABiXP7MDUCXvC/jWfr3meXYQfqxMbP93uP+X703pa/qU/qw8zbtwvcFglenf9xHxz7D+me8pAjNIq+wA8AqaGAAAxkUReNyGOpniEJ0fOYqIf5gKHpZmvnzbzJefwvpMHrbJDnBAnl/8yHHsrjdYmQoejlKY/xQRvyRHYZhuy+bdJ1EE5mDK6qxJrFmhOp/L6hwAAMbD67dxG+TEXrl7y1VHPGQ/FXyVHWTK7kxPmf7lZz4/9T7FGkzk7mNe7iIibtwVnKuZL0+a+fI6dtO/x9l5GKxnfT1XBObQVtkB4AVMAQMAAHsO0vmZo9jdFewwPUEzX17G7u5E01M8ZpUdIIHhHH5mf1ewFdEHVpqXrmLXxPouOQ7DpwjMcJWuM13TjI1DHgAAYG+VHYBROI7dYfrGYXr/mvmybebLm4j4LdydyNNM8axnin9mnu80diuiPb96dqf4exO7qws8v3jUczc7KAKTwQsOxuRDWWUOAAAQ5aoYzc081Vl8PUw/zw5TmzvF39/D6kyeblKroO9wJstz3H1+zbLD1ETxl1d49kaHv/WRAh7xPqzlYTxW2QEAAIDBuQ7va3mes4g4a+bLLxFxFRHXGo5fppkv30TEZUS0ofDLy6yyA2TYrhd/NvPlH2HdLM+zLwZ/jIjVdr1YJecZrWa+PImvzy+FX17i2c08JoE5uNJp9zE7BzzBl+16sckOAQAADM4qOwCjdRy7qdWbZr5cNfPl2+xAY9HMl7NmvlxFxP+L3eSUAjAvNeWJ2Cn/2Xmds9hdc3DTzJdXpaDJEzTz5XkzX15HxP/ErolQAZiXuI0XfA03CUyWVeweHDBk77MDAAAAw7NdLz6ViU5FKF7qKCIuIuKimS8/x+6c5HqiK2ofdGdq6jz8faMbU10FvXcdu/MuRShe6jh2jTi/7qeDw3aL75QmrzZM/dKdF/09UwQmxXa9WDXzpRccDJ3uSACA8XqTHYDqrWJ3CAqvdRoRv0XEbwrC9w7OZ7H73wa6tMoOkKmshL6OXRMKvNZZfJ0Q/iMiNjHt59csdk1LGpfow4tqFYrAZPKCgyH7Y6ovWAAAKmHFKn1bhSIw3btbEP4S5UA9Ija1TlmVad9Z+TgPAwP0S8O/M1n68a587BuaNvuPip9fb+Pr82sWnl/053a7XigCMzrvwwsOhmuVHQAAABiu7XpxUw45TSrSl+MoK6MjIsrn26fYHap/2q4Xn/KivVyZlHpbPmZhWorD+ajhP2K7Xlw38+VtKFjRn9Py8UvEX8+vTeyeYaN8fjXz5Zv4+tza/9PfIQ7lxQ1MisCkKXcoecPMEH15aWcNAACDYRKYQ3gfEb9nh2Ay9ofq+6JwRMS+MHwTuwP2P4dyuF6KvftD87cRcRLOgMi1yg4wIKsoBTo4gP3zKyL+en59jN2z6yYG9Py6U+w9KR+z8k8NS2R6/9L/UBGYbKvYrTmCIVEABgAYP535HMJ1KAKT6+7B+q8Rfx2u38auOBzln/tVnJtv/vubp05GlrWXd+9b3x+Uf/vvZ09KDod1G8577lqFIjC59vcJRzz8/Nrc+fl3/z3idc+vk/Jx99/fhEYlhunLaxokFIHJtgpFYIbnxZ01AADkK9Nn0LvtevFnM19+CFcdMTxH8fVw/W5R9rt7rMuhO9TuutZ7SV/ChkYGzPML7ntVreJfukoBL1FefH3IzgF3uB8GAGD8rILmkFbZAQB41Co7wAAZggAYvtVr/mNFYIZglR0A7lhlBwAA4NUUgTmY7XqxiYgv2TkAeNCX8rWa+65jt3oX+P/t3U1uI8m1NuAjwHN7B5ZXYPUKrB5rcMsrMGuegNUruKwVXBWguVM7kAY5/sgVfKUVXHEHxRXkHTBYUqsllX5InsjM5wEKMrqNqhctFZOMN+IE1Onmo1MslMCk84GZiqz7rmmzQwAA8GGn2QH4sGV2gDdymgqgXl6jn1CKBfckA9Sr/ehvoASmFm12AAg/hwAAg3d0dnkSEX/NzsHktNkBAHjSOrxGv0RBDlCnVd81H96oowSmFm12AAg/hwAAY3CaHYDpKaeprrJzAPAH1x8dpTlmfdd8i4jb7BwA/MFONukogalC3zV3EXGTnYNJuy1vfAEAGLbz7ABMltNUAPXx2vxz/hsB1KfdxW+iBKYm7qAgkze8AAADZxT0qCyyA7xV2VQ6tLuMAcZsacP/z/Vd08ZmbDYAdbja1RQLJTDV8IaDROuwCQEAYAycAiZbmx0AgB/a7AAD4nAEQD3mu/qNlMDUps0OwCS5HwYAYOCOzi6PI+Jf2TnYmUG+Py+bm1fZOQCIVXlN5nWUwAB1WJbrU3dCCUxtvOEgQ5sdAACAD5tnB2Cnhjy+0+dagHxei9+gHI64ys4BwG4/1yqBqUrZ4XCbnYNJWfVds8gOAQDA+x2dXZ6GU8DUow1XHQFkWocN/+8xzw4AMHE77yqUwNTITj0Oyc8bAMCAHZ1d/iW8pxujwZ4ELqep/EwC5Llw7dfblcM5N9k5ACZsvuvfUAlMja7DrmkOp80OAADAh8wj4u/ZIditESzet9kBACbMRpz3898OIMde7rJXAlOd8mH/OjsHk3AzgsUlAIDJOjq7nEXEv7NzsHODvyKonKZytyLA4V1Z63m/MoZ0mZ0DYILm+/hNlcDUyq4zDqHNDgAAwPuUe4D/k52DvRjL4v08OwDABM2zA4zAPDsAwMSs93EKOEIJTKX6rvkWEavsHIzaqu8aJ84BAAaoFMDey43XIjvALjgNDHBwV+W1lw9wGhjg4PZ2KFIJTM2cBmaf2uwAAAC8XRkB/f8i4s/JUdifsZwEjnCaCuCQ5tkBRmSeHQBgItahBGai2uwAjFqbHQAAgLc5Oru8CCOgp+BbdoBdcRoY4GCcAt4hp4EBDuZin3fZK4GpVvnBv8nOwSgtfTAAABiOo7PL06Ozy28R8e/sLBzEaErgYp4dAGAC5tkBRmieHQBg5Fax54m4SmBq12YHYJTa7AAAAPzc0dnl8dHZZRub8c9/T47DYaz3uRM+g9PAAHv31Wb/3XMaGGDv5vv+7KMEpmp911zHZjcE7Mq675o2OwQAAM87Ors8KeXv/0bEv5LjcFhjOwW8dR6b+74A2K11OLG6T/PsAAAjtTpET6EEZgja7ACMSpsdAACAPyqnfs/L2Of/H8rfqVpkB9iHssN/r6PeACZqr3cpTl05DWyaBcDuzQ/xh/zpEH8IfFAbEf+dHYLRaLMDAACwuec3Io4j4rT8+mteGioy1pPAEZsS+Dwi/pwdBGAk1mGDzSHMw+Y8gF1aHmpaqRKY6vVdc3d0drmMiH9kZ2HwbvuuGfOiEgAQMSvlIvU5LV+PQ+HL80b7fr3vmu9HZ5fnEfGf7CwAI3HuFPD+lbXZrxHx7+wsACMxP9QfpARmKNpQAvNxdocCwPg5pQDDte675i47xD71XdMenV3Ow0YIgI+6PdQpKiJiU1jMwjQLgI+6KaP2D8KdwAxCeVO3zs7BoK0j4jo7BAAA8KxFdoADmWUHABiB8+wAU1JOXM+zcwCMwEGfX0pghkSBx0dcGxEEAABVW2QHOISy83+ZnQNgwA56ioqNvmsuImKVnQNgwL4cevKREpghMcqXj2izAwAAAC9aZAc4oFl2AIABcwo4zyw7AMBArSOh41ICMxh913yLiNvsHAzSyg5RAACo2rp85puEcgLgS3YOgAE6+Ckq7pX1tZvsHAADdJ4xqVQJzNA4Dcx7+LkBAIC6LbIDJDBWE+BtVmGNpwbnsTnRBsDrLPuuaTP+YCUwQ+NeYN6jzQ4AAAC8aJEd4NDKSQAjTQFeL+UUFb9XTmIr4wFeL+09vxKYQSlv9K6yczAoNz4gAABA9RbZATL0XXMdEcvsHAADcFNeM6lA3zXzMM0C4DW+ZF57owRmiNrsAAxKmx0AAAB40WpK9wE/YRbGagK8ZB0mJ9Rolh0AoHLp1xgogRmcvmsWYacZr7OySxQAAKq3yA6QyVhNgJ+al9dKKlLWaE1sBHjeLHtKqRKYoWqzAzAIbXYAAADgpya/cbOM1bzNzgFQoWXfNTbK1Os8TLMAeMpN2SyTSgnMULXZARiENjsAAADworXpPT/MsgMAVMgY6IqVE26z7BwAlVlHJa+NSmAGqYyAucnOQdWWRgUBAED1FtkBalHuRf6SnQOgIl8mfmf8IJTNXNZpAe6lj4HeUgIzZG12AKrWZgcAAAB+yingB4yFBvjhtrwmMgyzMBYaIGIzBrqazzhKYAar/EXy5oKnrPuuabNDAAAAL1qHEvgps+wAABWYZQfg9YyFBoiIisZAbymBGbo2OwBVarMDAAAAP3Vdy5i0mhgLDRC/GQM9PMZCA9QzBnpLCczQXWQHoEp+LgAAoH5OAT/DWGhgwpZ911jXGa5ZRKyyQwAk+FrTGOgtJTCD1nfNXUQss3NQldvycwEAANRrXeMiSWU+hSuQgGmpbowmb2MsNDBRtxExzw7xFCUwY9BmB6AqdosCAED92uwAtSubW8+zcwAc0MzG/uHru2YRrjUApqW6MdBbSmDG4DrsjmZjHUbKAQDAENi8+Qp917QRcZWdA+AArkyIGA/XGgATUvU99kpgBq/ssPAmkYiI61p33AAAAD8snfR6k/NwvyIwbrdh8sEYudYAGLub2u+xVwIzFlX/ReNg/BwAAED92uwAQ1I2un7KzgGwJ+uoeIwm71c2fM2SYwDsyyoG8BqnBGYUynF7O6OnbVXz2AUAACAiNu/b2+wQQ1M+63zOzgGwB+fWc8arjPj+mp0DYA8+DWEDkxKYMXEKdNp8/wEAoH5tdoChcj8wMEJXNgaNX9815+F+YGBcqr4H+CElMGPSZgcgVZsdAAAAeNE6bN78KAvpwFjc9l0zyw7BwZyG+4GBcbiq/R7gh5TAjEY5em9X9DRdDWH0AgAATNy19+0fU/77zcJCOjBs69iUgkyE++2BkbiNzabMwVACMzbX2QFI4fsOAAD1m2cHGIMyes5COjBkpzYFTU/fNYtwvz0wXOsYyD3ADymBGZW+a64jYpWdg4Nale87AABQr6u+a+6yQ4xFWUj/LTsHwDt8Hso9iuye++2BAfs0xM8zSmDGqM0OwEG12QEAAICfmmcHGJtyF5mFdGBIvpYSkAkrd0G73x4Yks9lE+bgKIEZozY7AAfVZgcAAABe5BTwnlhIBwbkpu+aQd2jyF6dhmmOwDBcDXkDkxKY0SmLC8vsHBzEjcUkAACo3jw7wMidhiIYqNttRMyyQ1CPcqfmp9jcsQlQq5uy6XKwlMCMVZsdgINwFzAAANTNKeA9Kwvps7CQDtRpHRGn5bUKfih3Q59m5wB4xig2MCmBGaVyPN8H4HFbD3kMAwAATMA6Ioz+PIAHC+k+BwM1UQDzovL8+pydA+CRVYzk+aUEZsza7ADsVZsdAAAAeNHFGBZOhqIspCvdgZqcltcmeFY55KEIBmqxjohPY/kcowRmzNrsAOzVRXYAAADgWavwnv3gLKQDFfmsAOa1yvPrKjsHMHnbCRajeX4pgRmt8hf1NjsHe3HrXjEAAKja+Vh2zw9NWUj/LTsHMGmfXeHFW/VdMwtFMJBrVAVwhBKY8bPzfJx8XwEAoF7Lvmuus0NMWd81F2EhHcihAObdFMFAolFOsFACM3YWHsZnHb6vAABQs1l2ACykAym+KID5qPL8WmbnACZltBuYlMCMWhk/5kPvuFwbKwcAANX64uqWeiiCgQO66rtmnh2C0fgUrvkDDmO0BXCEEphpaLMDsFNGQQMAQJ1uFQD1UQQDB3BVXmtgJ8oBkNNQBAP7NeoCOEIJzAT0XbOIiFV2DnZiNca5/AAAMBKz7AA8TREM7JECmL1QBAN7NvoCOEIJzHQ4PToOvo8AAFCnLzZs1k0RDOyBApi9UgQDezKJAjhCCcx0XGcHYCfa7AAAAMAfLI2BHgZFMLBDvymAOYQHRfBNchRgHCZTAEcogZmIvmvuwhuFobsqb/oAAIB6rMMY6EFRBAM78LnvGtPaOJi+a773XfMpPL+Aj5lUARyhBGZa2uwAfIjT3AAAUJ9Z2XTLgJQi+HN2DmCQJreATj1sZALeaR0Rv0zx+aUEZjL6rrmOiFV2Dt5lVb5/AABAPb56nz5cZRFMEQy81joUwFSgFMFfs3MAg7GOiNO+a75lB8mgBGZqLFAMU5sdAAAA+J3bvmvOs0PwMQ+K4HVyFKBu2wX0NjsIRESU9yA2MgE/cxsTLoAjlMBMj/tKhqnNDgAAAPywjojT7BDsRil1TkMRDDxtFRNfQKdONjIBPzH5AjhCCczElLuqltk5eJMbd4wBAEBVTvuu+Z4dgt0pi2OnsVksA9i6jYiTqS+gUy8bmYBnXIXPLBGhBGaa2uwAvEmbHQAAAPjhszJgnBTBwCMW0BkEzy/gka9918w8vzaUwEzRddgdNhTrvmvc4wwAAHX44j7Iceu75nvfNSexKX+A6fpiAZ0heVAEmwAJ0/a53BlOoQRmcsobWMXiMLTZAQAAgIiIuOq7Zp4dgsPou2YWm3sWgWlZx2YBfZ4dBN6qbGQ6jYiv2VmAg1tHxC82rP6REpipusgOwKv4PgEAQL6bUgoyIWUR7dcwSQumYhWb8c9tdhD4iHIK8HN4fsFU3EbEsStrnqYEZpLKC4J7Iuq27LvmLjsEAABM3G1EzLJDkKPvmkVEnITPzzB2NxFxYgGdsSibGU5js7kBGK+rvmtOXF/wPCUwU9ZmB+BFbXYAAACYuNvYnAqzqDJhfdfcuScYRu1L3zWfvNYzNmVTw0lsNjkA47K9vmCWHaR2SmCmrM0OwLPW4d5mAADIpADmdx7cE2y8JozDOiJ+df8vY1buCf4UEb9lZwF2Zvs5pc0OMgRKYCarLGbYyVyna4tNAACQRgHMkx6M1zQeGoZtGZv7ExfZQeAQ+q65iIhfwnhoGLqr2HxOcX3BKymBmTqnTet0kR0AAAAmSgHMi/qu+VbGQ3/NzgK8y29913idZ3KMh4ZBW0fEP/uumXl+vY0SmEnru+Y67ACrza2dPAAAkGK7s97CCj/Vd815RPwaxkPDUNxGxC/lRCRM0oPx0K43gOFYRsRJ6XJ4IyUwuBu4Nm12AAAAmKArO+t5qzJK9jicqoLafQ3jM+GHcr3BSWzKJaBe2+kVd9lBhkoJDErH2rTZAQAAYGK+9F0zyw7BMD04VfXPcKoKarOKiF/7rjm3yQd+r++au75rTiPit+wswB+YXrEjSmAmr+wisWu5Dlc+lAAAwMGsI+Jz3zXz7CAMXxnRdxw+X0MtvsZmfOYiOwjUrJRMv4RTwVCLL33XnJhesRtKYNgwT74ObXYAAACYiHVsRoO22UEYD6eCoQpO/8Ib9V3z7cGpYM8vyLGMzenfeXaQMVECQ/y4B8IDPtfK7lQAADiIZUQc213Pvjw4Ffw1OQpMzZe+a46tr8D7lFPB7gqGw1rH/d2/Pp/smBIY7rXZASauzQ4AAAAT8KUssDgdxl6VU8HnEfFrbO51A/ZnGRF/c3oKPu7BXcH/jM3JemB/bmKzOdXdv3uiBIZ7bXaAiWuzAwAAwIitYzMedJ4dhGnpu2bRd81JGLEJ+7C92/2075q77DAwJmWqxUlEfMnOAiO0vbrgk82p+6UEhqKMGrA7OceNDysAALA32/HPi+wgTFc54XEcEVfJUWAsvsTmtb3NDgJjVaZazCPib2FENOzCdvSzzyYH8qfsAFCZi4j4T3aICWqzAwAAwAitI2JuvBq1KCc9Zkdnl21EzCPiH6mBYJhuIuLcZno4nPL37fTo7PI0NuuYf83MAwN1FZvnl5O/B6QEht+7jk0R/OfsIBOyLuNVAACA3VlGxExJQI3KyY/To7PLT7H5DG4xHX5uGZuNPYvsIDBV5e/f8dHZ5SysIcNr+VySyDhoeKDsQlFIHlabHQAAAEZkO2LN/ZBUr++a675rjsN9wfCSVdzf+7vIDgNElDHsx7EZy+75BU9bxubeX59LEimB4Y/a7AATYzQdAADsxjIiTox/Zmge3BdsMR3ubctf9/5ChR7cF3wcEV9z00BVVhHxT5uX6qAEhkfKC9MqO8dELO0CAgCAD3u40HKXHQbe49FiujKYKdtOdFD+wgCU59d5RPwtNneewlQ93Lxk2mollMDwNDvnD6PNDgAAAAP3JTanfy20MArKYCZsFRGfI+LYRAcYnr5r7vqumYUymOkxuaJif8oOAJVqI+J/skOM3DrcvwwAAO91ExHnTv4yVn3XfI+I+dHZ5UVEnJdff85NBXuxioi5hXMYh/LebHZ0djmPiHlEfArPL8bJ82sAlMDwhL5rvh+dXd5ExH9lZxmx6/KhHgAAeL3b2JS/i+wgcAiPyuBZbMrgv6aGgt2weA4j9qAM/kvYzMS4LGPz/FpkB+HnlMDwvDaUwPtktBEAALyesoBJK2XwRURcHJ1dzmKzmP731FDwPhbPYUIebWb6FJvTwTYzMURXEdF6fg2LEhie0XfN9dHZ5So8lPfhtu+ab9khAABgANaxKQtsooSibIZoj84uT2NTBtvAzRBcxeb1/C47CHB4pQxuY/P8+hSb59c/UkPBz61j83N74fk1TEpgeNl1RPw7O8QItdkBAACgcusopx5dowJPKydRFkdnl8exWUyfhVGb1GUV94vnXsuBiNgcPoqI66Ozy5PYPL/cG0xtbmPzWcSVjgOnBIaXXYQSeB/a7AAAAFAp5S+8UTmZch4R52VU9CycriLXTWxGZl5nBwHqVSYlbu8NNiqaGhj5PDJKYHhB3zV3R2eXy/DhcZeuLGYBAMAfrGKz8Ge3PXzAg1HRx+F0MIe1PfXbGpkJvMWjUdFOB3Not3H//PI5ZGSUwPBzbSiBd6nNDgAAABVZxeaOyDY7CIzJo9PBn2JTBrs7mF1bx+YqMaemgJ144nTwp/D8Yve2d/225WeOkVICw0/0XdMenV1ehJ1Xu7DyoQgAACIiYhmb8neRHQTG7sHdi9sF9VnY7M3H3MRmckObHQQYp0eng4/j/vn197xUDNx249K16wqmQwkMr3MdEf/KDjECbXYAAABItN1xf2FUKByeBXU+6CbuF8+NywQOprxvvIiIC88v3sHGpQlTAsPrXIQSeBfa7AAAAHBgdtxDhZ5ZUD8NIzf5PcUvUBWFMK/g8wc/KIHhFfqu+XZ0dnkbHqYfceO0AwAAE7GKiEVYeIFBeLSgvh0ZfVq+uhpqWrx+A4PxRCF8Gu4QnqpV3Be/i+QsVEQJDK/XRsT/ZIcYsDY7AAAA7NEyNgsvi75rvmWHAd7n4cjoiIijs8vTuF9UtzF8nLx+A4NXCuE27p9f2w1Np+H5NVY3cb9x6S43CrVSAsPrtaEEfq+VHbQAAIzIOjYLLt9iUxosUtMAe1P+fi8iYl5OCZ/GfSn816xcfMhtbL6nC2sVwFiV17friIgHp4S3vzy/hmkZ98+vRW4UhkIJDK/Ud833o7PLq3A38Hv4UAUAwJAtY1P4bkvfu9w4QIZySni7qH5eFtVPwkmr2m1fwxexeQ13ty8wKU+cEj4OpfAQKH35MCUwvE0bSuD3uMgOAAAAr3AbEXdxX/h+U/gCzymvD3fxYOPzg/HR23LYncKHtYr7wvebRXOAP3qiFN5Oujh58NXz67Bu4/ebTl1PwE4ogeEN+q5ZHJ1drsLuqLdYWjgDAKAiq7gver/Hpij4bqEF2IUH46Mj4sdpq+O4X1Q/CWsKu/Jw484iNqWvU74Ab/Ro0kVE/Hh+bZ9bp7F5lnl+7cYyHmw8tWGJfVICw9u1EfHf2SEGpM0OAADApNzGpty9K7++Ryl8Fb3AoT04Lbx4+M/LieHjuC+I/xLGST/n8ZSGO6/nAPv1zLSLv8R9MXz84Kty+GnLuP8s4vlFCiUwvF0bSuDXWvdd02aHAABg0NaxWTTZWjzxvxW8wKA8d+rn6OzyJDaF8PbraflXYx7NuX2d//7o653JYgD1KCeGF/FoY1PE755fp+Ufbb/+Y//J0mwnDD3+ZTIF1VACwxv1XXN3dHZ5ExH/lZ1lAK5//n8BAGAAHhexb3FXfj1n8fgfGIkGTNWDDS2Lp/79g/HSEfcL7NvSeKuGBffXbOBR8gKMxCueX9uS+OEz6zjun2kRdTy/tsXu1qJ83W5QilDyMiB/iohfs0PwIXa75ziPiIvsEAPg5zNHG8+84YJKeO8xbGP/oPMt/IwO3eOF8OfcxcvFZNWUpADT9GA8Z8QrP/c9Ko4fe+nfPbY9pfsUhS4Az3o0tedVB4ceFMdPeenfPfbS80uhy6j9HyjnxDldSKPyAAAAAElFTkSuQmCC" alt="MIBOO" style="height:22px;width:auto;filter:none"/> </span>
     <span class="topbar-user" id="topbarUser"></span>
+    <div class="topbar-sep" aria-hidden="true"></div>
     <div style="position:relative" id="notiWrap">
       <div class="noti-bell" id="notiBell" onclick="toggleNotiDropdown()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -874,9 +1037,9 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- 홈 탭 -->
     <div id="tabHome">
-      <div class="page-title-wrap" style="margin-bottom:28px">
-        <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">DB 관리 시스템</h1>
-        <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em">공정·자재·AS를 한눈에 관리합니다.</p>
+      <div class="page-title-wrap">
+        <h1 class="page-title">DB 관리 시스템</h1>
+        <p class="page-subtitle">공정·자재·AS를 한눈에 관리합니다.</p>
       </div>
       <div class="stats-row" id="statsRow"></div>
       <!-- 공장 배치도 -->
@@ -920,14 +1083,14 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- DB 관리 탭 -->
     <div id="tabTracking" style="display:none">
-      <div class="page-title-wrap" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap">
+      <div class="page-title-wrap with-action">
         <div>
-          <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">DB 관리</h1>
-          <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em">ERP 데이터를 조회하고 관리합니다.</p>
+          <h1 class="page-title">DB 관리</h1>
+          <p class="page-subtitle">ERP 데이터를 조회하고 관리합니다.</p>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <span id="trackNewBadge" style="padding:6px 14px;background:#e6eef7;border-radius:999px;font-size:13px;font-weight:700;color:#004A93;letter-spacing:-0.01em;display:none">신규 0건</span>
-          <span id="trackTotalBadge" style="padding:6px 14px;background:#f2f4f6;border-radius:999px;font-size:13px;font-weight:700;color:#4e5968;letter-spacing:-0.01em">총 0건</span>
+          <span id="trackNewBadge" style="padding:6px 14px;background:var(--brand-soft);border-radius:var(--r-pill);font-size:13px;font-weight:700;color:var(--brand);letter-spacing:-0.01em;display:none">신규 0건</span>
+          <span id="trackTotalBadge" style="padding:6px 14px;background:var(--surface-subtle);border-radius:var(--r-pill);font-size:13px;font-weight:700;color:var(--text2);letter-spacing:-0.01em">총 0건</span>
         </div>
       </div>
       <!-- 툴바 -->
@@ -984,9 +1147,9 @@ tbody tr:hover td{background:#f8fafc}
     <!-- ERP 데이터 탭 -->
     <div id="tabErp" style="display:none">
     <div id="erpSubUpload">
-      <div class="page-title-wrap" style="margin-bottom:28px">
-        <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">엑셀 업로드</h1>
-        <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em">삼성중공업 ERP 자료를 업로드하면 칼럼을 자동으로 인식합니다.</p>
+      <div class="page-title-wrap">
+        <h1 class="page-title">엑셀 업로드</h1>
+        <p class="page-subtitle">삼성중공업 ERP 자료를 업로드하면 칼럼을 자동으로 인식합니다.</p>
       </div>
       <!-- 엑셀 업로드 영역 -->
       <div class="toss-upload-card">
@@ -1004,23 +1167,22 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- 칼럼 현황 -->
     <div id="erpSubColstatus" style="display:none">
-      <div class="page-title-wrap" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap">
+      <div class="page-title-wrap with-action">
         <div>
-          <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">칼럼 현황</h1>
-          <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em" id="erpColSubText">삼성중공업 ERP 자료의 칼럼을 관리합니다. 업로드 시 일치하는 칼럼만 자동 인식됩니다.</p>
+          <h1 class="page-title">칼럼 현황</h1>
+          <p class="page-subtitle">ERP 자료의 칼럼명을 편집하거나 추가·삭제할 수 있습니다.<span id="erpColSubText" style="margin-left:8px;color:#d97706;font-weight:700;font-variant-numeric:tabular-nums"></span></p>
         </div>
-        <span style="padding:6px 14px;background:#f2f4f6;border-radius:999px;font-size:13px;font-weight:700;color:#4e5968;letter-spacing:-0.01em">총 <span id="erpTotalColCount">0</span>건</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="display:inline-flex;align-items:center;height:40px;padding:0 14px;background:var(--surface-subtle);border-radius:var(--r-md);font-size:13px;font-weight:600;color:var(--text2);letter-spacing:-0.01em">총 <b style="color:var(--text);font-weight:800;margin:0 3px 0 4px;font-variant-numeric:tabular-nums" id="erpTotalColCount">0</b>건</span>
+          <button id="erpEditModeBtn" class="toss-btn-mini toss-btn-mini-secondary" style="width:40px;height:40px;padding:0;justify-content:center" onclick="toggleErpEditMode()" title="수정" aria-label="수정">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </button>
+          <button class="toss-btn-mini toss-btn-mini-primary" style="width:40px;height:40px;padding:0;justify-content:center" onclick="openAddColModal()" title="추가" aria-label="추가">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          </button>
+        </div>
       </div>
       <div id="erpColStatus" class="toss-col-card">
-        <div class="toss-col-toolbar">
-          <div style="flex:1"></div>
-          <button class="toss-btn-mini toss-btn-mini-primary toss-btn-mini-icon" onclick="openAddColModal()" title="추가" aria-label="추가">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-          </button>
-          <button id="erpEditModeBtn" class="toss-btn-mini toss-btn-mini-secondary toss-btn-mini-icon" onclick="toggleErpEditMode()" title="수정" aria-label="수정">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
-          </button>
-        </div>
         <div id="erpColGrid"></div>
       </div>
     </div><!-- /erpSubColstatus -->
@@ -1073,7 +1235,7 @@ tbody tr:hover td{background:#f8fafc}
         </div>
         <div style="padding:20px 24px">
           <div style="padding:14px 16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;display:flex;align-items:center;gap:10px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             <div style="font-size:13px;font-weight:700;color:#1e40af" id="saveColText"></div>
           </div>
         </div>
@@ -1090,7 +1252,7 @@ tbody tr:hover td{background:#f8fafc}
         <!-- 헤더 -->
         <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:12px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <div>
               <div style="font-size:16px;font-weight:800;color:#0f172a" id="erpPreviewTitle">파일 미리보기</div>
               <div style="font-size:12px;color:#94a3b8;margin-top:2px" id="erpPreviewInfo"></div>
@@ -1115,7 +1277,7 @@ tbody tr:hover td{background:#f8fafc}
           </div>
           <div style="display:flex;gap:10px">
             <button onclick="closeErpPreview()" style="padding:10px 24px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;font-size:13px">취소</button>
-            <button id="erpUploadConfirmBtn" onclick="confirmErpUpload()" style="padding:10px 32px;border:none;border-radius:10px;background:#2563eb;color:#fff;cursor:pointer;font-size:14px;font-weight:700">업로드 확인</button>
+            <button id="erpUploadConfirmBtn" onclick="confirmErpUpload()" style="padding:10px 32px;border:none;border-radius:var(--r-md);background:var(--brand);color:#fff;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:-0.01em">업로드 확인</button>
           </div>
         </div>
       </div>
@@ -1128,7 +1290,7 @@ tbody tr:hover td{background:#f8fafc}
         <!-- 헤더 -->
         <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:12px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <div>
               <div style="font-size:16px;font-weight:800;color:#0f172a">그리드 설정</div>
               <div style="font-size:12px;color:#94a3b8;margin-top:2px" id="trackColInfo">DB 관리 테이블에 표시할 칼럼을 선택하세요</div>
@@ -1151,7 +1313,7 @@ tbody tr:hover td{background:#f8fafc}
           <span style="font-size:13px;color:#64748b" id="trackColCount"></span>
           <div style="display:flex;gap:10px">
             <button onclick="closeGridModal()" style="padding:10px 24px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;font-size:13px">취소</button>
-            <button onclick="saveTrackCols()" style="padding:10px 32px;border:none;border-radius:10px;background:#2563eb;color:#fff;cursor:pointer;font-size:14px;font-weight:700">저장</button>
+            <button onclick="saveTrackCols()" style="padding:10px 32px;border:none;border-radius:var(--r-md);background:var(--brand);color:#fff;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:-0.01em">저장</button>
           </div>
         </div>
       </div>
@@ -1159,14 +1321,13 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- 사용자 관리 탭 -->
     <div id="tabUsers" style="display:none">
-      <div class="page-title-wrap" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+      <div class="page-title-wrap with-action">
         <div>
-          <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">사용자 관리</h1>
-          <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em">시스템 사용자와 권한을 관리합니다.</p>
+          <h1 class="page-title">사용자 관리</h1>
+          <p class="page-subtitle">시스템 사용자와 권한을 관리합니다.</p>
         </div>
-        <button onclick="openUserModal()" class="toss-user-new-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-          새 사용자
+        <button onclick="openUserModal()" class="toss-user-new-btn" style="width:40px;height:40px;padding:0;justify-content:center" title="새 사용자 추가" aria-label="새 사용자 추가">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
         </button>
       </div>
 
@@ -1241,10 +1402,10 @@ tbody tr:hover td{background:#f8fafc}
     <!-- AS 접수 탭 -->
     <div id="tabAs" style="display:none">
     <div id="asSubList">
-      <div class="page-title-wrap" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+      <div class="page-title-wrap with-action">
         <div>
-          <h1 style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:#191f28;margin:0 0 6px 0;line-height:1.2">AS 접수 목록</h1>
-          <p style="font-family:'Pretendard Variable',Pretendard,sans-serif;font-size:15px;font-weight:500;color:#6b7684;margin:0;letter-spacing:-0.01em">AS 접수건을 조회하고 관리합니다.</p>
+          <h1 class="page-title">AS 접수 목록</h1>
+          <p class="page-subtitle">AS 접수건을 조회하고 관리합니다.</p>
         </div>
       </div>
 
@@ -1311,36 +1472,63 @@ tbody tr:hover td{background:#f8fafc}
         <!-- 1행: 조회 영역 -->
         <div class="as-toolbar-row">
           <span class="as-toolbar-label">조회</span>
-          <select class="as-filter-select" id="asSearchField" style="min-width:100px;max-width:120px">
-            <option value="all">전체</option>
-            <option value="ship">호선</option>
-            <option value="block">블록</option>
-            <option value="element">엘레멘트</option>
-            <option value="product">제품명</option>
-            <option value="asNo">접수번호</option>
-          </select>
+          <div class="toss-dd" id="asSearchFieldDd" style="min-width:100px;max-width:120px">
+            <button type="button" class="toss-dd-btn" id="asSearchFieldBtn" onclick="toggleAsDd(event,'asSearchField')" aria-haspopup="listbox" aria-expanded="false" style="width:100%;min-width:100px">
+              <span class="toss-dd-label" id="asSearchFieldLabel">전체</span>
+              <svg class="toss-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="toss-dd-panel" id="asSearchFieldPanel" role="listbox"></div>
+            <input type="hidden" id="asSearchField" value="all"/>
+          </div>
           <input class="as-search-input" id="asSearch" placeholder="검색어 입력" style="flex:1;min-width:160px;max-width:240px"
             onkeydown="if(event.key==='Enter')_applyAsFilters()"/>
-          <select class="as-filter-select" id="asCategoryFilter" onchange="_applyAsFilters()">
-            <option value="">전체 구분</option>
-            <option value="사내">사내</option>
-            <option value="사외">사외</option>
-            <option value="기타">기타</option>
-          </select>
-          <select class="as-filter-select" id="asStatusFilter" onchange="_applyAsFilters()">
-            <option value="">전체 진행현황</option>
-            <option value="접수">접수</option>
-            <option value="검토 요청">검토 요청</option>
-            <option value="승인 요청">승인 요청</option>
-            <option value="처리 대기">처리 대기</option>
-            <option value="완료">완료</option>
-          </select>
+          <div class="toss-dd" id="asCategoryFilterDd">
+            <button type="button" class="toss-dd-btn" id="asCategoryFilterBtn" onclick="toggleAsDd(event,'asCategoryFilter')" aria-haspopup="listbox" aria-expanded="false">
+              <span class="toss-dd-label" id="asCategoryFilterLabel">전체 구분</span>
+              <svg class="toss-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="toss-dd-panel" id="asCategoryFilterPanel" role="listbox"></div>
+            <input type="hidden" id="asCategoryFilter" value=""/>
+          </div>
+          <input type="hidden" id="asStatusFilter" value=""/>
           <div class="as-toolbar-sep"></div>
           <span class="as-toolbar-label">기간</span>
-          <input type="date" class="as-filter-select" id="asDateFrom" style="width:130px;padding-right:6px" onchange="_applyAsFilters()"/>
-          <span style="font-size:11px;color:#94a3b8">~</span>
-          <input type="date" class="as-filter-select" id="asDateTo" style="width:130px;padding-right:6px" onchange="_applyAsFilters()"/>
-          <button class="as-tb-btn as-tb-btn-search" onclick="_applyAsFilters()">조회</button>
+          <div class="toss-date-range" id="asDateRange" onclick="openAsCal(event)">
+            <svg class="toss-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <button type="button" class="toss-date-btn" id="asDateFromBtn" data-empty="1" onclick="event.stopPropagation();openAsCal(event,'from')">시작일</button>
+            <span class="toss-date-sep">~</span>
+            <button type="button" class="toss-date-btn" id="asDateToBtn" data-empty="1" onclick="event.stopPropagation();openAsCal(event,'to')">종료일</button>
+            <input type="hidden" id="asDateFrom" value=""/>
+            <input type="hidden" id="asDateTo" value=""/>
+            <div class="toss-cal-pop" id="asCalPop" role="dialog" aria-modal="false" aria-label="날짜 선택" onclick="event.stopPropagation()">
+              <div class="toss-cal-header">
+                <button type="button" class="toss-cal-nav" onclick="asCalMove(-1)" aria-label="이전 달">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div class="toss-cal-title" id="asCalTitle">—</div>
+                <button type="button" class="toss-cal-nav" onclick="asCalMove(1)" aria-label="다음 달">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <div class="toss-cal-weekdays">
+                <div class="toss-cal-weekday sun">일</div>
+                <div class="toss-cal-weekday">월</div>
+                <div class="toss-cal-weekday">화</div>
+                <div class="toss-cal-weekday">수</div>
+                <div class="toss-cal-weekday">목</div>
+                <div class="toss-cal-weekday">금</div>
+                <div class="toss-cal-weekday sat">토</div>
+              </div>
+              <div class="toss-cal-grid" id="asCalGrid"></div>
+              <div class="toss-cal-quick">
+                <button type="button" class="toss-cal-quick-btn" onclick="asCalPreset('today')">오늘</button>
+                <button type="button" class="toss-cal-quick-btn" onclick="asCalPreset('7d')">1주일</button>
+                <button type="button" class="toss-cal-quick-btn" onclick="asCalPreset('1m')">1개월</button>
+                <button type="button" class="toss-cal-quick-btn" onclick="asCalPreset('3m')">3개월</button>
+                <button type="button" class="toss-cal-quick-btn reset" onclick="asCalClear()">초기화</button>
+              </div>
+            </div>
+          </div>
           <button class="as-tb-btn as-tb-btn-secondary" onclick="resetAsFilters()">초기화</button>
         </div>
         <div class="as-toolbar-divider"></div>
@@ -1354,7 +1542,7 @@ tbody tr:hover td{background:#f8fafc}
           <button class="as-tb-btn" onclick="bulkPrintAs()">출력</button>
           <button class="as-tb-btn as-tb-btn-excel" onclick="exportAsExcel()">Excel</button>
           <div style="flex:1"></div>
-          <button class="as-tb-btn as-tb-btn-new" onclick="openAsModal()">+ AS 접수</button>
+          <button class="as-tb-btn as-tb-btn-new" onclick="openAsModal()" title="AS 접수 추가" aria-label="AS 접수 추가" style="width:40px;padding:0;justify-content:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
         </div>
       </div>
 
@@ -1368,7 +1556,7 @@ tbody tr:hover td{background:#f8fafc}
           <table class="as-erp-table">
             <thead>
               <tr>
-                <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" onchange="toggleAsSelectAll(this)" style="accent-color:#2563eb;cursor:pointer"/></th>
+                <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" onchange="toggleAsSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>
                 <th class="as-no-col no-sort">#</th>
                 <th data-col="status" onclick="sortAsTable('status')">진행현황</th>
                 <th data-col="category" onclick="sortAsTable('category')">구분</th>
@@ -1400,18 +1588,22 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- 제품명 관리 -->
     <div id="asSubProduct" style="display:none">
-      <div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:28px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <div>
-            <div style="font-size:15px;font-weight:800;color:#0f172a">제품명 현황</div>
-            <div style="font-size:12px;color:#94a3b8;margin-top:2px" id="productSubText"></div>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span style="padding:6px 14px;background:#eff6ff;border-radius:8px;font-size:12px"><b style="color:#2563eb" id="productTotalCount">0</b> 전체 제품</span>
-            <button onclick="openAddProductModal()" style="padding:8px 18px;border:1px solid #e2e8f0;border-radius:8px;background:#0f172a;cursor:pointer;font-size:12px;font-weight:700;color:#fff">+ 추가</button>
-            <button id="productEditModeBtn" onclick="toggleProductEditMode()" style="padding:8px 18px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:#2563eb">수정</button>
-          </div>
+      <div class="page-title-wrap with-action">
+        <div>
+          <h1 class="page-title">제품명 관리</h1>
+          <p class="page-subtitle">AS 접수에서 사용할 제품명을 편집하거나 추가·삭제할 수 있습니다.<span id="productSubText" style="margin-left:8px;color:#d97706;font-weight:700;font-variant-numeric:tabular-nums"></span></p>
         </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="display:inline-flex;align-items:center;height:40px;padding:0 14px;background:var(--surface-subtle);border-radius:var(--r-md);font-size:13px;font-weight:600;color:var(--text2);letter-spacing:-0.01em">총 <b style="color:var(--text);font-weight:800;margin:0 3px 0 4px;font-variant-numeric:tabular-nums" id="productTotalCount">0</b>건</span>
+          <button id="productEditModeBtn" onclick="toggleProductEditMode()" class="toss-btn-mini toss-btn-mini-secondary" style="width:40px;height:40px;padding:0;justify-content:center" title="편집 모드" aria-label="편집 모드">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </button>
+          <button onclick="openAddProductModal()" class="toss-btn-mini toss-btn-mini-primary toss-btn-mini-icon" style="width:40px;height:40px" title="제품 추가" aria-label="제품 추가">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:var(--r-xl);border:1px solid var(--border);padding:20px;box-shadow:var(--shadow-xs)">
         <div id="productListBody"></div>
       </div>
     </div>
@@ -1440,7 +1632,7 @@ tbody tr:hover td{background:#f8fafc}
       <div class="modal-box">
         <div class="modal-header">
           <h3 id="asModalTitle">AS 접수</h3>
-          <button class="modal-close" onclick="closeAsModal()">&times;</button>
+          <button class="modal-close" onclick="closeAsModal()" aria-label="닫기">&times;</button>
         </div>
         <div class="modal-body">
           <div class="modal-row" style="grid-template-columns:1fr 1fr 1fr 1fr">
@@ -1526,7 +1718,7 @@ tbody tr:hover td{background:#f8fafc}
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e2e8f0;flex-shrink:0">
           <span id="fileViewerTitle" style="font-size:14px;font-weight:700;color:#0f172a"></span>
           <div style="display:flex;gap:8px;align-items:center">
-            <button id="asViewerRequestReview" onclick="requestReviewFromViewer()" style="padding:6px 14px;border-radius:8px;background:#eff6ff;color:#2563eb;font-size:12px;font-weight:700;border:1px solid #bfdbfe;cursor:pointer;display:none">검토 요청</button>
+            <button id="asViewerRequestReview" onclick="requestReviewFromViewer()" style="padding:6px 14px;border-radius:var(--r-sm);background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700;border:1px solid var(--info-border);cursor:pointer;display:none">검토 요청</button>
             <button id="asViewerReview" onclick="reviewFromViewer()" style="padding:6px 14px;border-radius:8px;background:#fffbeb;color:#d97706;font-size:12px;font-weight:700;border:1px solid #fde68a;cursor:pointer;display:none">검토</button>
             <button id="asViewerApprove" onclick="approveFromViewer()" style="padding:6px 14px;border-radius:8px;background:#f0fdf4;color:#16a34a;font-size:12px;font-weight:700;border:1px solid #bbf7d0;cursor:pointer;display:none">승인</button>
             <button id="asViewerProgress" onclick="progressFromViewer()" style="padding:6px 14px;border-radius:8px;background:#fff7ed;color:#b45309;font-size:12px;font-weight:700;border:1px solid #fed7aa;cursor:pointer;display:none">처리 대기</button>
@@ -1542,7 +1734,10 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- 평면도 편집 탭 -->
     <div id="tabFloorplan" style="display:none">
-      <div class="admin-section-title">평면도 편집</div>
+      <div class="page-title-wrap">
+        <h1 class="page-title">평면도 편집</h1>
+        <p class="page-subtitle">공장 배치도를 편집하고 구역을 관리합니다.</p>
+      </div>
         <div class="card" style="overflow:visible">
           <!-- 도구 모음 -->
           <div class="map-toolbar" id="mapToolbar" style="flex-wrap:wrap;gap:8px;padding:12px 16px">
@@ -1566,7 +1761,7 @@ tbody tr:hover td{background:#f8fafc}
             <div style="display:flex;align-items:center;gap:4px" id="colorPicker">
               <span style="font-size:12px;font-weight:600;color:#64748b">색상</span>
               <div style="display:flex;gap:3px">
-                <span class="color-dot active" data-color="#2563eb" style="background:#2563eb" onclick="pickEditorColor(this)"></span>
+                <span class="color-dot active" data-color="#004A93" style="background:#004A93" onclick="pickEditorColor(this)"></span>
                 <span class="color-dot" data-color="#059669" style="background:#059669" onclick="pickEditorColor(this)"></span>
                 <span class="color-dot" data-color="#d97706" style="background:#d97706" onclick="pickEditorColor(this)"></span>
                 <span class="color-dot" data-color="#dc2626" style="background:#dc2626" onclick="pickEditorColor(this)"></span>
@@ -1596,7 +1791,7 @@ tbody tr:hover td{background:#f8fafc}
                 <rect x="0" y="0" width="1000" height="600" fill="none" stroke="#cbd5e1" stroke-width="1"/>
                 <g id="svgZonesAdmin"></g>
                 <g id="svgWallsAdmin"></g>
-                <rect id="svgDrawRect" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2" stroke-dasharray="6,3" rx="4" style="display:none"/>
+                <rect id="svgDrawRect" fill="rgba(0,74,147,0.1)" stroke="#004A93" stroke-width="2" stroke-dasharray="6,3" rx="4" style="display:none"/>
                 <line id="svgDrawLine" stroke="#64748b" stroke-width="2" stroke-dasharray="4,3" style="display:none"/>
               </svg>
             </div>
@@ -1613,7 +1808,7 @@ tbody tr:hover td{background:#f8fafc}
       <div class="modal-box">
         <div class="modal-header">
           <h3 id="modalTitle">새 사용자 추가</h3>
-          <button class="modal-close" onclick="closeUserModal()">&times;</button>
+          <button class="modal-close" onclick="closeUserModal()" aria-label="닫기">&times;</button>
         </div>
         <div class="modal-body">
           <div class="modal-row">
@@ -1653,20 +1848,20 @@ tbody tr:hover td{background:#f8fafc}
           <div class="modal-field">
             <label>권한 부여</label>
             <div class="modal-steps" id="modalStepsGrid">
-              <div class="modal-step-item" style="--tc:#4ade80" data-step="incoming" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#86efac"></span><span class="mst-txt">입고</span></div>
-              <div class="modal-step-item" style="--tc:#22c55e" data-step="inspect_wait" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#4ade80"></span><span class="mst-txt">검수 대기</span></div>
-              <div class="modal-step-item" style="--tc:#16a34a" data-step="inspect_done" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#22c55e"></span><span class="mst-txt">검수 완료</span></div>
-              <div class="modal-step-item" style="--tc:#15803d" data-step="paint_wait" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#16a34a"></span><span class="mst-txt">도장 대기</span></div>
-              <div class="modal-step-item" style="--tc:#166534" data-step="paint_done" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#15803d"></span><span class="mst-txt">도장 완료</span></div>
-              <div class="modal-step-item" style="--tc:#14532d" data-step="deliver_wait" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#166534"></span><span class="mst-txt">납품 대기</span></div>
-              <div class="modal-step-item" style="--tc:#052e16" data-step="deliver_done" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#14532d"></span><span class="mst-txt">납품 완료</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#4ade80" data-step="incoming" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#86efac" aria-hidden="true"></span><span class="mst-txt">입고</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#22c55e" data-step="inspect_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#4ade80" aria-hidden="true"></span><span class="mst-txt">검수 대기</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#16a34a" data-step="inspect_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#22c55e" aria-hidden="true"></span><span class="mst-txt">검수 완료</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#15803d" data-step="paint_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#16a34a" aria-hidden="true"></span><span class="mst-txt">도장 대기</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#166534" data-step="paint_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#15803d" aria-hidden="true"></span><span class="mst-txt">도장 완료</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#14532d" data-step="deliver_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#166534" aria-hidden="true"></span><span class="mst-txt">납품 대기</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#052e16" data-step="deliver_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#14532d" aria-hidden="true"></span><span class="mst-txt">납품 완료</span></div>
             </div>
           </div>
           <div class="modal-field" style="margin-top:8px">
             <label>AS 결재 권한</label>
             <div class="modal-steps" id="modalAsPerms">
-              <div class="modal-step-item" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#fcd34d"></span><span class="mst-txt">AS 검토</span></div>
-              <div class="modal-step-item" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw"></span><span class="mst-dot" style="background:#c4b5fd"></span><span class="mst-txt">AS 승인</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#fcd34d" aria-hidden="true"></span><span class="mst-txt">AS 검토</span></div>
+              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#c4b5fd" aria-hidden="true"></span><span class="mst-txt">AS 승인</span></div>
             </div>
           </div>
         </div>
@@ -1917,6 +2112,230 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// ── AS 접수 커스텀 드롭다운 (DB관리와 동일 패턴) ──
+const AS_DD_CONFIG = {
+  asSearchField: { apply:false, options:[
+    {value:'all',     label:'전체'},
+    {value:'ship',    label:'호선'},
+    {value:'block',   label:'블록'},
+    {value:'element', label:'엘레멘트'},
+    {value:'product', label:'제품명'},
+    {value:'asNo',    label:'접수번호'},
+  ]},
+  asCategoryFilter: { apply:true, options:[
+    {value:'',     label:'전체 구분'},
+    {value:'사내', label:'사내'},
+    {value:'사외', label:'사외'},
+    {value:'기타', label:'기타'},
+  ]},
+};
+function renderAsDd(name) {
+  const cfg = AS_DD_CONFIG[name]; if (!cfg) return;
+  const panel = document.getElementById(name + 'Panel'); if (!panel) return;
+  const cur = document.getElementById(name)?.value ?? '';
+  const esc = (s) => String(s).replace(/'/g, "\\'");
+  panel.innerHTML = cfg.options.map(o => `
+    <div class="toss-dd-item${o.value === cur ? ' is-selected' : ''}" role="option" data-val="${o.value}" onclick="selectAsDd('${name}','${esc(o.value)}','${esc(o.label)}')">
+      <span>${o.label}</span>
+      <svg class="toss-dd-item-check" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>
+    </div>
+  `).join('');
+}
+function toggleAsDd(e, name) {
+  if (e) e.stopPropagation();
+  const dd = document.getElementById(name + 'Dd'); if (!dd) return;
+  const opening = !dd.classList.contains('is-open');
+  document.querySelectorAll('#tabAs .toss-dd.is-open').forEach(el => {
+    el.classList.remove('is-open');
+    const b = el.querySelector('.toss-dd-btn'); if (b) b.setAttribute('aria-expanded', 'false');
+  });
+  const btn = document.getElementById(name + 'Btn');
+  if (opening) {
+    renderAsDd(name);
+    dd.classList.add('is-open');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  } else if (btn) {
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+function selectAsDd(name, value, label) {
+  setAsDdValue(name, value, label);
+  const dd = document.getElementById(name + 'Dd'); if (dd) dd.classList.remove('is-open');
+  const btn = document.getElementById(name + 'Btn'); if (btn) btn.setAttribute('aria-expanded', 'false');
+  if (AS_DD_CONFIG[name]?.apply && typeof _applyAsFilters === 'function') _applyAsFilters();
+}
+function setAsDdValue(name, value, label) {
+  const hid = document.getElementById(name); if (hid) hid.value = value;
+  const lab = document.getElementById(name + 'Label');
+  if (lab) {
+    if (label === undefined) {
+      const opt = AS_DD_CONFIG[name]?.options.find(o => o.value === value);
+      label = opt ? opt.label : '';
+    }
+    lab.textContent = label;
+  }
+}
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('#tabAs .toss-dd.is-open').forEach(dd => {
+    if (!dd.contains(e.target)) {
+      dd.classList.remove('is-open');
+      const b = dd.querySelector('.toss-dd-btn'); if (b) b.setAttribute('aria-expanded', 'false');
+    }
+  });
+});
+
+// ── AS 접수 Toss 캘린더 (커스텀 range picker) ──
+let _asCalFrom = null;
+let _asCalTo   = null;
+let _asCalView = (() => { const d = new Date(); d.setDate(1); d.setHours(0,0,0,0); return d; })();
+let _asCalStage = 'start'; // 'start' | 'end'
+
+function _asCalFmt(d) {
+  if (!d) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function _asCalFmtLabel(d) {
+  if (!d) return '';
+  return `${d.getFullYear()}. ${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}`;
+}
+function _asCalParse(s) {
+  if (!s) return null;
+  const p = String(s).split('-'); if (p.length !== 3) return null;
+  const d = new Date(+p[0], +p[1]-1, +p[2]); d.setHours(0,0,0,0); return d;
+}
+function _asCalWriteInputs() {
+  const fi = document.getElementById('asDateFrom'); if (fi) fi.value = _asCalFmt(_asCalFrom);
+  const ti = document.getElementById('asDateTo');   if (ti) ti.value = _asCalFmt(_asCalTo);
+  _asCalUpdateBtns();
+}
+function _asCalUpdateBtns() {
+  const fb = document.getElementById('asDateFromBtn');
+  const tb = document.getElementById('asDateToBtn');
+  if (fb) {
+    if (_asCalFrom) { fb.textContent = _asCalFmtLabel(_asCalFrom); fb.dataset.empty = '0'; }
+    else { fb.textContent = '시작일'; fb.dataset.empty = '1'; }
+  }
+  if (tb) {
+    if (_asCalTo) { tb.textContent = _asCalFmtLabel(_asCalTo); tb.dataset.empty = '0'; }
+    else { tb.textContent = '종료일'; tb.dataset.empty = '1'; }
+  }
+}
+function _asCalSyncFromInputs() {
+  _asCalFrom = _asCalParse(document.getElementById('asDateFrom')?.value);
+  _asCalTo   = _asCalParse(document.getElementById('asDateTo')?.value);
+  _asCalUpdateBtns();
+}
+function openAsCal(e, which) {
+  if (e) e.stopPropagation();
+  const range = document.getElementById('asDateRange');
+  const pop   = document.getElementById('asCalPop');
+  if (!range || !pop) return;
+  _asCalSyncFromInputs();
+  _asCalStage = (which === 'to' && _asCalFrom) ? 'end' : 'start';
+  const anchor = (which === 'to' ? _asCalTo : _asCalFrom) || _asCalFrom || new Date();
+  _asCalView = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  range.classList.add('is-open');
+  pop.classList.add('is-open');
+  _asCalRender();
+}
+function closeAsCal() {
+  const range = document.getElementById('asDateRange');
+  const pop   = document.getElementById('asCalPop');
+  if (range) range.classList.remove('is-open');
+  if (pop)   pop.classList.remove('is-open');
+}
+function asCalMove(delta) {
+  _asCalView = new Date(_asCalView.getFullYear(), _asCalView.getMonth()+delta, 1);
+  _asCalRender();
+}
+function _asCalRender() {
+  const title = document.getElementById('asCalTitle');
+  const grid  = document.getElementById('asCalGrid');
+  if (!title || !grid) return;
+  const y = _asCalView.getFullYear();
+  const m = _asCalView.getMonth();
+  title.textContent = `${y}년 ${m+1}월`;
+  const first = new Date(y, m, 1);
+  const startDow = first.getDay();
+  const start = new Date(y, m, 1 - startDow);
+  const today = new Date(); today.setHours(0,0,0,0);
+  let html = '';
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    d.setHours(0,0,0,0);
+    const isOut = d.getMonth() !== m;
+    const cls = ['toss-cal-cell'];
+    if (isOut) cls.push('out');
+    if (+d === +today) cls.push('today');
+    if (_asCalFrom && _asCalTo) {
+      const isS = +d === +_asCalFrom;
+      const isE = +d === +_asCalTo;
+      if (isS && isE) cls.push('range-start','range-end');
+      else if (isS) cls.push('range-start');
+      else if (isE) cls.push('range-end');
+      else if (d > _asCalFrom && d < _asCalTo) cls.push('in-range');
+    } else if (_asCalFrom && +d === +_asCalFrom) {
+      cls.push('single');
+    }
+    const onclick = isOut ? '' : `onclick="asCalPick('${_asCalFmt(d)}')"`;
+    html += `<div class="${cls.join(' ')}" ${onclick}>${d.getDate()}</div>`;
+  }
+  grid.innerHTML = html;
+}
+function asCalPick(ymd) {
+  const d = _asCalParse(ymd); if (!d) return;
+  if (_asCalStage === 'start' || !_asCalFrom || (_asCalFrom && _asCalTo)) {
+    _asCalFrom = d; _asCalTo = null;
+    _asCalStage = 'end';
+    _asCalWriteInputs();
+    _asCalRender();
+    return;
+  }
+  // stage === 'end' && _asCalFrom && !_asCalTo
+  if (d < _asCalFrom) { _asCalTo = _asCalFrom; _asCalFrom = d; }
+  else { _asCalTo = d; }
+  _asCalStage = 'start';
+  _asCalWriteInputs();
+  if (typeof _applyAsFilters === 'function') _applyAsFilters();
+  closeAsCal();
+}
+function asCalPreset(preset) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const to = new Date(today);
+  const from = new Date(today);
+  if (preset === 'today') { /* from = to = today */ }
+  else if (preset === '7d') { from.setDate(today.getDate() - 6); }
+  else if (preset === '1m') { from.setMonth(today.getMonth() - 1); from.setDate(today.getDate() + 1); }
+  else if (preset === '3m') { from.setMonth(today.getMonth() - 3); from.setDate(today.getDate() + 1); }
+  _asCalFrom = from; _asCalTo = to; _asCalStage = 'start';
+  _asCalView = new Date(to.getFullYear(), to.getMonth(), 1);
+  _asCalWriteInputs();
+  if (typeof _applyAsFilters === 'function') _applyAsFilters();
+  closeAsCal();
+}
+function asCalClear() {
+  _asCalFrom = null; _asCalTo = null; _asCalStage = 'start';
+  _asCalWriteInputs();
+  if (typeof _applyAsFilters === 'function') _applyAsFilters();
+  closeAsCal();
+}
+document.addEventListener('click', (e) => {
+  const range = document.getElementById('asDateRange');
+  const pop   = document.getElementById('asCalPop');
+  if (pop && pop.classList.contains('is-open') && range && !range.contains(e.target)) {
+    closeAsCal();
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const pop = document.getElementById('asCalPop');
+    if (pop && pop.classList.contains('is-open')) closeAsCal();
+  }
+});
+
 // ── 검색어 파싱 (줄바꿈 다중검색) ──
 function parseSearchTerms(raw) {
   return raw.split('\n').map(s => s.trim()).filter(Boolean);
@@ -2010,12 +2429,12 @@ async function loadTracking() {
 
     // 헤더
     document.getElementById('trackHead').innerHTML = '<tr>'
-      + '<th style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#f8fafc"><input type="checkbox" onchange="toggleTrackSelectAll(this)" style="accent-color:#2563eb;cursor:pointer"/></th>'
+      + '<th style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#f8fafc"><input type="checkbox" onchange="toggleTrackSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>'
       + visCols.map(c => {
         const esc = c.replace(/"/g,'&quot;');
         const isSort = _trackSortCol === c;
         const arrow = isSort ? (_trackSortDir === 'asc' ? ' ↑' : ' ↓') : '';
-        return `<th data-col="${esc}" onclick="sortTrackTable('${esc}')" style="white-space:nowrap;position:relative;${_colW(c)};cursor:pointer;user-select:none">${c}<span style="color:#2563eb">${arrow}</span><div class="col-resize-handle"></div></th>`;
+        return `<th data-col="${esc}" onclick="sortTrackTable('${esc}')" style="white-space:nowrap;position:relative;${_colW(c)};cursor:pointer;user-select:none">${c}<span style="color:var(--brand)">${arrow}</span><div class="col-resize-handle"></div></th>`;
       }).join('')
       + '</tr>';
     initColResize();
@@ -2028,11 +2447,11 @@ async function loadTracking() {
     }
 
     tbody.innerHTML = rows.slice(0, 500).map(row => `<tr>`
-      + `<td style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;background:#fff;z-index:1"><input type="checkbox" class="track-row-cb" onchange="toggleTrackRowSelect(this)" style="accent-color:#2563eb;cursor:pointer"/></td>`
+      + `<td style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;background:#fff;z-index:1"><input type="checkbox" class="track-row-cb" onchange="toggleTrackRowSelect(this)" style="width:16px;height:16px;accent-color:var(--brand);cursor:pointer;vertical-align:middle"/></td>`
       + visCols.map(col => {
         const v = row[col] || '';
         const isUid = col === 'UID';
-        return `<td style="white-space:nowrap;${_colW(col)};overflow:hidden;text-overflow:ellipsis;${isUid?'font-weight:700;color:#2563eb':''}" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
+        return `<td style="white-space:nowrap;${_colW(col)};overflow:hidden;text-overflow:ellipsis;${isUid?'font-weight:700;color:var(--brand)':''}" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
       }).join('')
       + '</tr>').join('');
   } catch(e) {
@@ -2170,8 +2589,8 @@ function renderTrackColList() {
     const c = cols[j];
     const idx = erpAllColumns.indexOf(c) + 1;
     const checked = vis.has(c);
-    html += `<label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid ${checked?'#2563eb':'#e2e8f0'};border-radius:8px;background:${checked?'#eff6ff':'#fff'};cursor:pointer;font-size:11px;min-height:32px;transition:all .15s">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${checked?'checked':''} onchange="toggleTrackCol(this)" style="accent-color:#2563eb;margin:0;width:14px;height:14px;flex-shrink:0"/>
+    html += `<label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid ${checked?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${checked?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:11px;min-height:32px;transition:background var(--ease),border-color var(--ease)">
+      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${checked?'checked':''} onchange="toggleTrackCol(this)" style="accent-color:var(--brand);margin:0;width:14px;height:14px;flex-shrink:0"/>
       <span style="color:#94a3b8;font-size:10px;font-weight:700;min-width:20px">${idx}</span>
       <span style="color:${checked?'#1e40af':'#64748b'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c}">${c}</span>
     </label>`;
@@ -2274,7 +2693,7 @@ async function _openErpPreview(file) {
       dupOpt.style.display = 'none';
     } else {
       uploadBtn.disabled = false;
-      uploadBtn.style.background = '#2563eb';
+      uploadBtn.style.background = 'var(--brand)';
       uploadBtn.style.cursor = 'pointer';
       document.getElementById('erpPreviewStatus').textContent = `미리보기 ${rows.length}행 (전체 ${data.totalRows}행)`;
     }
@@ -2383,10 +2802,10 @@ async function loadErpData() {
     _erpEditMode = false;
     _erpRenameMap = {};
     const _editBtn = document.getElementById('erpEditModeBtn');
-    _editBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>';
+    _editBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
     _editBtn.title = '수정';
     _editBtn.setAttribute('aria-label', '수정');
-    _editBtn.classList.remove('toss-btn-mini-primary');
+    _editBtn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success');
     _editBtn.classList.add('toss-btn-mini-secondary');
     _editBtn.style.background = '';
     _editBtn.style.color = '';
@@ -2404,18 +2823,17 @@ function renderErpColGrid() {
     const c = erpAllColumns[j];
     const esc = c.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     const changed = _erpEditMode && _erpRenameMap[c] && _erpRenameMap[c] !== c;
-    html += `<div class="erp-col-cell${changed?' erp-col-changed':''}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;min-height:44px;transition:all .15s;cursor:default;font-family:'Pretendard Variable',Pretendard,sans-serif">
-      <span style="font-size:11px;font-weight:700;color:#b0b8c1;min-width:24px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em">${String(j+1).padStart(2,'0')}</span>`;
-    if (_erpEditMode) {
-      html += `<input type="text" value="${(_erpRenameMap[c]||c).replace(/"/g,'&quot;')}" data-orig="${esc}" oninput="_onErpRenameInput(this)" style="flex:1;padding:0;border:none;font-size:13px;font-weight:600;font-family:inherit;color:#191f28;letter-spacing:-0.02em;min-width:0;outline:none;background:transparent"/>`;
-      html += `<span onclick="_deleteErpCol('${esc}')" style="cursor:pointer;color:#b0b8c1;font-size:16px;line-height:1;padding:2px 6px;flex-shrink:0;transition:color .12s,background .12s;border-radius:6px" onmouseenter="this.style.color='#ef4444';this.style.background='#fef2f2'" onmouseleave="this.style.color='#b0b8c1';this.style.background='transparent'" title="삭제">&times;</span>`;
-    } else {
-      html += `<span style="flex:1;font-size:13px;font-weight:600;color:#333d4b;letter-spacing:-0.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc}">${c}</span>`;
-    }
-    html += `</div>`;
+    const displayVal = (_erpRenameMap[c] || c).replace(/"/g,'&quot;');
+    html += `<div class="erp-col-cell${changed?' erp-col-changed':''}" data-col="${esc}">`
+      + `<span class="erp-col-no">${String(j+1).padStart(2,'0')}</span>`
+      + `<input type="text" class="erp-col-input" value="${displayVal}" data-orig="${esc}" oninput="_onErpRenameInput(this)"${_erpEditMode?'':' readonly tabindex="-1"'} title="${esc}"/>`
+      + `<button type="button" class="erp-col-del" onclick="_deleteErpCol('${esc}')" aria-label="삭제" tabindex="-1">&times;</button>`
+      + `</div>`;
   }
   html += '</div>';
-  document.getElementById('erpColGrid').innerHTML = html;
+  const root = document.getElementById('erpColGrid');
+  root.classList.toggle('is-editing', _erpEditMode);
+  root.innerHTML = html;
 }
 
 function _onErpRenameInput(input) {
@@ -2426,11 +2844,8 @@ function _onErpRenameInput(input) {
   } else {
     delete _erpRenameMap[orig];
   }
-  const changed = _erpRenameMap[orig] && _erpRenameMap[orig] !== orig;
-  const parent = input.parentElement;
-  parent.style.borderColor = changed ? '#f59e0b' : '#e2e8f0';
-  parent.style.background = changed ? '#fffbeb' : '#fff';
-  parent.classList.toggle('erp-col-changed', !!changed);
+  const changed = !!(_erpRenameMap[orig] && _erpRenameMap[orig] !== orig);
+  input.parentElement.classList.toggle('erp-col-changed', changed);
   const cnt = Object.keys(_erpRenameMap).length;
   document.getElementById('erpColSubText').textContent = cnt ? `${cnt}개 변경됨` : '';
 }
@@ -2492,19 +2907,36 @@ function toggleErpEditMode() {
     _erpEditMode = true;
     _erpRenameMap = {};
     const btn = document.getElementById('erpEditModeBtn');
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
     btn.title = '저장';
     btn.setAttribute('aria-label', '저장');
-    btn.classList.remove('toss-btn-mini-secondary');
-    btn.classList.add('toss-btn-mini-primary');
+    btn.classList.remove('toss-btn-mini-secondary','toss-btn-mini-primary');
+    btn.classList.add('toss-btn-mini-success');
     btn.style.background = '';
     btn.style.color = '';
     btn.style.borderColor = '';
     document.getElementById('erpColSubText').textContent = '';
-    renderErpColGrid();
+    // DOM 재생성 없이 수정 모드로 전환 (레이아웃 안정 유지)
+    const grid = document.getElementById('erpColGrid');
+    grid.classList.add('is-editing');
+    grid.querySelectorAll('.erp-col-input').forEach(i => { i.removeAttribute('readonly'); i.removeAttribute('tabindex'); });
   } else {
     const cnt = Object.keys(_erpRenameMap).length;
-    if (!cnt) { _erpEditMode = false; loadErpData(); return; }
+    if (!cnt) {
+      // 변경 없이 종료: 재요청 없이 클래스/버튼만 되돌림 (부드러운 전환)
+      _erpEditMode = false;
+      const btn = document.getElementById('erpEditModeBtn');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
+      btn.title = '수정';
+      btn.setAttribute('aria-label', '수정');
+      btn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success');
+      btn.classList.add('toss-btn-mini-secondary');
+      const grid = document.getElementById('erpColGrid');
+      grid.classList.remove('is-editing');
+      grid.querySelectorAll('.erp-col-input').forEach(i => { i.setAttribute('readonly',''); i.setAttribute('tabindex','-1'); });
+      document.getElementById('erpColSubText').textContent = '';
+      return;
+    }
     document.getElementById('saveColText').textContent = cnt + '개 칼럼명을 변경하시겠습니까?';
     document.getElementById('saveColModal').style.display = 'flex';
   }
@@ -2527,8 +2959,8 @@ function renderErpColumnList() {
   const vis = new Set(erpVisibleColumns);
   const container = document.getElementById('erpColumnList');
   container.innerHTML = cols.map((c, i) => `
-    <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;margin:3px;border:1px solid ${vis.has(c)?'#2563eb':'#e2e8f0'};border-radius:8px;background:${vis.has(c)?'#eff6ff':'#fff'};cursor:pointer;font-size:12px;transition:all .15s">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${vis.has(c)?'checked':''} onchange="toggleErpCol(this)" style="accent-color:#2563eb"/>
+    <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;margin:3px;border:1px solid ${vis.has(c)?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${vis.has(c)?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:12px;transition:background var(--ease),border-color var(--ease)">
+      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${vis.has(c)?'checked':''} onchange="toggleErpCol(this)" style="accent-color:var(--brand)"/>
       ${c}
     </label>
   `).join('');
@@ -2587,7 +3019,7 @@ async function loadRecords() {
     document.getElementById('recCount').textContent = terms.length ? `검색 결과: ${records.length}건 (검색어 ${terms.length}개)` : '';
     const tbody = document.getElementById('recordsBody');
     if (!records.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>기록이 없습니다</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></div><p>기록이 없습니다</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = records.map(r => {
@@ -2667,7 +3099,7 @@ async function uploadMaster() {
 
   const form = new FormData();
   form.append('file', fileEl.files[0]);
-  resultEl.innerHTML = '<span style="color:#3b82f6">업로드 중...</span>';
+  resultEl.innerHTML = '<span style="color:var(--brand)">업로드 중...</span>';
 
   try {
     const r = await fetch(`${SERVER}/api/master/upload`, { method: 'POST', body: form });
@@ -2780,6 +3212,7 @@ let modalEditingId = null;
 
 function toggleStep(el) {
   el.classList.toggle('on');
+  el.setAttribute('aria-checked', el.classList.contains('on') ? 'true' : 'false');
 }
 
 function getModalSteps() {
@@ -2808,10 +3241,12 @@ function openUserModal(user) {
   document.querySelectorAll('#modalStepsGrid .modal-step-item').forEach(el => {
     const isOn = user ? (user.allowedSteps || []).includes(el.dataset.step) : false;
     el.classList.toggle('on', isOn);
+    el.setAttribute('aria-checked', isOn ? 'true' : 'false');
   });
   document.querySelectorAll('#modalAsPerms .modal-step-item').forEach(el => {
     const isOn = user ? (user[el.dataset.perm] === true) : false;
     el.classList.toggle('on', isOn);
+    el.setAttribute('aria-checked', isOn ? 'true' : 'false');
   });
   document.getElementById('userModal').classList.add('open');
 }
@@ -2963,7 +3398,7 @@ async function loadProductList() {
     _productEditMode = false;
     _productRenameMap = {};
     var btn = document.getElementById('productEditModeBtn');
-    if (btn) { btn.textContent = '수정'; btn.style.background = '#fff'; btn.style.color = '#2563eb'; btn.style.borderColor = '#e2e8f0'; }
+    if (btn) { btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>'; btn.title = '편집 모드'; btn.setAttribute('aria-label','편집 모드'); btn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success'); btn.classList.add('toss-btn-mini-secondary'); }
     var sub = document.getElementById('productSubText');
     if (sub) sub.textContent = '';
     renderProductList();
@@ -2978,7 +3413,8 @@ function renderProductList() {
   if (!container) return;
   document.getElementById('productTotalCount').textContent = _productList.length;
   if (!_productList.length) {
-    container.innerHTML = '<div style="padding:36px 0;text-align:center;color:#94a3b8;font-size:13px">등록된 제품명이 없습니다</div>';
+    container.classList.remove('is-editing');
+    container.innerHTML = '<div style="padding:36px 0;text-align:center;color:var(--text-muted);font-size:13px">등록된 제품명이 없습니다</div>';
     return;
   }
   var colsPerRow = 5;
@@ -2987,19 +3423,15 @@ function renderProductList() {
     var p = _productList[j];
     var esc = p.name.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     var changed = _productEditMode && _productRenameMap[p.name] && _productRenameMap[p.name] !== p.name;
-    var borderC = changed ? '#f59e0b' : '#e2e8f0';
-    var bgC = changed ? '#fffbeb' : '#fff';
-    html += '<div class="erp-col-cell'+(changed?' erp-col-changed':'')+'" style="display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:8px;border:1px solid '+borderC+';background:'+bgC+';min-height:32px;transition:all .15s;cursor:default">';
-    html += '<span style="font-size:10px;font-weight:700;color:#94a3b8;min-width:22px">'+(j+1)+'</span>';
-    if (_productEditMode) {
-      html += '<input type="text" value="'+(_productRenameMap[p.name]||p.name).replace(/"/g,'&quot;')+'" data-orig="'+esc+'" oninput="_onProductRenameInput(this)" style="flex:1;padding:0;border:none;font-size:11px;font-family:inherit;color:#334155;min-width:0;outline:none;background:transparent"/>';
-      html += '<span onclick="_deleteProduct(\''+esc+'\')" style="cursor:pointer;color:#94a3b8;font-size:13px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .1s" onmouseenter="this.style.color=\'#ef4444\'" onmouseleave="this.style.color=\'#94a3b8\'" title="삭제">&times;</span>';
-    } else {
-      html += '<span style="flex:1;font-size:11px;color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc+'">'+p.name+'</span>';
-    }
-    html += '</div>';
+    var displayVal = (_productRenameMap[p.name] || p.name).replace(/"/g,'&quot;');
+    html += '<div class="erp-col-cell'+(changed?' erp-col-changed':'')+'" data-name="'+esc+'">'
+      + '<span class="erp-col-no">'+String(j+1).padStart(2,'0')+'</span>'
+      + '<input type="text" class="erp-col-input" value="'+displayVal+'" data-orig="'+esc+'" oninput="_onProductRenameInput(this)"'+(_productEditMode?'':' readonly tabindex="-1"')+' title="'+esc+'"/>'
+      + '<button type="button" class="erp-col-del" onclick="_deleteProduct(\''+esc+'\')" aria-label="삭제" tabindex="-1">&times;</button>'
+      + '</div>';
   }
   html += '</div>';
+  container.classList.toggle('is-editing', _productEditMode);
   container.innerHTML = html;
 }
 
@@ -3008,11 +3440,8 @@ function _onProductRenameInput(input) {
   var val = input.value.trim();
   if (val && val !== orig) _productRenameMap[orig] = val;
   else delete _productRenameMap[orig];
-  var changed = _productRenameMap[orig] && _productRenameMap[orig] !== orig;
-  var parent = input.parentElement;
-  parent.style.borderColor = changed ? '#f59e0b' : '#e2e8f0';
-  parent.style.background = changed ? '#fffbeb' : '#fff';
-  parent.classList.toggle('erp-col-changed', !!changed);
+  var changed = !!(_productRenameMap[orig] && _productRenameMap[orig] !== orig);
+  input.parentElement.classList.toggle('erp-col-changed', changed);
   var cnt = Object.keys(_productRenameMap).length;
   document.getElementById('productSubText').textContent = cnt ? cnt + '개 변경됨' : '';
 }
@@ -3022,12 +3451,33 @@ function toggleProductEditMode() {
     _productEditMode = true;
     _productRenameMap = {};
     var btn = document.getElementById('productEditModeBtn');
-    btn.textContent = '저장'; btn.style.background = '#2563eb'; btn.style.color = '#fff'; btn.style.borderColor = '#2563eb';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    btn.title = '저장';
+    btn.setAttribute('aria-label','저장');
+    btn.classList.remove('toss-btn-mini-secondary','toss-btn-mini-primary');
+    btn.classList.add('toss-btn-mini-success');
     document.getElementById('productSubText').textContent = '';
-    renderProductList();
+    // DOM 재생성 없이 수정 모드로 전환 (칼럼 현황과 동일 패턴)
+    var container = document.getElementById('productListBody');
+    container.classList.add('is-editing');
+    container.querySelectorAll('.erp-col-input').forEach(function(i){ i.removeAttribute('readonly'); i.removeAttribute('tabindex'); });
   } else {
     var cnt = Object.keys(_productRenameMap).length;
-    if (!cnt) { _productEditMode = false; loadProductList(); return; }
+    if (!cnt) {
+      // 변경 없이 종료 — 재요청 없이 클래스/버튼만 되돌림
+      _productEditMode = false;
+      var btn2 = document.getElementById('productEditModeBtn');
+      btn2.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
+      btn2.title = '편집 모드';
+      btn2.setAttribute('aria-label','편집 모드');
+      btn2.classList.remove('toss-btn-mini-primary','toss-btn-mini-success');
+      btn2.classList.add('toss-btn-mini-secondary');
+      var container2 = document.getElementById('productListBody');
+      container2.classList.remove('is-editing');
+      container2.querySelectorAll('.erp-col-input').forEach(function(i){ i.setAttribute('readonly',''); i.setAttribute('tabindex','-1'); });
+      document.getElementById('productSubText').textContent = '';
+      return;
+    }
     _saveProductRenames();
   }
 }
@@ -3046,7 +3496,7 @@ async function _saveProductRenames() {
   _productEditMode = false;
   _productRenameMap = {};
   var btn = document.getElementById('productEditModeBtn');
-  btn.textContent = '수정'; btn.style.background = '#fff'; btn.style.color = '#2563eb'; btn.style.borderColor = '#e2e8f0';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>'; btn.title = '편집 모드'; btn.setAttribute('aria-label','편집 모드'); btn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success'); btn.classList.add('toss-btn-mini-secondary');
   document.getElementById('productSubText').textContent = '';
   loadProductList();
 }
@@ -3088,7 +3538,7 @@ function showProductSuggest() {
   if (!matches.length) { box.style.display = 'none'; return; }
   box.style.display = 'block';
   box.innerHTML = matches.map(function(p) {
-    return '<div style="padding:8px 14px;cursor:pointer;font-size:13px;color:#334155;transition:background .1s" onmousedown="selectProductSuggest(\'' + p.name.replace(/'/g,"\\'") + '\')" onmouseenter="this.style.background=\'#eff6ff\'" onmouseleave="this.style.background=\'#fff\'">' + (q ? p.name.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<b style=color:#2563eb>$1</b>') : p.name) + '</div>';
+    return '<div style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-body);transition:background .1s" onmousedown="selectProductSuggest(\'' + p.name.replace(/'/g,"\\'") + '\')" onmouseenter="this.style.background=\'var(--brand-soft)\'" onmouseleave="this.style.background=\'#fff\'">' + (q ? p.name.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<b style=color:var(--brand)>$1</b>') : p.name) + '</div>';
   }).join('');
 }
 function selectProductSuggest(name) {
@@ -3248,7 +3698,7 @@ function _renderAsPage() {
     const dateStr = (a.createdAt||'').slice(0,10);
 
     return `<tr data-id="${a.id}" onclick="_onAsRowClick(event,this)" ondblclick="_onAsRowDblClick(event,'${esc}')" style="cursor:pointer">
-      <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" onchange="toggleAsRowCb(this)" style="accent-color:#2563eb;cursor:pointer"/></td>
+      <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
       <td class="as-no-col">${rowNum}</td>
       <td>${statusBadge}</td>
       <td>${catBadge}</td>
@@ -3313,7 +3763,8 @@ function asGoPage(p) {
 }
 
 function asKpiFilter(status) {
-  document.getElementById('asStatusFilter').value = status;
+  if (typeof setAsDdValue === 'function') setAsDdValue('asStatusFilter', status);
+  else document.getElementById('asStatusFilter').value = status;
   _asPage = 1;
   _applyAsFilters();
   document.querySelectorAll('.as-kpi-card').forEach(c => c.classList.remove('active-filter'));
@@ -3326,9 +3777,18 @@ function asKpiFilter(status) {
 }
 
 function resetAsFilters() {
-  const ids = ['asSearch','asStatusFilter','asCategoryFilter','asDateFrom','asDateTo'];
+  const ids = ['asSearch','asDateFrom','asDateTo'];
   ids.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  const sf = document.getElementById('asSearchField'); if(sf) sf.value = 'all';
+  if (typeof setAsDdValue === 'function') {
+    setAsDdValue('asSearchField', 'all');
+    setAsDdValue('asCategoryFilter', '');
+    setAsDdValue('asStatusFilter', '');
+  } else {
+    const sf = document.getElementById('asSearchField'); if(sf) sf.value = 'all';
+    const cf = document.getElementById('asCategoryFilter'); if(cf) cf.value = '';
+    const stf = document.getElementById('asStatusFilter'); if(stf) stf.value = '';
+  }
+  if (typeof _asCalSyncFromInputs === 'function') _asCalSyncFromInputs();
   document.querySelectorAll('.as-kpi-card').forEach(c => c.classList.remove('active-filter'));
   _asSortCol = 'createdAt'; _asSortDir = 'desc'; _asPage = 1;
   _applyAsFilters();
@@ -3945,7 +4405,7 @@ async function buildAsPageHtml(a) {
     }
   }
   const otherHtml = otherFiles.map(f => '<span class="attach-file">' + f.name + '</span>').join('');
-  const _statusColors = {'접수':'#3b82f6','검토 요청':'#f59e0b','승인 요청':'#8b5cf6','처리 대기':'#64748b','완료':'#10b981'};
+  const _statusColors = {'접수':'#004A93','검토 요청':'#d97706','승인 요청':'#7c3aed','처리 대기':'#4e5968','완료':'#16a34a'};
   const _statusColor = _statusColors[a.status] || '#64748b';
   const _statusLabel = a.status || '접수';
   const attachPage = asFiles.length ? '<div class="attach-page"><div class="attach-label">별 첨</div><div class="attach-body">'+(otherHtml?'<div style="margin-bottom:10px">'+otherHtml+'</div>':'')+imagesHtml+pdfImagesHtml+'</div></div>' : '';
@@ -4178,7 +4638,7 @@ function svgPoint(svg, e, noSnap) {
   return noSnap ? { x: Math.round(rawX), y: Math.round(rawY) } : { x: snap(rawX), y: snap(rawY) };
 }
 
-let editorColor = '#2563eb';
+let editorColor = '#004A93';
 function pickEditorColor(el) {
   document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
   el.classList.add('active');
@@ -4441,8 +4901,8 @@ function showPropEditor(event, areaId) {
     <label>이름</label>
     <input id="pe_name" value="${a.name}"/>
     <label>색상</label>
-    <select id="pe_color" style="width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit">
-      <option value="#2563eb"${a.color==='#2563eb'?' selected':''}>파랑</option>
+    <select id="pe_color" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-strong);border-radius:var(--r-xs);font-size:12px;font-family:inherit">
+      <option value="#004A93"${a.color==='#004A93'||a.color==='#2563eb'?' selected':''}>파랑</option>
       <option value="#059669"${a.color==='#059669'?' selected':''}>초록</option>
       <option value="#d97706"${a.color==='#d97706'?' selected':''}>주황</option>
       <option value="#dc2626"${a.color==='#dc2626'?' selected':''}>빨강</option>
@@ -4978,9 +5438,9 @@ function openAssignModal() {
       const checked = assigned.includes(i.barcode);
       const stepInfo = TYPE_INFO[i.currentStep];
       const stepLabel = stepInfo ? stepInfo.label : '';
-      html += `<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid ${checked ? '#2563eb' : '#e2e8f0'};background:${checked ? '#eff6ff' : '#fff'};margin-bottom:4px" onclick="toggleAssign(this,'${i.barcode}')">
+      html += `<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;border:1px solid ${checked ? 'var(--brand)' : 'var(--border-strong)'};background:${checked ? 'var(--brand-soft)' : '#fff'};margin-bottom:4px" onclick="toggleAssign(this,'${i.barcode}')">
         <input type="checkbox" ${checked ? 'checked' : ''} style="display:none" data-barcode="${i.barcode}">
-        <span style="width:18px;height:18px;border-radius:4px;border:2px solid ${checked ? '#2563eb' : '#cbd5e1'};background:${checked ? '#2563eb' : '#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
+        <span style="width:18px;height:18px;border-radius:4px;border:2px solid ${checked ? 'var(--brand)' : 'var(--border-stronger)'};background:${checked ? 'var(--brand)' : '#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
           ${checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
         </span>
         <div style="flex:1;min-width:0">
@@ -5019,11 +5479,11 @@ function toggleAssign(label, barcode) {
   const cb = label.querySelector('input');
   cb.checked = !cb.checked;
   const checked = cb.checked;
-  label.style.borderColor = checked ? '#2563eb' : '#e2e8f0';
-  label.style.background = checked ? '#eff6ff' : '#fff';
+  label.style.borderColor = checked ? '#004A93' : '#e5e8eb';
+  label.style.background = checked ? '#e6eef7' : '#fff';
   const box = label.querySelector('span');
-  box.style.borderColor = checked ? '#2563eb' : '#cbd5e1';
-  box.style.background = checked ? '#2563eb' : '#fff';
+  box.style.borderColor = checked ? '#004A93' : '#d1d6db';
+  box.style.background = checked ? '#004A93' : '#fff';
   box.innerHTML = checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '';
 }
 
@@ -5070,7 +5530,7 @@ function showToast({ title, message, type }) {
   const colors = {
     success: { bg:'#f0fdf4', border:'#bbf7d0', icon:'#22c55e', title:'#15803d' },
     error:   { bg:'#fef2f2', border:'#fecaca', icon:'#ef4444', title:'#dc2626' },
-    info:    { bg:'#eff6ff', border:'#bfdbfe', icon:'#3b82f6', title:'#1d4ed8' },
+    info:    { bg:'#e6eef7', border:'#bfdbfe', icon:'#004A93', title:'#003a75' },
   };
   const c = colors[type] || colors.info;
   const icons = {
