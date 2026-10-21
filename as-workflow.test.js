@@ -117,3 +117,21 @@ test('legacy records without an agreement can enter the new workflow through the
  assert.equal(updated.status,'제작 요청');assert.equal(updated.reviewer,'previous');assert.equal(updated.deliveryAgreedDate,'2026-10-25');
  assert.throws(()=>applyWorkflow(legacy,{revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:''},actor,day,now));
 });
+
+test('formal receipt keeps dates together and escapes text exactly once',()=>{
+ const c={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
+ const doc=c.asJobDocument({createdAt:'2026-10-14',deliveryAgreedDate:'2026-10-22',reason:'A & B <확인>',files:[{name:'검사 & 도면.pdf'}]});
+ assert(doc.includes('2026.10.14'));assert(doc.includes('2026.10.22'));assert(doc.includes('A &amp; B &lt;확인&gt;'));assert(!doc.includes('&amp;amp;'));assert(doc.includes('검사 &amp; 도면.pdf'));assert(!doc.includes('처리 이력'));assert.equal((doc.match(/납품 협의일/g)||[]).length,1);
+});
+
+test('bulk deletion reports server failures instead of success, refreshes partial results and honors cancel',async()=>{
+ const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
+ const source=html.slice(html.indexOf('async function bulkDeleteAs()'),html.indexOf('function bulkApproveAs()'));
+ for(const scenario of ['success','failure','network','cancel']){
+  const alerts=[],requests=[];let refreshes=0;
+  const context={asListExampleReadOnly:()=>false,_getSelectedAsItems:()=>[{id:'one'},{id:'two'}],showConfirm:async()=>scenario!=='cancel',SERVER:'',fetch:async url=>{requests.push(url);if(scenario==='network')throw Error('offline');return {ok:scenario!=='failure'||requests.length===1};},showAlert:(message,type)=>alerts.push({message,type}),loadAsList:()=>refreshes++};
+  vm.createContext(context);vm.runInContext(source,context);await context.bulkDeleteAs();
+  if(scenario==='cancel'){assert.equal(requests.length,0);assert.equal(alerts.length,0);assert.equal(refreshes,0);}
+  else{assert.equal(refreshes,1);assert.equal(alerts.length,1);assert.equal(alerts[0].type,scenario==='success'?'success':'error');}
+ }
+});
