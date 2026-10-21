@@ -126,23 +126,14 @@ const asJobStyle=document.createElement('style');asJobStyle.textContent=`
 @media(prefers-reduced-motion:no-preference){.as-job-dialog[open]{animation:asJobEnter .16s ease-out}.as-job-dialog button{transition:background-color .15s,border-color .15s,transform .1s}@keyframes asJobEnter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
 `;document.head.appendChild(asJobStyle);
 function asJobDocument(raw){
-  const a=Object.fromEntries(Object.entries(raw).map(([key,value])=>[key,typeof value==='string'?asJobEsc(value):value]));
-  const date=(a.createdAt||'').slice(0,10).replace(/-/g,'.');
-  const asFiles=(raw.files||[]).map(f=>({...f,name:asJobEsc(f.name)}));
-  const _statusColor='#555555',_statusLabel=a.status||'접수';
-  return `<div class="page">
-  ${asJobApprovalLine(raw)}
-  <table class="info-table"><colgroup><col style="width:16%"><col style="width:34%"><col style="width:16%"><col style="width:34%"></colgroup><tbody><tr><th scope="row">호선</th><td>${a.ship||''}</td><th scope="row">블록</th><td>${a.block||''}</td></tr><tr><th scope="row">엘레멘트</th><td>${a.element||''}</td><th scope="row">자재코드</th><td>${a.materialCode||''}</td></tr><tr><th scope="row">자재명</th><td colspan="3">${a.product||''}</td></tr></tbody></table>
-  <div class="section"><div class="section-head"><div class="section-label">사유</div></div><div class="section-body">${(a.reason||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>
-  <div class="section"><div class="section-head"><div class="section-label">후속조치</div></div><div class="section-body">${(a.action||'').replace(/</g,'&lt;').replace(/>/g,'&gt;') || '&nbsp;'}</div></div>
-  <div class="section"><div class="section-head"><div class="section-label">납품 협의일</div></div><div class="section-body compact">${a.deliveryAgreedDate||'미정'}</div></div>
-  ${(a.remark||'') ? '<div class="section"><div class="section-head"><div class="section-label">비고</div></div><div class="section-body">'+(a.remark||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div></div>' : ''}
-  ${asFiles.length ? '<div class="section"><div class="section-head"><div class="section-label">첨부</div></div><div class="section-body compact" style="font-size:11px;color:#64748b;white-space:pre-line;line-height:2.1">별첨 참조 ('+asFiles.length+'건)\\n'+asFiles.map(f=>'  - '+f.name).join('\\n')+'</div></div>' : ''}
-  <div class="section"><div class="section-head"><div class="section-label">처리 이력</div></div><div class="history-wrap"><div class="history-row head-row"><div class="history-cell stage head">단계</div><div class="history-cell name head">담당자</div><div class="history-cell dept head">부서 / 직급</div><div class="history-cell time head">일시</div></div><div class="history-row"><div class="history-cell stage">접수</div><div class="history-cell name">${a.createdBy||'-'}</div><div class="history-cell dept">${a.createdDept||''} ${a.createdPos||''}</div><div class="history-cell time">${a.createdAt ? a.createdAt.slice(0,10)+' '+a.createdAt.slice(11,16) : '-'}</div></div>${a.reviewer ? '<div class="history-row"><div class="history-cell stage">검토</div><div class="history-cell name">'+a.reviewer+'</div><div class="history-cell dept">'+(a.reviewerDept||'')+' '+(a.reviewerPos||'')+'</div><div class="history-cell time">'+(a.reviewedAt?a.reviewedAt.slice(0,10)+' '+a.reviewedAt.slice(11,16):'-')+'</div></div>' : ''}${a.approver ? '<div class="history-row"><div class="history-cell stage">승인</div><div class="history-cell name">'+a.approver+'</div><div class="history-cell dept">'+(a.approverDept||'')+' '+(a.approverPos||'')+'</div><div class="history-cell time">'+(a.approvedAt?a.approvedAt.slice(0,10)+' '+a.approvedAt.slice(11,16):'-')+'</div></div>' : ''}${a.completedBy ? '<div class="history-row"><div class="history-cell stage">완료</div><div class="history-cell name">'+a.completedBy+'</div><div class="history-cell dept">'+(a.completedDept||'')+' '+(a.completedPos||'')+'</div><div class="history-cell time">'+(a.completedAt?a.completedAt.slice(0,10)+' '+a.completedAt.slice(11,16):'-')+'</div></div>' : ''}</div></div>
-  <div class="doc-footer">본 문서는 사내 A/S 관리 시스템에서 자동 생성되었습니다. &copy; ${new Date().getFullYear()}</div>
-</div>`;
+ const e=asJobEsc, date=value=>e((value||'').slice(0,10).replace(/-/g,'.'));
+ const section=(title,value)=>'<section class="section"><h3>'+title+'</h3><div class="section-body">'+e(value||'—')+'</div></section>';
+ return '<article class="page">'+asJobApprovalLine(raw)+'<div class="as-doc-dates"><div><span>접수일</span><strong>'+date(raw.createdAt)+'</strong></div><div><span>납품 협의일</span><strong>'+(date(raw.deliveryAgreedDate)||'미정')+'</strong></div></div>'
+ +'<section class="section"><h3>자재 정보</h3><table class="info-table"><colgroup><col style="width:16%"><col style="width:34%"><col style="width:16%"><col style="width:34%"></colgroup><tbody><tr><th>호선</th><td>'+e(raw.ship||'')+'</td><th>블록</th><td>'+e(raw.block||'')+'</td></tr><tr><th>엘레멘트</th><td>'+e(raw.element||'')+'</td><th>자재코드</th><td>'+e(raw.materialCode||'')+'</td></tr><tr><th>자재명</th><td colspan="3">'+e(raw.product||'')+'</td></tr></tbody></table></section>'
+ +section('접수 사유',raw.reason)+section('후속조치',raw.action)+section('비고',raw.remark)
+ +'<section class="section"><h3>첨부</h3><ul class="as-doc-files">'+((raw.files||[]).length?(raw.files||[]).map((f,i)=>'<li><span>'+String(i+1).padStart(2,'0')+'</span>'+e(f.name)+'<small>별첨</small></li>').join(''):'<li>첨부 없음</li>')+'</ul></section><footer class="doc-footer"><strong>MIBOO</strong><span>A/S 접수서</span></footer></article>';
 }
-﻿function asJobApprovalLine(item){
+function asJobApprovalLine(item){
  const slots=[{role:'접수',name:item.createdBy,date:item.createdAt,label:'접수'},
   ...AS_JOB_STAGES.map(stage=>{
    const record=item.workflow?.stages?.[stage];
@@ -155,21 +146,22 @@ function asJobDocument(raw){
  const e=asJobEsc;
  return '<table class="as-doc-approval" aria-label="결재선"><tbody><tr><th class="as-doc-approval-label" rowspan="3" scope="rowgroup">결재</th>'+slots.map(s=>'<th scope="col">'+e(s.role||'')+'</th>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signature">'+(s.date?'<span>'+e(s.label)+' 완료</span><time>'+e(s.date.slice(0,10))+'</time>':'')+'</td>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signer">'+e(s.name||'')+'</td>').join('')+'</tr></tbody></table>';
 }
-function getAsCssStr(){return getLegacyAsCssStr().replace(/#(?:1e293b|334155|475569|64748b|94a3b8|0f172a|f8fafc|d1d5db)/gi,color=>({'#1e293b':'#333333','#334155':'#444444','#475569':'#555555','#64748b':'#666666','#94a3b8':'#777777','#0f172a':'#333333','#f8fafc':'#f3f3f3','#d1d5db':'#222222'}[color.toLowerCase()]))+`
-body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','Apple SD Gothic Neo',sans-serif}
-@media screen{.page{padding:0 12px 20px}}
-.doc-title{color:#333333}
-.doc-header{border-bottom-color:#222222}
-.info-table td,.history-row:not(.head-row),.as-doc-signer{background:#ffffff}
-.status-badge{background:#f3f3f3;color:#555555;border-color:#222222}
-.info-table th{width:auto;white-space:normal;word-break:keep-all}
-.info-table th,.info-table td{padding:10px 12px;vertical-align:middle}
-.info-table td{overflow-wrap:anywhere;line-height:1.6}
-.as-doc-approval{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;margin:0 0 20px;border:1px solid #222222;border-radius:6px;overflow:hidden;color:#555555;font-size:13px;break-inside:avoid}
-.as-doc-approval th,.as-doc-approval td{border:0;border-right:1px solid #222222;border-bottom:1px solid #222222;text-align:center;vertical-align:middle;padding:7px 3px;font-weight:400;overflow-wrap:anywhere}
-.as-doc-approval th{background:#f3f3f3;height:30px}.as-doc-approval .as-doc-approval-label{width:72px;font-family:inherit;font-size:13px;font-weight:700;color:#555555;background:#f3f3f3}
-.as-doc-approval .as-doc-signature{height:74px;background:#fff}.as-doc-signature span{display:block;color:#a53d43;font-size:11px;margin:4px 0 8px}.as-doc-signature time{display:block;font-size:11px;color:#555555;white-space:nowrap}
-.as-doc-approval .as-doc-signer{height:30px;font-size:13px}
-.as-doc-approval tr>:last-child{border-right:0}.as-doc-approval tr:last-child td,.as-doc-approval .as-doc-approval-label{border-bottom:0}
-@media print{.as-doc-approval{break-inside:avoid}.as-doc-approval .as-doc-signature{height:20mm}}
+function getAsCssStr(){return getLegacyAsCssStr()+`
+@page{size:A4 portrait;margin:12mm}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;font-size:13px;line-height:1.65;color:#252525;background:#fff}
+.page{width:186mm;max-width:none;min-height:270mm;margin:0 auto;padding:0;display:block;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.as-doc-approval{width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 25px;break-inside:avoid}
+.as-doc-approval th,.as-doc-approval td{border:1px solid #aeb3b9;text-align:center;padding:8px 5px;font-weight:500}
+.as-doc-approval th{background:#f3f3f3;font-size:12px;color:#444}.as-doc-approval-label{width:48px;font-weight:650!important}
+.as-doc-signature{height:60px}.as-doc-signature span{display:block;font-size:15px;font-weight:650;color:#262626}.as-doc-signature time{display:block;font-size:10px;color:#555;margin-top:3px}.as-doc-signer{height:34px;font-size:12px}
+.as-doc-dates{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #333;border-bottom:1px solid #aeb3b9;margin-bottom:24px;break-inside:avoid}.as-doc-dates>div{display:flex;align-items:center;gap:20px;padding:13px 10px}.as-doc-dates>div+div{border-left:1px solid #aeb3b9}.as-doc-dates span{font-size:12px;color:#606060}.as-doc-dates strong{font-size:13px;font-weight:650}
+.section{margin:0 0 22px;break-inside:auto}.section h3{font-size:13px;font-weight:650;margin:0 0 9px;color:#262626;break-after:avoid}
+.info-table{border-collapse:collapse;border:1px solid #aeb3b9;border-radius:0;margin:0;break-inside:avoid}.info-table th,.info-table td{border:1px solid #aeb3b9;padding:11px 12px;vertical-align:top;overflow-wrap:anywhere}.info-table th{width:auto;background:#f3f3f3;color:#444;text-align:left;font-size:12px;font-weight:500;white-space:normal}.info-table td{font-size:13px;color:#252525;font-weight:550}
+.section-body{border:1px solid #aeb3b9;border-radius:0;padding:14px 16px;min-height:65px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;color:#252525;orphans:3;widows:3}
+.as-doc-files{list-style:none;border-top:1px solid #aeb3b9;padding-top:10px;font-size:12px;color:#586574}.as-doc-files li{display:flex;gap:10px;padding:4px 0;overflow-wrap:anywhere}.as-doc-files li>span{font-size:10px;color:#909aa5}.as-doc-files small{margin-left:auto;white-space:nowrap}
+.doc-footer{display:flex;justify-content:space-between;border:0;margin-top:26px;padding:0;color:#666;font-size:10px;break-inside:avoid}.doc-footer strong{font-size:12px;letter-spacing:.3px}
+.attach-page{padding:0;width:186mm;margin:auto}.img-wrap{max-width:100%}.img-wrap img{max-height:240mm;border-radius:0}
+@media screen{body{padding:0 12px 20px}.page{min-height:270mm}}
+@media print{body{padding:0}.page{width:186mm;padding:0}.doc-footer{margin-top:26px}.section{break-inside:auto;page-break-inside:auto}.img-wrap img{max-height:240mm}}
 `;}
