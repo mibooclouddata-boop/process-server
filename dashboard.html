@@ -661,18 +661,20 @@ tbody tr:hover td{background:var(--surface-muted)}
 #productListBody .erp-col-del:hover{color:var(--danger);background:var(--danger-bg)}
 
 /* ── Toss-style AS 접수 목록 ── */
-#tabAs .as-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-#tabAs .as-kpi-card{background:#fff!important;border:1px solid #f1f3f5!important;border-radius:16px!important;padding:18px 20px!important;box-shadow:0 1px 2px rgba(0,0,0,0.02)!important;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative;overflow:hidden}
-#tabAs .as-kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(17,24,39,0.06),0 2px 4px rgba(17,24,39,0.04)!important;border-color:#e5e8eb!important}
-#tabAs .as-kpi-card.active-filter{border-color:#004A93!important;box-shadow:0 0 0 3px rgba(0,74,147,0.1),0 1px 2px rgba(0,0,0,0.02)!important}
-#tabAs .as-kpi-icon{width:40px!important;height:40px!important;border-radius:12px!important;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-#tabAs .as-kpi-icon svg{width:20px!important;height:20px!important}
-#tabAs .as-kpi-total .as-kpi-icon{background:#e6eef7!important}
-#tabAs .as-kpi-open .as-kpi-icon{background:#f2f4f6!important}
-#tabAs .as-kpi-progress .as-kpi-icon{background:#fffbeb!important}
-#tabAs .as-kpi-done .as-kpi-icon{background:#ecfdf5!important}
-#tabAs .as-kpi-label{font-size:13px!important;font-weight:500!important;color:#6b7684!important;letter-spacing:-0.01em!important;margin-bottom:4px!important;text-transform:none!important}
-#tabAs .as-kpi-value{font-size:24px!important;font-weight:800!important;line-height:1!important;letter-spacing:-0.03em!important;color:#191f28!important}
+/* AS status cards: approved concept A. */
+#tabAs .as-kpi-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:24px}
+#tabAs .as-kpi-card{appearance:none;background:var(--card);border:1px solid #dce2e8;border-radius:10px;padding:14px 16px;min-height:100px;min-width:0;box-shadow:none;display:block;text-align:left;font-family:inherit;color:var(--text);cursor:pointer;position:relative;overflow:hidden;transition:transform .15s ease}
+#tabAs .as-kpi-card:hover{transform:none;background:var(--brand-softer);border-color:#92b3d3;box-shadow:none}
+#tabAs .as-kpi-card:active{transform:scale(.98)}
+#tabAs .as-kpi-card:focus-visible{outline:3px solid #397cba;outline-offset:3px}
+#tabAs .as-kpi-card.active-filter{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:none}
+#tabAs .as-kpi-card::after{display:none}
+#tabAs .as-kpi-label{display:block;font-size:16px;font-weight:650;color:#526174;letter-spacing:-.01em;margin:0;white-space:nowrap;text-transform:none}
+#tabAs .as-kpi-value{display:block;margin-top:6px;font-size:32px;font-weight:700;line-height:1.1;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--text)}
+#tabAs .as-kpi-card.active-filter .as-kpi-label,#tabAs .as-kpi-card.active-filter .as-kpi-value{color:#fff}
+@media(max-width:1200px){#tabAs .as-kpi-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#tabAs .as-kpi-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#tabAs .as-kpi-card{min-height:96px;padding:12px 15px}#tabAs .as-kpi-value{font-size:30px}}
+
 
 #tabAs .as-toolbar{background:transparent!important;padding:0!important;border:none!important;box-shadow:none!important;margin-bottom:16px}
 #tabAs .as-toolbar-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -959,6 +961,405 @@ tbody tr:hover td{background:var(--surface-muted)}
   .page-subtitle{font-size:13px}
   .page-title-wrap{margin-bottom:20px}
 }
+/* AS list typography: readable controls and dense table text. */
+#tabAs #asSubList{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
+#tabAs #asSubList .page-title{font-size:24px;font-weight:700;line-height:1.35;letter-spacing:-.02em}
+#tabAs #asSubList .page-subtitle{font-size:14px;color:#526174;line-height:1.5}
+#tabAs #asSubList .as-toolbar-label{font-size:14px!important;font-weight:650!important;color:#526174!important}
+#tabAs #asSubList .as-tb-btn{height:44px!important;font-size:15px!important;font-weight:650!important;white-space:nowrap;flex-shrink:0}
+#tabAs #asSubList .as-tb-btn-new{width:44px!important;padding:0!important;justify-content:center}
+#tabAs #asSubList .as-tb-btn-danger{color:#526174!important}
+#tabAs #asSubList .as-tb-btn-danger:hover{color:var(--danger)!important}
+#tabAs #asSubList .as-tb-btn-excel{color:var(--success-strong)!important}
+#tabAs #asSubList .as-search-input,#tabAs #asSubList .as-filter-select{height:44px!important;font-size:15px!important;font-weight:550!important}
+#tabAs #asSubList .as-search-input::placeholder{color:#657386}
+#tabAs #asSubList .toss-dd-btn{height:44px}
+#tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item{font-size:15px;font-weight:600}
+#tabAs #asSubList .toss-date-range{height:44px;max-width:100%;gap:6px;padding:4px 10px}
+#tabAs #asSubList .toss-date-btn{font-size:15px;font-weight:600;width:112px;min-width:0}
+#tabAs #asSubList .toss-date-btn[data-empty="1"]{color:#657386}
+#tabAs #asSubList .toss-cal-weekday{font-size:13px}
+#tabAs #asSubList .toss-cal-cell{font-size:14px}
+#tabAs #asSubList .toss-cal-quick-btn{font-size:13px;color:#526174;white-space:nowrap}
+#tabAs #asSubList .as-table-title{font-size:17px!important;font-weight:700!important}
+#tabAs #asSubList .as-result-count{font-size:14px!important;color:#526174!important}
+#tabAs #asSubList .as-erp-table thead th{font-size:14px!important;font-weight:650!important;color:#526174!important;padding:14px 12px!important;line-height:1.5}
+#tabAs #asSubList .as-erp-table tbody td{font-size:14px!important;font-weight:500!important;padding:14px 12px!important;line-height:1.5}
+#tabAs #asSubList .as-code{font-size:14px!important;font-weight:650!important}
+#tabAs #asSubList .as-text-muted{font-size:14px!important;color:#526174!important}
+#tabAs #asSubList .as-truncate{font-size:14px!important;color:#333d4b!important}
+#tabAs #asSubList .as-no-col{font-size:13px!important;color:#657386!important}
+#tabAs #asSubList .as-status-badge,#tabAs #asSubList .as-cat-badge{font-size:13px!important;font-weight:650!important}
+#tabAs #asSubList .as-file-badge{font-size:14px}
+#tabAs #asSubList .as-remark-cell input{font-family:inherit;font-size:14px!important}
+#tabAs #asSubList .as-page-info,#tabAs #asSubList .as-table-footer{font-size:13px;color:#526174}
+#tabAs #asSubList .as-page-btn{font-family:inherit;font-size:14px;font-weight:650;min-width:36px;height:36px}
+#tabAs #asSubList .as-pagination{gap:12px;flex-wrap:wrap}
+@media(max-width:600px){#tabAs #asSubList .as-toolbar-row{gap:8px}#tabAs #asSubList .toss-cal-pop{width:min(320px,calc(100vw - 56px));padding:12px}#tabAs #asSubList .as-table-header{gap:12px;flex-wrap:wrap}}
+
+/* Intake list: explicit cell boundaries, restrained status text. */
+#tabAs #asSubList .as-erp-table tbody tr{height:76px}
+#tabAs #asSubList .as-erp-table tbody tr.as-placeholder{pointer-events:none;cursor:default}
+#tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:760px}
+#tabAs #asSubList .as-erp-table thead th,#tabAs #asSubList .as-erp-table tbody td{text-align:center!important;vertical-align:middle}
+#tabAs #asSubList .as-table-card{border-color:#c5ced8!important;border-radius:10px!important;box-shadow:none!important}
+#tabAs #asSubList .as-table-header{border-bottom-color:#c5ced8!important}
+#tabAs #asSubList .as-erp-table thead th{background:#f1f4f7!important;color:#354354!important;border-bottom:1px solid #b8c4d1!important;border-right:1px solid #cbd4de!important}
+#tabAs #asSubList .as-erp-table tbody td{border-bottom:1px solid #cbd4de!important;border-right:1px solid #d6dde5!important}
+#tabAs #asSubList .as-erp-table thead th:last-child,#tabAs #asSubList .as-erp-table tbody td:last-child{border-right:0!important}
+#tabAs #asSubList .as-erp-table tbody tr:last-child td{border-bottom:0!important}
+#tabAs #asSubList .as-erp-table tbody tr:hover td{background:#f3f6f9!important}
+#tabAs #asSubList .as-erp-table tbody tr.selected td{background:#e6eef7!important}
+#tabAs #asSubList .as-status-text{font-size:14px;font-weight:650;color:#354354;white-space:nowrap}
+#tabAs #asSubList .as-deadline-cell .as-job-due{margin:0;font-size:14px}
+
+/* Grouped ERP headers: leaf columns retain sorting and resizing. */
+#tabAs #asSubList .as-erp-table thead .as-group-header th{height:32px;padding:6px 12px!important;background:#eaf0f7!important;color:#506780!important;font-size:12px!important;letter-spacing:.2px;border-right:2px solid #bbc9da!important}
+#tabAs #asSubList .as-erp-table thead .as-group-header th:last-child{border-right:0!important}
+#tabAs #asSubList .as-erp-table thead .as-column-header th{height:40px;padding:9px 12px!important}
+#tabAs #asSubList .as-erp-table tbody tr{height:45px}
+#tabAs #asSubList .as-erp-table tbody td{padding:10px 12px!important}
+#tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:450px}
+#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(2),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(5),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(7),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(11),#tabAs #asSubList .as-erp-table tbody td:nth-child(2),#tabAs #asSubList .as-erp-table tbody td:nth-child(5),#tabAs #asSubList .as-erp-table tbody td:nth-child(7),#tabAs #asSubList .as-erp-table tbody td:nth-child(11){border-right:2px solid #bbc9da!important}
+
+/* AS intake dialog readability and centered date values. */
+#tabAs #asSubList .toss-date-btn{text-align:center}
+#asModal{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
+#asModal .modal-box{max-width:640px;max-height:90dvh}
+#asModal .modal-header{padding:22px 24px 0;flex-shrink:0}
+#asModal .modal-header h3{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.35}
+#asModal .modal-close{width:36px;height:36px;font-size:22px;flex-shrink:0}
+#asModal .modal-body{padding:20px 24px}
+#asModal .modal-field{min-width:0;margin-bottom:16px}
+#asModal .modal-field label{font-size:15px!important;font-weight:650!important;color:#333d4b!important;letter-spacing:-.01em;line-height:1.5;margin-bottom:7px}
+#asModal .modal-field input:not([type="file"]):not([type="hidden"]),#asModal .modal-field select,#asModal .modal-field textarea{font-family:inherit;font-size:15px!important;font-weight:500;line-height:1.5;min-width:0;min-height:44px;padding:10px 12px!important;color:var(--text);box-sizing:border-box}
+#asModal .modal-field input::placeholder,#asModal .modal-field textarea::placeholder{color:#657386;opacity:1}
+#asModal .modal-field textarea{min-height:80px!important}
+#asModal .modal-field textarea:focus{outline:none;border-color:var(--brand)!important;box-shadow:var(--shadow-focus)}
+#asModal .modal-field input:focus,#asModal .modal-field select:focus{border-color:var(--brand)!important}
+#asModal .modal-field label:has(#asFiles){font-size:14px!important;font-weight:500!important;color:#526174!important;line-height:1.6}
+#asModal .modal-field label:has(#asFiles) svg{flex-shrink:0}
+#asModal #asProductSuggest>div{font-size:15px!important;padding:10px 12px!important;line-height:1.5}
+#asModal #asNewFiles>span,#asModal #asExistingFiles>span{font-size:14px!important;line-height:1.5;max-width:100%;overflow-wrap:anywhere}
+#asModal #asExistingFiles button{font-size:18px!important;min-width:28px;min-height:28px;flex-shrink:0;color:#526174!important}
+#asModal .modal-msg{font-size:14px;line-height:1.5;margin:0 24px 16px;flex-shrink:0}
+#asModal .modal-footer{padding:0 24px 22px;flex-shrink:0}
+#asModal .modal-footer .admin-btn{font-family:inherit;font-size:15px;font-weight:650;min-height:44px;padding:10px 20px;white-space:nowrap}
+@media(max-width:600px){#asModal{padding:12px}#asModal .modal-box{max-height:calc(100dvh - 24px)}#asModal .modal-header{padding:18px 18px 0}#asModal .modal-body{padding:18px}#asModal .modal-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}#asModal .modal-footer{padding:0 18px 18px}#asModal .modal-msg{margin-left:18px;margin-right:18px}#asModal .modal-field input:not([type="file"]):not([type="hidden"]),#asModal .modal-field select,#asModal .modal-field textarea{font-size:16px!important}}
+
+#asModal .as-intake-category{max-width:160px}
+#asModal .as-intake-category select{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff}
+#asModal .modal-row.as-intake-location{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#asModal .modal-row.as-intake-material{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)!important}
+#asDeliveryAgreedDateHint{display:block;font-size:13px;color:#526174;margin-top:6px}
+@media(max-width:480px){#asModal .modal-row.as-intake-location,#asModal .modal-row.as-intake-material{grid-template-columns:1fr!important}}
+
+/* Development notice: centered, readable and scoped to this dialog. */
+#devNotice{border:0;padding:0;margin:auto;background:transparent;width:min(340px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;border-radius:16px;color:#202c3a;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
+#devNotice::backdrop{background:rgba(15,23,42,.42);backdrop-filter:blur(2px)}
+#devNotice .modal-box{position:relative;max-width:none;min-height:260px;max-height:none;border-radius:16px;background:#fcfdff;box-shadow:0 16px 48px rgba(15,35,60,.18);animation:none}
+#devNotice .modal-header{display:flex;align-items:center;justify-content:center;flex:1;padding:64px 44px 36px}
+#devNotice .modal-header h3{display:block;width:100%;margin:0;font-size:24px;font-weight:700;line-height:1.4;letter-spacing:-.02em;text-align:center;color:#202c3a;word-break:keep-all}
+#devNotice .modal-header h3::before{display:none}
+#devNotice .modal-close{position:absolute;right:10px;top:10px;width:40px;height:40px;background:transparent;color:#526174;font-family:inherit;font-size:26px;font-weight:400;line-height:1;border-radius:10px;display:flex;align-items:center;justify-content:center}
+#devNotice .modal-close:hover{background:#eaf0f6;color:#202c3a}
+#devNotice .modal-footer{padding:0 24px 24px;flex-shrink:0;display:block}
+#devNotice .admin-btn{width:100%;min-height:48px;margin:0;padding:12px 20px;border:1px solid #004a93;border-radius:10px;background:#004a93;color:#fff;font-family:inherit;font-size:16px;font-weight:650;line-height:1.4;white-space:nowrap;box-shadow:none}
+#devNotice .admin-btn:hover{background:#003a75;border-color:#003a75}
+#devNotice .admin-btn:active{transform:scale(.98)}
+#devNotice button:focus-visible{outline:3px solid #397cba;outline-offset:3px}
+/* Sidebar typography preserves the existing navigation and brand. */
+.sidebar .tabs{gap:4px;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
+.sidebar .tab{font-family:inherit;font-size:16px;font-weight:650;line-height:1.5;min-height:48px;padding:12px 16px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
+.sidebar .tab.on{font-weight:700;color:var(--brand);background:var(--brand-soft)}
+.sidebar .as-submenu{padding-left:14px}
+.sidebar .as-submenu.open{max-height:132px}
+.sidebar .tab-sub{font-family:inherit;font-size:15px;font-weight:550;line-height:1.5;min-height:44px;padding:10px 14px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
+.sidebar .tab-sub.on{font-weight:650;color:var(--brand);background:var(--brand-soft)}
+.sidebar .tab:focus-visible,.sidebar .tab-sub:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+@media(max-width:768px){.sidebar>.tabs{display:flex;min-width:0;max-width:100%;gap:4px}.sidebar .tab{font-size:15px;min-height:44px;flex-shrink:0;padding:10px 14px}.sidebar .as-submenu{display:none}.sidebar .as-submenu.open{display:contents}.sidebar .tab-sub{width:auto;flex-shrink:0;font-size:14px;min-height:44px;padding:10px 12px;transform:none;opacity:1}}
+/* AS statistics uses actual reception data; no chart dependency. */
+#asSubStats{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;color:#202c3a}
+#asSubStats h2{font-size:18px;font-weight:650;margin:0 0 6px}
+#asSubStats p{font-size:14px;line-height:1.6;color:#526174}
+#asSubStats button,#asSubStats select{font-family:inherit;font-size:15px;font-weight:600}
+.as-stats-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin:12px 0 20px}
+#asSubStats .as-stats-actions button{min-height:40px;padding:8px 12px;border:1px solid #dce2e8;background:var(--card);border-radius:8px;color:#526174;font-size:14px;font-weight:500;cursor:pointer}
+.as-stats-actions button:hover{background:#f5f7fa}
+.as-stats-chart-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+#asSubStats .as-stats-chart-heading h2{margin:0}
+#asStatsYear{height:40px;min-width:112px;padding:0 12px;border:1px solid #c6d0dc;border-radius:8px;background:var(--card);color:#202c3a;cursor:pointer}
+@media(max-width:480px){.as-stats-chart-heading{align-items:flex-start;flex-direction:column}.as-stats-actions{justify-content:flex-start}}
+#asStatsMessage:not(:empty){padding:16px;border:1px solid #dce2e8;border-radius:10px;margin:16px 0;background:var(--card)}
+.as-stats-summary{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,1fr));gap:0;padding:22px 0;margin-bottom:20px;border-bottom:1px solid #dce2e8}
+.as-stats-summary>div{min-width:0;padding:0 24px}
+.as-stats-summary>div:first-child{padding-left:0}
+.as-stats-summary>div+div{border-left:1px solid #dce2e8}
+.as-stats-summary>div>span{display:block;font-size:15px;font-weight:650;color:#526174;line-height:1.5}
+.as-stats-summary strong{display:block;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.025em;margin:8px 0;line-height:1.2;color:#202c3a}
+.as-stats-summary .as-stats-month-summary strong{font-size:36px;color:#004a93}
+#asSubStats .as-stats-summary p{font-size:14px;line-height:1.5;margin:8px 0 0;color:#526174;overflow-wrap:anywhere}
+.as-stats-chart-panel{padding:24px;border:1px solid #dce2e8;border-radius:12px;background:var(--card);margin-bottom:20px}
+/* Shared plot coordinates: 220px high, baseline 208px, maximum bar 176px. */
+.as-stats-chart-scroll{overflow-x:auto;margin-top:20px;padding:3px}
+.as-stats-chart{position:relative;display:grid;grid-template-columns:repeat(12,minmax(44px,1fr));gap:0;min-width:672px}
+.as-stats-month{display:flex;flex-direction:column;align-items:center;gap:8px;border:0;background:transparent;padding:8px 4px 10px;border-radius:6px;color:#526174;cursor:pointer;font:inherit;font-size:14px;line-height:22px}
+.as-stats-month:hover{background:#f4f7fa}
+.as-stats-month.is-comparison{color:#004a93;font-weight:700}
+.as-stats-month:focus-visible{outline:2px solid #004a93;outline-offset:1px}
+.as-stats-value{position:absolute;left:50%;transform:translate(-50%,-100%);padding:0 4px;background:var(--card);border-radius:3px;white-space:nowrap;font-size:15px;font-weight:650;line-height:22px;font-variant-numeric:tabular-nums;color:#202c3a;z-index:3}
+.as-stats-plot-space{position:relative;height:220px;width:100%;flex-shrink:0}
+.as-stats-bar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:64%;max-width:36px;background:#c6d7e7;border-radius:4px 4px 0 0}
+.is-comparison .as-stats-bar,.as-stats-month:hover .as-stats-bar{background:#86a9cd}
+.as-stats-point{position:absolute;left:50%;width:8px;height:8px;box-sizing:border-box;transform:translate(-50%,-50%);border:2px solid #004a93;border-radius:50%;background:#fff;z-index:2}
+.is-comparison .as-stats-point,.as-stats-month:hover .as-stats-point{background:#004a93}
+/* Matches the month button's top padding; overlays only the plot. */
+.as-stats-line{position:absolute;top:8px;left:0;width:100%;height:220px;pointer-events:none;z-index:1}
+.as-stats-line svg{display:block;width:100%;height:100%;overflow:visible}
+.as-reason-table-wrap{margin-top:20px;min-width:0}
+#asSubStats .as-reason-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:15px}
+#asSubStats .as-reason-table th{padding:10px 12px;text-align:right;font-size:14px;font-weight:600;color:#526174;background:#f5f7fa;border-bottom:1px solid #dce2e8}
+#asSubStats .as-reason-table td{padding:12px;text-align:right;border-bottom:1px solid #edf0f4;font-variant-numeric:tabular-nums;vertical-align:middle}
+#asSubStats .as-reason-table th:first-child,#asSubStats .as-reason-table td:first-child{text-align:left;width:48%}
+#asSubStats .as-reason-table tr:last-child td{border-bottom:0}
+.as-reason-name{display:block;font-weight:600;overflow-wrap:anywhere;margin-bottom:8px}
+.as-reason-track{display:block;width:100%;height:6px;background:#edf2f7;border-radius:3px;overflow:hidden}
+.as-reason-fill{display:block;height:100%;background:#5c88b5;border-radius:3px}
+#asSubStats .as-reason-table td:last-child{color:#526174}
+@media(max-width:480px){#asSubStats .as-reason-table th,#asSubStats .as-reason-table td{padding:12px 6px}}
+#asSubStats .as-stats-footnote{font-size:13px}
+.sidebar #asSubmenu.open{max-height:180px}
+#asSubStats button:focus-visible,#asSubStats select:focus-visible{outline:3px solid #397cba;outline-offset:2px}
+@media(max-width:768px){.as-stats-summary{grid-template-columns:1fr;padding:4px 0 8px;gap:0}.as-stats-summary>div,.as-stats-summary>div:first-child{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:center;padding:16px 0}.as-stats-summary>div+div{border-left:0;border-top:1px solid #edf0f4}.as-stats-summary strong{margin:0;font-size:28px}.as-stats-summary .as-stats-month-summary strong{font-size:32px}#asSubStats .as-stats-summary p{grid-column:1/-1;margin:0}.as-stats-chart-panel{padding:18px}}
+
+/* 캘린더 팝오버 */
+#appDatePicker .toss-cal-pop{position:absolute;top:calc(100% + 8px);left:0;width:320px;background:var(--card);border:1px solid var(--border-strong);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:16px;z-index:100;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s var(--ease-smooth),transform .18s var(--ease-smooth);cursor:default}
+#appDatePicker .toss-cal-pop.is-open{opacity:1;transform:translateY(0);pointer-events:auto}
+#appDatePicker .toss-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+#appDatePicker .toss-cal-title{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.02em;flex:1;text-align:center}
+#appDatePicker .toss-cal-nav{width:32px;height:32px;border:none;background:var(--surface-muted);border-radius:var(--r-md);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);transition:background var(--ease),color var(--ease);flex-shrink:0}
+#appDatePicker .toss-cal-nav:hover{background:var(--border-strong);color:var(--text)}
+#appDatePicker .toss-cal-nav svg{width:16px;height:16px}
+#appDatePicker .toss-cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+#appDatePicker .toss-cal-weekday{text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:-0.01em;padding:8px 0}
+#appDatePicker .toss-cal-weekday.sun{color:#e35d5d}
+#appDatePicker .toss-cal-weekday.sat{color:var(--brand)}
+#appDatePicker .toss-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px}
+#appDatePicker .toss-cal-cell{height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-body);cursor:pointer;user-select:none;position:relative;border-radius:var(--r-sm);transition:background var(--ease),color var(--ease)}
+#appDatePicker .toss-cal-cell.out{color:var(--text-faint);cursor:default}
+#appDatePicker .toss-cal-cell.out:hover{background:transparent;color:var(--text-faint)}
+#appDatePicker .toss-cal-cell:not(.out):hover{background:var(--brand-softer);color:var(--brand)}
+#appDatePicker .toss-cal-cell.today{font-weight:800}
+#appDatePicker .toss-cal-cell.today::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--brand)}
+#appDatePicker .toss-cal-cell.in-range{background:var(--brand-softer);color:var(--brand);border-radius:0}
+#appDatePicker .toss-cal-cell.range-start,#appDatePicker .toss-cal-cell.range-end,#appDatePicker .toss-cal-cell.single{background:var(--brand);color:#fff;font-weight:800}
+#appDatePicker .toss-cal-cell.range-start{border-radius:var(--r-sm) 0 0 var(--r-sm)}
+#appDatePicker .toss-cal-cell.range-end{border-radius:0 var(--r-sm) var(--r-sm) 0}
+#appDatePicker .toss-cal-cell.range-start.range-end,#appDatePicker .toss-cal-cell.single{border-radius:var(--r-sm)}
+#appDatePicker .toss-cal-cell.range-start.today::after,#appDatePicker .toss-cal-cell.range-end.today::after,#appDatePicker .toss-cal-cell.single.today::after{background:#fff}
+#appDatePicker .toss-cal-cell.in-range.today::after{background:var(--brand)}
+#appDatePicker .toss-cal-quick{display:flex;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+#appDatePicker .toss-cal-quick-btn{flex:1;min-width:0;padding:8px 4px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--card);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;letter-spacing:-0.01em;transition:background var(--ease),border-color var(--ease),color var(--ease);font-family:inherit}
+#appDatePicker .toss-cal-quick-btn:hover{background:var(--surface-muted);border-color:var(--border-stronger);color:var(--text)}
+#appDatePicker .toss-cal-quick-btn.reset{color:var(--text-muted)}
+#appDatePicker .toss-cal-quick-btn.reset:hover{color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg)}
+
+#appDatePicker{padding:0;border:0;background:transparent;width:min(352px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;margin:auto;font-family:inherit;color:var(--text)}
+#appDatePicker::backdrop{background:rgba(15,23,42,.16)}
+#appDatePicker .toss-cal-pop{position:relative;top:auto;left:auto;width:100%;box-sizing:border-box;opacity:1;transform:none;pointer-events:auto;box-shadow:none}
+#appDatePicker .toss-cal-cell{border:0;background:transparent;font-family:inherit;font-size:14px}
+#appDatePicker .toss-cal-cell.single{background:var(--brand);color:white}
+#appDatePicker .toss-cal-cell:disabled{color:var(--text-faint);cursor:default;background:transparent}
+#appDatePicker .toss-cal-weekday,#appDatePicker .toss-cal-quick-btn{font-size:13px}
+#appDatePicker button:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+.app-date-input{cursor:pointer}
+.app-date-input::-webkit-calendar-picker-indicator{pointer-events:none}
+
+
+
+/* A/S overview: preserve theme and behavior, respond to available content width. */
+.main:has(#asSubStats){min-width:0}
+#asSubStats{container:as-overview / inline-size;max-width:1400px;width:100%;min-width:0;margin-inline:auto;--overview-gap:24px}
+#asSubStats *{box-sizing:border-box}
+#asSubStats .as-overview-heading{margin:0 0 28px}
+#asSubStats .as-overview-heading h2{font-size:24px;line-height:1.4;letter-spacing:-.025em;margin:0}
+#asSubStats .as-overview-heading p{font-size:14px;line-height:1.6;margin:6px 0 0;color:#526174}
+#asSubStats .as-overview-section{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:0 0 16px}
+#asSubStats .as-overview-section h2{font-size:17px;line-height:1.5;margin:0;letter-spacing:-.02em}
+#asSubStats .as-overview-section>span,#asSubStats .as-period-basis{font-size:13px;line-height:1.6;color:#526174;margin:0}
+#asSubStats .as-overview-kpis{display:grid;grid-template-columns:1.15fr repeat(4,minmax(0,1fr));border:1px solid #dce2e8;border-radius:12px;overflow:hidden;margin:0 0 32px;background:var(--card)}
+#asSubStats .as-overview-kpis button{position:relative;display:grid;grid-template-rows:auto 48px;align-content:center;gap:10px;min-width:0;min-height:128px;text-align:left;padding:20px;border:0;border-right:1px solid #dce2e8;border-radius:0;background:var(--card);cursor:pointer;font-family:inherit}
+#asSubStats .as-overview-kpis button:last-child{border-right:0}
+#asSubStats .as-overview-kpis button:hover{background:var(--brand-softer)}
+#asSubStats .as-overview-kpis button:first-child{background:#eef5fd}
+#asSubStats .as-overview-kpis span{display:block;padding-right:22px;font-size:14px;line-height:20px;color:#526174;white-space:nowrap}
+#asSubStats .as-overview-kpis strong{display:flex;align-items:baseline;align-self:end;font-size:32px;line-height:44px;font-weight:650;color:#223d5e;margin:0;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+#asSubStats .as-overview-kpis button:first-child strong{font-size:38px;color:var(--brand)}
+#asSubStats .as-overview-kpis button:first-child span{color:var(--brand);font-weight:650}
+#asSubStats .as-overview-kpis small{position:absolute;top:20px;right:16px;font-size:16px;line-height:20px;color:#526174}
+#asSubStats .as-overview-period{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #dce2e8;padding-top:28px;margin:0}
+#asSubStats .as-period-basis{margin-top:4px}
+#asSubStats #asStatsYear{height:44px;min-width:120px;flex-shrink:0;font-size:14px;border-radius:8px}
+#asSubStats .as-stats-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:24px 0;margin:0 0 24px;border-bottom:1px solid #dce2e8}
+#asSubStats .as-stats-summary>div{display:flex;flex-direction:column;padding:0 24px;min-width:0}
+#asSubStats .as-stats-summary>div:first-child{padding-left:0}
+#asSubStats .as-stats-summary>div:last-child{padding-right:0}
+#asSubStats .as-stats-summary>div+div{border-left:1px solid #dce2e8;border-top:0}
+#asSubStats .as-stats-summary>div>span{font-size:14px;line-height:22px;font-weight:600;min-height:44px;display:flex;align-items:flex-start}
+#asSubStats .as-stats-summary strong{font-size:30px;line-height:40px;margin:6px 0 0}
+#asSubStats .as-stats-summary .as-stats-month-summary strong{font-size:30px;color:var(--brand)}
+#asSubStats .as-stats-summary p{font-size:13px;line-height:21px;margin:6px 0 0;color:#526174}
+#asSubStats .as-overview-charts{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+#asSubStats .as-stats-chart-panel{min-width:0;margin:0;padding:24px;border-radius:12px;border:1px solid #dce2e8;background:var(--card)}
+#asSubStats .as-stats-chart-panel h2{font-size:17px;line-height:26px;margin:0 0 6px}
+#asSubStats .as-stats-chart-heading{margin:0;display:block}
+#asSubStats .as-stats-chart-panel>p{font-size:13px;line-height:21px;color:#526174}
+#asSubStats #asStatsChartHint,#asSubStats #asStatsReasonsHint{min-height:42px}
+#asSubStats .as-stats-chart-scroll{min-width:0;max-width:100%;margin-top:16px;padding:3px;overscroll-behavior-x:contain}
+#asSubStats .as-stats-chart{min-width:480px;grid-template-columns:repeat(12,minmax(40px,1fr))}
+#asSubStats .as-stats-month{padding:8px 2px 10px;font-size:13px}
+#asSubStats .as-stats-value{font-size:13px;padding:0 2px}
+#asSubStats .as-stats-bar{background:#d5dfe9;max-width:30px}
+#asSubStats .as-stats-month:hover .as-stats-bar{background:#b6c9df}
+#asSubStats .as-stats-month.is-comparison .as-stats-bar{background:var(--brand)}
+#asSubStats .as-stats-plot-space:after{content:'';position:absolute;left:0;right:0;bottom:11px;height:1px;background:#dce2e8}
+#asSubStats .as-reason-table-wrap{margin-top:16px;min-width:0}
+#asSubStats .as-reason-table{width:100%;min-width:0}
+#asSubStats .as-reason-table th,#asSubStats .as-reason-table td{border:0;border-bottom:1px solid #edf1f5;background:transparent;padding:10px 8px;white-space:normal}
+#asSubStats .as-reason-table th{font-size:12px;line-height:20px}
+#asSubStats .as-reason-table th:first-child{width:30%;padding-left:0}
+#asSubStats .as-reason-table th:nth-child(2){width:44%;text-align:left}
+#asSubStats .as-reason-table th:last-child{width:26%;padding-right:0}
+#asSubStats .as-reason-table td:first-child{padding-left:0}
+#asSubStats .as-reason-table td:last-child{padding-right:0;white-space:nowrap}
+#asSubStats .as-reason-name{margin:0;font-size:13px;line-height:20px;font-weight:600;word-break:keep-all;overflow-wrap:anywhere}
+#asSubStats .as-reason-track{height:8px}
+#asSubStats .as-reason-table td strong{display:block;font-size:14px;line-height:20px;color:#324c6a}
+#asSubStats .as-reason-table td small{display:block;font-size:12px;line-height:18px;color:#526174}
+#asSubStats .as-stats-chart-panel .as-stats-footnote{font-size:12px;line-height:20px;margin:16px 0 0}
+#asSubStats .as-stats-actions{display:flex;justify-content:flex-end;gap:8px;margin:20px 0 0;flex-wrap:wrap}
+#asSubStats .as-stats-actions button{min-height:44px;padding:10px 16px;white-space:nowrap;border-radius:8px}
+#asSubStats #asStatsMessage:not(:empty){margin:0 0 24px;padding:16px 20px;font-size:13px;line-height:1.7;border-radius:12px;overflow-wrap:anywhere}
+#tabAs .as-status-select{height:44px;padding:0 30px 0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--card);color:var(--text-body);font-family:inherit;font-size:14px;cursor:pointer}
+@container as-overview (max-width:1080px){#asSubStats .as-overview-charts{grid-template-columns:1fr}#asSubStats #asStatsChartHint,#asSubStats #asStatsReasonsHint{min-height:0}#asSubStats .as-stats-chart-panel{padding:24px}}
+@container as-overview (max-width:760px){#asSubStats .as-overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#asSubStats .as-overview-kpis button{min-height:108px;border-bottom:1px solid #dce2e8}#asSubStats .as-overview-kpis button:first-child{grid-column:1/-1;grid-template-columns:1fr auto;grid-template-rows:auto;align-items:center;min-height:92px;padding-right:44px;border-right:0}#asSubStats .as-overview-kpis button:first-child strong{align-self:center}#asSubStats .as-overview-kpis button:nth-child(odd){border-right:0}#asSubStats .as-overview-kpis button:nth-last-child(-n+2){border-bottom:0}#asSubStats .as-stats-summary>div{padding:0 16px}}
+@container as-overview (max-width:560px){#asSubStats .as-overview-heading{margin-bottom:24px}#asSubStats .as-overview-heading h2{font-size:22px}#asSubStats .as-overview-kpis{margin-bottom:24px}#asSubStats .as-overview-kpis button{padding:16px}#asSubStats .as-overview-kpis small{top:16px}#asSubStats .as-overview-kpis strong{font-size:28px}#asSubStats .as-overview-period{padding-top:24px;flex-wrap:wrap}#asSubStats .as-stats-summary{grid-template-columns:1fr;padding:8px 0 0}#asSubStats .as-stats-summary>div,#asSubStats .as-stats-summary>div:first-child,#asSubStats .as-stats-summary>div:last-child{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:16px 0}#asSubStats .as-stats-summary>div+div{border-left:0;border-top:1px solid #edf0f4}#asSubStats .as-stats-summary>div>span{min-height:0;align-self:center;display:block}#asSubStats .as-stats-summary strong,#asSubStats .as-stats-summary .as-stats-month-summary strong{font-size:27px;line-height:36px;margin:0}#asSubStats .as-stats-summary p{grid-column:1/-1;margin:0}#asSubStats .as-overview-charts{gap:16px}#asSubStats .as-stats-chart-panel{padding:18px 16px}#asSubStats .as-stats-actions{display:grid;grid-template-columns:1fr 1fr}#asSubStats #asStatsMessage:not(:empty){padding:14px 16px}}
+
+#asSubStats .as-daily-section{border-top:1px solid #dce2e8;padding-top:22px;margin-top:24px;min-width:0}
+#asSubStats .as-daily-section h3{font-size:15px;line-height:24px;font-weight:650;margin:0 0 4px}
+#asSubStats .as-daily-section p{font-size:12px;line-height:20px;color:#526174;margin:0}
+#asSubStats .as-daily-scroll{overflow-x:auto;max-width:100%;margin-top:16px;padding:4px 2px 8px;overscroll-behavior-x:contain}
+#asSubStats .as-daily-chart{display:grid;gap:0;width:100%;min-width:620px}
+#asSubStats .as-daily-day{text-align:center;font-size:11px;line-height:22px;color:#526174;font-variant-numeric:tabular-nums}
+#asSubStats .as-daily-plot{position:relative;height:116px;border-bottom:1px solid #dce2e8;margin-bottom:4px}
+#asSubStats .as-daily-bar{position:absolute;bottom:0;left:25%;width:50%;max-width:18px;background:#5c88b5;border-radius:3px 3px 0 0}
+#asSubStats .as-daily-value{position:absolute;left:0;right:0;font-size:10px;line-height:16px;color:#526174}
+#asSubStats .as-daily-day:hover .as-daily-bar{background:var(--brand)}
+#asSubStats .as-daily-scroll:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+#asSubStats #asDailyEmpty:not([hidden]){margin-top:12px}
+
+#asSubStats .as-trend-stack{display:grid;gap:24px;min-width:0}
+#asSubStats .as-daily-section{padding:24px;margin:0;border:1px solid #dce2e8;border-radius:12px;background:var(--card)}
+#asSubStats .as-stats-chart-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0}
+#asSubStats .as-stats-chart-heading h2,#asSubStats .as-stats-chart-heading h3{font-size:17px;line-height:26px;margin:0;font-weight:650}
+#asSubStats .as-chart-unit{flex-shrink:0;font-size:12px;line-height:20px;color:#526174;white-space:nowrap}
+#asSubStats .as-chart-sr-only{position:absolute!important;width:1px;height:1px;min-height:0!important;padding:0!important;margin:-1px!important;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@container as-overview (max-width:560px){#asSubStats .as-trend-stack{gap:16px}#asSubStats .as-daily-section{padding:18px 16px}#asSubStats .as-stats-chart-heading{flex-direction:row}}
+
+/* Match the trend panels and align the full analytics columns. */
+#asSubStats .as-overview-charts{align-items:stretch}
+#asSubStats .as-trend-stack{grid-template-rows:auto 1fr}
+#asSubStats .as-daily-section{min-height:364px;display:flex;flex-direction:column}
+#asSubStats .as-daily-scroll{margin-top:16px;padding-top:11px;padding-bottom:8px;flex:1}
+#asSubStats .as-daily-plot{height:220px}
+#asSubStats .as-daily-bar{bottom:12px}
+#asSubStats .as-daily-value{transform:translateY(-12px)}
+#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:100%}
+@container as-overview (max-width:1080px){#asSubStats .as-overview-charts{align-items:start}#asSubStats .as-trend-stack{grid-template-rows:auto auto}#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:auto}}
+@container as-overview (max-width:560px){#asSubStats .as-daily-section{min-height:352px}}
+</style>
+<style id="as-overview-final-styles">#asSubStats .month-comparison{display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-top:18px;padding:15px 16px;background:#f3f6fa;border:1px solid #e2e8f0;border-radius:8px}
+#asSubStats .comparison-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+#asSubStats .comparison-main>span{font-size:13px;color:#526174}
+#asSubStats .comparison-main strong,#asSubStats .reason-top-summary strong{font-size:25px;line-height:1.4;color:#254566;font-weight:700;font-variant-numeric:tabular-nums}
+#asSubStats .comparison-detail{display:flex;flex-direction:column;gap:4px;text-align:right}
+#asSubStats .comparison-detail>span,#asSubStats .reason-top-summary>span{font-size:13px;font-weight:600;color:#42566f;line-height:1.6}
+#asSubStats .comparison-detail small{font-size:11px;color:#62768e}
+@container as-overview (max-width:560px){#asSubStats .month-comparison{display:block;padding:14px}#asSubStats .comparison-detail{margin-top:8px;text-align:left}}
+
+#asSubStats .as-overview-period{display:none!important}
+#asSubStats .as-overview-kpis{margin-bottom:24px}
+#asSubStats .chart-header-controls{display:flex;align-items:center;gap:12px;flex-shrink:0}
+#asSubStats .chart-header-controls #asStatsYear{height:36px;min-width:104px;padding:0 10px;font-size:13px}
+#asSubStats .as-trend-stack>.as-stats-chart-panel>.as-stats-chart-heading{flex-wrap:wrap;row-gap:10px}
+#asSubStats .as-stats-chart-heading h2{white-space:nowrap}
+@container as-overview (max-width:560px){#asSubStats .chart-header-controls{gap:8px}#asSubStats .chart-header-controls #asStatsYear{min-width:94px;height:40px}#asSubStats .as-trend-stack>.as-stats-chart-panel>.as-stats-chart-heading h2{font-size:16px}}
+
+#asSubStats #asStatsReasonsHint,#asSubStats .as-stats-footnote{display:none!important}
+
+#asSubStats .reason-donut{display:grid;grid-template-columns:180px minmax(0,1fr);gap:22px;align-items:center;padding:24px 0 20px;border-bottom:1px solid #e4e9ef;margin-bottom:16px}
+#asSubStats .reason-donut-ring{width:180px;height:180px;position:relative;border-radius:50%;display:grid;place-items:center}
+#asSubStats .reason-donut-center{width:124px;height:124px;background:white;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
+#asSubStats .reason-donut-center strong{font-size:27px;font-weight:700;color:#274462;font-variant-numeric:tabular-nums}
+#asSubStats .reason-donut-center span{font-size:12px;color:#61758f}
+#asSubStats .reason-donut-legend{display:grid;gap:3px;min-width:0}
+#asSubStats .reason-donut-legend button{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:7px;align-items:center;font-size:12px;font-weight:500;padding:6px;border:0;border-radius:4px;background:transparent;text-align:left;cursor:pointer;color:#526174}
+#asSubStats .reason-donut-legend button.active,#asSubStats .reason-donut-legend button:hover{background:#eef3f9;color:#254566}
+#asSubStats .reason-donut-legend i{width:8px;height:8px;border-radius:2px}
+#asSubStats .reason-donut-legend b{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+@container as-overview (max-width:560px){#asSubStats .reason-donut{grid-template-columns:1fr;justify-items:center;gap:18px}#asSubStats .reason-donut-legend{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}}
+
+#asSubStats .reason-donut{display:block;padding:8px 0 0;margin:0;border:0;width:100%;min-width:0}
+#asSubStats .reason-donut-svg{display:block;width:100%;height:auto;max-height:540px;overflow:visible}
+#asSubStats .reason-donut-svg text{font-family:inherit;fill:#526174;font-size:13px}
+#asSubStats .reason-donut-svg #donut-percent{font-size:30px;font-weight:700;fill:#254566}
+#asSubStats .reason-donut-svg #donut-label{font-size:13px}
+#asSubStats .donut-segment{cursor:pointer;opacity:.7;transition:opacity .12s}
+#asSubStats .donut-segment.active{opacity:1;filter:brightness(.94)}
+#asSubStats .donut-callout{cursor:pointer}
+#asSubStats .donut-callout.active text{fill:#203e60;font-weight:700}
+#asSubStats .donut-callout.active .donut-leader{stroke-width:2}
+#asSubStats .donut-share{font-weight:650}
+#asSubStats .donut-callout:focus-visible{outline:none}#asSubStats .donut-callout:focus-visible text{text-decoration:underline}
+#asSubStats .donut-segment:focus-visible{outline:none;stroke-width:42}
+#asSubStats .as-overview-charts>section .as-reason-table-wrap{margin-top:20px;border-top:1px solid #e4e9ef;padding-top:12px}
+@media(prefers-reduced-motion:reduce){#asSubStats .donut-segment{transition:none}}
+
+/* Selected concept 02: thick ring with linked callouts. */
+#asSubStats .donut-segment{opacity:.85;transition:opacity .12s,stroke-width .12s}
+#asSubStats .donut-segment.active,#asSubStats .donut-segment:focus-visible{stroke-width:56;opacity:1;filter:none}
+@media(prefers-reduced-motion:reduce){#asSubStats .donut-segment{transition:none}}
+
+/* Equal trend rows and a shared bottom edge on desktop. */
+#asSubStats .as-overview-charts{align-items:stretch}
+#asSubStats .as-trend-stack{grid-template-rows:repeat(2,1fr);align-content:start}
+#asSubStats .as-trend-stack>.as-stats-chart-panel{display:flex;flex-direction:column;min-height:0}
+#asSubStats .as-stats-chart-scroll,#asSubStats .as-daily-scroll{flex:0 0 auto;margin-top:auto}
+#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:auto;display:flex;flex-direction:column}
+#asSubStats .reason-donut{padding-top:24px}
+#asSubStats .as-overview-charts>section .as-reason-table-wrap{margin-top:auto;padding-top:8px}
+#asSubStats .as-reason-table td{padding-top:5px;padding-bottom:5px}
+#asSubStats .reason-donut-svg #donut-percent,#asSubStats .reason-donut-svg #donut-label{text-anchor:middle;dominant-baseline:central}
+@container as-overview (max-width:1080px){#asSubStats .as-overview-charts{align-items:start}}
+
+#asSubStats .monthly-line-overlay{position:absolute;top:8px;left:0;width:100%;height:220px;pointer-events:none;z-index:2;overflow:visible}
+#asSubStats .monthly-chart-legend{display:flex;justify-content:flex-end;gap:16px;align-items:center;flex-wrap:wrap;margin:10px 0 2px;font-size:12px;color:#526174;line-height:20px}
+#asSubStats .monthly-chart-legend span{display:inline-flex;align-items:center;gap:6px}
+#asSubStats .monthly-chart-legend i{display:inline-block;width:20px;border-top:2px solid #246cbd}
+#asSubStats .monthly-chart-legend .average-key{border-top:2px dashed #a16b34}
+
+#asSubStats .reason-top-summary{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0 4px;color:#526174}
+
+#asSubStats .reason-top-summary strong{overflow-wrap:anywhere;text-wrap:balance}
+#asSubStats .reason-top-summary small{font-size:12px;line-height:18px}
+
+#asSubStats .donut-segment{opacity:.55}
+#asSubStats .donut-segment.is-leading{opacity:1;stroke-width:48}
+#asSubStats .donut-segment.active,#asSubStats .donut-segment:focus-visible{opacity:1;stroke-width:48}
+
+#asSubStats .as-overview-period,#asSubStats .as-stats-summary,#asSubStats #asStatsReasonsHint,#asSubStats .as-stats-footnote{display:none!important}
+#asSubStats .as-overview-kpis{margin-bottom:24px}
+#asSubStats #asDailyHint{position:static!important;width:auto;height:auto;clip-path:none;white-space:normal;margin:7px 0 0;font-size:12px}
 </style>
 </head>
 <body>
@@ -1027,7 +1428,6 @@ tbody tr:hover td{background:var(--surface-muted)}
       <button class="tab" onclick="toggleAsMenu(this)">AS 접수</button>
       <div class="as-submenu" id="asSubmenu">
         <button class="tab-sub" onclick="switchTab('as',this,'list')" data-sub="list">접수 목록</button>
-        <button class="tab-sub" onclick="switchTab('as',this,'product')" data-sub="product">제품명 관리</button>
       </div>
       <button class="tab" onclick="switchTab('users',this)" id="tabUsersBtn" style="display:none">사용자 관리</button>
       <button class="tab" onclick="switchTab('floorplan',this)" id="tabFloorplanBtn" style="display:none">평면도 편집</button>
@@ -1402,70 +1802,6 @@ tbody tr:hover td{background:var(--surface-muted)}
     <!-- AS 접수 탭 -->
     <div id="tabAs" style="display:none">
     <div id="asSubList">
-      <div class="page-title-wrap with-action">
-        <div>
-          <h1 class="page-title">AS 접수 목록</h1>
-          <p class="page-subtitle">AS 접수건을 조회하고 관리합니다.</p>
-        </div>
-      </div>
-
-      <!-- KPI 카드 -->
-      <div class="as-kpi-row" id="asKpiRow">
-        <div class="as-kpi-card as-kpi-total" onclick="asKpiFilter('')" title="전체 보기">
-          <div class="as-kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">전체</div>
-            <div class="as-kpi-value" id="kpiTotal">—</div>
-          </div>
-        </div>
-        <div class="as-kpi-card as-kpi-open" onclick="asKpiFilter('접수')" title="접수 건만 보기">
-          <div class="as-kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4e5968" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="M4 13l2.5-7a1.5 1.5 0 0 1 1.4-1h8.2a1.5 1.5 0 0 1 1.4 1L20 13"/><path d="M4 13h5a1 1 0 0 1 1 1v0a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2v0a1 1 0 0 1 1-1h5"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">접수</div>
-            <div class="as-kpi-value" id="kpiOpen">—</div>
-          </div>
-        </div>
-        <div class="as-kpi-card as-kpi-review-wait" style="border-left:none;--kpi-accent:#c2410c" onclick="asKpiFilter('검토 요청')" title="검토 요청 건만 보기">
-          <div class="as-kpi-icon" style="background:#fff7ed">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">검토 요청</div>
-            <div class="as-kpi-value" id="kpiReviewWait">—</div>
-          </div>
-        </div>
-        <div class="as-kpi-card as-kpi-approve-wait" style="border-left:none;--kpi-accent:#6d28d9" onclick="asKpiFilter('승인 요청')" title="승인 요청 건만 보기">
-          <div class="as-kpi-icon" style="background:#f5f3ff">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">승인 요청</div>
-            <div class="as-kpi-value" id="kpiApproveWait">—</div>
-          </div>
-        </div>
-        <div class="as-kpi-card as-kpi-progress" onclick="asKpiFilter('처리 대기')" title="처리 대기 건만 보기">
-          <div class="as-kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">처리 대기</div>
-            <div class="as-kpi-value" id="kpiProgress">—</div>
-          </div>
-        </div>
-        <div class="as-kpi-card as-kpi-done" onclick="asKpiFilter('완료')" title="완료 건만 보기">
-          <div class="as-kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="8 12 11 15 16 9"/></svg>
-          </div>
-          <div>
-            <div class="as-kpi-label">완료</div>
-            <div class="as-kpi-value" id="kpiDone">—</div>
-          </div>
-        </div>
-      </div>
 
       <!-- 툴바 -->
       <div class="as-toolbar">
@@ -1490,7 +1826,7 @@ tbody tr:hover td{background:var(--surface-muted)}
             <div class="toss-dd-panel" id="asCategoryFilterPanel" role="listbox"></div>
             <input type="hidden" id="asCategoryFilter" value=""/>
           </div>
-          <input type="hidden" id="asStatusFilter" value=""/>
+          <select id="asStatusFilter" class="as-status-select" aria-label="진행현황" onchange="_asPage=1;_applyAsFilters()"><option value="">전체 진행현황</option><option value="pending">전체 대기</option><option>접수</option><option>제작 요청</option><option>도장 요청</option><option>납품 요청</option><option>완료</option></select>
           <div class="as-toolbar-sep"></div>
           <span class="as-toolbar-label">기간</span>
           <div class="toss-date-range" id="asDateRange" onclick="openAsCal(event)">
@@ -1548,20 +1884,25 @@ tbody tr:hover td{background:var(--surface-muted)}
 
       <!-- 테이블 카드 -->
       <div class="as-table-card">
-        <div class="as-table-header">
-          <span class="as-table-title">AS 접수 목록</span>
-          <span class="as-result-count" id="asResultCount"></span>
-        </div>
         <div style="overflow-x:auto">
           <table class="as-erp-table">
+            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
             <thead>
-              <tr>
+              <tr class="as-group-header">
+                <th colspan="2" scope="colgroup" class="no-sort">선택</th>
+                <th colspan="3" scope="colgroup" class="no-sort">접수 정보</th>
+                <th colspan="2" scope="colgroup" class="no-sort">납기</th>
+                <th colspan="4" scope="colgroup" class="no-sort">자재 정보</th>
+                <th colspan="5" scope="colgroup" class="no-sort">처리 내용</th>
+              </tr>
+              <tr class="as-column-header">
                 <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" onchange="toggleAsSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>
                 <th class="as-no-col no-sort">#</th>
                 <th data-col="status" onclick="sortAsTable('status')">진행현황</th>
-                <th data-col="category" onclick="sortAsTable('category')">구분</th>
                 <th data-col="asNo" onclick="sortAsTable('asNo')">접수번호</th>
                 <th data-col="createdAt" onclick="sortAsTable('createdAt')">접수일</th>
+                <th data-col="deliveryAgreedDate" onclick="sortAsTable('deliveryAgreedDate')">납품 협의일</th>
+                <th class="no-sort">납기 잔여일</th>
                 <th data-col="ship" onclick="sortAsTable('ship')">호선</th>
                 <th data-col="block" onclick="sortAsTable('block')">블록</th>
                 <th data-col="element" onclick="sortAsTable('element')">엘레멘트</th>
@@ -1582,9 +1923,33 @@ tbody tr:hover td{background:var(--surface-muted)}
         </div>
         <div class="as-table-footer">
           <span id="asSelectedCount">선택 0건</span>
+          <button type="button" class="as-tb-btn" id="asListExampleBtn" onclick="toggleAsListExample()">예시 데이터 보기</button>
         </div>
       </div>
     </div><!-- /asSubList -->
+
+<section id="asSubStats" style="display:none" aria-label="A/S 현황">
+  <p id="asStatsMessage" role="status" aria-live="polite"></p>
+  <div id="asStatsContent" hidden>
+<div class="as-overview-section"><h2>현재 처리 대기</h2><span>현재 기준 · 전체 접수 중 미완료</span></div><div id="asKpiRow" class="as-overview-kpis"><button type="button" onclick="asKpiFilter('pending')"><span>전체 대기</span><strong id="kpiTotal">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('접수')"><span>접수</span><strong id="kpiOpen">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('제작 요청')"><span>제작 요청</span><strong id="kpiReviewWait">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('도장 요청')"><span>도장 요청</span><strong id="kpiApproveWait">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('납품 요청')"><span>납품 요청</span><strong id="kpiProgress">0</strong><small aria-hidden="true">↗</small></button></div><div class="as-overview-section as-overview-period"><div><h2 id="asStatsPeriodTitle">기간별 접수 분석</h2><p class="as-period-basis">접수일 기준</p></div><select id="asStatsYear" aria-label="집계 연도" onchange="renderAsStatistics()"></select></div>
+    <div class="as-stats-summary">
+      <div class="as-stats-month-summary"><span id="asStatsMonthLabel"></span><strong id="asStatsMonthly"></strong><p id="asStatsDelta"></p></div>
+      <div><span id="asStatsYearLabel">연간 접수</span><strong id="asStatsTotal"></strong><p id="asStatsYearDelta"></p></div>
+      <div><span id="asStatsPendingLabel">연간 미처리</span><strong id="asStatsPending"></strong><p id="asStatsPendingHint"></p></div>
+    </div>
+    <div class="as-overview-charts">
+    <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div><section class="as-daily-section as-stats-chart-panel" aria-labelledby="asDailyTitle"><div class="as-stats-chart-heading"><h3 id="asDailyTitle">일별 접수 추이</h3><span class="as-chart-unit">단위: 건</span></div><p id="asDailyHint" class="as-chart-sr-only"></p><div class="as-daily-scroll" tabindex="0" role="region" aria-label="일별 접수 그래프, 좌우로 스크롤"><div id="asDailyChart" class="as-daily-chart" role="list"></div></div><p id="asDailyEmpty" hidden>해당 월에 접수된 건이 없습니다.</p></section></div>
+    <section class="as-stats-chart-panel" aria-labelledby="asStatsReasonsTitle">
+      <h2 id="asStatsReasonsTitle">접수 사유별 집계</h2>
+      <p id="asStatsReasonsHint" aria-live="polite"></p>
+      <div class="as-reason-table-wrap"><table class="as-reason-table" aria-describedby="asStatsReasonsHint"><thead><tr><th scope="col">사유 유형</th><th scope="col">비중</th><th scope="col">건수 · 비율</th></tr></thead><tbody id="asStatsReasons"></tbody></table></div>
+      <p id="asStatsReasonsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p>
+      <p class="as-stats-footnote">기존 7개 사유와 기타를 고정 표시합니다. 직접 입력하거나 사유가 없는 접수는 기타로 집계합니다.</p>
+    </section>
+    </div>
+  </div>
+  <div class="as-stats-actions"><button type="button" onclick="loadAsStatistics(true)">예시 데이터 보기</button><button type="button" onclick="loadAsStatistics()">새로고침</button></div>
+</section>
 
     <!-- 제품명 관리 -->
     <div id="asSubProduct" style="display:none">
@@ -1635,32 +2000,25 @@ tbody tr:hover td{background:var(--surface-muted)}
           <button class="modal-close" onclick="closeAsModal()" aria-label="닫기">&times;</button>
         </div>
         <div class="modal-body">
-          <div class="modal-row" style="grid-template-columns:1fr 1fr 1fr 1fr">
-            <div class="modal-field">
-              <label>구분 *</label>
-              <select id="asCategory" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px">
-                <option value="사내">사내</option>
-                <option value="사외">사외</option>
-                <option value="기타">기타</option>
-              </select>
-            </div>
-            <div class="modal-field">
-              <label>호선 *</label>
-              <input id="asShip" placeholder="호선"/>
-            </div>
-            <div class="modal-field">
-              <label>블록 *</label>
-              <input id="asBlock" placeholder="블록"/>
-            </div>
-            <div class="modal-field">
-              <label>엘레멘트</label>
-              <input id="asElement" placeholder="엘레멘트"/>
-            </div>
+          <div class="modal-field as-intake-category">
+            <label for="asCategory">구분 *</label>
+            <select id="asCategory"><option value="사내">사내</option><option value="사외">사외</option><option value="기타">기타</option></select>
           </div>
+          <div class="modal-row as-intake-location">
+            <div class="modal-field"><label for="asShip">호선 *</label><input id="asShip" placeholder="호선"/></div>
+            <div class="modal-field"><label for="asBlock">블록 *</label><input id="asBlock" placeholder="블록"/></div>
+            <div class="modal-field"><label for="asElement">엘레멘트</label><input id="asElement" placeholder="엘레멘트"/></div>
+          </div>
+          <div class="modal-row as-intake-material">
           <div class="modal-field" style="position:relative">
-            <label>제품명</label>
-            <input id="asProduct" placeholder="제품명 검색 또는 직접 입력" autocomplete="off" oninput="showProductSuggest()" onfocus="showProductSuggest()" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px"/>
+            <label for="asProduct">자재명</label>
+            <input id="asProduct" placeholder="자재명 검색 또는 직접 입력" autocomplete="off" oninput="showProductSuggest()" onfocus="showProductSuggest()" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px"/>
             <div id="asProductSuggest" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:100;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;margin-top:4px"></div>
+          </div>
+          <div class="modal-field">
+            <label for="asMaterialCode">자재코드</label>
+            <input id="asMaterialCode" name="materialCode" placeholder="자재코드 입력" maxlength="100"/>
+          </div>
           </div>
           <div class="modal-field">
             <label>사유 *</label>
@@ -1687,6 +2045,11 @@ tbody tr:hover td{background:var(--surface-muted)}
               <option value="기타">기타 (직접 입력)</option>
             </select>
             <textarea id="asAction" style="width:100%;min-height:70px;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:inherit;resize:vertical;display:none;margin-top:8px" placeholder="기타 후속조치를 입력하세요"></textarea>
+          </div>
+          <div class="modal-field">
+            <label for="asDeliveryAgreedDate">납품 협의일</label>
+            <input id="asDeliveryAgreedDate" name="deliveryAgreedDate" type="date" aria-describedby="asDeliveryAgreedDateHint"/>
+            <small id="asDeliveryAgreedDateHint">최종 납품 마감일입니다. 미정이면 비워두고 제작 요청 전에 지정하세요.</small>
           </div>
           <div class="modal-field">
             <label>비고</label>
@@ -1718,12 +2081,11 @@ tbody tr:hover td{background:var(--surface-muted)}
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e2e8f0;flex-shrink:0">
           <span id="fileViewerTitle" style="font-size:14px;font-weight:700;color:#0f172a"></span>
           <div style="display:flex;gap:8px;align-items:center">
-            <button id="asViewerRequestReview" onclick="requestReviewFromViewer()" style="padding:6px 14px;border-radius:var(--r-sm);background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700;border:1px solid var(--info-border);cursor:pointer;display:none">검토 요청</button>
+            <button id="asViewerRequestReview" onclick="requestReviewFromViewer()" style="padding:6px 14px;border-radius:var(--r-sm);background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700;border:1px solid var(--info-border);cursor:pointer;display:none">제작 요청</button>
             <button id="asViewerReview" onclick="reviewFromViewer()" style="padding:6px 14px;border-radius:8px;background:#fffbeb;color:#d97706;font-size:12px;font-weight:700;border:1px solid #fde68a;cursor:pointer;display:none">검토</button>
             <button id="asViewerApprove" onclick="approveFromViewer()" style="padding:6px 14px;border-radius:8px;background:#f0fdf4;color:#16a34a;font-size:12px;font-weight:700;border:1px solid #bbf7d0;cursor:pointer;display:none">승인</button>
-            <button id="asViewerProgress" onclick="progressFromViewer()" style="padding:6px 14px;border-radius:8px;background:#fff7ed;color:#b45309;font-size:12px;font-weight:700;border:1px solid #fed7aa;cursor:pointer;display:none">처리 대기</button>
+            <button id="asViewerProgress" onclick="progressFromViewer()" style="padding:6px 14px;border-radius:8px;background:#fff7ed;color:#b45309;font-size:12px;font-weight:700;border:1px solid #fed7aa;cursor:pointer;display:none">납품 요청</button>
             <button id="asViewerComplete" onclick="completeFromViewer()" style="padding:6px 14px;border-radius:8px;background:#f0fdf4;color:#15803d;font-size:12px;font-weight:700;border:1px solid #bbf7d0;cursor:pointer;display:none">완료</button>
-            <button id="fileViewerPrint" onclick="printViewerContent()" style="padding:6px 14px;border-radius:8px;background:#0f172a;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;display:none">인쇄</button>
             <a id="fileViewerDownload" href="#" download style="padding:6px 14px;border-radius:8px;background:#f1f5f9;color:#475569;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #e2e8f0">다운로드</a>
             <button onclick="closeFileViewer()" style="width:32px;height:32px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:18px;color:#64748b">&times;</button>
           </div>
@@ -1804,6 +2166,18 @@ tbody tr:hover td{background:var(--surface-muted)}
     </div>
 
     <!-- 사용자 추가/수정 모달 -->
+    <dialog id="devNotice" aria-labelledby="devNoticeTitle" onclick="if(event.target===this)this.close()">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="devNoticeTitle">현재 개발중</h3>
+          <button type="button" class="modal-close" aria-label="닫기" onclick="document.getElementById('devNotice').close()">&times;</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="admin-btn admin-btn-primary" autofocus onclick="document.getElementById('devNotice').close()">확인</button>
+        </div>
+      </div>
+    </dialog>
+
     <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeUserModal()">
       <div class="modal-box">
         <div class="modal-header">
@@ -1945,9 +2319,9 @@ async function doLogin() {
             document.getElementById('tabUsersBtn').style.display = '';
             document.getElementById('tabFloorplanBtn').style.display = '';
           }
-          if (currentUser.asReview) document.getElementById('btnAsReview').style.display = '';
-          if (currentUser.asApprove) document.getElementById('btnAsApprove').style.display = '';
-          if (currentUser.role === 'sysadmin') { document.getElementById('btnAsReview').style.display = ''; document.getElementById('btnAsApprove').style.display = ''; }
+          if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
+          if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
+          if (currentUser.role === 'sysadmin') { document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none'); document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none'); }
           loadStats(); loadMapView(); connectSSE();
         }, 400);
       }, 2500);
@@ -1957,7 +2331,9 @@ async function doLogin() {
   }
 }
 
-function doLogout() {
+async function doLogout() {
+  try { await fetch(SERVER+'/api/logout',{method:'POST'}); } catch {}
+
   currentUser = null;
   if (typeof evtSource !== 'undefined' && evtSource) { evtSource.close(); evtSource = null; }
   try {
@@ -1968,10 +2344,20 @@ function doLogout() {
 }
 
 // ── 탭 전환 ──
-let _asSubMode = 'list';
+let _asSubMode = 'stats';
 let _erpSubMode = 'upload';
 
+function showDevelopmentNotice(tab) {
+  const dialog = document.getElementById('devNotice');
+  if (!dialog.open) dialog.showModal();
+}
+
 function switchTab(tab, el, sub) {
+  // Temporarily unavailable screens: block before changing navigation or loading data.
+  if (['tracking', 'erp', 'floorplan'].includes(tab)) {
+    showDevelopmentNotice(tab);
+    return;
+  }
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.tab-sub').forEach(t => t.classList.remove('on'));
   var asMenu = document.getElementById('asSubmenu');
@@ -1979,7 +2365,7 @@ function switchTab(tab, el, sub) {
   if (tab === 'as') {
     document.querySelector('.tabs .tab[onclick*="toggleAsMenu"]').classList.add('on');
     if (el && el.classList.contains('tab-sub')) el.classList.add('on');
-    _asSubMode = sub || 'list';
+    _asSubMode = sub || 'stats';
     erpMenu.classList.remove('open');
   } else if (tab === 'erp') {
     document.querySelector('.tabs .tab[onclick*="toggleErpMenu"]').classList.add('on');
@@ -2006,7 +2392,9 @@ function switchTab(tab, el, sub) {
   if (tab === 'as') {
     document.getElementById('asSubList').style.display = _asSubMode === 'list' ? '' : 'none';
     document.getElementById('asSubProduct').style.display = _asSubMode === 'product' ? '' : 'none';
+    document.getElementById('asSubStats').style.display = _asSubMode === 'stats' ? '' : 'none';
     if (_asSubMode === 'list') loadAsList();
+    if (_asSubMode === 'stats') loadAsStatistics();
     loadProductList();
   }
   if (tab === 'users') loadAdminUsers();
@@ -2015,16 +2403,12 @@ function switchTab(tab, el, sub) {
 
 function toggleAsMenu(btn) {
   var sub = document.getElementById('asSubmenu');
-  if (sub.classList.contains('open')) { sub.classList.remove('open'); return; }
   sub.classList.add('open');
-  switchTab('as', sub.querySelector('[data-sub="list"]'), 'list');
+  switchTab('as', btn, 'stats');
 }
 
 function toggleErpMenu(btn) {
-  var sub = document.getElementById('erpSubmenu');
-  if (sub.classList.contains('open')) { sub.classList.remove('open'); return; }
-  sub.classList.add('open');
-  switchTab('erp', sub.querySelector('[data-sub="upload"]'), 'upload');
+  switchTab('erp', btn, 'upload');
 }
 
 // ── 통계 ──
@@ -2522,6 +2906,7 @@ function initColResize() {
       const onMove = (e2) => {
         const w = Math.max(40, startW + e2.clientX - startX);
         th.style.width = w + 'px';
+        cols[i].style.width = w + 'px';
         th.style.minWidth = w + 'px';
         // 같은 인덱스 td도 맞춤
         const idx = Array.from(th.parentElement.children).indexOf(th);
@@ -3382,12 +3767,237 @@ async function deleteAdminUser(id, name) {
 
 // ── AS 접수 ──
 let asEditingId = null;
+let _asStatsRecords = [];
+let _asStatsRequest = 0;
+let _asStatsExample = false;
+let _asStatsSelectedMonth = new Date().getMonth()+1;
+const AS_REASON_TYPES = ['치수 오작','품질 불량','용접 불량','도장 불량','수량 누락','납기 누락','마킹 오류'];
+function createAsStatisticsExample(year) {
+  // Preview only: synthetic records never leave browser memory.
+  // Seeded sample dates stay stable while users switch months and filters.
+  let seed=year>>>0;
+  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  const monthly = [8,12,9,17,14,22,19,27,16,24,18,13];
+  const statuses = ['접수','제작 요청','도장 요청','납품 요청','완료'];
+  return monthly.flatMap((count,index)=>Array.from({length:count},(_,i)=>({
+    id:`example-${index+1}-${i+1}`,
+    createdAt:`${year}-${String(index+1).padStart(2,'0')}-${String(1+Math.floor(random()*new Date(year,index+1,0).getDate())).padStart(2,'0')}T09:00:00.000Z`,
+    status: i%5<3 ? '완료' : statuses[(index+i)%4],
+    reason: [...AS_REASON_TYPES, '현장 조정 필요'][(i+index)%8]
+  })));
+}
+function asStatsDateKey(value) {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:T|$)/.exec(value);
+  if (!match) return null;
+  const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+  if (year < 1000 || month < 1 || month > 12 || day < 1 || day > new Date(Date.UTC(year, month, 0)).getUTCDate()) return null;
+  return { year, month };
+}
+function summarizeAsStatistics(records, year, month) {
+  const counts = Array(12).fill(0);
+  const reasons = Object.fromEntries([...AS_REASON_TYPES, '기타'].map(name=>[name,0]));
+  const statuses = { '접수':0, '제작 요청':0, '도장 요청':0, '납품 요청':0, '완료':0 };
+  let previous = 0, invalid = 0, previousYearTotal = 0;
+  const previousYear = month === 1 ? year - 1 : year;
+  const previousMonth = month === 1 ? 12 : month - 1;
+  for (const record of records) {
+    const date = asStatsDateKey(record?.createdAt);
+    if (!date) { invalid++; continue; }
+    if (date.year === previousYear && date.month === previousMonth) previous++;
+    if (date.year === year-1) previousYearTotal++;
+    if (date.year !== year) continue;
+    counts[date.month - 1]++;
+    const reason = typeof record.reason === 'string' ? record.reason.trim() : '';
+    reasons[AS_REASON_TYPES.includes(reason) ? reason : '기타']++;
+    const status = Object.prototype.hasOwnProperty.call(statuses, record.status) ? record.status : '기타';
+    statuses[status] = (statuses[status] || 0) + 1;
+  }
+  const total = counts.reduce((sum, value) => sum + value, 0);
+  return { counts, statuses, reasons, total, previousYearTotal, current:counts[month-1], previous, previousYear, previousMonth, pending:total-statuses['완료'], invalid };
+}
+function asAnnualChangeText(total, previous) {
+  const change = total-previous;
+  if (!change) return '전년 대비 변동 없음';
+  if (!previous) return '전년 0건 대비 '+total.toLocaleString()+'건 증가';
+  return '전년 대비 '+Math.abs(change/previous*100).toFixed(1)+'% '+(change>0?'증가':'감소');
+}
+async function loadAsStatistics(useExample = false) {
+  const request = ++_asStatsRequest;
+  const content = document.getElementById('asStatsContent');
+  const message = document.getElementById('asStatsMessage');
+  const yearSelect = document.getElementById('asStatsYear');  content.hidden = true;
+  message.textContent = 'A/S 현황을 불러오는 중입니다.';
+  document.getElementById('asSubStats').setAttribute('aria-busy', 'true');
+  yearSelect.disabled = true;
+  try {
+    let data;
+    if (useExample) {
+      data = { list: createAsStatisticsExample(new Date().getFullYear()-1) };
+    } else {
+      const response = await fetch(`${SERVER}/api/as`);
+      if (!response.ok) throw new Error('Request failed');
+      data = await response.json();
+    }
+    if (!Array.isArray(data.list)) throw new Error('Invalid data');
+    if (request !== _asStatsRequest) return;
+    _asStatsRecords = data.list;
+    _asStatsExample = useExample;
+    const now = new Date();
+    const previousYear = Number(yearSelect.value);
+    const years = new Set([now.getFullYear()]);
+    _asStatsRecords.forEach(record => { const date = asStatsDateKey(record?.createdAt); if (date) years.add(date.year); });
+    yearSelect.replaceChildren();
+    [...years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(`${year}년`, String(year))));
+    yearSelect.value = String(useExample ? now.getFullYear()-1 : (years.has(previousYear) ? previousYear : now.getFullYear()));
+    if (useExample) _asStatsSelectedMonth = 8;
+    renderAsStatistics();
+  } catch (error) {
+    if (request !== _asStatsRequest) return;
+    content.hidden = true;
+    message.textContent = 'A/S 현황을 불러오지 못했습니다. 새로고침을 눌러 다시 시도해 주세요.';
+  } finally {
+    if (request === _asStatsRequest) {
+      yearSelect.disabled = content.hidden;
+      document.getElementById('asSubStats').setAttribute('aria-busy', 'false');
+    }
+  }
+}
+function renderAsOverviewKpis(records) {
+ const counts = {pending:0,'접수':0,'제작 요청':0,'도장 요청':0,'납품 요청':0};
+ records.forEach(record=>{if(record.status!=='완료')counts.pending++;if(Object.hasOwn(counts,record.status)&&record.status!=='pending')counts[record.status]++;});
+ const ids={pending:'kpiTotal','접수':'kpiOpen','제작 요청':'kpiReviewWait','도장 요청':'kpiApproveWait','납품 요청':'kpiProgress'};
+ Object.entries(ids).forEach(([key,id])=>{document.getElementById(id).textContent=counts[key].toLocaleString();});
+}
+function summarizeAsDaily(records,year,month) {
+ const counts=Array(new Date(year,month,0).getDate()).fill(0);
+ records.forEach(record=>{const date=asStatsDateKey(record?.createdAt);if(date?.year===year&&date.month===month)counts[Number(record.createdAt.slice(8,10))-1]++;});
+ return counts;
+}
+function renderAsDaily(year,month) {
+ const counts=summarizeAsDaily(_asStatsRecords,year,month),total=counts.reduce((a,b)=>a+b,0),max=Math.max(1,...counts);
+ document.getElementById('asDailyTitle').textContent='일별 접수 추이';
+ document.getElementById('asDailyHint').textContent=year+'년 '+month+'월 총 '+total.toLocaleString()+'건 · 접수일 기준';
+ const chart=document.getElementById('asDailyChart');chart.style.gridTemplateColumns='repeat('+counts.length+', minmax(20px, 1fr))';chart.replaceChildren();
+ counts.forEach((count,index)=>{const day=document.createElement('div');day.className='as-daily-day';day.setAttribute('role','listitem');day.setAttribute('aria-label',month+'월 '+(index+1)+'일 접수 '+count+'건');day.title=month+'월 '+(index+1)+'일: '+count+'건';day.innerHTML='<div class="as-daily-plot" aria-hidden="true"><span class="as-daily-value" style="bottom:'+(count/max*176+5)+'px">'+count+'</span><span class="as-daily-bar" style="height:'+(count/max*176)+'px"></span></div><span aria-hidden="true">'+(index+1)+'</span>';chart.appendChild(day);});
+ document.getElementById('asDailyEmpty').hidden=total!==0;
+}
+function renderAsStatistics() {
+  renderAsOverviewKpis(_asStatsRecords);
+  const year = Number(document.getElementById('asStatsYear').value);
+  const month = _asStatsSelectedMonth;
+  if (!year || month<1 || month>12) return;
+  const result = summarizeAsStatistics(_asStatsRecords,year,month);
+  renderAsDaily(year,month);
+  document.getElementById('asStatsMessage').textContent = _asStatsExample ? '예시 데이터입니다. 월별 추이를 보여주기 위한 가상 접수 건이며 실제 업무 데이터에 저장되지 않습니다.' : (result.invalid ? `접수일이 없거나 올바르지 않은 ${result.invalid}건은 집계에서 제외했습니다.` : '');
+  document.getElementById('asStatsChartHint').textContent = '월을 누르면 아래에서 해당 월의 접수 사유별 집계를 확인할 수 있습니다. 단위: 건';
+  document.getElementById('asStatsContent').hidden = false;
+  document.getElementById('asStatsYearLabel').textContent = `${year}년 접수`;
+  document.getElementById('asStatsPeriodTitle').textContent = `${year}년 ${month}월 · 접수 분석`;
+  document.getElementById('asStatsPendingLabel').textContent = `${year}년 접수 중 미완료`;
+  document.getElementById('asStatsPendingHint').textContent = `현재 상태 기준 · ${year}년 접수 건`;
+  document.getElementById('asStatsTotal').textContent = `${result.total.toLocaleString()}건`;
+  document.getElementById('asStatsMonthLabel').textContent = `${year}년 ${month}월 접수`;
+  document.getElementById('asStatsMonthly').textContent = `${result.current.toLocaleString()}건`;
+  document.getElementById('asStatsPending').textContent = `${result.pending.toLocaleString()}건`;
+  const change = result.current-result.previous;
+  const direction = change>0?'증가':change<0?'감소':'동일';
+  const rate = result.previous ? ` (${Math.abs(change/result.previous*100).toFixed(1)}%)` : '';
+  const difference = change===0?'동일':`${Math.abs(change)}건 ${direction}${rate}`;
+  const now = new Date();
+  const yearDelta = document.getElementById('asStatsYearDelta');
+  yearDelta.textContent = asAnnualChangeText(result.total,result.previousYearTotal)+(year===now.getFullYear()?' · 올해는 현재까지':'');
+  yearDelta.title = (year-1)+'년 전체 '+result.previousYearTotal.toLocaleString()+'건과 비교';
+  const ongoing = year===now.getFullYear() && month===now.getMonth()+1 ? ' · 이번 달은 현재까지' : '';
+  document.getElementById('asStatsDelta').textContent = `전월 대비 ${difference}${ongoing}`;
+  const max = Math.max(1,...result.counts);
+  const chart = document.getElementById('asStatsChart');
+  chart.replaceChildren();
+  result.counts.forEach((count,index)=>{
+    const button = document.createElement('button');
+    button.type='button';
+    button.className='as-stats-month'+(index+1===month?' is-comparison':'');
+    button.setAttribute('aria-label',`${year}년 ${index+1}월 접수 ${count}건, 사유별 집계 보기`);
+    button.setAttribute('aria-pressed',String(index+1===month));
+    button.title=`${year}년 ${index+1}월 ${count}건`;
+    button.innerHTML=`<span class="as-stats-plot-space" aria-hidden="true"><span class="as-stats-bar" style="height:${count/max*176}px"></span><span class="as-stats-value" style="top:${198-count/max*176}px">${count}</span></span><span>${index+1}월</span>`;
+    button.onclick=()=>showAsStatisticsMonth(year,index+1);
+    chart.appendChild(button);
+  });
+  document.getElementById('asStatsEmpty').hidden=result.total!==0;
+  const reasonMonth = month;
+  const reasonResult = reasonMonth >= 1 && reasonMonth <= 12
+    ? summarizeAsStatistics(_asStatsRecords.filter(record=>asStatsDateKey(record?.createdAt)?.month===reasonMonth),year,reasonMonth)
+    : result;
+  const reasonPeriod = reasonMonth >= 1 && reasonMonth <= 12 ? `${year}년 ${reasonMonth}월` : `${year}년 전체`;
+  document.getElementById('asStatsReasonsHint').textContent = `${reasonPeriod} 접수 ${reasonResult.total.toLocaleString()}건 기준 · 8개 유형 고정`;
+  const reasonRows = document.getElementById('asStatsReasons');
+  // Capture the displayed width, including an in-flight animation, before rebuilding sorted rows.
+  const previousWidths = new Map();
+  reasonRows.querySelectorAll('.as-reason-fill').forEach(fill=>{
+    const trackWidth = fill.parentElement.getBoundingClientRect().width;
+    previousWidths.set(fill.dataset.reason,trackWidth ? fill.getBoundingClientRect().width/trackWidth*100 : 0);
+  });
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  reasonRows.replaceChildren();
+  const reasonEntries = Object.entries(reasonResult.reasons);
+  reasonEntries.forEach(([name,count])=>{
+    const percent = reasonResult.total ? count/reasonResult.total*100 : 0;
+    const row = document.createElement('tr');
+    // Names come only from the fixed intake categories, never from free text.
+    row.innerHTML = `<td><span class="as-reason-name">${name}</span></td><td><span class="as-reason-track" aria-hidden="true"><span class="as-reason-fill" style="width:${percent}%"></span></span></td><td><strong>${count.toLocaleString()}건</strong><small>${percent.toFixed(1)}%</small></td>`;
+    reasonRows.appendChild(row);
+    const fill = row.querySelector('.as-reason-fill');
+    fill.dataset.reason = name;
+    if (!reduceMotion && typeof fill.animate === 'function') {
+      fill.animate([
+        {width:(previousWidths.get(name) ?? 0)+'%'},
+        {width:percent+'%'}
+      ],{duration:500,easing:'cubic-bezier(0.22, 1, 0.36, 1)'});
+    }
+  });
+  document.getElementById('asStatsReasonsEmpty').hidden = reasonResult.total!==0;
+  document.getElementById('asStatsReasonsEmpty').textContent = `${reasonPeriod}에 접수된 AS가 없습니다.`;
+
+}
+function showAsStatisticsMonth(year,month) {
+  document.getElementById('asStatsYear').value=String(year);
+  _asStatsSelectedMonth = month;
+  renderAsStatistics();
+  // Rendering replaces the buttons; retain keyboard focus on the selected month.
+  document.getElementById('asStatsChart').children[month-1]?.focus?.({preventScroll:true});
+}
+
+let _asKpiSelectionMade = false;
 let _asFullList = [];       // raw list from server (all records)
 let _asFiltered = [];       // after client filters applied
 let _asSortCol = 'createdAt';
 let _asSortDir = 'desc';    // 'asc' | 'desc'
 let _asPage = 1;
-const _asPageSize = 20;
+const _asPageSize = 10;
+let _asListExample = false;
+let _asListPreviewRecords = null;
+function createAsListExample() {
+  const dayOffset=n=>{const d=new Date(asJobToday()+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+  const statuses=['접수','제작 요청','도장 요청','납품 요청','완료'];
+  const products=['점검구 프레임','환기 그릴','보강 브래킷','케이블 지지대','도어 패널','배관 커버','고정 플레이트'];
+  const reasons=['도장 표면 보수','치수 재확인 및 재제작','운송 중 모서리 손상','체결부 위치 수정','납품 수량 부족','용접부 마감 보수','설치 간섭 조정'];
+  return Array.from({length:35},(_,i)=>{
+    const status=statuses[i%5],stages={};
+    ['제작 요청','도장 요청','납품 요청'].forEach((name,j)=>{if(i%5>j)stages[name]={requestedDate:dayOffset(-12+j),...(i%5>j+1?{completedDate:dayOffset(-10+j)}:{})};});
+    return {id:'list-example-'+(i+1),asNo:'예시-'+String(i+1).padStart(3,'0'),status,category:'사내',ship:'DEMO-'+(7100+i%6),block:['A01','B02','C03','D04'][i%4],element:'E-'+(101+i%9),product:products[i%7],materialCode:'DEMO-M'+(100+i),reason:reasons[i%7],action:'현장 확인 후 보수 및 재납품',createdBy:'예시 담당 '+(i%4+1),createdAt:dayOffset(-14-Math.floor(i/5))+'T09:00:00Z',deliveryAgreedDate:dayOffset(i%11-3),files:[],remark:'화면 확인용 예시',workflow:{revision:0,stages,history:[]},...(status==='완료'?{deliveredDate:dayOffset(-8)}:{})};
+  });
+}
+async function toggleAsListExample(){
+  _asListExample=!_asListExample;
+  _asListPreviewRecords=null;
+  document.getElementById('asListExampleBtn').textContent=_asListExample?'실제 데이터 보기':'예시 데이터 보기';
+  await loadAsList();resetAsFilters();
+}
+function asListExampleReadOnly(){
+  if(!_asListExample)return false;
+  showAlert('예시 데이터는 조회 전용입니다. 실제 데이터 보기로 전환한 뒤 처리해주세요.','warn');return true;
+}
 
 let _productList = [];
 
@@ -3551,6 +4161,7 @@ document.addEventListener('click', function(e) {
 });
 
 async function loadAsList() {
+  if(_asListExample){_asFullList=_asListPreviewRecords||createAsListExample();_asPage=1;_applyAsFilters();return;}
   try {
     const r = await fetch(`${SERVER}/api/as`);
     const data = await r.json();
@@ -3559,7 +4170,7 @@ async function loadAsList() {
     _applyAsFilters();
   } catch(e) {
     document.getElementById('asTableBody').innerHTML =
-      '<tr><td colspan="12" style="padding:28px;color:#dc2626;text-align:center;font-size:13px">서버 연결 오류</td></tr>';
+      '<tr><td colspan="16" style="padding:28px;color:#dc2626;text-align:center;font-size:13px">서버 연결 오류</td></tr>';
   }
 }
 
@@ -3568,6 +4179,11 @@ function _applyAsFilters() {
   const search        = (document.getElementById('asSearch')?.value || '').trim().toLowerCase();
   const categoryFilter = document.getElementById('asCategoryFilter')?.value || '';
   const statusFilter  = document.getElementById('asStatusFilter')?.value || '';
+  document.querySelectorAll('#asKpiRow .as-kpi-card').forEach(card => {
+    const selected = _asKpiSelectionMade && card.dataset.status === statusFilter;
+    card.classList.toggle('active-filter', selected);
+    card.setAttribute('aria-pressed', String(selected));
+  });
   const dateFrom      = document.getElementById('asDateFrom')?.value || '';
   const dateTo        = document.getElementById('asDateTo')?.value || '';
 
@@ -3578,6 +4194,7 @@ function _applyAsFilters() {
     if (searchField === 'all') {
       list = list.filter(a =>
         (a.asNo||'').toLowerCase().includes(search) ||
+        (a.materialCode||'').toLowerCase().includes(search) ||
         (a.ship||'').toLowerCase().includes(search) ||
         (a.block||'').toLowerCase().includes(search) ||
         (a.element||'').toLowerCase().includes(search) ||
@@ -3590,22 +4207,11 @@ function _applyAsFilters() {
   // category filter
   if (categoryFilter) list = list.filter(a => (a.category||'사내') === categoryFilter);
   // status filter
-  if (statusFilter) list = list.filter(a => a.status === statusFilter);
+  if (statusFilter === 'pending') list = list.filter(a => a.status !== '완료');
+  else if (statusFilter) list = list.filter(a => a.status === statusFilter);
   // date range
   if (dateFrom) list = list.filter(a => (a.createdAt||'') >= dateFrom);
   if (dateTo)   list = list.filter(a => (a.createdAt||'').slice(0,10) <= dateTo);
-  // KPI summary (from unfiltered full list)
-  const all = _asFullList;
-  const kpi = { total: all.length, '접수':0, '검토 요청':0, '승인 요청':0, '처리 대기':0, '완료':0 };
-  all.forEach(a => { kpi[a.status] = (kpi[a.status]||0) + 1; });
-  const setKpi = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-  setKpi('kpiTotal', kpi.total);
-  setKpi('kpiOpen', kpi['접수']);
-  setKpi('kpiProgress', kpi['처리 대기']);
-  setKpi('kpiDone', kpi['완료']);
-  setKpi('kpiReviewWait', kpi['검토 요청']);
-  setKpi('kpiApproveWait', kpi['승인 요청']);
-
   // sort
   list = _sortAsListBy(list, _asSortCol, _asSortDir);
 
@@ -3618,8 +4224,6 @@ function _applyAsFilters() {
   });
 
   // result count
-  const countEl = document.getElementById('asResultCount');
-  if (countEl) countEl.textContent = `총 ${list.length}건`;
 
   _renderAsPage();
 }
@@ -3657,7 +4261,7 @@ function _renderAsPage() {
   _updateAsSelectedCount();
 
   if (!total) {
-    tbody.innerHTML = `<tr><td colspan="15"><div class="as-empty">
+    tbody.innerHTML = `<tr class="as-empty-row"><td colspan="16"><div class="as-empty">
       <div class="as-empty-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
       <p>AS 접수 내역이 없습니다</p>
     </div></td></tr>`;
@@ -3670,14 +4274,7 @@ function _renderAsPage() {
     const esc = encodeURIComponent(JSON.stringify(a));
 
     // status badge
-    const statusCls = a.status === '완료' ? 'as-status-done' : a.status === '처리 대기' ? 'as-status-progress' : a.status === '검토 요청' ? 'as-status-review-wait' : a.status === '승인 요청' ? 'as-status-approve-wait' : 'as-status-open';
-    const statusBadge = `<span class="as-status-badge ${statusCls}">${a.status}</span>`;
-
-    // category badge
-    const cat = a.category || '사내';
-    const catCls = cat === '사외' ? 'as-cat-external' : cat === '기타' ? 'as-cat-etc' : 'as-cat-internal';
-    const catBadge = `<span class="as-cat-badge ${catCls}">${cat}</span>`;
-
+    const statusBadge = `<span class="as-status-text">${asJobEsc(a.status)}</span>`;
 
     // file cell
     const ff = a.files || [];
@@ -3701,9 +4298,10 @@ function _renderAsPage() {
       <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
       <td class="as-no-col">${rowNum}</td>
       <td>${statusBadge}</td>
-      <td>${catBadge}</td>
       <td><span class="as-code">${a.asNo||'—'}</span></td>
       <td><span class="as-text-muted">${dateStr}</span></td>
+      <td><span class="as-text-muted" style="white-space:nowrap">${asJobEsc(a.deliveryAgreedDate||'미정')}</span></td>
+      <td class="as-deadline-cell">${asWorkflowDelayHtml(a,false)}</td>
       <td style="font-weight:700;font-size:12px;color:#0f172a">${a.ship||'—'}</td>
       <td style="font-size:12px;color:#475569">${a.block||'—'}</td>
       <td style="font-size:12px;color:#94a3b8">${a.element||'—'}</td>
@@ -3716,6 +4314,9 @@ function _renderAsPage() {
     </tr>`;
   }).join('');
 
+  tbody.innerHTML += Array.from({length:Math.max(0,_asPageSize-pageItems.length)},()=>
+    '<tr class="as-placeholder" aria-hidden="true">'+'<td></td>'.repeat(16)+'</tr>'
+  ).join('');
   _renderAsPagination(total, totalPages);
   _initAsColResizers();
 }
@@ -3763,20 +4364,21 @@ function asGoPage(p) {
 }
 
 function asKpiFilter(status) {
+  _asListExample = _asStatsExample;
+  _asListPreviewRecords = _asStatsExample ? _asStatsRecords.map((r,i)=>({...r,id:'list-example-stats-'+i,asNo:'예시-'+String(i+1).padStart(3,'0')})) : null;
+  document.getElementById('asListExampleBtn').textContent=_asListExample?'실제 데이터 보기':'예시 데이터 보기';
+  ['asSearch','asDateFrom','asDateTo'].forEach(id=>document.getElementById(id).value='');
+  setAsDdValue('asSearchField','all');setAsDdValue('asCategoryFilter','');
+  _asCalSyncFromInputs();
+  _asKpiSelectionMade = true;
   if (typeof setAsDdValue === 'function') setAsDdValue('asStatusFilter', status);
   else document.getElementById('asStatusFilter').value = status;
   _asPage = 1;
-  _applyAsFilters();
-  document.querySelectorAll('.as-kpi-card').forEach(c => c.classList.remove('active-filter'));
-  if (status === '') document.querySelector('.as-kpi-total')?.classList.add('active-filter');
-  else if (status === '접수') document.querySelector('.as-kpi-open')?.classList.add('active-filter');
-  else if (status === '검토 요청') document.querySelector('.as-kpi-review-wait')?.classList.add('active-filter');
-  else if (status === '승인 요청') document.querySelector('.as-kpi-approve-wait')?.classList.add('active-filter');
-  else if (status === '처리 대기') document.querySelector('.as-kpi-progress')?.classList.add('active-filter');
-  else if (status === '완료') document.querySelector('.as-kpi-done')?.classList.add('active-filter');
+  switchTab('as',document.querySelector('#asSubmenu [data-sub="list"]'),'list');
 }
 
 function resetAsFilters() {
+  _asKpiSelectionMade = false;
   const ids = ['asSearch','asDateFrom','asDateTo'];
   ids.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   if (typeof setAsDdValue === 'function') {
@@ -3789,7 +4391,6 @@ function resetAsFilters() {
     const stf = document.getElementById('asStatusFilter'); if(stf) stf.value = '';
   }
   if (typeof _asCalSyncFromInputs === 'function') _asCalSyncFromInputs();
-  document.querySelectorAll('.as-kpi-card').forEach(c => c.classList.remove('active-filter'));
   _asSortCol = 'createdAt'; _asSortDir = 'desc'; _asPage = 1;
   _applyAsFilters();
 }
@@ -3912,7 +4513,6 @@ function openFileViewer(filename, displayName) {
 function closeFileViewer() {
   document.getElementById('fileViewer').classList.remove('open');
   document.getElementById('fileViewerContent').innerHTML = '';
-  document.getElementById('fileViewerPrint').style.display = 'none';
   document.getElementById('fileViewerDownload').style.display = '';
   document.getElementById('asViewerRequestReview').style.display = 'none';
   document.getElementById('asViewerReview').style.display = 'none';
@@ -3923,18 +4523,21 @@ function closeFileViewer() {
 }
 
 function openAsModal(item) {
+  if(asListExampleReadOnly())return;
   asEditingId = item ? item.id : null;
   document.getElementById('asModalTitle').textContent = item ? 'AS 수정' : 'AS 접수';
   document.getElementById('asCategory').value = item ? (item.category||'사내') : '사내';
   document.getElementById('asShip').value = item ? (item.ship||'') : '';
   document.getElementById('asBlock').value = item ? (item.block||'') : '';
   document.getElementById('asElement').value = item ? (item.element||'') : '';
+  document.getElementById('asDeliveryAgreedDate').value = item ? (item.deliveryAgreedDate||'') : '';
+  document.getElementById('asMaterialCode').value = item ? (item.materialCode||'') : '';
   document.getElementById('asProduct').value = item ? (item.product||'') : '';
   // 사유: 기존 값이 선택 옵션에 있으면 select, 없으면 기타
   const reasonVal = item ? (item.reason||'') : '';
   const reasonSelect = document.getElementById('asReasonSelect');
   const reasonText = document.getElementById('asReason');
-  const presetReasons = ['치수 오작','품질 불량','용접 불량','도장 불량','수량 누락','납기 누락','마킹 오류'];
+  const presetReasons = AS_REASON_TYPES;
   if (!reasonVal || presetReasons.includes(reasonVal)) {
     reasonSelect.value = reasonVal || '';
     reasonText.value = '';
@@ -3998,6 +4601,7 @@ function closeAsModal() {
 }
 
 function startRemarkEdit(e, td) {
+  if(asListExampleReadOnly())return;
   e.stopPropagation();
   if (td.querySelector('input')) return;
   const id = td.dataset.id;
@@ -4023,6 +4627,7 @@ async function saveRemark(inp, id) {
 }
 
 async function submitAs() {
+  if(asListExampleReadOnly())return;
   const ship = document.getElementById('asShip').value.trim();
   const block = document.getElementById('asBlock').value.trim();
   const reasonSel = document.getElementById('asReasonSelect').value;
@@ -4034,6 +4639,10 @@ async function submitAs() {
   fd.append('ship', ship);
   fd.append('block', block);
   fd.append('element', document.getElementById('asElement').value.trim());
+  const deliveryAgreedInput=document.getElementById('asDeliveryAgreedDate');
+  if(!deliveryAgreedInput.checkValidity()){deliveryAgreedInput.reportValidity();return;}
+  fd.append('deliveryAgreedDate',deliveryAgreedInput.value);
+  fd.append('materialCode', document.getElementById('asMaterialCode').value.trim());
   fd.append('product', document.getElementById('asProduct').value.trim());
   fd.append('reason', reason);
   const actionSel = document.getElementById('asActionSelect').value;
@@ -4066,51 +4675,15 @@ async function submitAs() {
   } catch(e) { const m=document.getElementById('asModalMsg'); m.className='modal-msg error'; m.textContent='서버 연결 오류'; }
 }
 
-async function changeAsStatus(id, newStatus) {
-  var item = _asFullList.find(function(a) { return a.id === id; });
-  var asNo = item ? (item.asNo||'') : '';
-  try {
-    var fd = new FormData(); fd.append('status', newStatus);
-    var r = await fetch(SERVER + '/api/as/' + id, { method:'PUT', body: fd });
-    if (r.ok) showToast({ title: newStatus, message: asNo + '\n' + newStatus + ' 처리되었습니다', type:'success' });
-    loadAsList();
-  } catch(e) { showToast({ title:'상태 변경 실패', message:'서버 연결 오류', type:'error' }); }
+function changeAsStatus(id) {
+  const item=_asFullList.find(a=>a.id===id);if(item)openAsWorkflow(item);
 }
 
-const AS_FLOW_ORDER = ['접수','검토 요청','승인 요청','처리 대기','완료'];
-const AS_VALID_NEXT = { '접수':'검토 요청', '검토 요청':'승인 요청', '승인 요청':'처리 대기', '처리 대기':'완료' };
+const AS_FLOW_ORDER = ['접수','제작 요청','도장 요청','납품 요청','완료'];
+const AS_VALID_NEXT = { '접수':'제작 요청', '제작 요청':'도장 요청', '도장 요청':'납품 요청', '납품 요청':'완료' };
 
-async function bulkChangeAsStatus(newStatus) {
-  const rows = document.querySelectorAll('.as-erp-table tbody tr.selected');
-  if (!rows.length) {
-    showAlert('행을 클릭하여 항목을 선택해주세요.', 'warn');
-    return;
-  }
-  const ids = Array.from(rows).map(r => r.dataset.id);
-  const items = _asFullList.filter(a => ids.includes(a.id));
-  // 플로우 순서 검증
-  const invalid = items.filter(a => AS_VALID_NEXT[a.status] !== newStatus);
-  if (invalid.length) {
-    const sample = invalid[0];
-    await showAlert(`"${sample.status}" 상태에서 "${newStatus}"(으)로 변경할 수 없습니다.\n\n다음 단계: "${AS_VALID_NEXT[sample.status] || '없음'}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm(`${ids.length}건을 "${newStatus}" 상태로 변경하시겠습니까?`, newStatus === '완료' ? 'success' : 'info');
-  if (!ok) return;
-  try {
-    let failCount = 0;
-    for (const id of ids) {
-      const fd = new FormData();
-      fd.append('status', newStatus);
-      const resp = await fetch(`${SERVER}/api/as/${id}`, { method:'PUT', body: fd });
-      if (!resp.ok) failCount++;
-    }
-    if (failCount) showToast({ title:'일부 실패', message: failCount + '건의 상태 변경이 실패했습니다.\n순서를 확인해주세요', type:'error' });
-    else showToast({ title: newStatus, message: ids.length + '건이 "' + newStatus + '" 상태로 변경되었습니다', type: newStatus === '완료' ? 'success' : 'info' });
-    loadAsList();
-  } catch(e) {
-    showToast({ title:'오류', message:'상태 변경 중 오류가 발생했습니다', type:'error' });
-  }
+function bulkChangeAsStatus() {
+  openSelectedAsWorkflow();
 }
 
 function _getSelectedAsItems() {
@@ -4123,7 +4696,7 @@ function _getSelectedAsItems() {
 async function bulkPrintAs() {
   const items = _getSelectedAsItems();
   if (!items) return;
-  if (items.length === 1) { printAsPdf(items[0]); return; }
+  if (items.length === 1) { await printAsPdf(items[0], true); return; }
   // 여러 건 합쳐서 한번에 출력
   const pages = [];
   for (const item of items) {
@@ -4134,14 +4707,13 @@ async function bulkPrintAs() {
   const blobUrl = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = `AS 접수서 - ${items.length}건 (${items.map(i=>i.asNo).join(', ')})`;
   document.getElementById('fileViewerDownload').style.display = 'none';
-  document.getElementById('fileViewerPrint').style.display = '';
   _viewerAsItem = null;
   document.getElementById('asViewerRequestReview').style.display = 'none';
   document.getElementById('asViewerReview').style.display = 'none';
   document.getElementById('asViewerApprove').style.display = 'none';
   document.getElementById('asViewerProgress').style.display = 'none';
   document.getElementById('asViewerComplete').style.display = 'none';
-  document.getElementById('fileViewerContent').innerHTML = '<iframe id="printFrame" src="' + blobUrl + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
+  document.getElementById('fileViewerContent').innerHTML = '<iframe id="printFrame" onload="printAsFrame(this)" src="' + blobUrl + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
   document.getElementById('fileViewer').classList.add('open');
 }
 
@@ -4149,11 +4721,12 @@ function bulkEditAs() {
   const items = _getSelectedAsItems();
   if (!items) return;
   if (items.length > 1) { showAlert('수정은 1건만 선택해주세요.', 'warn'); return; }
-  if (items[0].status !== '접수') { showAlert('접수 상태에서만 수정할 수 있습니다.\n\n검토 요청 이후에는 수정이 불가합니다.', 'error'); return; }
+  if (items[0].status !== '접수' || items[0].legacyStatus) { showAlert('접수 상태에서만 수정할 수 있습니다.\n\n제작 요청 이후에는 수정이 불가합니다.', 'error'); return; }
   openAsModal(items[0]);
 }
 
 async function bulkDeleteAs() {
+  if(asListExampleReadOnly())return;
   const items = _getSelectedAsItems();
   if (!items) return;
   const ok = await showConfirm(`${items.length}건을 삭제하시겠습니까?`, 'danger');
@@ -4165,54 +4738,12 @@ async function bulkDeleteAs() {
   } catch(e) { showAlert('삭제 중 오류가 발생했습니다.', 'error'); }
 }
 
-async function bulkReviewAs() {
-  const items = _getSelectedAsItems();
-  if (!items) return;
-  const invalid = items.filter(a => a.status !== '검토 요청');
-  if (invalid.length) {
-    await showAlert(`"검토 요청" 상태인 건만 검토할 수 있습니다.\n\n현재 상태: "${invalid[0].status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm(`${items.length}건을 검토 처리하시겠습니까?`, 'info');
-  if (!ok) return;
-  try {
-    let failCount = 0;
-    for (const item of items) {
-      const resp = await fetch(`${SERVER}/api/as/${item.id}/review`, {
-        method:'PATCH', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ reviewer: currentUser.name, reviewerDept: currentUser.department||'', reviewerPos: currentUser.position||'' })
-      });
-      if (!resp.ok) failCount++;
-    }
-    if (failCount) await showAlert(`${failCount}건의 검토 처리가 실패했습니다.`, 'error');
-    else showAlert(`${items.length}건이 검토 처리되었습니다.`, 'info');
-    loadAsList();
-  } catch(e) { await showAlert('검토 처리 중 오류가 발생했습니다.', 'error'); }
+function bulkReviewAs() {
+  openSelectedAsWorkflow();
 }
 
-async function bulkApproveAs() {
-  const items = _getSelectedAsItems();
-  if (!items) return;
-  const invalid = items.filter(a => a.status !== '승인 요청');
-  if (invalid.length) {
-    await showAlert(`"승인 요청" 상태인 건만 승인할 수 있습니다.\n\n현재 상태: "${invalid[0].status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm(`${items.length}건을 승인 처리하시겠습니까?`, 'success');
-  if (!ok) return;
-  try {
-    let failCount = 0;
-    for (const item of items) {
-      const resp = await fetch(`${SERVER}/api/as/${item.id}/approve`, {
-        method:'PATCH', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ approver: currentUser.name, approverDept: currentUser.department||'', approverPos: currentUser.position||'' })
-      });
-      if (!resp.ok) failCount++;
-    }
-    if (failCount) await showAlert(`${failCount}건의 승인 처리가 실패했습니다.`, 'error');
-    else showAlert(`${items.length}건이 승인 처리되었습니다.`, 'success');
-    loadAsList();
-  } catch(e) { await showAlert('승인 처리 중 오류가 발생했습니다.', 'error'); }
+function bulkApproveAs() {
+  openSelectedAsWorkflow();
 }
 
 function showAlert(msg, type) {
@@ -4312,7 +4843,7 @@ function showAlert(msg, type) {
 }
 
 function _initAsColResizers() {
-  const table = document.querySelector('.as-erp-table');
+  const table = document.querySelector('#asSubList .as-erp-table');
   if (!table) return;
 
   // 탭이 숨겨져 있으면 측정 불가 — 보일 때 재시도
@@ -4325,20 +4856,25 @@ function _initAsColResizers() {
   table.style.tableLayout = '';
   table.style.width = '';
   table.offsetWidth; // reflow
-  const ths = table.querySelectorAll('thead th');
+  const ths = table.querySelectorAll('.as-column-header th');
+  const cols = table.querySelectorAll('colgroup col');
   const totalW = table.offsetWidth;
   const widths = Array.from(ths).map(th => th.offsetWidth);
 
   if (widths.every(w => w === 0) || totalW === 0) return;
 
   // 퍼센트로 변환하여 반응형 유지
-  ths.forEach((th, i) => { th.style.width = ((widths[i] / totalW) * 100).toFixed(2) + '%'; });
+  ths.forEach((th, i) => {
+    const width = ((widths[i] / totalW) * 100).toFixed(2) + '%';
+    th.style.width = width;
+    cols[i].style.width = width;
+  });
   table.style.tableLayout = 'fixed';
   table.style.width = '100%';
 
   // 2) resizer 핸들 부착
   table.querySelectorAll('.as-col-resizer').forEach(r => r.remove());
-  ths.forEach(th => {
+  ths.forEach((th, i) => {
     if (th.classList.contains('as-no-col')) return;
     const resizer = document.createElement('div');
     resizer.className = 'as-col-resizer';
@@ -4369,6 +4905,7 @@ function _initAsColResizers() {
 }
 
 async function deleteAs(id) {
+  if(asListExampleReadOnly())return;
   const ok = await showConfirm('삭제하시겠습니까?', 'danger');
   if (!ok) return;
   try { await fetch(`${SERVER}/api/as/${id}`, { method:'DELETE' }); loadAsList(); } catch(e) {}
@@ -4405,24 +4942,15 @@ async function buildAsPageHtml(a) {
     }
   }
   const otherHtml = otherFiles.map(f => '<span class="attach-file">' + f.name + '</span>').join('');
-  const _statusColors = {'접수':'#004A93','검토 요청':'#d97706','승인 요청':'#7c3aed','처리 대기':'#4e5968','완료':'#16a34a'};
+  const _statusColors = {'접수':'#004A93','제작 요청':'#d97706','도장 요청':'#7c3aed','납품 요청':'#4e5968','완료':'#16a34a'};
   const _statusColor = _statusColors[a.status] || '#64748b';
   const _statusLabel = a.status || '접수';
   const attachPage = asFiles.length ? '<div class="attach-page"><div class="attach-label">별 첨</div><div class="attach-body">'+(otherHtml?'<div style="margin-bottom:10px">'+otherHtml+'</div>':'')+imagesHtml+pdfImagesHtml+'</div></div>' : '';
-  return { pageHtml: `<div class="page">
-  <div class="doc-header"><div class="doc-header-left"><div class="doc-title">A/S 접수건</div><div class="doc-no">문서번호&nbsp;&nbsp;${a.asNo}</div></div><div class="doc-header-right"><div class="doc-date">접수일자&nbsp;&nbsp;${date}</div><span class="status-badge" style="color:${_statusColor};border-color:${_statusColor}">${_statusLabel}</span></div></div>
-  <table class="info-table"><colgroup><col style="width:72px"><col><col style="width:72px"><col><col style="width:72px"><col></colgroup><tr><th>제품명</th><td colspan="5">${a.product||''}</td></tr><tr><th>호 선</th><td>${a.ship||''}</td><th>블 록</th><td>${a.block||''}</td><th>엘레멘트</th><td>${a.element||''}</td></tr></table>
-  <div class="section"><div class="section-head"><div class="section-label">사유</div></div><div class="section-body">${(a.reason||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>
-  <div class="section"><div class="section-head"><div class="section-label">후속조치</div></div><div class="section-body">${(a.action||'').replace(/</g,'&lt;').replace(/>/g,'&gt;') || '&nbsp;'}</div></div>
-  ${(a.remark||'') ? '<div class="section"><div class="section-head"><div class="section-label">비고</div></div><div class="section-body">'+(a.remark||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div></div>' : ''}
-  ${asFiles.length ? '<div class="section"><div class="section-head"><div class="section-label">첨부</div></div><div class="section-body compact" style="font-size:11px;color:#64748b;white-space:pre-line;line-height:2.1">별첨 참조 ('+asFiles.length+'건)\\n'+asFiles.map(f=>'  - '+f.name).join('\\n')+'</div></div>' : ''}
-  <div class="section"><div class="section-head"><div class="section-label">처리 이력</div></div><div class="history-wrap"><div class="history-row head-row"><div class="history-cell stage head">단계</div><div class="history-cell name head">담당자</div><div class="history-cell dept head">부서 / 직급</div><div class="history-cell time head">일시</div></div><div class="history-row"><div class="history-cell stage">접수</div><div class="history-cell name">${a.createdBy||'-'}</div><div class="history-cell dept">${a.createdDept||''} ${a.createdPos||''}</div><div class="history-cell time">${a.createdAt ? a.createdAt.slice(0,10)+' '+a.createdAt.slice(11,16) : '-'}</div></div>${a.reviewer ? '<div class="history-row"><div class="history-cell stage">검토</div><div class="history-cell name">'+a.reviewer+'</div><div class="history-cell dept">'+(a.reviewerDept||'')+' '+(a.reviewerPos||'')+'</div><div class="history-cell time">'+(a.reviewedAt?a.reviewedAt.slice(0,10)+' '+a.reviewedAt.slice(11,16):'-')+'</div></div>' : ''}${a.approver ? '<div class="history-row"><div class="history-cell stage">승인</div><div class="history-cell name">'+a.approver+'</div><div class="history-cell dept">'+(a.approverDept||'')+' '+(a.approverPos||'')+'</div><div class="history-cell time">'+(a.approvedAt?a.approvedAt.slice(0,10)+' '+a.approvedAt.slice(11,16):'-')+'</div></div>' : ''}${a.completedBy ? '<div class="history-row"><div class="history-cell stage">완료</div><div class="history-cell name">'+a.completedBy+'</div><div class="history-cell dept">'+(a.completedDept||'')+' '+(a.completedPos||'')+'</div><div class="history-cell time">'+(a.completedAt?a.completedAt.slice(0,10)+' '+a.completedAt.slice(11,16):'-')+'</div></div>' : ''}</div></div>
-  <div class="doc-footer">본 문서는 사내 A/S 관리 시스템에서 자동 생성되었습니다. &copy; ${new Date().getFullYear()}</div>
-</div>`, attachHtml: attachPage };
+  return { pageHtml: asJobDocument(a), attachHtml: attachPage };
 }
 
 // ── AS CSS (공통) ──
-function getAsCssStr() {
+function getLegacyAsCssStr() {
   return `@page{size:A4;margin:12mm 14mm 14mm 14mm}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;color:#1e293b;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -4474,132 +5002,49 @@ function buildAsWrapperHtml(items, pages) {
 }
 
 // ── AS PDF 출력 (단건) ──
-async function printAsPdf(a) {
+async function printAsPdf(a, printNow = false) {
   const result = await buildAsPageHtml(a);
   const htmlStr = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AS 접수서 - ' + a.asNo + '</title><style>' + getAsCssStr() + '</style></head><body>' + result.pageHtml + result.attachHtml + '</body></html>';
   const blob = new Blob([htmlStr], {type: 'text/html;charset=utf-8'});
   const blobUrl = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = 'AS 접수서 - ' + a.asNo;
   document.getElementById('fileViewerDownload').style.display = 'none';
-  document.getElementById('fileViewerPrint').style.display = '';
   // 상태에 맞는 버튼만 표시
   _viewerAsItem = a;
   const _isAdmin = currentUser && currentUser.role === 'sysadmin';
   const _isCreator = currentUser && currentUser.name === a.createdBy;
-  document.getElementById('asViewerRequestReview').style.display = (a.status === '접수' && (_isAdmin || _isCreator)) ? '' : 'none';
-  document.getElementById('asViewerReview').style.display = (a.status === '검토 요청' && (_isAdmin || (currentUser && currentUser.asReview))) ? '' : 'none';
-  document.getElementById('asViewerApprove').style.display = (a.status === '승인 요청' && (_isAdmin || (currentUser && currentUser.asApprove))) ? '' : 'none';
-  document.getElementById('asViewerProgress').style.display = 'none';
-  document.getElementById('asViewerComplete').style.display = (a.status === '처리 대기' && (_isAdmin || _isCreator)) ? '' : 'none';
-  document.getElementById('fileViewerContent').innerHTML = '<iframe id="printFrame" src="' + blobUrl + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
+  const workflowButton=document.getElementById('asViewerRequestReview');
+  workflowButton.textContent=asJobActionLabel(a);workflowButton.style.display=asJobCanEdit(a)&&asJobNext(a)?'':'none';workflowButton.onclick=()=>openAsWorkflow(a);
+  ['asViewerReview','asViewerApprove','asViewerProgress','asViewerComplete'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('fileViewerContent').innerHTML = '<iframe id="printFrame" '+(printNow?'onload="printAsFrame(this)" ':'')+'src="' + blobUrl + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
   document.getElementById('fileViewer').classList.add('open');
 }
 
 let _viewerAsItem = null;
 
-async function progressFromViewer() {
-  if (!_viewerAsItem) return;
-  if (_viewerAsItem.status !== '승인') {
-    await showAlert(`"승인" 상태인 건만 처리 대기으로 변경할 수 있습니다.\n\n현재 상태: "${_viewerAsItem.status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm('이 건을 처리 대기 상태로 변경하시겠습니까?', 'info');
-  if (!ok) return;
-  try {
-    const fd = new FormData();
-    fd.append('status', '처리 대기');
-    const resp = await fetch(`${SERVER}/api/as/${_viewerAsItem.id}`, { method:'PUT', body: fd });
-    if (!resp.ok) { const err = await resp.json(); await showAlert(err.error || '상태 변경 실패', 'error'); return; }
-    showToast({ title:'처리 대기', message: (_viewerAsItem.asNo||'') + '\n처리 대기 상태로 변경되었습니다', type:'info' });
-    closeFileViewer();
-    loadAsList();
-  } catch(e) { await showAlert('상태 변경 중 오류가 발생했습니다.', 'error'); }
+function progressFromViewer() {
+  if(_viewerAsItem)openAsWorkflow(_viewerAsItem);
 }
 
-async function completeFromViewer() {
-  if (!_viewerAsItem) return;
-  if (_viewerAsItem.status !== '처리 대기') {
-    await showAlert(`"처리 대기" 상태인 건만 완료할 수 있습니다.\n\n현재 상태: "${_viewerAsItem.status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm('이 건을 완료 처리하시겠습니까?', 'success');
-  if (!ok) return;
-  try {
-    const fd = new FormData();
-    fd.append('status', '완료');
-    fd.append('completedBy', currentUser.name || '');
-    fd.append('completedDept', currentUser.department || '');
-    fd.append('completedPos', currentUser.position || '');
-    const resp = await fetch(`${SERVER}/api/as/${_viewerAsItem.id}`, { method:'PUT', body: fd });
-    if (!resp.ok) { const err = await resp.json(); await showAlert(err.error || '상태 변경 실패', 'error'); return; }
-    showToast({ title:'완료', message: (_viewerAsItem.asNo||'') + '\n완료 처리되었습니다', type:'success' });
-    closeFileViewer();
-    loadAsList();
-  } catch(e) { await showAlert('상태 변경 중 오류가 발생했습니다.', 'error'); }
+function completeFromViewer() {
+  if(_viewerAsItem)openAsWorkflow(_viewerAsItem);
 }
 
-async function requestReviewFromViewer() {
-  if (!_viewerAsItem) return;
-  if (_viewerAsItem.status !== '접수') {
-    await showAlert(`"접수" 상태인 건만 검토 요청할 수 있습니다.\n\n현재 상태: "${_viewerAsItem.status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm('이 건을 검토 요청하시겠습니까?', 'info');
-  if (!ok) return;
-  try {
-    const fd = new FormData();
-    fd.append('status', '검토 요청');
-    const resp = await fetch(`${SERVER}/api/as/${_viewerAsItem.id}`, { method:'PUT', body: fd });
-    if (!resp.ok) { const err = await resp.json(); await showAlert(err.error || '검토 요청 실패', 'error'); return; }
-    showToast({ title:'검토 요청', message: (_viewerAsItem.asNo||'') + '\n검토 요청되었습니다', type:'info' });
-    closeFileViewer();
-    loadAsList();
-  } catch(e) { await showAlert('검토 요청 중 오류가 발생했습니다.', 'error'); }
+function requestReviewFromViewer() {
+  if(_viewerAsItem)openAsWorkflow(_viewerAsItem);
 }
 
-async function reviewFromViewer() {
-  if (!_viewerAsItem) return;
-  if (_viewerAsItem.status !== '검토 요청') {
-    await showAlert(`"검토 요청" 상태인 건만 검토할 수 있습니다.\n\n현재 상태: "${_viewerAsItem.status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm('이 건을 검토 처리하시겠습니까?', 'info');
-  if (!ok) return;
-  try {
-    const resp = await fetch(`${SERVER}/api/as/${_viewerAsItem.id}/review`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ reviewer: currentUser.name, reviewerDept: currentUser.department||'', reviewerPos: currentUser.position||'' })
-    });
-    if (!resp.ok) { const err = await resp.json(); await showAlert(err.error || '검토 처리 실패', 'error'); return; }
-    showToast({ title:'검토', message: (_viewerAsItem.asNo||'') + '\n검토 처리되었습니다', type:'info' });
-    closeFileViewer();
-    loadAsList();
-  } catch(e) { await showAlert('검토 처리 중 오류가 발생했습니다.', 'error'); }
+function reviewFromViewer() {
+  if(_viewerAsItem)openAsWorkflow(_viewerAsItem);
 }
 
-async function approveFromViewer() {
-  if (!_viewerAsItem) return;
-  if (_viewerAsItem.status !== '승인 요청') {
-    await showAlert(`"승인 요청" 상태인 건만 승인할 수 있습니다.\n\n현재 상태: "${_viewerAsItem.status}"`, 'error');
-    return;
-  }
-  const ok = await showConfirm('이 건을 승인 처리하시겠습니까?', 'success');
-  if (!ok) return;
-  try {
-    const resp = await fetch(`${SERVER}/api/as/${_viewerAsItem.id}/approve`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ approver: currentUser.name, approverDept: currentUser.department||'', approverPos: currentUser.position||'' })
-    });
-    if (!resp.ok) { const err = await resp.json(); await showAlert(err.error || '승인 처리 실패', 'error'); return; }
-    showToast({ title:'승인', message: (_viewerAsItem.asNo||'') + '\n승인 처리되었습니다', type:'success' });
-    closeFileViewer();
-    loadAsList();
-  } catch(e) { await showAlert('승인 처리 중 오류가 발생했습니다.', 'error'); }
+function approveFromViewer() {
+  if(_viewerAsItem)openAsWorkflow(_viewerAsItem);
 }
 
-function printViewerContent() {
-  const frame = document.getElementById('printFrame');
-  if (frame) frame.contentWindow.print();
+async function printAsFrame(frame) {
+  if (frame.contentDocument?.fonts) await frame.contentDocument.fonts.ready;
+  if (frame.isConnected) { frame.contentWindow.focus(); frame.contentWindow.print(); }
 }
 
 // ── 공장 배치도 ──
@@ -5619,15 +6064,132 @@ document.addEventListener('DOMContentLoaded', function() {
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
     document.getElementById('tabFloorplanBtn').style.display = '';
-    document.getElementById('btnAsReview').style.display = '';
-    document.getElementById('btnAsApprove').style.display = '';
+    document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
+    document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   }
-  if (currentUser.asReview) document.getElementById('btnAsReview').style.display = '';
-  if (currentUser.asApprove) document.getElementById('btnAsApprove').style.display = '';
+  if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
+  if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   if (typeof loadStats === 'function') loadStats();
   if (typeof loadMapView === 'function') loadMapView();
   if (typeof connectSSE === 'function') connectSSE();
 });
+</script>
+<script src="/as-workflow-ui.js?v=intake-order-6"></script>
+<script id="as-overview-final-script">
+
+// Approved local A/S overview layout; preserves the existing data loader and filters.
+function monthComparisonText(result){
+ const delta=result.current-result.previous;
+ if(result.previous===0)return result.current===0?'전월 대비 변동 없음 (0건)':'전월 0건 → 이번 달 '+result.current.toLocaleString()+'건';
+ if(delta===0)return '전월 대비 변동 없음 (0%)';
+ const rate=Math.abs(delta/result.previous*100).toFixed(1).replace(/\.0$/,'');
+ return '전월 대비 '+rate+'% '+(delta>0?'증가':'감소')+' ('+(delta>0?'+':'−')+Math.abs(delta).toLocaleString()+'건)';
+}
+
+function renderReasonDonut(){
+ const year=Number(document.getElementById('asStatsYear').value),month=_asStatsSelectedMonth;
+ const records=_asStatsRecords.filter(r=>{const d=asStatsDateKey(r.createdAt);return d&&d.year===year&&d.month===month;});
+ const result=summarizeAsStatistics(records,year,month),entries=Object.entries(result.reasons);
+ const host=document.getElementById('reason-donut');if(!host)return;
+ const compact=host.clientWidth<480,W=compact?460:620,H=360,cx=W/2,cy=180,r=compact?84:112,stroke=48;
+ const colors=['#246cbd','#52a5c2','#6b82be','#8f78b5','#c28c66','#7c9d70','#b49c55','#8895a6'];
+ const point=(angle,radius)=>[cx+Math.cos(angle)*radius,cy+Math.sin(angle)*radius];
+ let cursor=-Math.PI/2;
+ const segments=entries.map(([name,count],i)=>{const fraction=result.total?count/result.total:0;const start=cursor;cursor+=fraction*Math.PI*2;const middle=fraction?(start+cursor)/2:-Math.PI/2+i*Math.PI/4;const anchor=point(middle,r+stroke/2+3);return {i,name,count,fraction,start,end:cursor,middle,anchor,right:Math.cos(middle)>=0,y:anchor[1]};});
+ for(const right of [false,true]){const side=segments.filter(s=>s.right===right).sort((a,b)=>a.y-b.y);const gap=40,low=40,high=H-30;side.forEach((s,i)=>{s.y=Math.max(low,Math.min(high,s.y));if(i)s.y=Math.max(s.y,side[i-1].y+gap);});if(side.length&&side.at(-1).y>high){side.at(-1).y=high;for(let i=side.length-2;i>=0;i--)side[i].y=Math.min(side[i].y,side[i+1].y-gap);}}
+ let arcs='',labels='';
+ for(const s of segments){const percent=(s.fraction*100).toFixed(1)+'%';const attrs='data-reason-index="'+s.i+'" tabindex="0" role="button" aria-label="'+s.name+' '+percent+'" onpointerenter="selectDonutReason('+s.i+')" onfocus="selectDonutReason('+s.i+')" onclick="selectDonutReason('+s.i+')" onkeydown="if(event.key===&quot;Enter&quot;||event.key===&quot; &quot;){event.preventDefault();selectDonutReason('+s.i+')}"';
+ if(s.count){const a=point(s.start,r),b=point(s.end,r);let d='M '+a.join(' ')+' A '+r+' '+r+' 0 '+(s.fraction>.5?1:0)+' 1 '+b.join(' ');if(s.fraction>.99999){const opposite=point(s.start+Math.PI,r);d='M '+a.join(' ')+' A '+r+' '+r+' 0 1 1 '+opposite.join(' ')+' A '+r+' '+r+' 0 1 1 '+a.join(' ');}
+ arcs+='<path class="donut-segment" '+attrs+' d="'+d+'" fill="none" stroke="'+colors[s.i]+'" stroke-width="'+stroke+'"/>';}
+ const bend=s.right?cx+r+stroke/2+20:cx-r-stroke/2-20;const edge=s.right?W-14:14;const textAnchor=s.right?'end':'start';
+ labels+='<g class="donut-callout" '+attrs+'><path class="donut-leader" d="M '+s.anchor.join(' ')+' L '+bend+' '+s.y+' L '+edge+' '+s.y+'" fill="none" stroke="'+colors[s.i]+'" stroke-width="1.2" '+(!s.count?'stroke-dasharray="3 3"':'')+'/><text x="'+edge+'" y="'+(s.y-9)+'" text-anchor="'+textAnchor+'"><tspan class="donut-name">'+s.name+'</tspan><tspan dx="6" class="donut-share">'+percent+'</tspan></text><rect x="'+(s.right?W-160:4)+'" y="'+(s.y-30)+'" width="156" height="38" fill="transparent"/></g>';
+ }
+ host.innerHTML='<svg class="reason-donut-svg" viewBox="0 0 '+W+' '+H+'" aria-label="'+year+'년 '+month+'월 접수 사유별 비율"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#e5eaf0" stroke-width="'+stroke+'"/>'+arcs+'<text id="donut-percent" x="'+cx+'" y="'+(cy-10)+'" text-anchor="middle" dominant-baseline="central"></text><text id="donut-label" x="'+cx+'" y="'+(cy+20)+'" text-anchor="middle" dominant-baseline="central"></text>'+labels+'</svg>';
+ let summary=document.getElementById('reason-top-summary');
+ if(!summary){summary=document.createElement('div');summary.id='reason-top-summary';summary.className='reason-top-summary';summary.setAttribute('role','status');host.after(summary);}
+ summary.replaceChildren();
+ const maxCount=Math.max(0,...entries.map(e=>e[1]));
+ const leaders=entries.filter(e=>e[1]===maxCount);
+ const caption=document.createElement('span');caption.textContent=result.total?'가장 많이 접수된 유형':'선택한 월의 접수 유형';
+ const headline=document.createElement('strong');
+ if(!result.total){headline.textContent='접수 없음';}
+ else {const share=(maxCount/result.total*100).toFixed(1)+'%';caption.textContent=(leaders.length>1?'공동 최다 접수 유형 · 각 ':'최다 접수 유형 · ')+share;headline.textContent=leaders.map(e=>e[0]).join(' · ');}
+ summary.append(headline,caption);
+ host._entries=entries;host._total=result.total;
+ host.querySelectorAll('.donut-segment').forEach(el=>{
+  const index=Number(el.dataset.reasonIndex),segment=segments[index];
+  const leading=maxCount>0&&segment.count===maxCount;
+  el.classList.toggle('is-leading',leading);
+  if(leading)el.setAttribute('transform','translate('+(Math.cos(segment.middle)*6)+' '+(Math.sin(segment.middle)*6)+')');
+ });
+ const selected=entries.reduce((best,e,i)=>e[1]>entries[best][1]?i:best,0);selectDonutReason(selected);
+ if(!host._observer&&typeof ResizeObserver!=='undefined'){host._width=host.clientWidth;host._observer=new ResizeObserver(()=>{if(Math.abs(host.clientWidth-host._width)>1){host._width=host.clientWidth;renderReasonDonut();requestAnimationFrame(alignReasonTable);}});host._observer.observe(host);}
+}
+function selectDonutReason(index){const host=document.getElementById('reason-donut');if(!host?._entries)return;host._selected=index;const [name,count]=host._entries[index];document.getElementById('donut-percent').textContent=host._total?(count/host._total*100).toFixed(1)+'%':'0%';document.getElementById('donut-label').textContent=host._total?name:'접수 없음';host.querySelectorAll('[data-reason-index]').forEach(el=>{const active=Number(el.dataset.reasonIndex)===index;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));});}
+
+
+
+function alignReasonTable(){
+ const daily=document.querySelector('#asSubStats .as-daily-section');
+ const table=document.querySelector('#asSubStats .as-overview-charts>section .as-reason-table-wrap');
+ const stack=document.querySelector('#asSubStats .as-trend-stack');
+ if(!daily||!table||!stack||!daily.getClientRects().length)return;
+ const monthly=stack.firstElementChild;monthly.style.minHeight='0';
+ table.style.marginTop='8px';
+ if(table.parentElement.getBoundingClientRect().left>stack.getBoundingClientRect().right){
+  const unit=daily.querySelector('.as-chart-unit');
+  const target=()=>{const rect=unit.getBoundingClientRect();return rect.top+rect.height/2;};
+  const unitOffset=target()-daily.getBoundingClientRect().top;
+  monthly.style.minHeight=Math.ceil(Math.max(monthly.getBoundingClientRect().height,unitOffset+table.getBoundingClientRect().height+24))+'px';
+  const overflow=table.getBoundingClientRect().top-target();
+  if(overflow>0)monthly.style.minHeight=Math.ceil(monthly.getBoundingClientRect().height+overflow)+'px';
+  const gap=target()-table.getBoundingClientRect().top;
+  table.style.marginTop=Math.max(8,8+gap)+'px';
+ }
+}
+window.addEventListener('resize',()=>requestAnimationFrame(alignReasonTable));
+document.fonts?.ready.then(()=>requestAnimationFrame(alignReasonTable));
+
+function renderMonthlyLines(){
+ const chart=document.getElementById('asStatsChart');if(!chart)return;
+ chart.querySelector('.monthly-line-overlay')?.remove();
+ const year=Number(document.getElementById('asStatsYear').value);
+ const result=summarizeAsStatistics(_asStatsRecords,year,_asStatsSelectedMonth);
+ const counts=result.counts,max=Math.max(1,...counts),average=counts.reduce((sum,n)=>sum+n,0)/12;
+ const width=chart.clientWidth;if(!width)return;
+ const points=counts.map((n,i)=>[(i+.5)*width/12,208-n/max*176]);
+ const averageY=208-average/max*176;
+ const svg='<svg class="monthly-line-overlay" viewBox="0 0 '+width+' 220" aria-hidden="true"><line x1="0" y1="'+averageY+'" x2="'+width+'" y2="'+averageY+'" stroke="#a16b34" stroke-width="1.5" stroke-dasharray="6 5"/><polyline points="'+points.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#246cbd" stroke-width="2" stroke-linejoin="round"/>'+points.map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="white" stroke="#246cbd" stroke-width="2"/>').join('')+'</svg>';
+ chart.insertAdjacentHTML('beforeend',svg);
+ let legend=document.getElementById('monthly-chart-legend');
+ if(!legend){legend=document.createElement('div');legend.id='monthly-chart-legend';legend.className='monthly-chart-legend';chart.parentElement.before(legend);}
+ legend.innerHTML='<span><i></i>월별 추이</span><span title="선택 연도 총 접수 건수 ÷ 12개월"><i class="average-key"></i>월평균 '+average.toFixed(1)+'건</span>';
+ if(!chart._lineObserver&&typeof ResizeObserver!=='undefined'){chart._lineWidth=width;chart._lineObserver=new ResizeObserver(()=>{if(chart.clientWidth!==chart._lineWidth){chart._lineWidth=chart.clientWidth;renderMonthlyLines();}});chart._lineObserver.observe(chart);}
+}
+
+
+(function installAsOverview(){
+ const root=document.getElementById('asSubStats');
+ root.querySelector('.as-overview-section:not(.as-overview-period)').remove();
+ const title=document.getElementById('asStatsReasonsTitle');title.textContent='유형별 집계';
+ title.insertAdjacentHTML('afterend','<div id="reason-donut" class="reason-donut" aria-label="유형별 접수 비율"></div>');
+ const heading=root.querySelector('.as-trend-stack .as-stats-chart-heading');
+ const controls=document.createElement('div');controls.className='chart-header-controls';controls.append(document.getElementById('asStatsYear'),heading.querySelector('.as-chart-unit'));heading.append(controls);
+ heading.insertAdjacentHTML('afterend','<div class="month-comparison" role="status" aria-live="polite"><div class="comparison-main"><span id="comparison-period" class="as-chart-sr-only"></span><strong id="comparison-count"></strong></div><div class="comparison-detail"><span id="comparison-change"></span><small id="comparison-basis"></small></div></div>');
+ const originalRender=renderAsStatistics;
+ renderAsStatistics=function(){
+  originalRender();
+  const year=Number(document.getElementById('asStatsYear').value),month=_asStatsSelectedMonth;
+  if(!year||month<1||month>12)return;
+  const result=summarizeAsStatistics(_asStatsRecords,year,month);
+  document.getElementById('comparison-period').textContent=year+'년 '+month+'월';
+  document.getElementById('comparison-count').textContent=result.current.toLocaleString()+'건';
+  document.getElementById('comparison-change').textContent=monthComparisonText(result);
+  document.getElementById('comparison-basis').textContent=result.previousYear+'년 '+result.previousMonth+'월 '+result.previous.toLocaleString()+'건 기준';
+  document.getElementById('asDailyHint').textContent=year+'년 '+month+'월';
+  renderMonthlyLines();renderReasonDonut();requestAnimationFrame(alignReasonTable);
+ };
+})();
 </script>
 </body>
 </html>

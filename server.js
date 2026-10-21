@@ -5,6 +5,8 @@ const path = require('path');
 const multer = require('multer');
 const XLSX = require('xlsx');
 
+const asWorkflow = require('./as-workflow');
+const asSessions = require('./as-session').createSessionStore();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
@@ -41,6 +43,7 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/as-workflow-ui.js', (req,res)=>res.sendFile(path.join(__dirname,'as-workflow-ui.js')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/miboo_logo.png', (req, res) => res.sendFile(path.join(__dirname, 'miboo_logo.png')));
 app.get('/login-bg.png', (req, res) => res.sendFile(path.join(__dirname, 'login-bg.png')));
@@ -104,7 +107,7 @@ function saveLocations(data) {
 if (!fs.existsSync(AS_FILE)) {
   fs.writeFileSync(AS_FILE, JSON.stringify({ list: [], seq: 0 }, null, 2));
 }
-function loadAs() { return JSON.parse(fs.readFileSync(AS_FILE, 'utf8')); }
+function loadAs() { const data=JSON.parse(fs.readFileSync(AS_FILE, 'utf8')); data.list=(data.list||[]).map(asWorkflow.normalize); return data; }
 function saveAs(data) { fs.writeFileSync(AS_FILE, JSON.stringify(data, null, 2)); }
 
 // ── ERP 데이터 초기화 ──
@@ -214,6 +217,7 @@ app.post('/api/login', (req, res) => {
   const data = loadData();
   const user = data.users.find(u => u.id === id && u.password === password);
   if (!user) return res.status(401).json({ error: '아이디 또는 비밀번호가 틀렸습니다.' });
+  asSessions.issue(req,res,user.id);
   res.json({ success: true, user: { id: user.id, name: user.name, role: user.role, department: user.department||'', position: user.position||'', asReview: user.asReview||false, asApprove: user.asApprove||false } });
 });
 
@@ -554,7 +558,9 @@ app.get('/api/as', (req, res) => {
 });
 
 app.post('/api/as', asUpload.array('files', 10), (req, res) => {
-  const { ship, block, element, product, reason, action, remark, status, category, createdBy, createdDept, createdPos } = req.body;
+  const { ship, block, element, product, materialCode, deliveryAgreedDate, reason, action, remark, status, category, createdBy, createdDept, createdPos } = req.body;
+  if (deliveryAgreedDate !== undefined && deliveryAgreedDate !== '' && !asWorkflow.dateValid(deliveryAgreedDate)) return res.status(400).json({error:'납품 협의일을 올바른 날짜로 입력하세요.'});
+  if (materialCode !== undefined && (typeof materialCode !== 'string' || materialCode.trim().length > 100)) return res.status(400).json({ error: '자재코드는 100자 이내의 문자열로 입력하세요.' });
   if (!ship || !block) return res.status(400).json({ error: '호선과 블록이 필요합니다.' });
   if (!reason) return res.status(400).json({ error: '사유가 필요합니다.' });
   const data = loadAs();
@@ -564,7 +570,7 @@ app.post('/api/as', asUpload.array('files', 10), (req, res) => {
   data.monthSeq[ym] = (data.monthSeq[ym] || 0) + 1;
   const asNo = 'AS-' + ym + '-' + String(data.monthSeq[ym]).padStart(2, '0');
   const files = (req.files || []).map(f => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), filename: f.filename, size: f.size }));
-  const item = { id: Date.now().toString(), asNo, ship, block, element: element||'', product: product||'', reason, action: action||'', remark: remark||'', status: status||'접수', category: category||'사내', createdBy: createdBy||'', createdDept: createdDept||'', createdPos: createdPos||'', files, createdAt: new Date().toISOString() };
+  const item = { id: Date.now().toString(), asNo, ship, block, element: element||'', product: product||'', materialCode: (materialCode||'').trim(), deliveryAgreedDate: deliveryAgreedDate||'', reason, action: action||'', remark: remark||'', status: '접수', category: category||'사내', createdBy: createdBy||'', createdDept: createdDept||'', createdPos: createdPos||'', files, createdAt: new Date().toISOString() };
   data.list.push(item);
   saveAs(data);
   res.json({ success: true, item });
@@ -574,33 +580,27 @@ app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
   const data = loadAs();
   const idx = data.list.findIndex(a => a.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'AS 건을 찾을 수 없습니다.' });
-  const { ship, block, element, product, reason, action, remark, status, category } = req.body;
+  const { ship, block, element, product, materialCode, deliveryAgreedDate, reason, action, remark, status, category } = req.body;
+  if (deliveryAgreedDate !== undefined && deliveryAgreedDate !== '' && !asWorkflow.dateValid(deliveryAgreedDate)) return res.status(400).json({error:'납품 협의일을 올바른 날짜로 입력하세요.'});
+  if (materialCode !== undefined && (typeof materialCode !== 'string' || materialCode.trim().length > 100)) return res.status(400).json({ error: '자재코드는 100자 이내의 문자열로 입력하세요.' });
   const cur = data.list[idx].status;
   // 상태 변경 요청이 아닌 내용 수정은 접수 상태에서만 가능
-  const isRemarkOnly = remark !== undefined && ship === undefined && block === undefined && element === undefined && product === undefined && reason === undefined && action === undefined && category === undefined && !(req.files && req.files.length) && !req.body.removeFiles && status === undefined;
-  const isContentEdit = ship !== undefined || block !== undefined || element !== undefined || product !== undefined || reason !== undefined || action !== undefined || category !== undefined || (req.files && req.files.length) || req.body.removeFiles;
+  const isRemarkOnly = remark !== undefined && ship === undefined && block === undefined && element === undefined && product === undefined && materialCode === undefined && deliveryAgreedDate === undefined && reason === undefined && action === undefined && category === undefined && !(req.files && req.files.length) && !req.body.removeFiles && status === undefined;
+  const isContentEdit = ship !== undefined || block !== undefined || element !== undefined || product !== undefined || materialCode !== undefined || deliveryAgreedDate !== undefined || reason !== undefined || action !== undefined || category !== undefined || (req.files && req.files.length) || req.body.removeFiles;
   const isStatusChangeOnly = status !== undefined && status !== cur && !isContentEdit && !isRemarkOnly;
-  if (isContentEdit && cur !== '접수') return res.status(400).json({ error: '접수 상태에서만 수정할 수 있습니다.' });
+  if (isContentEdit && (cur !== '접수' || data.list[idx].legacyStatus)) return res.status(400).json({ error: '접수 상태에서만 수정할 수 있습니다.' });
   if (ship !== undefined) data.list[idx].ship = ship;
   if (block !== undefined) data.list[idx].block = block;
   if (element !== undefined) data.list[idx].element = element;
   if (product !== undefined) data.list[idx].product = product;
+  if (materialCode !== undefined) data.list[idx].materialCode = materialCode.trim();
+  if (deliveryAgreedDate !== undefined) data.list[idx].deliveryAgreedDate = deliveryAgreedDate;
   if (remark !== undefined) data.list[idx].remark = remark;
   if (reason !== undefined) data.list[idx].reason = reason;
   if (action !== undefined) data.list[idx].action = action;
   if (category !== undefined) data.list[idx].category = category;
   if (status !== undefined && status !== data.list[idx].status) {
-    const VALID_NEXT = { '접수': ['검토 요청'], '검토 요청': ['승인 요청'], '승인 요청': ['처리 대기'], '처리 대기': ['완료'] };
-    const cur = data.list[idx].status;
-    const allowed = VALID_NEXT[cur] || [];
-    if (!allowed.includes(status)) return res.status(400).json({ error: `"${cur}" 상태에서 "${status}"(으)로 변경할 수 없습니다. 다음 단계: ${allowed.join(', ') || '없음'}` });
-    data.list[idx].status = status;
-    if (status === '완료') {
-      data.list[idx].completedBy = req.body.completedBy || '';
-      data.list[idx].completedDept = req.body.completedDept || '';
-      data.list[idx].completedPos = req.body.completedPos || '';
-      data.list[idx].completedAt = new Date().toISOString();
-    }
+    return res.status(400).json({error:'진행 관리에서 일정과 완료일을 입력하여 변경하세요.'});
   }
   // 새 파일 추가
   const newFiles = (req.files || []).map(f => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), filename: f.filename, size: f.size }));
@@ -617,32 +617,30 @@ app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
   res.json({ success: true });
 });
 
-app.patch('/api/as/:id/review', (req, res) => {
-  const data = loadAs();
-  const idx = data.list.findIndex(a => a.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'AS 건을 찾을 수 없습니다.' });
-  if (data.list[idx].status !== '검토 요청') return res.status(400).json({ error: '검토 요청 상태인 건만 검토할 수 있습니다.' });
-  data.list[idx].reviewer = req.body.reviewer || '';
-  data.list[idx].reviewerDept = req.body.reviewerDept || '';
-  data.list[idx].reviewerPos = req.body.reviewerPos || '';
-  data.list[idx].reviewedAt = req.body.reviewedAt || new Date().toISOString();
-  data.list[idx].status = '승인 요청';
-  saveAs(data);
-  res.json({ success: true });
-});
-
-app.patch('/api/as/:id/approve', (req, res) => {
-  const data = loadAs();
-  const idx = data.list.findIndex(a => a.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'AS 건을 찾을 수 없습니다.' });
-  if (data.list[idx].status !== '승인 요청') return res.status(400).json({ error: '승인 요청 상태인 건만 승인할 수 있습니다.' });
-  data.list[idx].approver = req.body.approver || '';
-  data.list[idx].approverDept = req.body.approverDept || '';
-  data.list[idx].approverPos = req.body.approverPos || '';
-  data.list[idx].approvedAt = req.body.approvedAt || new Date().toISOString();
-  data.list[idx].status = '처리 대기';
-  saveAs(data);
-  res.json({ success: true });
+app.patch('/api/as/:id/review', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
+app.patch('/api/as/:id/approve', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
+app.post('/api/logout', (req,res)=>{asSessions.revoke(req,res);res.json({success:true});});
+function authenticateAsWorkflow(req,res,next){
+  const userId=asSessions.userId(req);
+  const actor=userId && loadData().users.find(user=>user.id===userId);
+  if(!actor)return res.status(401).json({error:'다시 로그인한 후 진행 관리를 이용하세요.'});
+  req.asActor=actor;next();
+}
+app.patch('/api/as/:id/workflow', authenticateAsWorkflow, asUpload.array('files',10), (req,res)=>{
+  const cleanUploads=()=>{for(const file of req.files||[]) {try {fs.unlinkSync(file.path);} catch {}}};
+  try {
+    const data=loadAs();
+    const index=data.list.findIndex(item=>item.id===req.params.id);
+    if(index<0) {cleanUploads();return res.status(404).json({error:'AS 건을 찾을 수 없습니다.'});}
+    const payload=typeof req.body.payload==='string'?JSON.parse(req.body.payload):req.body;
+    const actor=req.asActor;
+    if(!actor || !(actor.role==='sysadmin'||actor.asReview||actor.asApprove||actor.name===data.list[index].createdBy)) {cleanUploads();return res.status(403).json({error:'접수자 또는 AS 관리 권한이 필요합니다.'});}
+    const item=asWorkflow.applyWorkflow(data.list[index],payload,actor);
+    const files=(req.files||[]).map(f=>({name:Buffer.from(f.originalname,'latin1').toString('utf8'),filename:f.filename,size:f.size}));
+    item.files=[...(item.files||[]),...files];
+    data.list[index]=item;saveAs(data);
+    res.json({success:true,item});
+  } catch(error) {cleanUploads();res.status(error.status||400).json({error:error.status?error.message:'작업 정보를 저장하지 못했습니다.'});}
 });
 
 app.delete('/api/as/:id', (req, res) => {
