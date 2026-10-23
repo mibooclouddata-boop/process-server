@@ -48,8 +48,8 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
  const context={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
  const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',product:'<script>bad</script>',materialCode:'MAT-01',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
- assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('rowspan="3"'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
- assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=intake-order-6"><\/script>/g)||[]).length,1);
+ assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('as-doc-header'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
+ assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=receipt-black-7"><\/script>/g)||[]).length,1);
 });
 test('workflow API persists only valid requests and blocks stale edits',()=>{
  const src=fs.readFileSync(__dirname+'/server.js','utf8');const from=src.indexOf("app.patch('/api/as/:id/workflow'"),to=src.indexOf("app.delete('/api/as/:id'",from);
@@ -96,7 +96,7 @@ test('approval slots show the authenticated completer for each stage and preserv
  const pending=c.asJobApprovalLine({...base(),reviewer:'과거 검토자',approver:'과거 승인자'});
  assert(!pending.includes('과거 검토자'));assert(!pending.includes('과거 승인자'));assert(!pending.includes('제작 담당'));assert(!pending.includes('as-doc-approval-stamp'));
  const received=c.asJobApprovalLine({...base(),createdAt:now});
- assert.equal((received.match(/class="as-doc-approval-stamp"/g)||[]).length,1);assert(received.includes('<time>'+day+'</time>'));
+ assert.equal((received.match(/class="as-doc-approval-stamp"/g)||[]).length,1);assert(received.includes('<time datetime="'+day+'">'+day.replace(/-/g,'.')+'</time>'));
 });
 
 test('receipt amounts persist, clear and validate in every workflow status without changing workflow',()=>{
@@ -155,10 +155,15 @@ test('legacy records without an agreement can enter the new workflow through the
  assert.throws(()=>applyWorkflow(legacy,{revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:''},actor,day,now));
 });
 
-test('formal receipt keeps dates together and escapes text exactly once',()=>{
+test('receipt groups its number and dates under the title and escapes text exactly once',()=>{
  const c={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
- const doc=c.asJobDocument({createdAt:'2026-10-14',deliveryAgreedDate:'2026-10-22',reason:'A & B <확인>',files:[{name:'검사 & 도면.pdf'}]});
+ const doc=c.asJobDocument({asNo:'AS-TEST<&>',createdAt:'2026-10-14',deliveryAgreedDate:'2026-10-22',reason:'A & B <확인>',files:[{name:'검사 & 도면.pdf'}]});
  assert(doc.includes('2026.10.14'));assert(doc.includes('2026.10.22'));assert(doc.includes('A &amp; B &lt;확인&gt;'));assert(!doc.includes('&amp;amp;'));assert(doc.includes('검사 &amp; 도면.pdf'));assert(!doc.includes('처리 이력'));assert.equal((doc.match(/납품 협의일/g)||[]).length,1);
+ const header=doc.slice(doc.indexOf('<header'),doc.indexOf('</header>'));
+ assert(header.includes('A/S 접수서'));assert(header.includes('AS-TEST&lt;&amp;&gt;'));assert(header.includes('2026.10.14'));assert(header.includes('2026.10.22'));
+ assert(header.indexOf('접수번호')<header.indexOf('접수일'));assert(header.indexOf('접수일')<header.indexOf('납품 협의일'));assert(header.indexOf('납품 협의일')<header.indexOf('as-doc-approval'));
+ assert(!doc.includes('MIBOO'));assert(!doc.includes('as-doc-dates'));assert(!doc.includes('도장 요청'));
+ const empty=c.asJobDocument({});assert(empty.includes('<dt>접수번호</dt><dd>—</dd>'));assert(empty.includes('<dt>납품 협의일</dt><dd>미정</dd>'));assert(!empty.includes('as-doc-approval-stamp'));
 });
 
 test('intake pagination shows 20 records per page and handles the final partial page',()=>{
@@ -168,7 +173,7 @@ test('intake pagination shows 20 records per page and handles the final partial 
  const c={AsAmount:require('./as-amount'),window:{innerHeight:1000,scrollY:0},document:{querySelector:()=>head,getElementById:id=>id==='asTableBody'?tbody:pagination},_asRemarkEditing:null,_asFullList:[],_asPage:1,_asPageSize:20,_asFiltered:[],_updateAsSelectedCount(){},_renderAsPagination(){},_initAsColResizers(){},asJobEsc:String,asWorkflowDelayHtml:()=>''};
  vm.createContext(c);
  vm.runInContext(html.slice(html.indexOf('function _renderAsPage()'),html.indexOf('function _renderAsPagination(')),c);
- visible=true;c._renderAsPage();assert.equal(tbody.innerHTML,'');assert.equal(pagination.style.display,'none');
+ visible=true;c._renderAsPage();assert(tbody.innerHTML.includes('조건에 맞는 접수 내역이 없습니다.'));assert(!tbody.innerHTML.includes('data-id='));assert.equal(pagination.style.display,'none');
  c._asFiltered=[{id:'one',asNo:'AS-ONE',status:'접수',files:[]}];c._renderAsPage();
  assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,1);
  assert(!html.includes('asListExampleBtn'));assert(!html.includes('toggleAsListExample'));
@@ -177,17 +182,17 @@ test('intake pagination shows 20 records per page and handles the final partial 
  c._asPage=2;c._renderAsPage();assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,1);assert(tbody.innerHTML.includes('AS-20'));
 });
 
-test('switching to sample records ignores stale real-data responses and errors',async()=>{
+test('newer receipt requests ignore stale responses and errors',async()=>{
  const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  const source=html.slice(html.indexOf('let _asListRequest = 0;'),html.indexOf('function _applyAsFilters()'));
  for(const fail of [false,true]){
-  let resolve,reject;const pending=new Promise((yes,no)=>{resolve=yes;reject=no;});
-  const elements={},samples=[{id:'sample'}];
-  const c={_asRemarkEditing:null,_asListExample:false,_asFullList:[],_asPage:1,SERVER:'',fetch:()=>pending,getAsExampleRecords:()=>samples,_applyAsFilters(){},_updateAsSelectedCount(){},document:{getElementById:id=>elements[id]??= {style:{}}}};
+  let resolve,reject;const pending=new Promise((yes,no)=>{resolve=yes;reject=no;});let calls=0;
+  const elements={},latest=[{id:'latest'}];
+  const c={_asRemarkEditing:null,_asFullList:[],_asPage:1,SERVER:'',fetch:()=>++calls===1?pending:Promise.resolve({ok:true,json:async()=>({list:latest})}),_applyAsFilters(){},_updateAsSelectedCount(){},document:{getElementById:id=>elements[id]??= {style:{}}}};
   vm.createContext(c);vm.runInContext(source,c);
-  const first=c.loadAsList();c._asListExample=true;await c.loadAsList();
-  if(fail)reject(Error('offline'));else resolve({ok:true,json:async()=>({list:[{id:'real'}]})});
-  await first;assert.equal(c._asFullList,samples);assert.notEqual(elements.asLedgerCount.textContent,'조회 오류');
+  const first=c.loadAsList();await c.loadAsList();
+  if(fail)reject(Error('offline'));else resolve({ok:true,json:async()=>({list:[{id:'stale'}]})});
+  await first;assert.equal(c._asFullList,latest);assert.notEqual(elements.asLedgerCount.textContent,'조회 오류');
  }
 });
 

@@ -1257,87 +1257,7 @@ tbody tr:hover td{background:var(--surface-muted)}
 @container as-overview (max-width:1080px){#asSubStats .as-overview-charts{align-items:start}#asSubStats .as-trend-stack{grid-template-rows:auto auto}#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:auto}}
 @container as-overview (max-width:560px){#asSubStats .as-daily-section{min-height:352px}}
 </style>
-<style id="as-overview-final-styles">#asSubStats .month-comparison{display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-top:18px;padding:15px 16px;background:#f3f6fa;border:1px solid #e2e8f0;border-radius:8px}
-#asSubStats .comparison-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-#asSubStats .comparison-main>span{font-size:13px;color:#526174}
-#asSubStats .as-overview-kpis strong,#asSubStats .comparison-main strong,#asSubStats .reason-top-summary strong{font-size:25px;line-height:1.4;color:#254566;font-weight:700;font-variant-numeric:tabular-nums}
-#asSubStats .comparison-detail{display:flex;flex-direction:column;gap:4px;text-align:right}
-#asSubStats .comparison-detail>span,#asSubStats .reason-top-summary>span{font-size:13px;font-weight:600;color:#42566f;line-height:1.6}
-#asSubStats .comparison-detail small{font-size:11px;color:#62768e}
-@container as-overview (max-width:560px){#asSubStats .month-comparison{display:block;padding:14px}#asSubStats .comparison-detail{margin-top:8px;text-align:left}}
-
-#asSubStats .as-overview-period{display:none!important}
-#asSubStats .as-overview-kpis{margin-bottom:24px}
-#asSubStats .chart-header-controls{display:flex;align-items:center;gap:12px;flex-shrink:0}
-#asSubStats .chart-header-controls #asStatsYear{height:36px;min-width:104px;padding:0 10px;font-size:13px}
-#asSubStats .as-trend-stack>.as-stats-chart-panel>.as-stats-chart-heading{flex-wrap:wrap;row-gap:10px}
-#asSubStats .as-stats-chart-heading h2{white-space:nowrap}
-@container as-overview (max-width:560px){#asSubStats .chart-header-controls{gap:8px}#asSubStats .chart-header-controls #asStatsYear{min-width:94px;height:40px}#asSubStats .as-trend-stack>.as-stats-chart-panel>.as-stats-chart-heading h2{font-size:16px}}
-
-#asSubStats #asStatsReasonsHint,#asSubStats .as-stats-footnote{display:none!important}
-
-#asSubStats .reason-donut{display:grid;grid-template-columns:180px minmax(0,1fr);gap:22px;align-items:center;padding:24px 0 20px;border-bottom:1px solid #e4e9ef;margin-bottom:16px}
-#asSubStats .reason-donut-ring{width:180px;height:180px;position:relative;border-radius:50%;display:grid;place-items:center}
-#asSubStats .reason-donut-center{width:124px;height:124px;background:white;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
-#asSubStats .reason-donut-center strong{font-size:27px;font-weight:700;color:#274462;font-variant-numeric:tabular-nums}
-#asSubStats .reason-donut-center span{font-size:12px;color:#61758f}
-#asSubStats .reason-donut-legend{display:grid;gap:3px;min-width:0}
-#asSubStats .reason-donut-legend button{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:7px;align-items:center;font-size:12px;font-weight:500;padding:6px;border:0;border-radius:4px;background:transparent;text-align:left;cursor:pointer;color:#526174}
-#asSubStats .reason-donut-legend button.active,#asSubStats .reason-donut-legend button:hover{background:#eef3f9;color:#254566}
-#asSubStats .reason-donut-legend i{width:8px;height:8px;border-radius:2px}
-#asSubStats .reason-donut-legend b{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
-@container as-overview (max-width:560px){#asSubStats .reason-donut{grid-template-columns:1fr;justify-items:center;gap:18px}#asSubStats .reason-donut-legend{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}}
-
-#asSubStats .reason-donut{display:block;padding:8px 0 0;margin:0;border:0;width:100%;min-width:0}
-#asSubStats .reason-donut-svg{display:block;width:100%;height:auto;max-height:540px;overflow:visible}
-#asSubStats .reason-donut-svg text{font-family:inherit;fill:#526174;font-size:13px}
-#asSubStats .reason-donut-svg #donut-percent{font-size:30px;font-weight:700;fill:#254566}
-#asSubStats .reason-donut-svg #donut-label{font-size:13px}
-#asSubStats .donut-segment{cursor:pointer;opacity:.7;transition:opacity .12s}
-#asSubStats .donut-segment.active{opacity:1;filter:brightness(.94)}
-#asSubStats .donut-callout{cursor:pointer}
-#asSubStats .donut-callout.active text{fill:#203e60;font-weight:700}
-#asSubStats .donut-callout.active .donut-leader{stroke-width:2}
-#asSubStats .donut-share{font-weight:650}
-#asSubStats .donut-callout:focus-visible{outline:none}#asSubStats .donut-callout:focus-visible text{text-decoration:underline}
-#asSubStats .donut-segment:focus-visible{outline:none;stroke-width:42}
-#asSubStats .as-overview-charts>section .as-reason-table-wrap{margin-top:20px;border-top:1px solid #e4e9ef;padding-top:12px}
-@media(prefers-reduced-motion:reduce){#asSubStats .donut-segment{transition:none}}
-
-/* Selected concept 02: thick ring with linked callouts. */
-#asSubStats .donut-segment{opacity:.85;transition:opacity .12s,stroke-width .12s}
-#asSubStats .donut-segment.active,#asSubStats .donut-segment:focus-visible{stroke-width:56;opacity:1;filter:none}
-@media(prefers-reduced-motion:reduce){#asSubStats .donut-segment{transition:none}}
-
-/* Equal trend rows and a shared bottom edge on desktop. */
-#asSubStats .as-overview-charts{align-items:stretch}
-#asSubStats .as-trend-stack{grid-template-rows:repeat(2,1fr);align-content:start}
-#asSubStats .as-trend-stack>.as-stats-chart-panel{display:flex;flex-direction:column;min-height:0}
-#asSubStats .as-stats-chart-scroll,#asSubStats .as-daily-scroll{flex:0 0 auto;margin-top:auto}
-#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:auto;display:flex;flex-direction:column}
-#asSubStats .reason-donut{padding-top:24px}
-#asSubStats .as-overview-charts>section .as-reason-table-wrap{margin-top:auto;padding-top:8px}
-#asSubStats .as-reason-table td{padding-top:5px;padding-bottom:5px}
-#asSubStats .reason-donut-svg #donut-percent,#asSubStats .reason-donut-svg #donut-label{text-anchor:middle;dominant-baseline:central}
-@container as-overview (max-width:1080px){#asSubStats .as-overview-charts{align-items:start}}
-
-#asSubStats .monthly-line-overlay{position:absolute;top:8px;left:0;width:100%;height:220px;pointer-events:none;z-index:2;overflow:visible}
-#asSubStats .monthly-chart-legend{display:flex;justify-content:flex-end;gap:16px;align-items:center;flex-wrap:wrap;margin:10px 0 2px;font-size:12px;color:#526174;line-height:20px}
-#asSubStats .monthly-chart-legend span{display:inline-flex;align-items:center;gap:6px}
-#asSubStats .monthly-chart-legend i{display:inline-block;width:20px;border-top:2px solid #246cbd}
-#asSubStats .monthly-chart-legend .average-key{border-top:2px dashed #a16b34}
-
-#asSubStats .reason-top-summary{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0 4px;color:#526174}
-
-#asSubStats .reason-top-summary strong{overflow-wrap:anywhere;text-wrap:balance}
-#asSubStats .reason-top-summary small{font-size:12px;line-height:18px}
-
-#asSubStats .donut-segment{opacity:.55}
-#asSubStats .donut-segment.is-leading{opacity:1;stroke-width:48}
-#asSubStats .donut-segment.active,#asSubStats .donut-segment:focus-visible{opacity:1;stroke-width:48}
-
-#asSubStats .as-overview-period,#asSubStats .as-stats-summary,#asSubStats #asStatsReasonsHint,#asSubStats .as-stats-footnote{display:none!important}
-#asSubStats .as-overview-kpis{margin-bottom:24px}
+<style id="as-overview-final-styles">
 #asSubStats .as-amount-summary{display:flex;gap:8px 24px;flex-wrap:wrap;margin:10px 0 16px;font-size:14px;line-height:1.6;color:var(--text)}
 #asSubStats .as-amount-summary strong{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
 #asSubStats .as-amount-basis{font-size:12px;color:#526174;margin:8px 0 0}
@@ -1354,6 +1274,101 @@ tbody tr:hover td{background:var(--surface-muted)}
 #asModal .as-amount-unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:500;line-height:1.5;color:var(--text);pointer-events:none}
 #asModal #asAmount[aria-invalid="true"]{border-color:#a23732!important}
 #asModal #asAmountHint{display:block;margin-top:6px;color:#526174;font-size:12px}
+
+#asSubStats[data-overview-layout="comparison"]{--as-ink:#182b49;--as-secondary:#596b83;--as-blue:#155eef;--as-edge:#e5eaf2;max-width:none;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;color:var(--as-ink);font-variant-numeric:tabular-nums;--overview-gap:16px}
+.main:has(#asSubStats[data-overview-layout]:not([style*="display: none"]):not([style*="display:none"])){background:#f5f7fb}
+#asSubStats[data-overview-layout] :is(button,select,p,span,strong,small,th,td){font-family:inherit;font-size:14px;line-height:1.5;letter-spacing:0;font-weight:500}
+#asSubStats[data-overview-layout] :is(h2,h3){font:650 18px/1.5 'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;letter-spacing:-.02em;margin:0;color:var(--as-ink)}
+#asSubStats[data-overview-layout] :is(strong,thead th){font-weight:650}
+#asSubStats[data-overview-layout] :is(button,select,a):focus-visible{outline:3px solid var(--as-blue);outline-offset:3px}
+#asSubStats[data-overview-layout] [hidden]{display:none!important}
+#asSubStats[data-overview-layout] .as-overview-section:not(.as-overview-period){display:flex;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 16px}
+#asSubStats[data-overview-layout] .as-overview-section h2{font-size:24px;font-weight:700;line-height:1.35}
+#asSubStats[data-overview-layout] .as-overview-section>span{font-size:13px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] #asPendingRelation{margin:0 0 0 auto;font-size:13px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .as-overview-kpis{display:grid;grid-template-columns:1.32fr repeat(4,minmax(0,1fr));gap:12px;border:0;background:transparent;margin-bottom:20px;overflow:visible}
+#asSubStats[data-overview-layout] .as-overview-kpis button{min-height:116px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;border:1px solid var(--as-edge);border-radius:10px;padding:18px 20px;box-shadow:0 2px 5px #182b4905;background:#fff;grid-column:auto;position:relative;text-align:left;transition:background .12s,border-color .12s,box-shadow .12s}
+#asSubStats[data-overview-layout] .as-overview-kpis button:hover{background:#f6f9ff;border-color:#9cbcfb;box-shadow:0 3px 10px #182b4910}
+#asSubStats[data-overview-layout] .as-overview-kpis button:active{background:#eaf1ff}
+#asSubStats[data-overview-layout] .as-overview-kpis span{padding:0;color:var(--as-secondary);font-size:14px;white-space:normal;font-weight:600}
+#asSubStats[data-overview-layout] .as-overview-kpis button strong{font-size:32px;line-height:1.2;font-weight:700;color:var(--as-ink);grid-row:1/3;grid-column:2;margin:0;align-self:center;letter-spacing:-.025em}
+#asSubStats[data-overview-layout] .as-overview-kpis button strong::after{content:'건';font-size:13px;font-weight:500;margin-left:5px;letter-spacing:0}
+#asSubStats[data-overview-layout] .as-overview-kpis small{display:block;position:static;font-size:12px;color:#4b6486;grid-column:1;white-space:nowrap}
+#asSubStats[data-overview-layout] .as-overview-kpis button:first-child{background:var(--as-blue);border-color:var(--as-blue);box-shadow:0 4px 12px #155eef22}
+#asSubStats[data-overview-layout] .as-overview-kpis button:first-child :is(span,strong,small){color:#fff}
+#asSubStats[data-overview-layout] .as-overview-kpis button:first-child strong{font-size:42px}
+#asSubStats[data-overview-layout] .as-overview-kpis button:first-child:hover{background:#104bc4;border-color:#104bc4}
+#asSubStats[data-overview-layout] .as-overview-period,#asSubStats[data-overview-layout] .as-stats-summary{display:none}
+#asSubStats[data-overview-layout] .as-overview-basis{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 16px;padding:12px 16px;border:1px solid var(--as-edge);border-radius:8px;background:#fff}
+#asSubStats[data-overview-layout] .as-period-controls,#asSubStats[data-overview-layout] .as-period-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#asSubStats[data-overview-layout] .as-period-controls label{font-size:13px;color:var(--as-secondary);font-weight:600}
+#asSubStats[data-overview-layout] .as-overview-basis button,#asSubStats[data-overview-layout] .as-stats-actions button{font-family:inherit;font-size:13px;font-weight:600;line-height:1.5;color:#344c70;border:1px solid #d6deea;border-radius:6px;background:#fff;padding:7px 12px;min-height:36px;cursor:pointer}
+#asSubStats[data-overview-layout] .as-overview-basis button:hover:not(:disabled),#asSubStats[data-overview-layout] .as-stats-actions button:hover{background:#edf3ff;border-color:#91b3f5;color:#174db0}
+#asSubStats[data-overview-layout] .as-overview-basis button:disabled{color:#6b7a90;background:#f7f9fc;cursor:default}
+#asSubStats[data-overview-layout] #asStatsYear{height:36px;min-width:106px;font-size:14px;font-weight:600;border:1px solid #d6deea;border-radius:6px;padding:0 10px;color:var(--as-ink);background:#fff;cursor:pointer}
+#asSubStats[data-overview-layout] .as-overview-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'trend reasons' 'amount amount';gap:16px;align-items:stretch}
+#asSubStats[data-overview-layout] .as-trend-stack{display:contents}
+#asSubStats[data-overview-layout] .as-stats-chart-panel{padding:20px 22px;border:1px solid var(--as-edge);border-radius:10px;height:auto;min-height:0;background:#fff;display:flex;flex-direction:column;box-shadow:0 3px 12px #182b4906;align-self:stretch}
+#asSubStats[data-overview-layout] .as-trend-stack>.as-stats-chart-panel:first-child{grid-area:trend}
+#asSubStats[data-overview-layout] .as-daily-section{grid-area:amount}
+#asSubStats[data-overview-layout] .as-overview-charts>section{grid-area:reasons}
+#asSubStats[data-overview-layout] .as-stats-chart-heading{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+#asSubStats[data-overview-layout] .as-stats-chart-panel h2{margin:0}
+#asSubStats[data-overview-layout] .as-chart-unit{font-size:12px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .month-comparison{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;margin-top:14px;padding:0 0 12px;border-bottom:1px solid #eef2f7;word-break:keep-all}
+#asSubStats[data-overview-layout] .comparison-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+#asSubStats[data-overview-layout] #comparison-period{font-size:14px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] #comparison-count{font-size:32px;line-height:1.2;letter-spacing:-.025em;color:var(--as-blue);font-weight:700}
+#asSubStats[data-overview-layout] #comparison-count small{font-size:15px;font-weight:500;margin-left:4px;color:var(--as-secondary);letter-spacing:0}
+#asSubStats[data-overview-layout] #comparison-change{font-size:13px;color:#274e8b;font-weight:600;background:#f0f5ff;padding:5px 9px;border-radius:5px}
+#asSubStats[data-overview-layout] #comparison-basis{grid-column:1/-1;color:var(--as-secondary);font-size:12px;line-height:1.6}
+#asSubStats[data-overview-layout] .monthly-chart-legend{margin:12px 0 0;color:var(--as-secondary);font-size:13px}
+#asSubStats[data-overview-layout] .as-stats-chart-scroll{position:relative;padding:2px 2px 2px 32px;margin-top:auto;overflow-x:auto;overflow-y:hidden}
+#asSubStats[data-overview-layout] .as-stats-chart{min-width:480px}
+#asSubStats[data-overview-layout] .as-stats-plot-space{background:linear-gradient(to bottom,transparent 31px,#edf1f7 31px,#edf1f7 32px,transparent 32px,transparent 119px,#edf1f7 119px,#edf1f7 120px,transparent 120px,transparent 207px,#dce4ef 207px,#dce4ef 208px,transparent 208px)}
+#asSubStats[data-overview-layout] .as-stats-bar{border-radius:4px 4px 0 0;background:#96accb;left:32%;width:36%}
+#asSubStats[data-overview-layout] .as-stats-month.is-comparison .as-stats-bar{background:var(--as-blue)}
+#asSubStats[data-overview-layout] .as-stats-value{color:var(--as-ink);font-size:14px;font-weight:600;background:transparent}
+#asSubStats[data-overview-layout] .as-stats-month{border-radius:5px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .as-stats-month.is-comparison{background:#edf3ff;color:#124ab8;border-radius:5px;font-weight:650}
+#asSubStats[data-overview-layout] .as-stats-month.is-comparison .as-stats-value{color:#124ab8}
+#asSubStats[data-overview-layout] .as-stats-month:hover,#asSubStats[data-overview-layout] .as-amount-month:hover{background:#e6efff}
+#asSubStats[data-overview-layout] :is(.as-stats-month,.as-amount-month):focus-visible{outline-offset:-3px}
+#asSubStats[data-overview-layout] .readable-y-axis{position:absolute;top:8px;left:0;width:26px;height:220px;color:var(--as-secondary);pointer-events:none}
+#asSubStats[data-overview-layout] .readable-y-axis span{position:absolute;right:0;transform:translateY(-50%);font-size:12px}
+#asSubStats[data-overview-layout] [data-future=true]{background:repeating-linear-gradient(135deg,#fafbfd,#fafbfd 6px,#f1f4f8 6px,#f1f4f8 7px);color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .as-stats-month[data-zero=true] .as-stats-value{color:#65758c;font-size:12px;font-weight:500}
+#asSubStats[data-overview-layout] #asStatsReasonsHint{display:block;min-height:0;margin:8px 0 14px;color:var(--as-secondary);font-size:13px}
+#asSubStats[data-overview-layout] .as-reason-table-wrap{margin:0;padding:0;border:0;overflow:auto}
+#asSubStats[data-overview-layout] .as-reason-table{border-collapse:collapse;width:100%;table-layout:fixed}
+#asSubStats[data-overview-layout] .as-reason-table :is(th,td){padding:9px 12px;height:39px;border:0;border-bottom:1px solid #edf1f6;background:#fff;color:var(--as-ink);text-align:right;white-space:nowrap;font-size:14px}
+#asSubStats[data-overview-layout] .as-reason-table th{height:36px;background:#f5f7fb;color:#536780;font-size:12px;font-weight:600}
+#asSubStats[data-overview-layout] .as-reason-table :is(th,td):first-child{text-align:left;width:40%}
+#asSubStats[data-overview-layout] .as-reason-table :is(th,td):nth-child(2){width:20%;font-weight:650}
+#asSubStats[data-overview-layout] .as-reason-table tr[data-zero=false] td{background:#f7faff}
+#asSubStats[data-overview-layout] .as-reason-table tr[data-zero=true] td{color:#64748b}
+#asSubStats[data-overview-layout] .as-share{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+#asSubStats[data-overview-layout] .as-share-track{display:block;flex:1;max-width:96px;height:5px;background:#e9eef5;border-radius:3px;overflow:hidden}
+#asSubStats[data-overview-layout] .as-share-track i{display:block;height:100%;border-radius:3px;background:var(--as-blue)}
+#asSubStats[data-overview-layout] .as-share-value{width:44px;flex:none;font-size:14px;font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-layout] .as-stats-footnote{display:block;margin:auto 0 0;padding-top:12px;font-size:12px;color:var(--as-secondary);line-height:1.6}
+#asSubStats[data-overview-layout] .as-chart-note{margin:10px 0 0;font-size:12px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .as-daily-scroll{margin-top:14px;padding:2px;overflow-x:auto}
+#asSubStats[data-overview-layout] .as-amount-chart{min-width:648px!important;grid-template-columns:repeat(12,minmax(54px,1fr));width:100%}
+#asSubStats[data-overview-layout] .as-amount-bar{background:#96accb;border-radius:4px 4px 0 0;left:36%;width:28%}
+#asSubStats[data-overview-layout] .as-amount-month[aria-pressed=true] .as-amount-bar{background:var(--as-blue)}
+#asSubStats[data-overview-layout] .as-amount-month[aria-pressed=true]{color:#124ab8;background:#edf3ff;border-radius:5px}
+#asSubStats[data-overview-layout] .as-amount-value{background:transparent;color:var(--as-ink);font-size:13px;font-weight:600}
+#asSubStats[data-overview-layout] .as-amount-plot{height:180px}
+#asSubStats[data-overview-layout] .as-amount-summary{border:0;background:#f5f8fe;padding:14px 16px;margin:14px 0 8px;gap:8px 32px;border-radius:7px}
+#asSubStats[data-overview-layout] .as-amount-summary strong{font-size:20px;color:var(--as-ink);font-weight:650;margin-left:8px}
+#asSubStats[data-overview-layout] .as-amount-summary>span{font-size:13px;color:var(--as-secondary)}
+#asSubStats[data-overview-layout] .as-amount-basis{margin:4px 0 0;color:var(--as-secondary);font-size:12px}
+#asSubStats[data-overview-layout] #asStatsMessage:not(:empty){padding:8px 12px;margin:0 0 16px;font-size:13px;line-height:1.6;border:0;border-radius:6px;background:#eaf0fa;color:#455f83}
+#asSubStats[data-overview-layout][aria-busy=true] #asStatsMessage{background:#edf3ff;color:#274e8b}
+@container as-overview (max-width:1050px){#asSubStats[data-overview-layout] .as-overview-charts{grid-template-columns:minmax(0,1fr);grid-template-areas:'trend' 'reasons' 'amount'}#asSubStats[data-overview-layout] .as-overview-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}#asSubStats[data-overview-layout] .as-overview-kpis button:first-child{grid-column:1/-1;min-height:90px}#asSubStats[data-overview-layout] #asPendingRelation{margin-left:0;width:100%}#asSubStats[data-overview-layout] .as-stats-chart-scroll{margin-top:14px}}
+@container as-overview (max-width:650px){#asSubStats[data-overview-layout] .as-overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#asSubStats[data-overview-layout] .as-overview-kpis button{padding:14px;min-height:96px}#asSubStats[data-overview-layout] .month-comparison{grid-template-columns:1fr}#asSubStats[data-overview-layout] #comparison-change{justify-self:start}#asSubStats[data-overview-layout] .as-stats-chart-panel{padding:16px}#asSubStats[data-overview-layout] .as-reason-table :is(th,td){padding:9px 8px}#asSubStats[data-overview-layout] .as-share{gap:8px}#asSubStats[data-overview-layout] .as-overview-basis{padding:12px}#asSubStats[data-overview-layout] .as-period-controls,#asSubStats[data-overview-layout] .as-period-meta{gap:8px}#asSubStats[data-overview-layout] #asStatsYear{font-size:16px}}
+@media(prefers-reduced-motion:reduce){#asSubStats[data-overview-layout] .as-overview-kpis button{transition:none}}
 </style>
 
 <style id="as-list-drawer-style">
@@ -1431,7 +1446,7 @@ tbody tr:hover td{background:var(--surface-muted)}
 </style>
 <style id="as-ledger-style">
 /* Approved combination: concept 1 filters + concept 2 dense ledger. */
-#asSubList{--ledger-accent:#244b73;--ledger-tint:#e8f0fa;--ledger-line:#c4ccd5;--ledger-row:36px;--ledger-font:15px;--ledger-text:#202a36;--ledger-hover:#f3f6fa;--ledger-body-weight:500;--ledger-emphasis-weight:600}
+#asSubList{--ledger-accent:#244b73;--ledger-tint:#e8f0fa;--ledger-line:#c4ccd5;--ledger-row:40px;--ledger-font:15px;--ledger-text:#202a36;--ledger-hover:#f3f6fa;--ledger-body-weight:500;--ledger-emphasis-weight:600}
 .as-ledger-title{font-size:24px;font-weight:750;letter-spacing:-.4px;margin:0;color:#182534}
 .as-ledger-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;flex-shrink:0}
 .as-ledger-back{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #bdc7d0;border-radius:5px;background:#fff;color:#344354;font:600 14px inherit;cursor:pointer}
@@ -1508,12 +1523,13 @@ body.as-ledger-active .sidebar .tab{font-size:13px;min-height:36px;padding:8px 1
 body.as-ledger-active{overflow:hidden}
 body.as-ledger-active #dashboard>.topbar,body.as-ledger-active .layout>.sidebar{display:none!important}
 body.as-ledger-active .layout{height:100dvh;min-height:0}
-body.as-ledger-active .main{width:100%;height:100%;padding:16px 20px;overflow:hidden}
+body.as-ledger-active .main{width:100%;max-width:none!important;margin-inline:auto;height:100%;padding:16px 20px;overflow:hidden}
 body.as-ledger-active #tabAs{height:100%;min-height:0}
 body.as-ledger-active #asSubList{display:flex;flex-direction:column;height:100%;min-height:0}
 #asSubList>.as-toolbar,#asSubList>.as-ledger-controls,#asSubList>.as-ledger-help{flex-shrink:0}
 #tabAs #asSubList .as-table-card{display:flex;flex-direction:column;flex:1;min-height:160px}
-#asSubList .as-ledger-scroll{flex:1;min-height:0;max-height:none}
+#asSubList .as-ledger-scroll{flex:1;min-height:0;max-height:none;scrollbar-gutter:stable;overscroll-behavior:contain}
+#tabAs #asSubList .as-erp-table tbody .as-ledger-no-results td{height:120px!important;white-space:normal;color:#526171!important}
 #asSubList .as-pagination,#asSubList .as-table-footer{flex-shrink:0}
 #asLedgerMessage:empty{display:none}
 .as-ledger-counts{display:flex;align-items:center;gap:12px;min-height:32px}
@@ -1544,8 +1560,6 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
 #tabAs #asSubList .as-erp-table tbody tr td:nth-child(n){text-align:center!important}
 #tabAs #asSubList .as-erp-table thead .as-column-header th:first-child,#tabAs #asSubList .as-erp-table tbody td:first-child{padding-inline:5px!important;text-overflow:clip}
 #tabAs #asSubList .as-erp-table .as-truncate{width:100%;max-width:none;text-align:center!important}
-#tabAs #asSubList .as-erp-table .as-ledger-empty-line{height:var(--empty-height,36px)!important;min-height:0!important;pointer-events:none}
-#tabAs #asSubList .as-erp-table .as-ledger-empty-line td{height:var(--empty-height,36px)!important;min-height:0!important;padding:0!important;font-size:0!important;line-height:0!important}
 #tabAs #asSubList .toss-dd-btn,#tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item,#tabAs #asSubList .as-search-input,#tabAs #asSubList .toss-date-btn{font-family:inherit!important;font-size:var(--ledger-font)!important;font-weight:var(--ledger-body-weight)!important;line-height:1.4;letter-spacing:0!important;color:var(--ledger-text)}
 #tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item.is-selected{font-weight:var(--ledger-emphasis-weight)!important}
 #tabAs #asSubList .toss-dd-item span{font:inherit!important;letter-spacing:inherit!important;color:inherit!important}
@@ -1593,6 +1607,341 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
 #asModal .modal-footer .admin-btn-secondary{background:#fff;color:#202a36}
 #asModal .modal-footer .admin-btn-primary{background:#07549a;border-color:#07549a;color:#fff}
 @media(max-width:600px){#asModal{padding:10px}#asModal>.modal-box{max-height:calc(100dvh - 20px)}#asModal .modal-header,#asModal .modal-body{padding:18px 16px}#asModal .modal-header h3{font-size:22px}#asModal .modal-footer{padding:12px 16px}#asModal .modal-row.as-intake-location,#asModal .modal-row.as-intake-material{grid-template-columns:1fr!important}}
+</style>
+<style id="as-overview-readable-style">
+@font-face{font-family:'AS Overview Noto';src:local('Noto Sans KR');font-weight:100 900;font-display:swap}
+#asSubStats[data-overview-theme="readable"]{max-width:1560px;margin:0 auto;container-type:inline-size;font-family:var(--ui-font),'Malgun Gothic',sans-serif;--as-blue:var(--blue);--as-ink:var(--ink);--as-secondary:var(--muted);--as-edge:#e4eaf2;color:var(--ink);font-size:var(--body-size)}
+#asSubStats[data-overview-theme="readable"] :is(button,select,h1,h2,h3){font-family:inherit}
+#asSubStats[data-overview-theme="readable"] :is(h2,h3){font-size:18px;line-height:1.4;font-weight:750;letter-spacing:-.025em;color:var(--ink)}
+#asSubStats[data-overview-theme="readable"] .as-overview-section:not(.as-overview-period){margin:0 0 20px;gap:10px 18px;align-items:center}
+#asSubStats[data-overview-theme="readable"] h1{font-size:var(--title-size);font-weight:780;line-height:1.3;letter-spacing:-.04em;color:var(--ink);margin:0}
+#asSubStats[data-overview-theme="readable"] .as-overview-section>span{font-size:var(--caption-size);color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis{grid-template-columns:1.4fr repeat(4,minmax(0,1fr));gap:12px;margin-bottom:8px;background:transparent;border:0;overflow:visible}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:8px;row-gap:8px;padding:20px;min-height:128px;border:0;border-radius:var(--radius-panel);background:#fff;box-shadow:var(--panel-shadow);transition:background .15s,box-shadow .15s;color:var(--ink);text-align:left}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis span{font-size:var(--body-size);font-weight:650;letter-spacing:-.02em;color:var(--muted);grid-column:1/-1;align-self:start;padding:0;white-space:nowrap}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button strong{grid-column:1;grid-row:2;align-self:end;margin:0;font-family:var(--numeric-font),var(--ui-font),sans-serif;font-size:34px;line-height:1.05;font-weight:750;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--ink)}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button strong::after{font-family:var(--ui-font),sans-serif;font-size:13px;font-weight:500;letter-spacing:0;margin-left:6px;color:inherit}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{grid-column:auto;background:var(--blue);box-shadow:0 5px 14px #215ee81c}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child :is(span,strong,small){color:#fff}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child strong{font-size:var(--kpi-size);font-weight:750;line-height:1}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:hover{background:#eaf1ff;box-shadow:0 0 0 2px #215ee84d,0 5px 12px #183c6810}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child:hover{background:#174fc9}
+#asSubStats[data-overview-theme="readable"] .as-overview-basis{padding:14px 22px;min-height:78px;gap:18px;margin:0 0 var(--gap);background:#fff;border:1px solid #dce3ed;border-radius:8px;box-shadow:none}
+#asSubStats[data-overview-theme="readable"] .as-period-controls{gap:18px}
+#asSubStats[data-overview-theme="readable"] .as-period-controls label{font-size:15px;font-weight:650;color:#354a65;white-space:nowrap}
+#asSubStats[data-overview-theme="readable"] #asStatsYear{font-size:18px;font-weight:700;line-height:1.5;min-width:142px;max-width:100%;height:46px;padding:7px 12px;border:1px solid #7b8ba2;border-radius:6px;background:#fff;color:#182b49;font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-theme="readable"] #asStatsYear:hover{border-color:#155eef}
+#asSubStats[data-overview-theme="readable"] .as-overview-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-areas:'trend reasons' 'amount amount';gap:var(--gap);align-items:stretch}
+#asSubStats[data-overview-theme="readable"] .as-stats-chart-panel{padding:var(--panel-pad);border:0;border-radius:var(--radius-panel);box-shadow:var(--panel-shadow);background:#fff;min-width:0;min-height:0;height:auto}
+#asSubStats[data-overview-theme="readable"] .as-stats-chart-heading{margin:0;gap:12px;flex-direction:row;align-items:center}
+#asSubStats[data-overview-theme="readable"] .as-chart-unit{font-size:11px;color:var(--muted);font-weight:400}
+#asSubStats[data-overview-theme="readable"] .month-comparison{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:16px 0 0;padding:0;border:0;background:none}
+#asSubStats[data-overview-theme="readable"] .comparison-main{gap:10px;align-items:baseline}
+#asSubStats[data-overview-theme="readable"] #comparison-period{font-size:13px;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] #comparison-count{font-family:var(--numeric-font),var(--ui-font),sans-serif;font-size:34px;color:var(--ink);font-weight:750;letter-spacing:-.04em}
+#asSubStats[data-overview-theme="readable"] #comparison-count small{font:500 13px var(--ui-font),sans-serif;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] #comparison-change{padding:5px 8px;border-radius:4px;background:var(--blue-soft);color:#2454a4;font-size:12px;font-weight:650;align-self:center}
+#asSubStats[data-overview-theme="readable"] #comparison-basis{font-size:11px;color:var(--muted);line-height:1.6}
+#asSubStats[data-overview-theme="readable"] .monthly-chart-legend{margin:14px 0 4px;font-size:12px;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .as-stats-chart-scroll{padding:0 2px 2px 28px;margin-top:auto;overflow-x:auto;overflow-y:hidden}
+#asSubStats[data-overview-theme="readable"] .as-stats-chart{min-width:440px;gap:3px}
+#asSubStats[data-overview-theme="readable"] .as-stats-plot-space{background:linear-gradient(to bottom,transparent 31px,#eef2f7 31px,#eef2f7 32px,transparent 32px,transparent 119px,#eef2f7 119px,#eef2f7 120px,transparent 120px,transparent 207px,#dfe6ef 207px,#dfe6ef 208px,transparent 208px)}
+#asSubStats[data-overview-theme="readable"] .as-stats-bar{left:27%;width:46%;border-radius:4px 4px 0 0;background:var(--bar)}
+#asSubStats[data-overview-theme="readable"] .as-stats-value{font:650 13px var(--numeric-font),var(--ui-font),sans-serif;color:#4b617f;line-height:1.5;background:transparent}
+#asSubStats[data-overview-theme="readable"] .as-stats-month{font-size:12px;font-weight:500;color:var(--muted);padding:0 0 9px;border:0;border-radius:5px;min-width:0;line-height:1.5}
+#asSubStats[data-overview-theme="readable"] .as-stats-month>span:last-child{display:block;white-space:nowrap;font-size:11px}
+#asSubStats[data-overview-theme="readable"] .as-stats-month.is-comparison{background:var(--blue-soft);color:var(--blue);font-weight:750}
+#asSubStats[data-overview-theme="readable"] .as-stats-month.is-comparison .as-stats-bar{background:var(--blue)}
+#asSubStats[data-overview-theme="readable"] .as-stats-month.is-comparison .as-stats-value{color:var(--blue);font-weight:800}
+#asSubStats[data-overview-theme="readable"] .as-stats-month:hover,#asSubStats[data-overview-theme="readable"] .as-amount-month:hover{background:#e2ebfc}
+#asSubStats[data-overview-theme="readable"] [data-future=true]{background:#f8f9fb;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .readable-y-axis{color:#6c7d91;top:6px;left:0;width:23px}
+#asSubStats[data-overview-theme="readable"] .readable-y-axis span{font-size:11px}
+#asSubStats[data-overview-theme="readable"] .as-chart-note{font-size:11px;margin:10px 0 0;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] #asStatsReasonsHint{font-size:var(--caption-size);line-height:1.5;margin:8px 0 14px;color:var(--muted);min-height:0}
+#asSubStats[data-overview-theme="readable"] .as-reason-table{border-collapse:separate;border-spacing:0 3px;table-layout:fixed;min-width:0}
+#asSubStats[data-overview-theme="readable"] .as-reason-table :is(th,td){height:38px;padding:8px 10px;background:transparent;border:0;font-size:var(--body-size);font-weight:500;line-height:1.4;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+#asSubStats[data-overview-theme="readable"] .as-reason-table th{height:30px;padding-top:4px;padding-bottom:8px;font-size:11px;font-weight:600;color:var(--muted);background:transparent}
+#asSubStats[data-overview-theme="readable"] .as-reason-table :is(th,td):first-child{width:38%;text-align:left;border-radius:5px 0 0 5px}
+#asSubStats[data-overview-theme="readable"] .as-reason-table :is(th,td):nth-child(2){width:17%;font-weight:700}
+#asSubStats[data-overview-theme="readable"] .as-reason-table :is(th,td):last-child{width:45%;border-radius:0 5px 5px 0}
+#asSubStats[data-overview-theme="readable"] .as-reason-table tr[data-zero=false] td{background:#f5f8fd}
+#asSubStats[data-overview-theme="readable"] .as-reason-table tr[data-zero=true] td{background:transparent;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .as-reason-table tr:hover td{background:#eaf1ff}
+#asSubStats[data-overview-theme="readable"] .as-share{gap:10px;align-items:center;justify-content:flex-end}
+#asSubStats[data-overview-theme="readable"] .as-share-track{display:block;height:5px;max-width:110px;min-width:26px;background:#e2e9f3;border-radius:2px}
+#asSubStats[data-overview-theme="readable"] .as-share-track i{border-radius:2px;background:var(--blue);animation:none}
+#asSubStats[data-overview-theme="readable"] .as-share-value{font-family:var(--numeric-font),var(--ui-font),sans-serif;font-size:var(--body-size);width:42px;flex:none;font-weight:600}
+#asSubStats[data-overview-theme="readable"] .as-stats-footnote{margin:0;padding-top:12px;font-size:11px;color:var(--muted);line-height:1.6}
+#asSubStats[data-overview-theme="readable"] .as-amount-summary{margin:12px 0 8px;padding:0;background:transparent;border:0;display:flex;gap:12px 40px;flex-wrap:wrap}
+#asSubStats[data-overview-theme="readable"] .as-amount-summary>span{font-size:12px;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .as-amount-summary strong{font-family:var(--numeric-font),var(--ui-font),sans-serif;font-size:22px;font-weight:750;color:var(--ink);letter-spacing:-.02em;margin-left:8px}
+#asSubStats[data-overview-theme="readable"] .as-amount-basis{font-size:11px;line-height:1.5;color:var(--muted);margin:0}
+#asSubStats[data-overview-theme="readable"] .as-daily-scroll{margin-top:12px}
+#asSubStats[data-overview-theme="readable"] .as-amount-chart{min-width:648px!important;grid-template-columns:repeat(12,minmax(54px,1fr));gap:4px}
+#asSubStats[data-overview-theme="readable"] .as-amount-bar{background:var(--bar);width:30%;left:35%;border-radius:3px 3px 0 0}
+#asSubStats[data-overview-theme="readable"] .as-amount-month{font-size:12px;line-height:1.5;border:0;padding-bottom:6px}
+#asSubStats[data-overview-theme="readable"] .as-amount-value{font-size:11px;font-weight:600;color:#4b617f}
+#asSubStats[data-overview-theme="readable"] .as-amount-month[aria-pressed=true]{background:var(--blue-soft);color:var(--blue)}
+#asSubStats[data-overview-theme="readable"] .as-amount-month[aria-pressed=true] .as-amount-bar{background:var(--blue)}
+#asSubStats[data-overview-theme="readable"] #asStatsMessage:not(:empty){margin:4px 0 12px;padding:0;background:transparent;border:0;font-size:11px;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] .as-stats-actions{margin:12px 0 8px}
+#asSubStats[data-overview-theme="readable"] .as-stats-actions button{border:0;background:transparent;min-height:36px;font-size:12px;padding:7px 10px;color:var(--muted)}
+#asSubStats[data-overview-theme="readable"] :is(button,a,select):focus-visible{outline:3px solid #1659de;outline-offset:3px}
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month,.as-amount-month):focus-visible{outline-offset:-3px}
+#asSubStats[data-overview-theme="readable"] button:active:not(:disabled){filter:brightness(.96)}
+
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{min-height:136px}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{background:#174fcb}
+#asSubStats[data-overview-theme="readable"] .as-overview-charts{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+#asSubStats[data-overview-theme="readable"] .as-stats-chart-panel :is(h2,h3){font-size:20px}
+#asSubStats[data-overview-theme="readable"] .as-reason-table td{height:42px}
+#asSubStats[data-overview-theme="readable"] .as-reason-table th,#asSubStats[data-overview-theme="readable"] .as-stats-footnote,#asSubStats[data-overview-theme="readable"] #comparison-basis{font-size:12px}
+#asSubStats[data-overview-theme="readable"] .as-stats-value{font-size:15px}
+#asSubStats[data-overview-theme="readable"]{--ui-font:'AS Overview Noto';--numeric-font:'AS Overview Noto';--title-size:30px;--kpi-size:54px;--body-size:16px;--caption-size:13px;--ink:#182940;--muted:#526176;--blue:#215ee8;--blue-soft:#edf3ff;--radius-panel:9px;--gap:18px;--panel-pad:24px;--bar:#b4c7e8;--panel-shadow:0 3px 12px #20395407,0 1px 2px #20395405;letter-spacing:-.015em}
+.main:has(#asSubStats[data-overview-theme="readable"]:not([style*="display: none"]):not([style*="display:none"])){background:#f2f4f7}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis{margin-bottom:20px}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{grid-template-columns:1fr}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button>span{grid-column:1;grid-row:1}
+#asSubStats[data-overview-theme="readable"] #asStatsMessage:not(:empty){margin:0 0 14px;font-size:12px}
+#asSubStats[data-overview-theme="readable"] #asStatsMessage:empty{display:none}
+@container as-overview (max-width:1050px){#asSubStats[data-overview-theme="readable"] .as-overview-charts{grid-template-columns:1fr;grid-template-areas:'trend' 'reasons' 'amount'}#asSubStats[data-overview-theme="readable"] .as-overview-kpis{grid-template-columns:1.25fr repeat(4,minmax(0,1fr));gap:8px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{padding:16px 12px;min-height:116px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{grid-column:auto}#asSubStats[data-overview-theme="readable"] .as-overview-kpis span{font-size:14px}#asSubStats[data-overview-theme="readable"] .as-stats-chart-scroll{margin-top:12px}}
+@container as-overview (max-width:600px){#asSubStats[data-overview-theme="readable"] .as-overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{min-height:104px;padding:16px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{grid-column:1/-1;min-height:112px;grid-template-columns:1fr auto}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child strong{grid-column:2;grid-row:1/3;align-self:center}#asSubStats[data-overview-theme="readable"] .as-overview-section>span{width:100%}#asSubStats[data-overview-theme="readable"] .as-period-meta{width:100%;justify-content:space-between}#asSubStats[data-overview-theme="readable"] .as-period-basis-label{display:none}#asSubStats[data-overview-theme="readable"] .as-stats-chart-panel{padding:18px 14px}#asSubStats[data-overview-theme="readable"] .month-comparison{grid-template-columns:1fr}#asSubStats[data-overview-theme="readable"] #comparison-change{justify-self:start}#asSubStats[data-overview-theme="readable"] .as-reason-table td{font-size:14px;padding:8px 6px}#asSubStats[data-overview-theme="readable"] .as-share{gap:6px}#asSubStats[data-overview-theme="readable"] .as-share-value{font-size:14px;width:38px}#asSubStats[data-overview-theme="readable"] .as-amount-summary strong{font-size:20px}#asSubStats[data-overview-theme="readable"] .as-stats-chart-heading{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){#asSubStats[data-overview-theme="readable"] *,#asSubStats[data-overview-theme="readable"] *::before,#asSubStats[data-overview-theme="readable"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style id="as-ranking-and-line-style">
+#asSubStats[data-overview-theme] .as-reason-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+#asSubStats[data-overview-theme] .as-reason-tools{display:flex;align-items:center;gap:10px}
+#asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{margin:0;font-size:13px;white-space:nowrap}
+#asSubStats[data-overview-theme] .as-reason-ranking{display:grid;gap:15px;list-style:none;padding:0;margin:0}
+#asSubStats[data-overview-theme] .as-reason-ranking-label{display:flex;align-items:center;gap:16px;margin-bottom:7px}
+#asSubStats[data-overview-theme] .as-reason-ranking-label .as-reason-name{font-size:16px;line-height:1.5;color:var(--ink)}
+#asSubStats[data-overview-theme] .as-reason-count{margin-left:auto;min-width:40px;text-align:right;font-size:17px;font-weight:750;font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-theme] .as-reason-count small{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px}
+#asSubStats[data-overview-theme] .as-reason-percent{font-size:13px;color:var(--muted);width:52px;text-align:right;font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-theme] .as-reason-track{display:block;height:6px;background:#e3eaf5;border-radius:2px;overflow:hidden}
+#asSubStats[data-overview-theme] .as-reason-track i{display:block;height:100%;background:#1d5ce0;border-radius:2px}
+#asSubStats[data-overview-theme] .as-reason-info{position:relative;flex:none}
+#asSubStats[data-overview-theme] .as-reason-info summary{list-style:none;width:28px;height:28px;display:grid;place-items:center;border-radius:5px;color:var(--muted);cursor:pointer}
+#asSubStats[data-overview-theme] .as-reason-info summary::-webkit-details-marker{display:none}
+#asSubStats[data-overview-theme] .as-reason-info summary:hover,#asSubStats[data-overview-theme] .as-reason-info[open] summary{color:#1d5ce0;background:#edf3ff}
+#asSubStats[data-overview-theme] .as-reason-info summary:focus-visible{outline:3px solid #1659de;outline-offset:3px}
+#asSubStats[data-overview-theme] .as-reason-info svg{width:18px;height:18px}
+#asSubStats[data-overview-theme] .as-reason-info>div{position:absolute;right:0;top:36px;width:270px;max-width:calc(100vw - 60px);padding:14px;border:1px solid #d9e1ed;background:#fff;border-radius:8px;box-shadow:0 8px 26px #18365420;z-index:20;color:var(--muted);font-size:12px;line-height:1.8}
+#asSubStats[data-overview-theme] .as-reason-info :is(p,span){font-size:12px;line-height:1.8}
+#asSubStats[data-overview-theme] .as-reason-info .as-stats-footnote{margin:6px 0 0;padding:0}
+#asSubStats[data-overview-theme] .as-stats-chart-heading .as-chart-unit{margin-left:auto}
+#asSubStats[data-overview-theme] .as-stats-chart-heading .as-reason-info{margin-left:0}
+#asSubStats[data-overview-theme] .month-comparison{display:block;margin:14px 0 20px;padding:0}
+#asSubStats[data-overview-theme] .comparison-main{display:block}
+#asSubStats[data-overview-theme] .comparison-main>div{display:flex;align-items:center;gap:16px;margin-top:4px;flex-wrap:wrap}
+#asSubStats[data-overview-theme] #comparison-period{font-size:13px}
+#asSubStats[data-overview-theme] #comparison-count{font-size:38px}
+#asSubStats[data-overview-theme] #asStatsChart{gap:0;grid-template-columns:repeat(12,minmax(0,1fr));background-size:100% 220px;background-repeat:no-repeat;background-position:0 0}
+#asSubStats[data-overview-theme] .as-stats-point{position:absolute;left:50%;width:8px;height:8px;border-radius:50%;border:2px solid #fff;background:#88a7dc;transform:translate(-50%,-50%);z-index:2}
+#asSubStats[data-overview-theme] .as-stats-month.is-comparison{background:transparent}
+#asSubStats[data-overview-theme] .as-stats-month.is-comparison .as-stats-point{width:12px;height:12px;background:#1d5ce0}
+#asSubStats[data-overview-theme] .as-stats-month:hover{background:#edf3ff66}
+#asSubStats[data-overview-theme] .as-stats-month[data-future=true]{background:transparent}
+@container as-overview (max-width:600px){#asSubStats[data-overview-theme] .as-reason-ranking-label{gap:10px}#asSubStats[data-overview-theme] .as-reason-ranking-label .as-reason-name{font-size:15px}#asSubStats[data-overview-theme] .as-reason-heading{gap:8px}#asSubStats[data-overview-theme] .as-reason-tools{gap:5px}}
+</style>
+<style id="as-amount-footer-style">
+#asSubStats[data-overview-theme] .as-amount-annual-footer{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:20px;padding-top:14px;border-top:1px solid #e9eef5;font-size:13px;color:#526176}
+#asSubStats[data-overview-theme] .as-amount-annual-footer strong{font-size:18px;font-weight:650;color:#263c5a;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+</style>
+<style id="as-selected-kpi-area-style">
+#asSubStats[data-overview-theme="readable"] .as-overview-charts{grid-template-areas:'trend reasons' 'amount products'}
+#asSubStats[data-overview-layout] .as-overview-charts>.as-product-panel{grid-area:products}
+#asSubStats[data-overview-theme] .as-product-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+#asSubStats[data-overview-theme] #asStatsProductsHint{margin:0;font-size:13px;color:var(--muted);white-space:nowrap}
+#asSubStats[data-overview-theme] .as-product-panel{container:as-product / inline-size}
+#asSubStats[data-overview-theme] .as-product-body{display:grid;grid-template-columns:1fr;gap:24px;align-items:center;flex:1;padding:4px 0 22px}
+#asSubStats[data-overview-theme] .as-product-ring{position:relative;width:100%;max-width:190px;aspect-ratio:1;justify-self:center}
+#asSubStats[data-overview-theme] .as-product-ring svg{display:block;width:100%;height:auto}
+#asSubStats[data-overview-theme] .as-product-center{position:absolute;inset:24%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center}
+#asSubStats[data-overview-theme] .as-product-center strong{font-size:35px;font-weight:750;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--ink);letter-spacing:-1px;white-space:nowrap}
+#asSubStats[data-overview-theme] .as-product-center span{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4;height:1.4em;flex-shrink:0;width:100%;min-width:0;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#asSubStats[data-overview-theme] .as-product-legend{list-style:none;padding:0;margin:0;display:grid;gap:14px;min-width:0}
+#asSubStats[data-overview-theme] .as-product-list{min-width:0}
+#asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-rows:repeat(2,88px);grid-auto-rows:88px}
+#asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-choice{padding:8px 10px}
+#asSubStats[data-overview-theme] .as-product-pagination{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:12px}
+#asSubStats[data-overview-theme] .as-product-pagination[hidden]{display:none}
+#asSubStats[data-overview-theme] .as-product-page-info{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-theme] .as-product-pages{display:flex;gap:4px}
+#asSubStats[data-overview-theme] .as-product-pages button{min-width:30px;height:32px;padding:0 6px;border:1px solid #dce4ef;border-radius:4px;background:#fff;color:#526176;font:500 13px var(--ui-font),sans-serif;cursor:pointer}
+#asSubStats[data-overview-theme] .as-product-pages button[aria-current="page"]{background:#eaf2ff;border-color:#82a9dd;color:#1555bc;font-weight:650}
+#asSubStats[data-overview-theme] .as-product-pages button:disabled{color:#a0aabb;cursor:default}
+#asSubStats[data-overview-theme] .as-product-pages button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+#asSubStats[data-overview-theme] .as-product-pages button:hover:not(:disabled){background:#f0f5fc}
+#asSubStats[data-overview-theme] .as-product-legend{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#asSubStats[data-overview-theme] .as-product-legend li{min-width:0}
+#asSubStats[data-overview-theme] .as-product-choice{width:100%;height:100%;min-height:64px;padding:12px 10px;background:#fff;border:1px solid #e0e7f0;border-radius:6px;text-align:left;font:inherit;cursor:pointer;transition:background .18s,border-color .18s}
+#asSubStats[data-overview-theme] .as-product-choice:hover{background:#f6f9fd;border-color:#b7cce5}
+#asSubStats[data-overview-theme] .as-product-choice[aria-pressed="true"]{background:#eef4fc;border-color:#82a9dd}
+#asSubStats[data-overview-theme] .as-product-choice:focus-visible,#asSubStats[data-overview-theme] .as-product-actions button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+#asSubStats[data-overview-theme] .as-product-row{display:grid;grid-template-columns:10px minmax(0,1fr);gap:2px 9px;align-items:start;min-width:0}
+#asSubStats[data-overview-theme] .as-product-dot{width:9px;height:9px;margin-top:7px;border-radius:50%}
+#asSubStats[data-overview-theme] .as-product-name{font-size:13px;font-weight:550;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#asSubStats[data-overview-theme] .as-product-values{grid-column:2;display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums}
+#asSubStats[data-overview-theme] .as-product-values strong{font-size:16px;font-weight:650;color:var(--ink)}
+#asSubStats[data-overview-theme] .as-product-values span{font-size:13px;color:var(--muted)}
+#asSubStats[data-overview-theme] .as-product-footer{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid #e9eef5}
+#asSubStats[data-overview-theme] .as-product-period{margin:0;font-size:12px;color:var(--muted)}
+#asSubStats[data-overview-theme] .as-product-actions{display:flex;gap:12px}
+#asSubStats[data-overview-theme] .as-product-actions button{background:none;border:0;padding:6px 0;font:inherit;font-size:12px;color:var(--blue);min-height:44px;cursor:pointer}
+#asSubStats[data-overview-theme] .as-product-actions button:disabled{color:var(--muted);cursor:default}
+#asSubStats[data-overview-theme] .as-product-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#asSubStats[data-overview-theme] #asStatsProductsEmpty{color:var(--muted);font-size:14px;margin:0 0 16px;line-height:1.7}
+@container as-overview (min-width:1051px){#asSubStats[data-overview-theme="readable"] .as-product-panel{min-height:var(--as-monthly-panel-height,auto)}}
+@container as-product (min-width:361px){#asSubStats[data-overview-theme] .as-product-body{grid-template-columns:minmax(130px,.7fr) minmax(0,1.3fr);gap:16px}}
+@container as-product (max-width:360px){#asSubStats[data-overview-theme] .as-product-legend{grid-template-columns:1fr}#asSubStats[data-overview-theme] .as-product-choice{grid-template-columns:9px minmax(0,1fr) auto;gap:8px}#asSubStats[data-overview-theme] .as-product-choice .as-product-values{grid-column:3;gap:6px}#asSubStats[data-overview-theme] .as-product-values strong{font-size:14px}#asSubStats[data-overview-theme] .as-product-values span{font-size:12px}#asSubStats[data-overview-theme] .as-product-heading{gap:8px}}
+@container as-product (max-width:360px){#asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-rows:repeat(4,64px);grid-auto-rows:64px}}
+@media(prefers-reduced-motion:reduce){#asSubStats[data-overview-theme] .as-product-choice{transition:none}}
+#asSubStats[data-overview-theme="readable"] .as-daily-section{height:var(--as-monthly-panel-height,auto)}
+#asSubStats[data-overview-theme="readable"] .as-daily-scroll{min-height:0;display:flex;flex-direction:column;justify-content:flex-end}
+#asSubStats[data-overview-theme="readable"] .as-amount-chart{min-width:576px!important;grid-template-columns:repeat(12,minmax(48px,1fr));gap:0}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis{grid-template-columns:1.3fr repeat(4,minmax(0,1fr));gap:12px;padding:20px;background:#fff;border-radius:10px;box-shadow:var(--panel-shadow)}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{min-height:128px;padding:20px;border-radius:7px;background:#f2f5fa;box-shadow:none}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button>span{font-size:16px;font-weight:700;color:#253b59}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button strong{font-size:40px;font-weight:750;color:#142b49}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{background:#e5efff;box-shadow:none}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child :is(span,strong){color:#1555bc}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child strong{font-size:54px}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:hover{background:#e7eef9;box-shadow:inset 0 0 0 1px #a7bfe4}
+#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child:hover{background:#d9e8ff}
+#asSubStats[data-overview-theme="readable"] .as-stats-point{background:#316bc6}
+#asSubStats[data-overview-theme="readable"] .as-stats-value{color:#293e5d;font-weight:700}
+@container as-overview (max-width:1050px){#asSubStats[data-overview-theme="readable"] .as-overview-charts{grid-template-areas:'trend' 'reasons' 'products' 'amount'}#asSubStats[data-overview-theme="readable"] .as-overview-kpis{padding:16px;gap:10px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{padding:16px 12px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button>span{font-size:15px}}
+@container as-overview (max-width:600px){#asSubStats[data-overview-theme="readable"] .as-overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr));padding:14px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button{min-height:108px;padding:16px}#asSubStats[data-overview-theme="readable"] .as-overview-kpis button:first-child{grid-column:1/-1;min-height:100px}}
+</style>
+<style id="as-monthly-combination-style">
+#asSubStats[data-overview-theme="readable"] :is(#asStatsChart,#asAmountChart){position:relative;isolation:isolate;background-image:none}
+#asSubStats[data-overview-theme="readable"] :is(#asStatsChart,#asAmountChart)::after{content:'';position:absolute;inset:0 0 auto;height:220px;background:var(--as-chart-overlay) center top/100% 100% no-repeat;pointer-events:none;z-index:1}
+#asSubStats[data-overview-theme="readable"] #asAmountChart::after{height:200px}
+#asSubStats[data-overview-theme="readable"] .as-stats-bar{left:50%;width:52%;max-width:24px;bottom:12px;transform:translateX(-50%);background:#c6d5e9;border-radius:0}
+#asSubStats[data-overview-theme="readable"] .as-stats-month.is-comparison .as-stats-bar{background:#4c7ed8}
+#asSubStats[data-overview-theme="readable"] .as-trend-average{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:#a66316;font-weight:550}
+#asSubStats[data-overview-theme="readable"] .as-trend-average::before{content:'';width:18px;border-top:2px dashed #a66316}
+#asSubStats[data-overview-theme="readable"] .as-amount-month{padding:0 0 9px;background:transparent}
+#asSubStats[data-overview-theme="readable"] .as-amount-month[aria-pressed=true]{background:transparent}
+#asSubStats[data-overview-theme="readable"] .as-amount-month:hover{background:#edf3ff66}
+#asSubStats[data-overview-theme="readable"] .as-amount-plot{height:200px;border:0;margin-bottom:8px}
+#asSubStats[data-overview-theme="readable"] .as-amount-bar{position:absolute;left:27%;width:46%;bottom:20px;background:#a8c3e9;border-radius:3px 3px 0 0;z-index:2}
+#asSubStats[data-overview-theme="readable"] .as-amount-month[aria-pressed=true] .as-amount-bar{background:#2866ca}
+#asSubStats[data-overview-theme="readable"] .as-amount-value{bottom:auto;transform:translateY(-100%);color:#293e5d;font-weight:650;z-index:3}
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month,.as-amount-month)>span:last-child{display:block;font-family:var(--ui-font),sans-serif;font-size:13px;font-weight:500;line-height:20px;color:#526176}
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month.is-comparison,.as-amount-month[aria-pressed=true])>span:last-child{color:#1555bc;font-weight:750}
+</style>
+<style id="as-chart-reason-typography-style">
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-value,#comparison-count,#comparison-count small,#comparison-change,#asTrendAverage,.readable-y-axis span),
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month,.as-amount-month)>span:last-child,
+#asSubStats[data-overview-theme="readable"] .as-trend-stack>.as-stats-chart-panel .as-chart-unit{font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:500;letter-spacing:normal}
+#asSubStats[data-overview-theme="readable"] .as-stats-value,
+#asSubStats[data-overview-theme="readable"] .as-stats-month[data-zero=true] .as-stats-value,
+#asSubStats[data-overview-theme="readable"] :is(#comparison-count small,#comparison-change,#asTrendAverage),
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month,.as-amount-month)>span:last-child{font-size:16px;line-height:24px}
+#asSubStats[data-overview-theme="readable"] .as-stats-value,
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month,.as-amount-month)>span:last-child{color:var(--ink)}
+#asSubStats[data-overview-theme="readable"] .readable-y-axis span,
+#asSubStats[data-overview-theme="readable"] .as-trend-stack>.as-stats-chart-panel .as-chart-unit{font-size:14px;line-height:21px}
+#asSubStats[data-overview-theme="readable"] .as-stats-month.is-comparison .as-stats-value,
+#asSubStats[data-overview-theme="readable"] :is(.as-stats-month.is-comparison,.as-amount-month[aria-pressed=true])>span:last-child{font-weight:600;color:#1555bc}
+</style>
+<style id="as-reason-heatmap-style">
+#asSubStats[data-overview-theme] .as-reason-heatmap-panel{margin-top:20px;padding:24px 26px;min-width:0}
+#asSubStats .as-reason-heatmap-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+#asSubStats .as-reason-heatmap-heading h2{font-size:20px;letter-spacing:-.02em}
+#asSubStats .as-reason-heatmap-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#asSubStats .as-reason-heatmap-controls button{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;width:132px;min-height:44px;padding:4px;border:1px solid #dce4ef;border-radius:9px;background:#edf1f6;color:#526176;font:550 14px var(--ui-font),sans-serif;cursor:pointer}
+#asSubStats .as-reason-heatmap-controls button::before{content:'';position:absolute;left:4px;top:4px;bottom:4px;width:calc(50% - 4px);border-radius:6px;background:#fff;box-shadow:0 1px 4px #172b4914;transition:transform .2s ease}
+#asSubStats .as-reason-heatmap-controls button[aria-checked=true]::before{transform:translateX(100%)}
+#asSubStats .as-reason-heatmap-controls button span{position:relative;z-index:1;text-align:center}
+#asSubStats .as-reason-heatmap-controls button[aria-checked=false] span:first-child,#asSubStats .as-reason-heatmap-controls button[aria-checked=true] span:last-child{color:#111;font-weight:750}
+#asSubStats .as-reason-heatmap-legend{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;color:#526176}
+#asSubStats .as-reason-heatmap-scale{display:flex;gap:4px;align-items:center}
+#asSubStats .as-reason-heatmap-scale i{width:22px;height:11px;border-radius:2px;background:#f3f5f8}
+#asSubStats .as-reason-heatmap-scale i:nth-child(2){background:#e3edfc}#asSubStats .as-reason-heatmap-scale i:nth-child(3){background:#bad1f2}#asSubStats .as-reason-heatmap-scale i:nth-child(4){background:#85ace2}#asSubStats .as-reason-heatmap-scale i:nth-child(5){background:#4176bb}#asSubStats .as-reason-heatmap-scale i:nth-child(6){background:#204b87}
+#asSubStats .as-reason-heatmap-scroll{overflow-x:auto;min-width:0;padding:4px;scrollbar-width:thin;overscroll-behavior-inline:contain}
+#asSubStats .as-reason-heatmap-table{width:100%;min-width:980px;table-layout:fixed;border-collapse:separate;border-spacing:5px 7px;font-variant-numeric:tabular-nums}
+#asSubStats .as-reason-heatmap-table :is(th,td){border:0;padding:0;height:46px;text-align:center;background:transparent;color:#263c5a;font-size:13px;white-space:nowrap}
+#asSubStats .as-reason-heatmap-table th{font-weight:650;color:#111}
+#asSubStats .as-reason-heatmap-table thead th{height:30px;color:#111;font-size:14px}
+#asSubStats .as-reason-heatmap-table tbody th{font-size:14px}
+#asSubStats .as-reason-heatmap-table :is(th,td):first-child{width:110px;text-align:left;position:sticky;left:0;background:#fff;z-index:2;padding-right:10px}
+#asSubStats .as-reason-heatmap-table :is(th,td):last-child{width:64px;font-weight:700;color:#111;font-size:14px}
+#asSubStats .as-reason-heatmap-table tbody tr:hover{background:transparent}
+#asSubStats .as-reason-heat-cell{width:100%;min-width:44px;min-height:44px;height:100%;padding:9px 3px;border:0;border-radius:5px;color:var(--heat-ink);background:var(--heat-bg);font:650 13px var(--ui-font),sans-serif;font-variant-numeric:tabular-nums;cursor:pointer;animation:asReasonHeatIn .55s cubic-bezier(.2,.75,.25,1) var(--heat-delay) backwards;transition:filter .15s}
+#asSubStats .as-reason-heat-cell[data-future=true]{color:#607088;background:repeating-linear-gradient(135deg,#f5f7fa 0,#f5f7fa 5px,#e3e9f1 5px,#e3e9f1 6px);font-weight:500}
+#asSubStats .as-reason-heat-cell:hover{filter:brightness(.96)}
+#asSubStats .as-reason-heat-cell[aria-pressed=true]{outline:2px solid #24549b;outline-offset:2px}
+#asSubStats :is(.as-reason-heat-cell,.as-reason-heatmap-controls button,.as-reason-heatmap-scroll):focus-visible{outline:3px solid #24549b;outline-offset:2px}
+#asSubStats .as-reason-heatmap-table tfoot :is(th,td){border-top:1px solid #e3e9f1;padding-top:9px;font-size:14px;font-weight:700;color:#111}
+@keyframes asReasonHeatIn{from{opacity:0;transform:translateY(9px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@container as-overview (max-width:650px){#asSubStats[data-overview-theme] .as-reason-heatmap-panel{padding:20px 14px}#asSubStats .as-reason-heatmap-heading{align-items:flex-start;flex-direction:column;gap:14px}#asSubStats .as-reason-heatmap-legend{justify-content:flex-start;font-size:11px;gap:6px}}
+@media(prefers-reduced-motion:reduce){#asSubStats .as-reason-heat-cell{animation:none!important;transition:none!important}}
+</style>
+<style id="as-amount-column-style">
+#asSubStats[data-overview-theme] .as-column-amount{min-height:470px}
+#asSubStats[data-overview-theme] .as-column-amount .as-daily-scroll{padding:0;margin-top:12px;min-height:230px;justify-content:stretch}
+#asSubStats .as-amount-selection{margin-top:14px;display:flex;flex-direction:column;gap:4px}
+#asSubStats .as-amount-selection>span{font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:14px;font-weight:500;line-height:21px;letter-spacing:normal;color:#526176}
+#asSubStats .as-amount-selection>strong{font-size:28px;line-height:1.3;font-weight:750;color:#172b49;font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+#asSubStats .as-amount-selection small{font-size:15px;font-weight:500;margin-left:5px}
+#asSubStats .as-amount-column-plot{position:relative;flex:1;width:100%;min-height:230px}
+#asSubStats .as-amount-column-plot>svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#asSubStats .as-amount-column-plot .amount-grid{stroke:#e6ebf2;stroke-width:1}
+#asSubStats .as-amount-column-plot .amount-axis{fill:#66758b;font:12px var(--ui-font),'Malgun Gothic',sans-serif;font-variant-numeric:tabular-nums}
+#asSubStats .as-amount-column-plot .amount-future-label{fill:#66758b;font:12px var(--ui-font),'Malgun Gothic',sans-serif}
+#asSubStats[data-overview-theme] .as-amount-column-plot #asAmountChart{position:absolute;inset:0;display:block;min-width:0!important;background:none;isolation:auto}
+#asSubStats[data-overview-theme] .as-amount-column-plot #asAmountChart::after{display:none}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month{position:absolute;inset:0 auto 0 0;display:flex;align-items:flex-end;justify-content:center;padding:0 0 7px;background:transparent;border-radius:4px}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month:hover{background:#2866ca08}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-plot{position:absolute;inset:0;height:auto;margin:0;border:0;width:100%;pointer-events:none}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-bar{bottom:auto;left:27%;width:46%;background:#a8c3e9}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month[aria-pressed=true] .as-amount-bar{background:#2866ca}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-value{font-size:12px;font-weight:600;color:#526b8d}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month[aria-pressed=true] .as-amount-value{color:#205ebd;font-weight:750}
+#asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month>span:last-child{font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:16px;line-height:24px;letter-spacing:normal}
+</style>
+<style id="as-readable-trend-style">
+#asSubStats[data-overview-theme] .as-readable-trend{height:auto;min-height:442px;padding:20px 20px 12px;align-self:stretch;display:flex;flex-direction:column}
+#asSubStats .as-readable-trend .as-stats-chart-heading{min-height:27px;margin:0}
+#asSubStats .as-readable-trend .as-stats-chart-heading h2{font-size:18px;font-weight:700}
+#asSubStats .as-readable-trend .month-comparison{margin:0;padding:7px 0 8px;min-height:56px;border:0;display:block}
+#asSubStats .as-readable-trend .comparison-main>div{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin:0}
+#asSubStats .as-readable-trend #comparison-period{font-size:14px;font-weight:600;color:#53647c}
+#asSubStats .as-readable-trend #comparison-count{font-size:28px;font-weight:750;line-height:1.15;letter-spacing:-.025em;color:#172b49;white-space:nowrap}
+#asSubStats .as-readable-trend #comparison-count small{font-size:14px;font-weight:500;margin-left:4px}
+#asSubStats .as-readable-trend #comparison-change{align-self:flex-start;font-size:14px;font-weight:500;line-height:21px;color:#526176;background:none;padding:0;border-radius:0;margin:0}
+#asSubStats .as-readable-trend #comparison-change-value{font:inherit;font-weight:600;color:inherit}
+#asSubStats .as-readable-trend #comparison-change-value[data-direction="increase"]{color:#16804a}
+#asSubStats .as-readable-trend #comparison-change-value[data-direction="decrease"]{color:#c23838}
+#asSubStats .as-readable-trend .plot{position:relative;flex:1;min-height:210px;min-width:0;width:100%;max-width:100%;padding:0;margin:0;overflow:visible}
+#asSubStats .as-readable-trend .plot>svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible;pointer-events:none}
+#asSubStats .as-readable-trend #asStatsChart{position:absolute;inset:0;display:block;min-width:0;min-height:0;height:auto;background:none;pointer-events:none;isolation:auto}
+#asSubStats .as-readable-trend #asStatsChart::after{display:none}
+#asSubStats .as-readable-trend .gridline{stroke:#e9edf3;stroke-width:1}
+#asSubStats .as-readable-trend .baseline{stroke:#b8c4d2}
+#asSubStats .as-readable-trend .axis-tick{font-size:12px;fill:#53647c;font-variant-numeric:tabular-nums}
+#asSubStats .as-readable-trend .trend-line{fill:none;stroke:#457bce;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+#asSubStats .as-readable-trend .data-label{font-size:15px;font-weight:650;fill:#172b49;font-variant-numeric:tabular-nums}
+#asSubStats .as-readable-trend .data-label.selected{fill:#124bbb;font-weight:750}
+#asSubStats .as-readable-trend .point{fill:#fff;stroke:#477fcf;stroke-width:2}
+#asSubStats .as-readable-trend .point.selected{fill:#2866ca;stroke:#2866ca;stroke-width:3}
+#asSubStats .as-readable-trend .missing-label,#asSubStats .as-readable-trend .average-unavailable{font-size:12px;fill:#53647c}
+#asSubStats .as-readable-trend #asStatsChart .month-button{position:absolute;bottom:0;top:auto;display:flex;flex-direction:row;align-items:flex-end;justify-content:center;gap:0;min-width:0;min-height:44px;padding:0 0 9px;border:0;border-radius:5px;background:transparent;color:var(--ink);font-size:16px;font-weight:500;line-height:24px;pointer-events:auto;cursor:pointer;box-shadow:none}
+#asSubStats .as-readable-trend #asStatsChart .month-button>span{font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:16px;line-height:24px;color:inherit;font-weight:inherit;letter-spacing:normal}
+#asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]{color:#1555bc;font-weight:600}
+#asSubStats .as-readable-trend #asStatsChart .month-button:hover{background:#1c5dde09}
+#asSubStats .as-readable-trend #asStatsChart .month-button:focus-visible{outline:3px solid #1c5dde;outline-offset:-3px;background:#1c5dde0b}
+#asSubStats .as-readable-trend #asStatsEmpty{font-size:12px;margin:6px 0 0;color:#53647c}
+#asSubStats .as-readable-trend .as-trend-narrow #asStatsChart{inset:auto 0 0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px 4px;height:92px;pointer-events:auto}
+#asSubStats .as-readable-trend .as-trend-narrow #asStatsChart .month-button{position:static;width:auto!important;height:44px!important;min-height:44px;align-items:center;line-height:1.3;background:#f6f8fb;border:1px solid transparent;border-radius:5px}
+#asSubStats .as-readable-trend .as-trend-narrow #asStatsChart .month-button[aria-pressed=true]{background:#eef4ff;border-color:#7599e3;box-shadow:none}
+#asSubStats .as-readable-trend .as-trend-narrow .data-label{font-size:14px}
+@container as-overview (max-width:600px){#asSubStats[data-overview-theme] .as-readable-trend{min-height:480px;padding:16px 12px 12px}#asSubStats .as-readable-trend #comparison-period{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -2154,10 +2503,10 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
       <p class="as-ledger-help" id="asLedgerMessage" role="status"></p>
     </div><!-- /asSubList -->
 
-<section id="asSubStats" style="display:none" aria-label="A/S 현황">
+<section id="asSubStats" data-overview-theme="readable" style="display:none" aria-label="A/S 현황">
   <p id="asStatsMessage" role="status" aria-live="polite"></p>
   <div id="asStatsContent" hidden>
-<div class="as-overview-section"><h2>현재 처리 대기</h2><span>현재 기준 · 전체 접수 중 미완료</span></div><div id="asKpiRow" class="as-overview-kpis"><button type="button" onclick="asKpiFilter('pending')"><span>전체 대기</span><strong id="kpiTotal">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('접수')"><span>접수</span><strong id="kpiOpen">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('제작 요청')"><span>제작 요청</span><strong id="kpiReviewWait">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('도장 요청')"><span>도장 요청</span><strong id="kpiApproveWait">0</strong><small aria-hidden="true">↗</small></button><button type="button" onclick="asKpiFilter('납품 요청')"><span>납품 요청</span><strong id="kpiProgress">0</strong><small aria-hidden="true">↗</small></button></div><div class="as-overview-section as-overview-period"><div><h2 id="asStatsPeriodTitle">기간별 접수 분석</h2><p class="as-period-basis">접수일 기준</p></div><select id="asStatsYear" aria-label="집계 연도" onchange="renderAsStatistics()"></select></div>
+<div class="as-overview-section"><h1>AS 접수 현황</h1><span>현재 기준 · 전체 접수 중 미완료</span></div><div id="asKpiRow" class="as-overview-kpis"><button type="button" onclick="asKpiFilter('pending')"><span>전체 대기</span><strong id="kpiTotal">0</strong></button><button type="button" onclick="asKpiFilter('접수')"><span>접수</span><strong id="kpiOpen">0</strong></button><button type="button" onclick="asKpiFilter('제작 요청')"><span>제작 요청</span><strong id="kpiReviewWait">0</strong></button><button type="button" onclick="asKpiFilter('도장 요청')"><span>도장 요청</span><strong id="kpiApproveWait">0</strong></button><button type="button" onclick="asKpiFilter('납품 요청')"><span>납품 요청</span><strong id="kpiProgress">0</strong></button></div><div class="as-overview-section as-overview-period"><div><h2 id="asStatsPeriodTitle">기간별 접수 분석</h2><p class="as-period-basis">접수일 기준</p></div><select id="asStatsYear" aria-label="집계 연도" onchange="renderAsStatistics()"></select></div>
     <div class="as-stats-summary">
       <div class="as-stats-month-summary"><span id="asStatsMonthLabel"></span><strong id="asStatsMonthly"></strong><p id="asStatsDelta"></p></div>
       <div><span id="asStatsYearLabel">연간 접수</span><strong id="asStatsTotal"></strong><p id="asStatsYearDelta"></p></div>
@@ -2166,21 +2515,35 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
     <div class="as-overview-charts">
     <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div>
     <section class="as-daily-section as-stats-chart-panel" aria-labelledby="asAmountTitle">
-      <div class="as-stats-chart-heading"><h3 id="asAmountTitle">월별 금액 집계</h3><span class="as-chart-unit">단위: 원</span></div>
-      <div class="as-amount-summary" role="status" aria-live="polite" aria-atomic="true"><span><span id="asAmountMonthLabel">선택 월</span> <strong id="asAmountMonthly">0원</strong></span><span>연간 합계 <strong id="asAmountAnnual">0원</strong></span></div>
-      <p class="as-amount-basis" id="asAmountBasis">접수일 기준 · 금액 미입력 건 제외</p>
+      <div class="as-stats-chart-heading"><h3 id="asAmountTitle">월별 금액 집계</h3><span class="as-chart-unit">단위: 만 원</span></div>
+      <div class="as-amount-selection" role="status" aria-live="polite" aria-atomic="true"><strong id="asAmountSelectedValue">—</strong><span id="asAmountSelectedPeriod">선택 월 접수 금액</span></div>
+      <p class="as-chart-sr-only" id="asAmountBasis">접수일 기준 · 금액 미입력 건 제외</p>
       <div class="as-daily-scroll" tabindex="0" role="region" aria-label="월별 금액 집계, 좌우로 스크롤"><div id="asAmountChart" class="as-amount-chart" role="group" aria-label="월별 접수 금액"></div></div>
+      <div class="as-amount-annual-footer" role="status" aria-live="polite" aria-atomic="true"><span>연간 누계</span><strong id="asAmountAnnual">0원</strong></div>
     </section></div>
-    <section class="as-stats-chart-panel" aria-labelledby="asStatsReasonsTitle">
-      <h2 id="asStatsReasonsTitle">접수 사유별 집계</h2>
-      <p id="asStatsReasonsHint" aria-live="polite"></p>
-      <div class="as-reason-table-wrap"><table class="as-reason-table" aria-describedby="asStatsReasonsHint"><thead><tr><th scope="col">사유 유형</th><th scope="col">비중</th><th scope="col">건수 · 비율</th></tr></thead><tbody id="asStatsReasons"></tbody></table></div>
+    <section class="as-stats-chart-panel as-reason-ranking-panel" aria-labelledby="asStatsReasonsTitle">
+      <div class="as-reason-heading"><h2 id="asStatsReasonsTitle">유형별 집계</h2><div class="as-reason-tools"><p id="asStatsReasonsHint" aria-live="polite"></p><p class="as-chart-sr-only as-stats-footnote">직접 입력하거나 사유가 없으면 기타로 집계합니다.</p></div></div>
+      <ol id="asStatsReasons" class="as-reason-ranking" aria-label="선택 월 유형별 접수 순위" aria-describedby="asStatsReasonsHint"></ol>
       <p id="asStatsReasonsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p>
-      <p class="as-stats-footnote">기존 7개 사유와 기타를 고정 표시합니다. 직접 입력하거나 사유가 없는 접수는 기타로 집계합니다.</p>
+    </section>
+    <section class="as-stats-chart-panel as-product-panel" aria-labelledby="asStatsProductsTitle">
+      <div class="as-product-heading"><h2 id="asStatsProductsTitle">제품별 AS 현황</h2><p id="asStatsProductsHint" role="status" aria-live="polite" aria-atomic="true"></p></div>
+      <div class="as-product-body">
+        <div class="as-product-ring" aria-hidden="true"><div id="asStatsProductsChart"></div><div class="as-product-center"><strong id="asStatsProductsTotal">0건</strong><span id="asStatsProductsLabel">총 접수</span></div></div>
+        <div id="asStatsProductsList" class="as-product-list"><ul id="asStatsProductsLegend" class="as-product-legend" aria-label="선택 월 제품별 AS 건수 및 비율"></ul><nav id="asStatsProductsPager" class="as-product-pagination" aria-label="제품별 AS 현황 페이지" hidden><span id="asStatsProductsPageInfo" class="as-product-page-info"></span><div id="asStatsProductsPages" class="as-product-pages"></div></nav></div>
+      </div>
+      <p id="asStatsProductsEmpty" hidden>선택 월에 접수된 AS가 없습니다.</p>
+      <p id="asStatsProductsStatus" class="as-product-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div class="as-product-footer"><p id="asStatsProductsPeriod" class="as-product-period"></p><div class="as-product-actions"><button id="asStatsProductsReset" type="button">전체 보기</button><button id="asStatsProductsReplay" type="button">모션 다시 보기</button></div></div>
     </section>
     </div>
   </div>
-  <div class="as-stats-actions"><button type="button" onclick="loadAsStatistics(true)">예시 데이터 보기</button><button type="button" onclick="loadAsStatistics(false)">새로고침</button></div>
+  <section class="as-stats-chart-panel as-reason-heatmap-panel" aria-labelledby="asReasonHeatTitle">
+    <div class="as-reason-heatmap-heading"><h2 id="asReasonHeatTitle">월별 유형 분포</h2><div class="as-reason-heatmap-controls"><button id="asReasonHeatToggle" type="button" role="switch" aria-checked="false" aria-label="히트맵 비중 표시"><span aria-hidden="true">건수</span><span aria-hidden="true">비중</span></button></div></div>
+    <div class="as-reason-heatmap-legend"><span class="as-reason-heatmap-scale" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="asReasonHeatScale"></span></div>
+    <div class="as-reason-heatmap-scroll" tabindex="0" role="region" aria-label="월별 유형 분포 표, 작은 화면에서는 좌우로 스크롤"><table class="as-reason-heatmap-table" aria-label="연간 월별 유형 접수 건수와 비중"><thead><tr><th scope="col">유형</th><th scope="col">1월</th><th scope="col">2월</th><th scope="col">3월</th><th scope="col">4월</th><th scope="col">5월</th><th scope="col">6월</th><th scope="col">7월</th><th scope="col">8월</th><th scope="col">9월</th><th scope="col">10월</th><th scope="col">11월</th><th scope="col">12월</th><th scope="col">합계</th></tr></thead><tbody id="asReasonHeatBody"></tbody><tfoot id="asReasonHeatFoot"></tfoot></table></div>
+  </section>
+  <div class="as-stats-actions"><button type="button" onclick="loadAsStatistics()">새로고침</button></div>
 </section>
 
     <!-- 제품명 관리 -->
@@ -4052,16 +4415,8 @@ async function deleteAdminUser(id, name) {
 let asEditingId = null;
 let _asStatsRecords = [];
 let _asStatsRequest = 0;
-let _asStatsExample = false;
-let _asListExample = ['localhost','127.0.0.1','[::1]'].includes(window.location.hostname);
-let _asExampleRecords = null;
 let _asStatsSelectedMonth = new Date().getMonth()+1;
 const AS_REASON_TYPES = ['치수 오작','품질 불량','용접 불량','도장 불량','수량 누락','납기 누락','마킹 오류'];
-function getAsExampleRecords() {
-  // One browser-memory sample shared by the overview and receipt list.
-  if (!_asExampleRecords) _asExampleRecords = createAsListExample();
-  return _asExampleRecords;
-}
 function asStatsDateKey(value) {
   if (typeof value !== 'string') return null;
   const match = /^(\d{4})-(\d{2})-(\d{2})(?:T|$)/.exec(value);
@@ -4095,13 +4450,118 @@ function summarizeAsStatistics(records, year, month) {
   const total = counts.reduce((sum, value) => sum + value, 0);
   return { counts, amounts, amountEntries, totalAmount:amounts.reduce((sum,value)=>sum+value,0n), statuses, reasons, total, previousYearTotal, current:counts[month-1], previous, previousYear, previousMonth, pending:total-statuses['완료'], invalid };
 }
+function summarizeAsProducts(records,year,month) {
+ const counts=new Map();let total=0;
+ for(const record of records){
+  const date=asStatsDateKey(record?.createdAt);
+  if(!date||date.year!==year||date.month!==month)continue;
+  const name=(typeof record.product==='string'?record.product.trim().replace(/\s+/g,' '):'')||'미입력';
+  counts.set(name,(counts.get(name)||0)+1);total++;
+ }
+ const entries=Array.from(counts,([name,count])=>({name,count})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'ko'));
+ return {total,entries};
+}
+let _asProductAnimation=0;
+function renderAsProducts(records,year,month) {
+ if(_asProductAnimation)window.cancelAnimationFrame(_asProductAnimation);
+ _asProductAnimation=0;
+ const result=summarizeAsProducts(records,year,month),format=value=>value.toLocaleString('ko-KR');
+ const today=asJobToday(),future=year>Number(today.slice(0,4))||(year===Number(today.slice(0,4))&&month>Number(today.slice(5,7)));
+ const colors=['#316bc6','#32958c','#b67e36','#8975b9','#6f91ad','#9ca9bb'];
+ document.getElementById('asStatsProductsHint').textContent=future&&!result.total?'미도래':format(result.total)+'건 기준';
+ document.getElementById('asStatsProductsPeriod').textContent=year+'년 '+month+'월 · 접수일 기준';
+ const empty=document.getElementById('asStatsProductsEmpty');empty.hidden=result.total!==0;empty.textContent=future?'미도래 기간입니다.':'선택 월에 조회된 접수 자료가 없습니다.';
+ document.getElementById('asStatsProductsChart').innerHTML='<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><circle cx="120" cy="120" r="90" fill="none" stroke="#e9eef5" stroke-width="34"/><circle id="asStatsProductsArc" class="as-product-arc" cx="120" cy="120" r="90" pathLength="100" fill="none" stroke="#316bc6" stroke-width="34" stroke-dasharray="0 100" transform="rotate(-90 120 120)"/></svg>';
+ const arc=document.getElementById('asStatsProductsArc'),value=document.getElementById('asStatsProductsTotal'),label=document.getElementById('asStatsProductsLabel');
+ const reset=document.getElementById('asStatsProductsReset'),replay=document.getElementById('asStatsProductsReplay'),buttons=[];
+ const pageSize=4,pageCount=Math.ceil(result.entries.length/pageSize);
+ let page=0,selected=result.entries.length?0:-1,shownShare=0,shownNumber=0,shownUnit='%',targetShare=0,targetNumber=0,targetUnit='%';
+ function animate(duration,restart=false){
+  if(_asProductAnimation)window.cancelAnimationFrame(_asProductAnimation);
+  _asProductAnimation=0;
+  const fromShare=restart?0:shownShare,fromNumber=restart||shownUnit!==targetUnit?0:shownNumber;
+  shownUnit=targetUnit;
+  const draw=p=>{shownShare=fromShare+(targetShare-fromShare)*p;shownNumber=fromNumber+(targetNumber-fromNumber)*p;arc.setAttribute('stroke-dasharray',shownShare+' '+(100-shownShare));value.textContent=(targetUnit==='%'?shownNumber.toFixed(1):format(Math.round(shownNumber)))+targetUnit;};
+  const reduced=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!window.requestAnimationFrame||reduced()){draw(1);return;}
+  let start=null;draw(0);
+  const tick=now=>{if(start===null)start=now;const p=reduced()?1:Math.min(1,(now-start)/duration);draw(1-Math.pow(1-p,3));_asProductAnimation=p<1?window.requestAnimationFrame(tick):0;};
+  _asProductAnimation=window.requestAnimationFrame(tick);
+ }
+ function choose(index,initial=false){
+  selected=index;
+  const item=result.entries[index];targetShare=item?item.count/result.total*100:result.total?100:0;targetNumber=item?targetShare:result.total;targetUnit=item?'%':'건';
+  label.textContent=item?item.name:'총 접수';arc.setAttribute('stroke',item?colors[index%colors.length]:colors[0]);
+  buttons.forEach(button=>button.setAttribute('aria-pressed',String(button._productIndex===index)));
+  reset.disabled=index<0;replay.disabled=!result.total;
+  document.getElementById('asStatsProductsStatus').textContent=item?item.name+' · '+format(item.count)+'건 · '+targetShare.toFixed(1)+'%':'총 접수 '+format(result.total)+'건';
+  animate(initial?900:420,initial);
+ }
+ function row(item,index){
+  const li=document.createElement('li');li.className='as-product-row';
+  const dot=document.createElement('span');dot.className='as-product-dot';dot.style.backgroundColor=colors[index%colors.length];dot.setAttribute('aria-hidden','true');li.append(dot);
+  const name=document.createElement('span');name.className='as-product-name';name.textContent=item.name;
+  const values=document.createElement('span');values.className='as-product-values';const count=document.createElement('strong');count.textContent=format(item.count)+'건';const percent=document.createElement('span');percent.textContent=(item.count/result.total*100).toFixed(1)+'%';values.append(count,percent);li.append(name,values);return li;
+ }
+ const legend=document.getElementById('asStatsProductsLegend'),pager=document.getElementById('asStatsProductsPager'),pages=document.getElementById('asStatsProductsPages');
+ document.getElementById('asStatsProductsList').className='as-product-list'+(pageCount>1?' is-paged':'');
+ function renderPage(focus=false){
+  const start=page*pageSize;legend.replaceChildren();buttons.length=0;
+  result.entries.slice(start,start+pageSize).forEach((item,offset)=>{
+   const index=start+offset,li=document.createElement('li'),button=document.createElement('button'),content=row(item,index);button.type='button';button.className='as-product-row as-product-choice';button._productIndex=index;button.title=item.name;button.setAttribute('aria-pressed',String(index===selected));button.setAttribute('aria-label',item.name+', '+format(item.count)+'건, '+(item.count/result.total*100).toFixed(1)+'퍼센트');
+   button.append(...Array.from(content.children));button.onclick=()=>choose(selected===index?-1:index);buttons.push(button);li.append(button);legend.appendChild(li);
+  });
+  pager.hidden=pageCount<=1;pages.replaceChildren();
+  document.getElementById('asStatsProductsPageInfo').textContent=result.entries.length?(start+1)+'–'+Math.min(start+pageSize,result.entries.length)+' / '+result.entries.length+'종':'';
+  if(pager.hidden)return;
+  let active;
+  function pageButton(text,index,disabled,aria){
+   const button=document.createElement('button');button.type='button';button.textContent=text;button.disabled=disabled;button.setAttribute('aria-label',aria);button.setAttribute('aria-controls','asStatsProductsLegend');
+   if(index===page&&text===String(page+1)){button.setAttribute('aria-current','page');active=button;}
+   button.onclick=()=>{if(disabled||index===page)return;page=index;selected=page*pageSize;renderPage(true);choose(selected);document.getElementById('asStatsProductsStatus').textContent=(page+1)+' / '+pageCount+'페이지 · '+document.getElementById('asStatsProductsStatus').textContent;};pages.append(button);
+  }
+  pageButton('‹',page-1,page===0,'이전 제품 페이지');
+  const first=Math.max(0,Math.min(page-2,pageCount-5));
+  for(let i=first;i<Math.min(pageCount,first+5);i++)pageButton(String(i+1),i,false,(i+1)+'페이지');
+  pageButton('›',page+1,page===pageCount-1,'다음 제품 페이지');
+  if(focus)active?.focus?.({preventScroll:true});
+ }
+ renderPage();
+ reset.onclick=()=>choose(-1);replay.onclick=()=>animate(900,true);choose(selected,true);
+}
 function asAnnualChangeText(total, previous) {
   const change = total-previous;
   if (!change) return '전년 대비 변동 없음';
   if (!previous) return '전년 0건 대비 '+total.toLocaleString()+'건 증가';
   return '전년 대비 '+Math.abs(change/previous*100).toFixed(1)+'% '+(change>0?'증가':'감소');
 }
-async function loadAsStatistics(useExample = _asListExample) {
+function asTrendSegments(counts,year,today) {
+  const currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
+  const peak=Math.max(0,...counts),step=peak<=10?2:10,max=Math.max(step,Math.ceil(peak/step)*step);
+  const segments=[];let points=[];
+  counts.forEach((count,index)=>{
+    const future=year>currentYear||(year===currentYear&&index+1>currentMonth);
+    if(future&&!count){if(points.length)segments.push(points.join(' '));points=[];return;}
+    points.push((index+.5)*100+','+(208-count/max*176));
+  });
+  if(points.length)segments.push(points.join(' '));
+  return segments;
+}
+function asMonthlyAverage(counts,year,today) {
+ const currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
+ const months=year<currentYear?12:year===currentYear?currentMonth:0;
+ return {months,value:months?counts.slice(0,months).reduce((sum,count)=>sum+count,0)/months:null};
+}
+function asAmountSegments(amounts,entries) {
+ const max=Math.max(1,...amounts.map(Number)),segments=[];let points=[];
+ amounts.forEach((amount,index)=>{
+  if(!entries[index]){if(points.length)segments.push(points.join(' '));points=[];return;}
+  points.push((index+.5)*100+','+(180-Number(amount)/max*132));
+ });
+ if(points.length)segments.push(points.join(' '));
+ return segments;
+}
+async function loadAsStatistics() {
   const request = ++_asStatsRequest;
   const content = document.getElementById('asStatsContent');
   const message = document.getElementById('asStatsMessage');
@@ -4110,28 +4570,19 @@ async function loadAsStatistics(useExample = _asListExample) {
   document.getElementById('asSubStats').setAttribute('aria-busy', 'true');
   yearSelect.disabled = true;
   try {
-    let data;
-    if (useExample) {
-      data = { list: getAsExampleRecords() };
-    } else {
-      const response = await fetch(`${SERVER}/api/as`);
-      if (!response.ok) throw new Error('Request failed');
-      data = await response.json();
-    }
+    const response = await fetch(`${SERVER}/api/as`);
+    if (!response.ok) throw new Error('Request failed');
+    const data = await response.json();
     if (!Array.isArray(data.list)) throw new Error('Invalid data');
     if (request !== _asStatsRequest) return;
     _asStatsRecords = data.list;
-    _asStatsExample = useExample;
-    _asListExample = useExample;
     const now = new Date();
     const previousYear = Number(yearSelect.value);
     const years = new Set([now.getFullYear()]);
     _asStatsRecords.forEach(record => { const date = asStatsDateKey(record?.createdAt); if (date) years.add(date.year); });
     yearSelect.replaceChildren();
     [...years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(`${year}년`, String(year))));
-    const latestExampleDate = useExample ? _asStatsRecords.map(record=>asStatsDateKey(record.createdAt)).filter(Boolean).sort((a,b)=>b.year-a.year||b.month-a.month)[0] : null;
-    yearSelect.value = String(latestExampleDate ? latestExampleDate.year : (years.has(previousYear) ? previousYear : now.getFullYear()));
-    if (latestExampleDate) _asStatsSelectedMonth = latestExampleDate.month;
+    yearSelect.value = String(years.has(previousYear) ? previousYear : now.getFullYear());
     renderAsStatistics();
   } catch (error) {
     if (request !== _asStatsRequest) return;
@@ -4152,8 +4603,6 @@ function renderAsOverviewKpis(records) {
 }
 function renderAsAmounts(year,month,result) {
  const max=Math.max(1,...result.amounts.map(Number)),format=value=>value.toLocaleString('ko-KR');
- document.getElementById('asAmountMonthLabel').textContent=year+'년 '+month+'월';
- document.getElementById('asAmountMonthly').textContent=format(result.amounts[month-1])+'원';
  document.getElementById('asAmountAnnual').textContent=format(result.totalAmount)+'원';
  document.getElementById('asAmountBasis').textContent='접수일 기준 · 금액 미입력 건 제외 · '+month+'월 금액 입력 '+result.amountEntries[month-1]+'건';
  const chart=document.getElementById('asAmountChart');chart.replaceChildren();
@@ -4163,10 +4612,53 @@ function renderAsAmounts(year,month,result) {
    button.type='button';button.className='as-amount-month';button.setAttribute('aria-pressed',String(index+1===month));
    button.setAttribute('aria-label',year+'년 '+(index+1)+'월 '+value+'원, 금액 입력 '+result.amountEntries[index]+'건');
    button.title=(index+1)+'월 '+value+'원';
-   button.innerHTML='<span class="as-amount-plot" aria-hidden="true"><span class="as-amount-value" style="bottom:'+(height+4)+'px">'+value+'</span><span class="as-amount-bar" style="height:'+height+'px"></span></span><span>'+(index+1)+'월</span>';
+   button.innerHTML='<span class="as-amount-plot" aria-hidden="true"><span class="as-amount-value">'+value+'</span><span class="as-amount-bar" style="height:'+height+'px"></span></span><span>'+(index+1)+'월</span>';
    button.onclick=()=>{showAsStatisticsMonth(year,index+1);document.getElementById('asAmountChart').children[index]?.focus?.({preventScroll:true});};
    chart.appendChild(button);
  });
+}
+let _asReasonHeatMode='count';
+function summarizeAsReasonHeatmap(records,year,today=asJobToday()) {
+  const names=[...AS_REASON_TYPES,'기타'],values=names.map(()=>Array(12).fill(0)),totals=Array(12).fill(0);
+  for(const record of records){
+    const date=asStatsDateKey(record?.createdAt);if(!date||date.year!==year)continue;
+    const reason=typeof record.reason==='string'?record.reason.trim():'';
+    const row=AS_REASON_TYPES.indexOf(reason);
+    values[row<0?7:row][date.month-1]++;totals[date.month-1]++;
+  }
+  const future=totals.map((total,i)=>year+'-'+String(i+1).padStart(2,'0')>today.slice(0,7)&&!total);
+  return {names,values,totals,future,total:totals.reduce((a,b)=>a+b,0)};
+}
+function renderAsReasonHeatmap(records,year) {
+  const model=summarizeAsReasonHeatmap(records,year),body=document.getElementById('asReasonHeatBody');
+  const key=JSON.stringify([year,asJobToday(),_asReasonHeatMode,model.values]);
+  if(body._heatKey===key)return;
+  body._heatKey=key;
+  const format=value=>value.toLocaleString('ko-KR');
+  const shares=model.values.map(row=>row.map((count,i)=>model.totals[i]?count/model.totals[i]*100:0));
+  const displayed=_asReasonHeatMode==='share'?shares:model.values;
+  const maximum=Math.max(0,...displayed.flat());
+  const palette=['#f3f5f8','#e3edfc','#bad1f2','#85ace2','#4176bb','#204b87'];
+  document.getElementById('asReasonHeatScale').textContent='0–'+(_asReasonHeatMode==='share'?maximum.toFixed(1)+'%':format(maximum)+'건');
+  body.innerHTML=model.names.map((name,r)=>'<tr><th scope="row">'+name+'</th>'+model.values[r].map((count,i)=>{
+    const future=model.future[i],value=displayed[r][i],level=value?Math.min(5,Math.ceil(value/maximum*5)):0;
+    const label=year+'년 '+(i+1)+'월 · '+name+' · '+(future?'미도래':format(count)+'건 · 해당 월 비중 '+shares[r][i].toFixed(1)+'%');
+    return '<td><button type="button" class="as-reason-heat-cell" data-row="'+r+'" data-month="'+i+'" data-future="'+future+'" aria-pressed="false" aria-label="'+label+'" style="--heat-bg:'+palette[level]+';--heat-ink:'+(level>=4?'#fff':'#070f1a')+';--heat-delay:'+((r+i)*27)+'ms">'+(future?'—':_asReasonHeatMode==='share'?value.toFixed(1)+'%':format(count))+'</button></td>';
+  }).join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.values[r].reduce((a,b)=>a+b,0)))+'</td></tr>').join('');
+  document.getElementById('asReasonHeatFoot').innerHTML='<tr><th scope="row">합계 · 건</th>'+model.totals.map((count,i)=>'<td>'+(model.future[i]?'—':format(count))+'</td>').join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.total))+'</td></tr>';
+  body.onclick=event=>{
+    const button=event.target.closest('.as-reason-heat-cell');if(!button)return;
+    for(const cell of body.querySelectorAll('button'))cell.setAttribute('aria-pressed',String(cell===button));
+  };
+  body.onkeydown=event=>{
+    const button=event.target.closest('.as-reason-heat-cell');if(!button)return;
+    const offsets={ArrowLeft:-1,ArrowRight:1,ArrowUp:-12,ArrowDown:12};if(!(event.key in offsets))return;
+    event.preventDefault();const cells=[...body.querySelectorAll('button')],index=cells.indexOf(button);
+    cells[Math.max(0,Math.min(cells.length-1,index+offsets[event.key]))].focus();
+  };
+  const toggle=document.getElementById('asReasonHeatToggle');
+  toggle.setAttribute('aria-checked',String(_asReasonHeatMode==='share'));
+  toggle.onclick=()=>{_asReasonHeatMode=_asReasonHeatMode==='count'?'share':'count';renderAsReasonHeatmap(records,year);};
 }
 function renderAsStatistics() {
   renderAsOverviewKpis(_asStatsRecords);
@@ -4174,8 +4666,10 @@ function renderAsStatistics() {
   const month = _asStatsSelectedMonth;
   if (!year || month<1 || month>12) return;
   const result = summarizeAsStatistics(_asStatsRecords,year,month);
+  renderAsReasonHeatmap(_asStatsRecords,year);
   renderAsAmounts(year,month,result);
-  document.getElementById('asStatsMessage').textContent = _asStatsExample ? '접수목록과 동일한 예시 70건을 집계합니다. 실제 업무 데이터에는 저장되지 않습니다.' : (result.invalid ? `접수일이 없거나 올바르지 않은 ${result.invalid}건은 집계에서 제외했습니다.` : '');
+  renderAsProducts(_asStatsRecords,year,month);
+  document.getElementById('asStatsMessage').textContent = (result.invalid ? `접수일이 없거나 올바르지 않은 ${result.invalid}건은 집계에서 제외했습니다.` : '');
   document.getElementById('asStatsChartHint').textContent = '월을 누르면 아래에서 해당 월의 접수 사유별 집계를 확인할 수 있습니다. 단위: 건';
   document.getElementById('asStatsContent').hidden = false;
   document.getElementById('asStatsYearLabel').textContent = `${year}년 접수`;
@@ -4196,7 +4690,6 @@ function renderAsStatistics() {
   yearDelta.title = (year-1)+'년 전체 '+result.previousYearTotal.toLocaleString()+'건과 비교';
   const ongoing = year===now.getFullYear() && month===now.getMonth()+1 ? ' · 이번 달은 현재까지' : '';
   document.getElementById('asStatsDelta').textContent = `전월 대비 ${difference}${ongoing}`;
-  const max = Math.max(1,...result.counts);
   const chart = document.getElementById('asStatsChart');
   chart.replaceChildren();
   result.counts.forEach((count,index)=>{
@@ -4206,7 +4699,7 @@ function renderAsStatistics() {
     button.setAttribute('aria-label',`${year}년 ${index+1}월 접수 ${count}건, 사유별 집계 보기`);
     button.setAttribute('aria-pressed',String(index+1===month));
     button.title=`${year}년 ${index+1}월 ${count}건`;
-    button.innerHTML=`<span class="as-stats-plot-space" aria-hidden="true"><span class="as-stats-bar" style="height:${count/max*176}px"></span><span class="as-stats-value" style="top:${198-count/max*176}px">${count}</span></span><span>${index+1}월</span>`;
+    button.innerHTML=`<span>${index+1}월</span>`;
     button.onclick=()=>showAsStatisticsMonth(year,index+1);
     chart.appendChild(button);
   });
@@ -4216,31 +4709,18 @@ function renderAsStatistics() {
     ? summarizeAsStatistics(_asStatsRecords.filter(record=>asStatsDateKey(record?.createdAt)?.month===reasonMonth),year,reasonMonth)
     : result;
   const reasonPeriod = reasonMonth >= 1 && reasonMonth <= 12 ? `${year}년 ${reasonMonth}월` : `${year}년 전체`;
-  document.getElementById('asStatsReasonsHint').textContent = `${reasonPeriod} 접수 ${reasonResult.total.toLocaleString()}건 기준 · 8개 유형 고정`;
+  document.getElementById('asStatsReasonsHint').textContent = `${reasonResult.total.toLocaleString()}건 기준`;
   const reasonRows = document.getElementById('asStatsReasons');
-  // Capture the displayed width, including an in-flight animation, before rebuilding sorted rows.
-  const previousWidths = new Map();
-  reasonRows.querySelectorAll('.as-reason-fill').forEach(fill=>{
-    const trackWidth = fill.parentElement.getBoundingClientRect().width;
-    previousWidths.set(fill.dataset.reason,trackWidth ? fill.getBoundingClientRect().width/trackWidth*100 : 0);
-  });
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   reasonRows.replaceChildren();
-  const reasonEntries = Object.entries(reasonResult.reasons);
+  const reasonEntries = Object.entries(reasonResult.reasons).sort((a,b)=>b[1]-a[1]);
   reasonEntries.forEach(([name,count])=>{
     const percent = reasonResult.total ? count/reasonResult.total*100 : 0;
-    const row = document.createElement('tr');
-    // Names come only from the fixed intake categories, never from free text.
-    row.innerHTML = `<td><span class="as-reason-name">${name}</span></td><td><span class="as-reason-track" aria-hidden="true"><span class="as-reason-fill" style="width:${percent}%"></span></span></td><td><strong>${count.toLocaleString()}건</strong><small>${percent.toFixed(1)}%</small></td>`;
+    const row = document.createElement('li');
+    row.className = 'as-reason-ranking-row';
+    row.setAttribute('data-zero',String(count===0));
+    // Keep all seven defined reasons and 기타 visible, including zero-count rows.
+    row.innerHTML = '<div class="as-reason-ranking-label"><span class="as-reason-name">'+name+'</span><strong class="as-reason-count">'+count.toLocaleString('ko-KR')+'<small>건</small></strong><span class="as-reason-percent">'+percent.toFixed(1)+'%</span></div><span class="as-reason-track" aria-hidden="true"><i style="width:'+percent.toFixed(1)+'%"></i></span>';
     reasonRows.appendChild(row);
-    const fill = row.querySelector('.as-reason-fill');
-    fill.dataset.reason = name;
-    if (!reduceMotion && typeof fill.animate === 'function') {
-      fill.animate([
-        {width:(previousWidths.get(name) ?? 0)+'%'},
-        {width:percent+'%'}
-      ],{duration:500,easing:'cubic-bezier(0.22, 1, 0.36, 1)'});
-    }
   });
   document.getElementById('asStatsReasonsEmpty').hidden = reasonResult.total!==0;
   document.getElementById('asStatsReasonsEmpty').textContent = `${reasonPeriod}에 접수된 AS가 없습니다.`;
@@ -4262,22 +4742,6 @@ let _asSortDir = 'desc';    // 'asc' | 'desc'
 let _asPage = 1;
 const _asPageSize = 20;
 let _asRemarkEditing = null;
-function createAsListExample() {
-  const dayOffset=n=>{const d=new Date(asJobToday()+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
-  const statuses=['접수','제작 요청','도장 요청','납품 요청','완료'];
-  const randomInt=(min,max)=>min+Math.floor(Math.random()*(max-min+1));
-  const reasons=['도장 표면 보수','치수 재확인 및 재제작','운송 중 모서리 손상','체결부 위치 수정','납품 수량 부족','용접부 마감 보수','설치 간섭 조정'];
-  return Array.from({length:70},(_,i)=>{
-    const status=statuses[i%5],stages={};
-    ['제작 요청','도장 요청','납품 요청'].forEach((name,j)=>{if(i%5>j)stages[name]={requestedDate:dayOffset(-12+j),...(i%5>j+1?{completedDate:dayOffset(-10+j)}:{})};});
-    return {id:'list-example-'+(i+1),asNo:'예시-'+String(i+1).padStart(3,'0'),status,category:'사내',ship:String(randomInt(2600,2700)),block:'T'+randomInt(100,300)+'P',element:'CC'+randomInt(100,200)+'F',product:'VERTICAL LADDER',materialCode:'DEMO-M'+(100+i),reason:reasons[i%7],action:'현장 확인 후 보수 및 재납품',createdBy:'예시 담당 '+(i%4+1),createdAt:dayOffset(-14-Math.floor(i/5))+'T09:00:00Z',deliveryAgreedDate:dayOffset(i%11-3),files:[],remark:'화면 확인용 예시',amount:randomInt(5,500)*10000,workflow:{revision:0,stages,history:[]},...(status==='완료'?{deliveredDate:dayOffset(-8)}:{})};
-  });
-}
-function asListExampleReadOnly(){
-  if(!_asListExample)return false;
-  showAlert('화면 확인용 샘플 데이터는 조회 전용입니다.','warn');return true;
-}
-
 let _productList = [];
 
 async function loadProductList() {
@@ -4443,7 +4907,6 @@ let _asListRequest = 0;
 async function loadAsList() {
   if (_asRemarkEditing) return;
   const request=++_asListRequest;
-  if(_asListExample){_asFullList=getAsExampleRecords();_asPage=1;_applyAsFilters();return;}
   document.getElementById('asTableBody').innerHTML='<tr><td colspan="17"><div class="as-empty" role="status">접수목록을 불러오고 있습니다.</div></td></tr>';
   document.getElementById('asPagination').style.display='none';
   document.getElementById('asLedgerCount').textContent='조회 중';
@@ -4452,12 +4915,12 @@ async function loadAsList() {
     const r = await fetch(`${SERVER}/api/as`);
     if(!r.ok)throw Error('조회 실패');
     const data = await r.json();
-    if(request!==_asListRequest||_asRemarkEditing||_asListExample)return;
+    if(request!==_asListRequest||_asRemarkEditing)return;
     _asFullList = data.list || [];
     _asPage = 1;
     _applyAsFilters();
   } catch(e) {
-    if(request!==_asListRequest||_asListExample)return;
+    if(request!==_asListRequest)return;
     document.getElementById('asTableBody').innerHTML =
       '<tr><td colspan="17"><div class="as-empty" role="alert"><p>접수목록을 불러오지 못했습니다.</p><button type="button" class="as-tb-btn" onclick="loadAsList()">다시 조회</button></div></td></tr>';
     document.getElementById('asLedgerCount').textContent='조회 오류';
@@ -4559,7 +5022,7 @@ function _renderAsPage() {
   _updateAsSelectedCount();
 
   if (!total) {
-    tbody.innerHTML = '';
+    tbody.innerHTML = '<tr class="as-ledger-no-results"><td colspan="17">조건에 맞는 접수 내역이 없습니다.</td></tr>';
     document.getElementById('asPagination').style.display = 'none';
     _initAsColResizers();
     _updateAsSelectedCount();
@@ -4620,7 +5083,7 @@ function _renderAsPagination(total, totalPages) {
 
   const start = (_asPage - 1) * _asPageSize + 1;
   const end = Math.min(_asPage * _asPageSize, total);
-  info.textContent = `${start}–${end} / 전체 ${total}건`;
+  info.textContent = `${start}–${end} / 전체 ${total}건 · 페이지당 ${_asPageSize}건`;
 
   // page buttons: prev, page numbers, next
   let html = `<button class="as-page-btn" onclick="asGoPage(${_asPage-1})" ${_asPage===1?'disabled':''}>&lsaquo;</button>`;
@@ -4650,10 +5113,10 @@ function asGoPage(p) {
   if (p < 1 || p > totalPages) return;
   _asPage = p;
   _renderAsPage();
+  document.querySelector('#asSubList .as-ledger-scroll').scrollTop = 0;
 }
 
 function asKpiFilter(status) {
-  _asListExample = _asStatsExample;
   ['asSearch','asDateFrom','asDateTo'].forEach(id=>document.getElementById(id).value='');
   setAsDdValue('asSearchField','all');setAsDdValue('asCategoryFilter','');
   _asCalSyncFromInputs();
@@ -4845,7 +5308,6 @@ function formatAsAmountInput(input) {
   catch(error){input.setAttribute('aria-invalid','true');document.getElementById('asAmountError').textContent=error.message;}
 }
 function openAsModal(item) {
-  if(asListExampleReadOnly())return;
   asEditingId = item ? item.id : null;
   document.getElementById('asModalTitle').textContent = item ? 'AS 수정' : 'AS 접수';
   document.getElementById('asCategory').value = item ? (item.category||'사내') : '사내';
@@ -4927,7 +5389,7 @@ function closeAsModal() {
 
 function startRemarkEdit(e, td) {
   e.stopPropagation();
-  if(asListExampleReadOnly() || _asRemarkEditing)return;
+  if(_asRemarkEditing)return;
   const id=td.dataset.id, item=_asFullList.find(a=>String(a.id)===id);
   if(!item)return;
   _asRemarkEditing={id,saving:false};
@@ -4960,7 +5422,6 @@ async function saveRemark(inp, id) {
 
 
 async function submitAs() {
-  if(asListExampleReadOnly())return;
   const ship = document.getElementById('asShip').value.trim();
   const block = document.getElementById('asBlock').value.trim();
   const reasonSel = document.getElementById('asReasonSelect').value;
@@ -5065,7 +5526,6 @@ function bulkEditAs() {
 }
 
 async function bulkDeleteAs() {
-  if(asListExampleReadOnly())return;
   const items = _getSelectedAsItems();
   if (!items) return;
   const ok = await showConfirm(`접수 ${items.length}건을 삭제할까요?`, 'danger');
@@ -5113,7 +5573,6 @@ function showAlert(message, type) { return showToast({message, type}); }
 function _initAsColResizers() { asLedgerLayoutColumns(); }
 
 async function deleteAs(id) {
-  if(asListExampleReadOnly())return;
   const ok = await showConfirm('접수 건을 삭제할까요?', 'danger');
   if (!ok) return;
   try {
@@ -5214,13 +5673,13 @@ function getAsDocumentFontHtml() {
 function buildAsWrapperHtml(items, pages) {
   let body = '';
   for (const p of pages) { body += p.pageHtml + p.attachHtml; }
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AS 접수서 - ' + items.length + '건</title>' + getAsDocumentFontHtml() + '<style>' + getAsCssStr() + '</style></head><body>' + body + '</body></html>';
+  return '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AS 접수서 - ' + items.length + '건</title>' + getAsDocumentFontHtml() + '<style>' + getAsCssStr() + '</style></head><body>' + body + '</body></html>';
 }
 
 // ── AS PDF 출력 (단건) ──
 async function printAsPdf(a, printNow = false) {
   const result = await buildAsPageHtml(a);
-  const htmlStr = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AS 접수서 - ' + a.asNo + '</title>' + getAsDocumentFontHtml() + '<style>' + getAsCssStr() + '</style></head><body>' + result.pageHtml + result.attachHtml + '</body></html>';
+  const htmlStr = buildAsWrapperHtml([a], [result]);
   const blob = new Blob([htmlStr], {type: 'text/html;charset=utf-8'});
   const blobUrl = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = 'AS 접수서 - ' + a.asNo;
@@ -6213,120 +6672,179 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof connectSSE === 'function') connectSSE();
 });
 </script>
-<script src="/as-workflow-ui.js?v=intake-order-6"></script>
+<script src="/as-workflow-ui.js?v=receipt-black-7"></script>
+<script id="as-readable-trend-script">
+// The amount chart keeps all labels visible, independently of hover/focus tooltips.
+function createAsColumnAmounts(chart){
+ const card=chart.closest('.as-daily-section'),scroll=chart.parentElement;
+ card.classList.add('as-column-amount');
+ const plot=document.createElement('div');plot.className='as-amount-column-plot';scroll.append(plot);
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');plot.append(svg,chart);
+ const format=n=>n.toLocaleString('ko-KR'),scaled=n=>n.toLocaleString('ko-KR',{maximumFractionDigits:1});
+ let state=null,frame;
+ const append=(tag,attrs,text)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));if(text!==undefined)node.textContent=text;svg.append(node);};
+ function draw(){
+  if(!state)return;
+  const {sum,year,month,today}=state,currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
+  const future=i=>(year>currentYear||(year===currentYear&&i+1>currentMonth))&&!sum.counts[i];
+  const peak=Math.max(1,...sum.amounts.map(amount=>Number(amount)/10000)),rough=peak/4,power=10**Math.floor(Math.log10(rough));
+  const step=[1,2,2.5,5,10].find(n=>n*power>=rough)*power,max=step*4;
+  const ticks=Array.from({length:5},(_,i)=>i*step),L=Math.max(45,scaled(max).length*7+12),R=8;
+  const labels=sum.amounts.map((amount,i)=>future(i)?'':sum.amountEntries[i]?scaled(Number(amount)/10000):'미입력');
+  plot.style.minWidth=(L+R+12*Math.max(44,...labels.map(label=>label.length*7+8)))+'px';
+  const W=plot.clientWidth,H=plot.clientHeight,T=34,B=H-40,dx=(W-L-R)/12,y=value=>B-value/max*(B-T);
+  if(!W||H<80)return;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.replaceChildren();
+  // Group consecutive future months so the label is always visible, even before selection.
+  for(let i=0;i<12;i++){
+   if(!future(i))continue;
+   const start=i;while(i+1<12&&future(i+1))i++;
+   append('rect',{x:L+start*dx,y:6,width:(i-start+1)*dx,height:B-6,rx:4,fill:'#f6f8fb',class:'amount-future-region'});
+   append('text',{x:L+(start+(i-start+1)/2)*dx,y:22,'text-anchor':'middle',class:'amount-future-label'},'미도래');
+  }
+  append('rect',{x:L+(month-1+.08)*dx,y:T,width:dx*.84,height:B-T,rx:4,fill:'#eef4ff'});
+  ticks.forEach(value=>{append('line',{x1:L,x2:W-R,y1:y(value),y2:y(value),class:'amount-grid'});append('text',{x:L-8,y:y(value)+4,'text-anchor':'end',class:'amount-axis'},scaled(value));});
+  [...chart.children].forEach((button,index)=>{
+   const amount=sum.amounts[index],hasAmount=sum.amountEntries[index]>0,missing=future(index),top=y(Number(amount)/10000),bar=button.querySelector('.as-amount-bar'),label=button.querySelector('.as-amount-value');
+   Object.assign(button.style,{left:(L+index*dx)+'px',width:dx+'px'});button.dataset.future=String(missing);
+   Object.assign(bar.style,{top:(amount===0n?B-2:top)+'px',height:Math.max(2,B-top)+'px'});bar.hidden=missing||!hasAmount;
+   label.style.top=(hasAmount?top-10:B-9)+'px';label.textContent=labels[index];
+   button.title=year+'년 '+(index+1)+'월 '+(missing?'미도래':hasAmount?format(amount)+'원':'금액 입력 자료 없음');button.setAttribute('aria-label',button.title);
+  });
+  const current=sum.amounts[month-1],hasCurrent=sum.amountEntries[month-1]>0;
+  document.getElementById('asAmountSelectedPeriod').textContent=month+'월 접수 금액';
+  document.getElementById('asAmountSelectedValue').innerHTML=future(month-1)?'미도래':hasCurrent?format(current)+'<small>원</small>':'금액 미입력';
+ }
+ chart.addEventListener('keydown',event=>{const button=event.target.closest('.as-amount-month');if(!button)return;const index=[...chart.children].indexOf(button);let next;if(event.key==='ArrowRight')next=(index+1)%12;if(event.key==='ArrowLeft')next=(index+11)%12;if(event.key==='Home')next=0;if(event.key==='End')next=11;if(next!==undefined){event.preventDefault();chart.children[next]?.focus({preventScroll:true});}});
+ new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(draw);}).observe(plot);
+ document.fonts?.ready.then(draw);
+ return {update(sum,year,month,today){state={sum,year,month,today};draw();}};
+}
+// Monthly amount concept 2's line and points, with existing receipt-count controls.
+function createAsReadableTrend(chart){
+ const card=chart.closest('.as-stats-chart-panel'),plot=chart.parentElement;
+ card.classList.add('as-readable-trend');plot.classList.add('plot');chart.classList.add('month-controls');
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');plot.prepend(svg);
+ const NS='http://www.w3.org/2000/svg',format=n=>n.toLocaleString('ko-KR',{maximumFractionDigits:1});
+ let state={values:Array(12).fill(null)},selected=0,base={year:0,month:0};
+ const dataset=()=>state;
+ const description=i=>base.year+'년 '+(i+1)+'월 · '+(state.values[i]===null?(i>=base.month?'미도래':'자료 없음'):format(state.values[i])+'건');
+  function append(svg,tag,attrs,text){const node=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(([key,value])=>node.setAttribute(key,String(value)));if(text!==undefined)node.textContent=text;svg.append(node);return node;}
+  function boxOverlap(a,b,pad=4){return a.x<b.x+b.w+pad&&a.x+a.w+pad>b.x&&a.y<b.y+b.h+pad&&a.y+a.h+pad>b.y;}
+  function niceStep(max){const rough=Math.max(1,max/4),magnitude=10**Math.floor(Math.log10(rough));return [1,2,5,10].map(x=>x*magnitude).find(x=>x>=rough)||magnitude*10;}
+
+  function draw(card){
+    const {values}=dataset(),plot=card.querySelector('.plot'),svg=plot.querySelector('svg');
+    const mobile=plot.clientWidth<520;plot.classList.toggle('as-trend-narrow',mobile);
+    const W=plot.clientWidth,H=plot.clientHeight-(mobile?96:0);
+    if(!W||H<80)return;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.style.height=H+'px';svg.replaceChildren();
+    const L=values.some(v=>v>=100)?34:25,R=12,T=42,B=mobile?27:45;
+    const bottom=H-B,available=bottom-T,peak=Math.max(0,...values.filter(v=>v!==null)),step=niceStep(peak);
+    // Physical label space is reserved above the actual peak, not an arbitrary tall axis.
+    const scaleMax=peak||1,dx=(W-L-R)/12;
+    const x=i=>L+dx*(i+.5),y=n=>bottom-n/scaleMax*available;
+    const ticks=peak?[...Array(Math.floor(peak/step)+1)].map((_,i)=>i*step):[0,1];
+    ticks.forEach(n=>{const yy=y(n);append(svg,'line',{x1:L,y1:yy,x2:W-R,y2:yy,class:'gridline'+(n===0?' baseline':'')});append(svg,'text',{x:L-7,y:yy+4,'text-anchor':'end',class:'axis-tick'},format(n));});
+    const points=values.map((n,i)=>n===null?null:{x:x(i),y:y(n),value:n,index:i});
+    const reserved=[];
+    let segment=[];
+    const flush=()=>{if(segment.length>1)append(svg,'polyline',{points:segment.map(p=>p.x+','+p.y).join(' '),class:'trend-line'});segment=[];};
+    points.forEach(p=>{if(p)segment.push(p);else flush();});flush();
+    points.forEach((p,i)=>{
+      if(!p){append(svg,'text',{x:x(i),y:bottom-6,'text-anchor':'middle',class:'missing-label'},'—');return;}
+      append(svg,'circle',{cx:p.x,cy:p.y,r:i===selected?5:3.5,class:'point'+(i===selected?' selected':'')});
+    });
+    // Put the selected value first; preserve a consistent 17px gap unless a collision needs more space.
+    const order=[selected,...points.map((p,i)=>i).filter(i=>i!==selected)];
+    const labelBounds=[];
+    for(const i of order){
+      const p=points[i];if(!p)continue;
+      if(mobile&&i!==selected&&i%3!==0)continue;
+      const text=format(p.value),w=text.length*(mobile?8:8.4)+10,h=20;
+      let chosen=null;
+      for(const offset of [17,33,49,65]){
+        const b={x:p.x-w/2,y:p.y-offset-h+5,w,h};
+        if(b.x<0||b.x+b.w>W||b.y<0)continue;
+        if(reserved.some(r=>boxOverlap(b,r,3)))continue;
+        if(points.some((q,j)=>q&&j!==i&&boxOverlap(b,{x:q.x-7,y:q.y-7,w:14,h:14},3)))continue;
+        // Reject labels that intersect any neighbouring straight line segment.
+        let crosses=false;
+        for(let j=1;j<points.length;j++){const a=points[j-1],z=points[j];if(!a||!z)continue;for(let t=0;t<=1;t+=.08){const xx=a.x+(z.x-a.x)*t,yy=a.y+(z.y-a.y)*t;if(xx>=b.x-3&&xx<=b.x+b.w+3&&yy>=b.y-3&&yy<=b.y+b.h+3)crosses=true;}}
+        if(crosses)continue;
+        chosen=b;break;
+      }
+      if(!chosen)continue;
+      reserved.push(chosen);labelBounds.push({...chosen,index:i});
+      append(svg,'rect',{x:chosen.x,y:chosen.y,width:chosen.w,height:chosen.h,rx:3,fill:'#fff'});
+      append(svg,'text',{x:p.x,y:chosen.y+15,'text-anchor':'middle',class:'data-label'+(i===selected?' selected':''),'data-month':i+1},text);
+    }
+    if(mobile){values.forEach((n,i)=>{if(i===selected||([0,2,4,6,8,11].includes(i)&&Math.abs(i-selected)>=2))append(svg,'text',{x:x(i),y:H-7,'text-anchor':'middle',class:'axis-tick month-tick',style:i===selected?'font-weight:750;fill:#124bbb':''},(i+1)+'월');});}
+    const buttons=[...plot.querySelectorAll('.month-button')];
+    buttons.forEach((button,i)=>{
+      button.style.left=(L+dx*i)+'px';button.style.width=dx+'px';button.style.height=H+'px';
+      button.setAttribute('aria-label',description(i)+', 선택하여 요약 보기');button.setAttribute('aria-pressed',String(i===selected));
+    });
+    card._layout={W,H,points,labelBounds,plotTop:T,plotBottom:bottom,dx,mobile};
+  }
+
+ const target=event=>event.target.closest('.month-button');
+ chart.addEventListener('keydown',event=>{const b=target(event);if(!b)return;const i=Number(b.dataset.month)-1;let next;if(event.key==='ArrowRight')next=(i+1)%12;if(event.key==='ArrowLeft')next=(i+11)%12;if(event.key==='Home')next=0;if(event.key==='End')next=11;if(next!==undefined){event.preventDefault();chart.children[next]?.focus({preventScroll:true});}});
+ let frame;const redraw=()=>draw(card);
+ const observer=new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(redraw);});observer.observe(plot);document.fonts?.ready.then(redraw);
+ return {update(counts,year,month,today){
+   const currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
+   base={year,month:year<currentYear?12:year===currentYear?currentMonth:0};selected=month-1;
+   const values=counts.map((count,i)=>count===null||(!count&&i>=base.month)?null:count);
+   state={values};
+   [...chart.children].forEach((button,i)=>{button.classList.add('month-button');button.dataset.month=i+1;button.removeAttribute('title');});
+   redraw();
+ }};
+}
+</script>
 <script id="as-overview-final-script">
-
-// Approved local A/S overview layout; preserves the existing data loader and filters.
-function monthComparisonText(result){
- const delta=result.current-result.previous;
- if(result.previous===0)return result.current===0?'전월 대비 변동 없음 (0건)':'전월 0건 → 이번 달 '+result.current.toLocaleString()+'건';
- if(delta===0)return '전월 대비 변동 없음 (0%)';
- const rate=Math.abs(delta/result.previous*100).toFixed(1).replace(/\.0$/,'');
- return '전월 대비 '+rate+'% '+(delta>0?'증가':'감소')+' ('+(delta>0?'+':'−')+Math.abs(delta).toLocaleString()+'건)';
-}
-
-function renderReasonDonut(){
- const year=Number(document.getElementById('asStatsYear').value),month=_asStatsSelectedMonth;
- const records=_asStatsRecords.filter(r=>{const d=asStatsDateKey(r.createdAt);return d&&d.year===year&&d.month===month;});
- const result=summarizeAsStatistics(records,year,month),entries=Object.entries(result.reasons);
- const host=document.getElementById('reason-donut');if(!host)return;
- const compact=host.clientWidth<480,W=compact?460:620,H=360,cx=W/2,cy=180,r=compact?84:112,stroke=48;
- const colors=['#246cbd','#52a5c2','#6b82be','#8f78b5','#c28c66','#7c9d70','#b49c55','#8895a6'];
- const point=(angle,radius)=>[cx+Math.cos(angle)*radius,cy+Math.sin(angle)*radius];
- let cursor=-Math.PI/2;
- const segments=entries.map(([name,count],i)=>{const fraction=result.total?count/result.total:0;const start=cursor;cursor+=fraction*Math.PI*2;const middle=fraction?(start+cursor)/2:-Math.PI/2+i*Math.PI/4;const anchor=point(middle,r+stroke/2+3);return {i,name,count,fraction,start,end:cursor,middle,anchor,right:Math.cos(middle)>=0,y:anchor[1]};});
- for(const right of [false,true]){const side=segments.filter(s=>s.right===right).sort((a,b)=>a.y-b.y);const gap=40,low=40,high=H-30;side.forEach((s,i)=>{s.y=Math.max(low,Math.min(high,s.y));if(i)s.y=Math.max(s.y,side[i-1].y+gap);});if(side.length&&side.at(-1).y>high){side.at(-1).y=high;for(let i=side.length-2;i>=0;i--)side[i].y=Math.min(side[i].y,side[i+1].y-gap);}}
- let arcs='',labels='';
- for(const s of segments){const percent=(s.fraction*100).toFixed(1)+'%';const attrs='data-reason-index="'+s.i+'" tabindex="0" role="button" aria-label="'+s.name+' '+percent+'" onpointerenter="selectDonutReason('+s.i+')" onfocus="selectDonutReason('+s.i+')" onclick="selectDonutReason('+s.i+')" onkeydown="if(event.key===&quot;Enter&quot;||event.key===&quot; &quot;){event.preventDefault();selectDonutReason('+s.i+')}"';
- if(s.count){const a=point(s.start,r),b=point(s.end,r);let d='M '+a.join(' ')+' A '+r+' '+r+' 0 '+(s.fraction>.5?1:0)+' 1 '+b.join(' ');if(s.fraction>.99999){const opposite=point(s.start+Math.PI,r);d='M '+a.join(' ')+' A '+r+' '+r+' 0 1 1 '+opposite.join(' ')+' A '+r+' '+r+' 0 1 1 '+a.join(' ');}
- arcs+='<path class="donut-segment" '+attrs+' d="'+d+'" fill="none" stroke="'+colors[s.i]+'" stroke-width="'+stroke+'"/>';}
- const bend=s.right?cx+r+stroke/2+20:cx-r-stroke/2-20;const edge=s.right?W-14:14;const textAnchor=s.right?'end':'start';
- labels+='<g class="donut-callout" '+attrs+'><path class="donut-leader" d="M '+s.anchor.join(' ')+' L '+bend+' '+s.y+' L '+edge+' '+s.y+'" fill="none" stroke="'+colors[s.i]+'" stroke-width="1.2" '+(!s.count?'stroke-dasharray="3 3"':'')+'/><text x="'+edge+'" y="'+(s.y-9)+'" text-anchor="'+textAnchor+'"><tspan class="donut-name">'+s.name+'</tspan><tspan dx="6" class="donut-share">'+percent+'</tspan></text><rect x="'+(s.right?W-160:4)+'" y="'+(s.y-30)+'" width="156" height="38" fill="transparent"/></g>';
- }
- host.innerHTML='<svg class="reason-donut-svg" viewBox="0 0 '+W+' '+H+'" aria-label="'+year+'년 '+month+'월 접수 사유별 비율"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#e5eaf0" stroke-width="'+stroke+'"/>'+arcs+'<text id="donut-percent" x="'+cx+'" y="'+(cy-10)+'" text-anchor="middle" dominant-baseline="central"></text><text id="donut-label" x="'+cx+'" y="'+(cy+20)+'" text-anchor="middle" dominant-baseline="central"></text>'+labels+'</svg>';
- let summary=document.getElementById('reason-top-summary');
- if(!summary){summary=document.createElement('div');summary.id='reason-top-summary';summary.className='reason-top-summary';summary.setAttribute('role','status');host.after(summary);}
- summary.replaceChildren();
- const maxCount=Math.max(0,...entries.map(e=>e[1]));
- const leaders=entries.filter(e=>e[1]===maxCount);
- const caption=document.createElement('span');caption.textContent=result.total?'가장 많이 접수된 유형':'선택한 월의 접수 유형';
- const headline=document.createElement('strong');
- if(!result.total){headline.textContent='접수 없음';}
- else {const share=(maxCount/result.total*100).toFixed(1)+'%';caption.textContent=(leaders.length>1?'공동 최다 접수 유형 · 각 ':'최다 접수 유형 · ')+share;headline.textContent=leaders.map(e=>e[0]).join(' · ');}
- summary.append(headline,caption);
- host._entries=entries;host._total=result.total;
- host.querySelectorAll('.donut-segment').forEach(el=>{
-  const index=Number(el.dataset.reasonIndex),segment=segments[index];
-  const leading=maxCount>0&&segment.count===maxCount;
-  el.classList.toggle('is-leading',leading);
-  if(leading)el.setAttribute('transform','translate('+(Math.cos(segment.middle)*6)+' '+(Math.sin(segment.middle)*6)+')');
- });
- const selected=entries.reduce((best,e,i)=>e[1]>entries[best][1]?i:best,0);selectDonutReason(selected);
- if(!host._observer&&typeof ResizeObserver!=='undefined'){host._width=host.clientWidth;host._observer=new ResizeObserver(()=>{if(Math.abs(host.clientWidth-host._width)>1){host._width=host.clientWidth;renderReasonDonut();requestAnimationFrame(alignReasonTable);}});host._observer.observe(host);}
-}
-function selectDonutReason(index){const host=document.getElementById('reason-donut');if(!host?._entries)return;host._selected=index;const [name,count]=host._entries[index];document.getElementById('donut-percent').textContent=host._total?(count/host._total*100).toFixed(1)+'%':'0%';document.getElementById('donut-label').textContent=host._total?name:'접수 없음';host.querySelectorAll('[data-reason-index]').forEach(el=>{const active=Number(el.dataset.reasonIndex)===index;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));});}
-
-
-
-function alignReasonTable(){
- const daily=document.querySelector('#asSubStats .as-daily-section');
- const table=document.querySelector('#asSubStats .as-overview-charts>section .as-reason-table-wrap');
- const stack=document.querySelector('#asSubStats .as-trend-stack');
- if(!daily||!table||!stack||!daily.getClientRects().length)return;
- const monthly=stack.firstElementChild;monthly.style.minHeight='0';
- table.style.marginTop='8px';
- if(table.parentElement.getBoundingClientRect().left>stack.getBoundingClientRect().right){
-  const unit=daily.querySelector('.as-chart-unit');
-  const target=()=>{const rect=unit.getBoundingClientRect();return rect.top+rect.height/2;};
-  const unitOffset=target()-daily.getBoundingClientRect().top;
-  monthly.style.minHeight=Math.ceil(Math.max(monthly.getBoundingClientRect().height,unitOffset+table.getBoundingClientRect().height+24))+'px';
-  const overflow=table.getBoundingClientRect().top-target();
-  if(overflow>0)monthly.style.minHeight=Math.ceil(monthly.getBoundingClientRect().height+overflow)+'px';
-  const gap=target()-table.getBoundingClientRect().top;
-  table.style.marginTop=Math.max(8,8+gap)+'px';
- }
-}
-window.addEventListener('resize',()=>requestAnimationFrame(alignReasonTable));
-document.fonts?.ready.then(()=>requestAnimationFrame(alignReasonTable));
-
-function renderMonthlyLines(){
- const chart=document.getElementById('asStatsChart');if(!chart)return;
- chart.querySelector('.monthly-line-overlay')?.remove();
- const year=Number(document.getElementById('asStatsYear').value);
- const result=summarizeAsStatistics(_asStatsRecords,year,_asStatsSelectedMonth);
- const counts=result.counts,max=Math.max(1,...counts),average=counts.reduce((sum,n)=>sum+n,0)/12;
- const width=chart.clientWidth;if(!width)return;
- const points=counts.map((n,i)=>[(i+.5)*width/12,208-n/max*176]);
- const averageY=208-average/max*176;
- const svg='<svg class="monthly-line-overlay" viewBox="0 0 '+width+' 220" aria-hidden="true"><line x1="0" y1="'+averageY+'" x2="'+width+'" y2="'+averageY+'" stroke="#a16b34" stroke-width="1.5" stroke-dasharray="6 5"/><polyline points="'+points.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#246cbd" stroke-width="2" stroke-linejoin="round"/>'+points.map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="white" stroke="#246cbd" stroke-width="2"/>').join('')+'</svg>';
- chart.insertAdjacentHTML('beforeend',svg);
- let legend=document.getElementById('monthly-chart-legend');
- if(!legend){legend=document.createElement('div');legend.id='monthly-chart-legend';legend.className='monthly-chart-legend';chart.parentElement.before(legend);}
- legend.innerHTML='<span><i></i>월별 추이</span><span title="선택 연도 총 접수 건수 ÷ 12개월"><i class="average-key"></i>월평균 '+average.toFixed(1)+'건</span>';
- if(!chart._lineObserver&&typeof ResizeObserver!=='undefined'){chart._lineWidth=width;chart._lineObserver=new ResizeObserver(()=>{if(chart.clientWidth!==chart._lineWidth){chart._lineWidth=chart.clientWidth;renderMonthlyLines();}});chart._lineObserver.observe(chart);}
-}
-
-
-(function installAsOverview(){
- const root=document.getElementById('asSubStats');
- root.querySelector('.as-overview-section:not(.as-overview-period)').remove();
- const title=document.getElementById('asStatsReasonsTitle');title.textContent='유형별 집계';
- title.insertAdjacentHTML('afterend','<div id="reason-donut" class="reason-donut" aria-label="유형별 접수 비율"></div>');
+// Balanced line-only monthly trend, linked to the existing type/product/amount views.
+(function installAsOverviewComparison(){
+ const root=document.getElementById('asSubStats'),$=id=>document.getElementById(id),format=value=>value.toLocaleString('ko-KR');
+ root.dataset.overviewLayout='comparison';
+ const context=root.querySelector('.as-overview-section:not(.as-overview-period)');
+ context.querySelector('span').textContent='현재 상태 기준 · 전체 기간 · 완료 제외';
+ const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><label for="asStatsYear">조회연도</label></div>';$('asKpiRow').after(basis);
+ basis.querySelector('label').after($('asStatsYear'));
+ $('asStatsReasonsTitle').textContent='유형별 집계';
  const heading=root.querySelector('.as-trend-stack .as-stats-chart-heading');
- const controls=document.createElement('div');controls.className='chart-header-controls';controls.append(document.getElementById('asStatsYear'),heading.querySelector('.as-chart-unit'));heading.append(controls);
- heading.insertAdjacentHTML('afterend','<div class="month-comparison" role="status" aria-live="polite"><div class="comparison-main"><span id="comparison-period" class="as-chart-sr-only"></span><strong id="comparison-count"></strong></div><div class="comparison-detail"><span id="comparison-change"></span><small id="comparison-basis"></small></div></div>');
- const originalRender=renderAsStatistics;
- renderAsStatistics=function(){
-  originalRender();
-  const year=Number(document.getElementById('asStatsYear').value),month=_asStatsSelectedMonth;
-  if(!year||month<1||month>12)return;
-  const result=summarizeAsStatistics(_asStatsRecords,year,month);
-  document.getElementById('comparison-period').textContent=year+'년 '+month+'월';
-  document.getElementById('comparison-count').textContent=result.current.toLocaleString()+'건';
-  document.getElementById('comparison-change').textContent=monthComparisonText(result);
-  document.getElementById('comparison-basis').textContent=result.previousYear+'년 '+result.previousMonth+'월 '+result.previous.toLocaleString()+'건 기준';
-  renderMonthlyLines();renderReasonDonut();requestAnimationFrame(alignReasonTable);
- };
+ const trendPanel=heading.closest('.as-stats-chart-panel');
+ const readableTrend=createAsReadableTrend($('asStatsChart'));
+ const columnAmounts=createAsColumnAmounts($('asAmountChart'));
+ const monthlyPanelObserver=new ResizeObserver(()=>{
+  const height=trendPanel.getBoundingClientRect().height;
+  if(height>0)root.style.setProperty('--as-monthly-panel-height',height+'px');
+ });
+ monthlyPanelObserver.observe(trendPanel);
+ heading.insertAdjacentHTML('beforeend','<span id="comparison-basis" class="as-chart-sr-only"></span>');
+ heading.insertAdjacentHTML('afterend','<div class="month-comparison" role="status" aria-live="polite"><div class="comparison-main"><div><strong id="comparison-count"></strong><span id="comparison-change">전월 대비 <span id="comparison-change-value"></span></span></div></div></div>');
+ root.querySelector('.as-stats-footnote').textContent='직접 입력하거나 사유가 없으면 ‘기타’로 집계합니다.';
+ function update(){
+  const year=Number($('asStatsYear').value),month=_asStatsSelectedMonth;if(!year||month<1||month>12)return;
+  const today=asJobToday(),currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
+  const future=m=>year>currentYear||(year===currentYear&&m>currentMonth),ongoing=year===currentYear&&month===currentMonth;
+  const sum=summarizeAsStatistics(_asStatsRecords,year,month);
+  root.querySelectorAll('#asKpiRow button').forEach(button=>button.setAttribute('aria-label',button.querySelector('span').textContent+' '+button.querySelector('strong').textContent+'건, 해당 조건의 접수 목록 보기'));
+  $('comparison-count').innerHTML=future(month)&&!sum.current?'미도래':format(sum.current)+'<small>건</small>';
+  const delta=sum.current-sum.previous;
+  $('comparison-change').hidden=future(month);
+  $('comparison-change-value').textContent=delta===0?'변동 없음':(delta>0?'+':'−')+format(Math.abs(delta))+'건';
+  $('comparison-change-value').dataset.direction=delta>0?'increase':delta<0?'decrease':'unchanged';
+  $('comparison-basis').textContent=future(month)?'미래 월은 실제 0건과 구분':sum.previousYear+'년 '+sum.previousMonth+'월 조회 '+format(sum.previous)+'건과 비교'+(ongoing?' · 이번 달 일부 기간 ↔ 전월 전체':'');
+  $('asStatsChartHint').textContent='월을 선택하면 유형별 집계, 제품별 AS 현황과 금액이 함께 바뀝니다. 단위: 건 · 0건과 미도래를 구분합니다.';
+  readableTrend.update(sum.counts,year,month,today);
+  $('asStatsReasonsHint').textContent=future(month)&&!sum.current?'미도래':format(sum.current)+'건 기준';
+  $('asStatsReasonsEmpty').textContent=future(month)?'미도래 기간입니다.':'선택 월에 조회된 접수 자료가 없습니다.';
+  $('asStatsEmpty').textContent='선택 연도에 조회된 접수 자료가 없습니다.';
+  columnAmounts.update(sum,year,month,today);
+  $('asAmountBasis').textContent='접수일 기준 · '+month+'월 금액 입력 '+sum.amountEntries[month-1]+'건 / 미입력 '+(sum.current-sum.amountEntries[month-1])+'건';
+ }
+ const original=renderAsStatistics;renderAsStatistics=function(){original();update();};
 })();
 </script>
 
@@ -6367,21 +6885,12 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
 </script><script id="as-ledger-script">
 // Approved ledger interactions; uses the existing authenticated API and read-only preview guard.
 function asLedgerCanLeave(){if(!_asRemarkEditing)return true;document.getElementById('asLedgerMessage').textContent='편집 중인 비고를 먼저 저장하거나 취소해 주세요.';document.getElementById('asRemarkInput')?.focus();return false;}
-function asLedgerFillBlankRows(table,viewport){
- const body=table.tBodies[0];
- body.querySelectorAll('.as-ledger-empty-line').forEach(row=>row.remove());
- const occupied=[...body.rows].reduce((height,row)=>height+row.getBoundingClientRect().height,0);
- const capacity=Math.max(_asPageSize*36,viewport.clientHeight-table.tHead.getBoundingClientRect().height);
- const remaining=Math.max(0,Math.floor(capacity-occupied)),count=Math.ceil(remaining/36);
- if(count)body.insertAdjacentHTML('beforeend',Array.from({length:count},(_,i)=>'<tr class="as-ledger-empty-line" aria-hidden="true" style="--empty-height:'+Math.min(36,remaining-i*36)+'px">'+'<td></td>'.repeat(table.tHead.rows[0].cells.length)+'</tr>').join(''));
-}
 function asLedgerLayoutColumns(){
  const table=document.querySelector('#asSubList .as-erp-table');
  const viewport=table?.parentElement;
  if(!table||!viewport.clientWidth)return;
- asLedgerFillBlankRows(table,viewport);
  const heads=[...table.querySelectorAll('.as-column-header th')],cols=[...table.querySelectorAll('colgroup col')];
- const minimum=[36,36,98,112,106,106,104,72,80,104,150,110,110,58,84,84,112];
+ const minimum=[36,40,104,136,122,122,110,76,88,108,180,120,150,58,96,120,128];
  if(_asRemarkEditing)minimum[15]=260;
  const desired=[...minimum],measure=document.createElement('canvas').getContext('2d');
  measure.font='600 15px '+getComputedStyle(document.getElementById('asSubList')).fontFamily;
@@ -6401,7 +6910,7 @@ function asLedgerLayoutColumns(){
  let left=0;
  heads.forEach((th,i)=>{
   const width=widths[i];cols[i].style.width=width+'px';th.style.width=width+'px';th.style.minWidth=minimum[i]+'px';
-  [th,...table.querySelectorAll('tbody tr[data-id] td:nth-child('+(i+1)+'),tbody tr.as-ledger-empty-line td:nth-child('+(i+1)+')')].forEach(cell=>{
+  [th,...table.querySelectorAll('tbody tr[data-id] td:nth-child('+(i+1)+')')].forEach(cell=>{
    cell.style.maxWidth=width+'px';
    if(i<4){cell.classList.add('as-ledger-sticky');cell.style.position='sticky';cell.style.left=left+'px';cell.style.zIndex=cell===th?'7':'3';}
    if(cell!==th&&i>=2&&cell.parentElement.hasAttribute('data-id')){cell.tabIndex=0;if(!cell.title)cell.title=cell.textContent.trim();}
@@ -6409,7 +6918,11 @@ function asLedgerLayoutColumns(){
   if(i<4)left+=width;
   if(th.dataset.col){th.tabIndex=0;th.setAttribute('aria-sort',th.dataset.col===_asSortCol?(_asSortDir==='asc'?'ascending':'descending'):'none');th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();th.click();}};}
  });
- if([...table.tBodies[0].rows].every(row=>row.hasAttribute('data-id')||row.classList.contains('as-ledger-empty-line'))){
+ // Keep 20-record pages readable while using the available height on larger screens.
+ // Divide by the page capacity so a short final page does not create oversized rows.
+ const rowHeight=Math.max(40,Math.floor((viewport.clientHeight-table.tHead.getBoundingClientRect().height)/_asPageSize));
+ document.getElementById('asSubList').style.setProperty('--ledger-row',rowHeight+'px');
+ if([...table.tBodies[0].rows].every(row=>row.hasAttribute('data-id')||row.classList.contains('as-ledger-no-results'))){
   const filtered=_asFiltered.length,total=_asFullList.length;
   document.getElementById('asLedgerCount').innerHTML=filtered===total?'전체 <strong>'+total+'</strong>건':'조회 <strong>'+filtered+'</strong>건 <span class="as-ledger-count-total">/ 전체 '+total+'건</span>';
  }
