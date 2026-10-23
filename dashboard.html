@@ -112,7 +112,7 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFo
 
 /* ── 레이아웃 ── */
 .layout{display:flex;min-height:calc(100vh - 64px)}
-.sidebar{width:220px;background:#fff;padding:24px 0;display:flex;flex-direction:column;gap:4px;flex-shrink:0;border-right:1px solid var(--border)}
+.sidebar{width:196px;background:#fff;padding:24px 0;display:flex;flex-direction:column;gap:4px;flex-shrink:0;border-right:1px solid var(--border)}
 .main{flex:1;padding:28px 32px;max-width:1600px;overflow-y:auto}
 
 /* 통계 */
@@ -979,7 +979,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 
 /* Intake list: explicit cell boundaries, restrained status text. */
 #tabAs #asSubList .as-erp-table tbody tr{height:76px}
-#tabAs #asSubList .as-erp-table tbody tr.as-placeholder{pointer-events:none;cursor:default}
 #tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:760px}
 #tabAs #asSubList .as-erp-table thead th,#tabAs #asSubList .as-erp-table tbody td{text-align:center!important;vertical-align:middle}
 #tabAs #asSubList .as-table-card{border-color:#c5ced8!important;border-radius:10px!important;box-shadow:none!important}
@@ -997,7 +996,7 @@ tbody tr:hover td{background:var(--surface-muted)}
 #tabAs #asSubList .as-erp-table thead .as-column-header th{height:44px;padding:9px 12px!important;border-top:1px solid #d4d4d4!important}
 #tabAs #asSubList .as-erp-table tbody tr{height:52px}
 #tabAs #asSubList .as-erp-table tbody td{padding:10px 12px!important}
-#tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:520px}
+#tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:180px}
 #tabAs #asSubList .as-erp-table .as-column-header th:nth-child(2),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(11),#tabAs #asSubList .as-erp-table tbody td:nth-child(2),#tabAs #asSubList .as-erp-table tbody td:nth-child(11){border-right:2px solid #d0d4d8!important}
 
 /* AS intake dialog readability and centered date values. */
@@ -1048,11 +1047,11 @@ tbody tr:hover td{background:var(--surface-muted)}
 #devNotice button:focus-visible{outline:3px solid #397cba;outline-offset:3px}
 /* Sidebar typography preserves the existing navigation and brand. */
 .sidebar .tabs{gap:4px;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
-.sidebar .tab{font-family:inherit;font-size:16px;font-weight:650;line-height:1.5;min-height:48px;padding:12px 16px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
+.sidebar .tab{font-family:inherit;font-size:14px;font-weight:650;line-height:1.5;min-height:42px;padding:10px 14px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
 .sidebar .tab.on{font-weight:700;color:var(--brand);background:var(--brand-soft)}
 .sidebar .as-submenu{padding-left:14px}
 .sidebar .as-submenu.open{max-height:132px}
-.sidebar .tab-sub{font-family:inherit;font-size:15px;font-weight:550;line-height:1.5;min-height:44px;padding:10px 14px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
+.sidebar .tab-sub{font-family:inherit;font-size:13px;font-weight:550;line-height:1.5;min-height:38px;padding:9px 12px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
 .sidebar .tab-sub.on{font-weight:650;color:var(--brand);background:var(--brand-soft)}
 .sidebar .tab:focus-visible,.sidebar .tab-sub:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
 @media(max-width:768px){.sidebar>.tabs{display:flex;min-width:0;max-width:100%;gap:4px}.sidebar .tab{font-size:15px;min-height:44px;flex-shrink:0;padding:10px 14px}.sidebar .as-submenu{display:none}.sidebar .as-submenu.open{display:contents}.sidebar .tab-sub{width:auto;flex-shrink:0;font-size:14px;min-height:44px;padding:10px 12px;transform:none;opacity:1}}
@@ -1339,7 +1338,22 @@ tbody tr:hover td{background:var(--surface-muted)}
 
 #asSubStats .as-overview-period,#asSubStats .as-stats-summary,#asSubStats #asStatsReasonsHint,#asSubStats .as-stats-footnote{display:none!important}
 #asSubStats .as-overview-kpis{margin-bottom:24px}
-#asSubStats #asDailyHint{position:static!important;width:auto;height:auto;clip-path:none;white-space:normal;margin:7px 0 0;font-size:12px}
+#asSubStats .as-amount-summary{display:flex;gap:8px 24px;flex-wrap:wrap;margin:10px 0 16px;font-size:14px;line-height:1.6;color:var(--text)}
+#asSubStats .as-amount-summary strong{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+#asSubStats .as-amount-basis{font-size:12px;color:#526174;margin:8px 0 0}
+#asSubStats .as-amount-chart{display:grid;grid-template-columns:repeat(12,minmax(80px,1fr));min-width:960px;gap:0}
+#asSubStats .as-amount-month{border:0;background:transparent;padding:0 4px;font:inherit;font-size:13px;color:var(--text);cursor:pointer;text-align:center;font-variant-numeric:tabular-nums}
+#asSubStats .as-amount-month[aria-pressed="true"]{background:#edf3fa}
+#asSubStats .as-amount-month:hover{background:#f4f6f8}
+#asSubStats .as-amount-month:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+#asSubStats .as-amount-plot{display:block;position:relative;height:200px;border-bottom:1px solid #dce2e8;margin-bottom:6px}
+#asSubStats .as-amount-bar{position:absolute;bottom:0;left:35%;width:30%;background:#5c88b5;border-radius:2px 2px 0 0}
+#asSubStats .as-amount-value{position:absolute;left:0;right:0;line-height:18px;font-size:12px;white-space:nowrap}
+#asModal .as-amount-input{position:relative}
+#asModal .as-amount-input #asAmount{width:100%;padding-right:40px!important;text-align:right;font-variant-numeric:tabular-nums}
+#asModal .as-amount-unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:500;line-height:1.5;color:var(--text);pointer-events:none}
+#asModal #asAmount[aria-invalid="true"]{border-color:#a23732!important}
+#asModal #asAmountHint{display:block;margin-top:6px;color:#526174;font-size:12px}
 </style>
 
 <style id="as-list-drawer-style">
@@ -1414,6 +1428,171 @@ tbody tr:hover td{background:var(--surface-muted)}
 @keyframes appToastCountdown{to{transform:scaleX(0)}}
 @media(prefers-reduced-motion:no-preference){#toastContainer[open]{animation:appToastEnter .16s ease-out}@keyframes appToastEnter{from{opacity:0;translate:0 4px}to{opacity:1;translate:0 0}}}
 @media(prefers-reduced-motion:reduce){.app-toast-timer::after{animation:none}}
+</style>
+<style id="as-ledger-style">
+/* Approved combination: concept 1 filters + concept 2 dense ledger. */
+#asSubList{--ledger-accent:#244b73;--ledger-tint:#e8f0fa;--ledger-line:#c4ccd5;--ledger-row:36px;--ledger-font:15px;--ledger-text:#202a36;--ledger-hover:#f3f6fa;--ledger-body-weight:500;--ledger-emphasis-weight:600}
+.as-ledger-title{font-size:24px;font-weight:750;letter-spacing:-.4px;margin:0;color:#182534}
+.as-ledger-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;flex-shrink:0}
+.as-ledger-back{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #bdc7d0;border-radius:5px;background:#fff;color:#344354;font:600 14px inherit;cursor:pointer}
+.as-ledger-back:hover{background:#edf2f8}
+body.as-ledger-active .main{min-width:0;max-width:none;padding:20px 24px}
+body.as-ledger-active .sidebar{width:148px}
+body.as-ledger-active .sidebar .tab{font-size:13px;min-height:36px;padding:8px 12px}
+#tabAs #asSubList .as-toolbar{padding:14px!important;background:#fff!important;border:1px solid #cbd3da!important;border-radius:6px!important;box-shadow:none!important;margin-bottom:14px!important}
+#tabAs #asSubList .as-filter-grid{display:flex!important;align-items:end!important;gap:10px!important;flex-wrap:wrap!important}
+#asSubList .as-filter-field{flex:0 1 auto;min-width:100px!important}
+#asSubList .as-filter-field:nth-child(2){flex:1 1 190px;min-width:160px!important}
+#asSubList .as-filter-field:nth-child(2)>input{width:100%!important;max-width:none!important}
+#asSubList .as-filter-period{flex:0 1 230px}
+#asSubList .as-filter-caption{position:static!important;width:auto!important;height:auto!important;clip-path:none!important;overflow:visible!important;white-space:normal!important;font-size:12px!important;font-weight:500;color:#536171!important;margin:0 0 6px!important;padding:0!important}
+#tabAs #asSubList .as-filter-field input,#tabAs #asSubList .toss-dd-btn,#tabAs #asSubList .toss-date-range{border:1px solid var(--ledger-line)!important;background:#fff!important;border-radius:4px!important;min-height:38px!important;box-shadow:none!important}
+#asSubList .as-filter-buttons{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+#tabAs #asSubList .as-tb-btn{border-radius:4px!important;min-height:38px!important;font-size:12px!important}
+#asSubList .toss-cal-pop:not(.is-open),#asSubList .toss-dd:not(.is-open) .toss-dd-panel{display:none!important}
+#asSubList .toss-cal-pop{left:auto!important;right:0!important;max-width:calc(100vw - 48px)}
+.as-ledger-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px;color:#4b5b68;font-size:13px}
+.as-ledger-controls strong{color:#253340}.as-ledger-actions{display:flex;gap:6px;flex-wrap:wrap}
+.as-ledger-actions button,.as-ledger-columns button{min-height:32px;border:1px solid #bfc8d0;border-radius:4px;background:#fff;color:#3e4c59;font-family:inherit;font-size:12px;padding:6px 11px;cursor:pointer}
+.as-ledger-actions button:hover{background:var(--ledger-tint)}
+#tabAs #asSubList .as-table-card{border:1px solid var(--ledger-line)!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
+#asSubList .as-ledger-scroll{overflow:auto;max-height:calc(100vh - 220px);min-height:180px;scroll-padding-top:46px;scroll-padding-left:340px}
+#tabAs #asSubList table.as-erp-table{min-width:0!important;table-layout:fixed!important;border-collapse:separate!important;border-spacing:0;font-variant-numeric:tabular-nums}
+#tabAs #asSubList .as-erp-table th{position:sticky;top:0;z-index:4;background:#edf0f3!important;border-top:0!important;border-bottom:1px solid #aebac4!important;border-right:1px solid #d3d9df!important;height:44px!important;padding:9px 10px!important;font-size:12px!important;color:#526172!important;white-space:nowrap!important}
+#tabAs #asSubList .as-erp-table tbody tr[data-id]{height:var(--ledger-row)!important;min-height:0!important;transform:none!important;transition:none!important}
+#tabAs #asSubList .as-erp-table tbody td{background:#fff!important;border-bottom:1px solid #dbe0e5!important;border-right:1px solid #d7ddd9!important;height:var(--ledger-row)!important;padding:5px 9px!important;font-size:var(--ledger-font)!important;font-weight:450!important;color:#34424e!important;line-height:1.35!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tabAs #asSubList .as-erp-table tbody td span{font-size:inherit!important;color:inherit!important}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(2){font-size:12px!important;color:#677581!important;text-align:right!important}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(4){font-weight:650!important;color:var(--ledger-text)!important}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(14){text-align:right!important}
+#tabAs #asSubList .as-erp-table tbody tr:hover td{background:#f2f5f3!important}
+#tabAs #asSubList .as-erp-table tbody tr.selected td{background:var(--ledger-tint)!important}
+#tabAs #asSubList .as-erp-table tbody tr.selected td:first-child{box-shadow:inset 3px 0 var(--ledger-accent)!important}
+#tabAs #asSubList .as-erp-table th:nth-child(4),#tabAs #asSubList .as-erp-table td:nth-child(4){border-right:2px solid #bcc6cf!important}
+#tabAs #asSubList .as-erp-table .as-status-text{display:inline-block;padding:0;border-radius:0;font-size:12px!important;line-height:1.4!important;font-weight:550!important;background:transparent;color:var(--ledger-text)!important}
+#tabAs #asSubList .as-erp-table input[type="checkbox"]{display:block;width:16px;height:16px;min-width:16px;min-height:16px;margin:0 auto;padding:0;vertical-align:middle;accent-color:var(--ledger-accent)!important;cursor:pointer}
+#tabAs #asSubList .as-pagination{border-top:0;padding:10px 14px!important}
+#tabAs #asSubList .as-table-footer{padding:9px 14px!important;background:#f8f9fa;border-top:1px solid var(--ledger-line)!important}
+#asSubList .as-col-resizer{width:8px;cursor:col-resize;touch-action:none}
+#asSubList :focus-visible{outline:3px solid var(--ledger-accent)!important;outline-offset:2px}
+#asSubList td:focus-visible,#asSubList th:focus-visible{outline-offset:-3px!important}
+.as-ledger-help{margin:12px 0 0;color:#63717c;font-size:12px;line-height:1.6}
+.as-ledger-columns{width:min(550px,calc(100vw - 32px));max-height:85vh;padding:24px;border:1px solid #bac4ce;border-radius:8px;color:#34424e;background:#fff}
+.as-ledger-columns::backdrop{background:#1d2e3f55}.as-ledger-columns h2{font-size:18px;margin:0 0 12px}
+.as-ledger-column{display:grid;grid-template-columns:1fr 100px;align-items:center;gap:20px;border-bottom:1px solid #e0e4e8;padding:8px 0;font-size:13px}
+.as-ledger-column label{display:flex;align-items:center;gap:10px}.as-ledger-column input[type=number]{width:100%;padding:6px;border:1px solid #b8c3ce;border-radius:4px;font-size:14px}
+.as-ledger-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.as-ledger-inline input{width:100%;min-height:32px;padding:5px;border:1px solid #9cadbd;border-radius:3px;font:14px inherit;background:#fff}
+.as-ledger-inline input[aria-invalid=true]{border-color:#a23732}.as-ledger-inline-actions{display:flex;gap:5px;margin-top:5px}
+.as-ledger-inline button{border:1px solid #bdc7d0;background:#fff;border-radius:3px;padding:3px 8px;cursor:pointer;font-size:12px;min-height:28px}
+.as-ledger-inline-error{display:block;white-space:normal;font-size:12px!important;color:#a23732!important;margin-top:4px}
+@media(max-width:1100px){body.as-ledger-active .main{padding:16px}.as-ledger-actions{gap:5px}}
+@media(max-width:768px){body.as-ledger-active .sidebar{width:100%}body.as-ledger-active .main{padding:14px}.as-ledger-title{font-size:20px}#asSubList .as-filter-field{flex:1 1 130px}#asSubList .as-filter-period{flex:1 1 230px}#asSubList .as-filter-buttons{margin-left:0;flex-basis:100%;padding-top:10px}#asSubList .as-ledger-scroll{max-height:520px;scroll-padding-left:48px}#tabAs #asSubList .as-ledger-sticky{position:static!important}#tabAs #asSubList th:first-child,#tabAs #asSubList td:first-child{position:sticky!important;left:0!important}#tabAs #asSubList th{position:sticky!important;top:0!important}}
+@media(prefers-reduced-motion:reduce){#asSubList *{transition:none!important;animation:none!important}}
+/* Readability: distinguish labels from values without reducing ledger density. */
+#tabAs #asSubList .as-filter-caption{font-size:13px!important;font-weight:600!important;color:#364354!important}
+#tabAs #asSubList .as-erp-table thead .as-column-header th{font-family:inherit!important;font-size:var(--ledger-font)!important;font-weight:700!important;color:#172334!important;background:#dfe7f0!important;letter-spacing:0!important;border-right-color:#cbd5e0!important}
+#tabAs #asSubList .as-erp-table tbody td{font-family:inherit!important;font-weight:var(--ledger-body-weight)!important;color:var(--ledger-text)!important;letter-spacing:0!important;border-right-color:#e4e8ed!important}
+#tabAs #asSubList .as-erp-table tbody td span:not(.as-status-text){font-family:inherit!important;font-weight:inherit!important}
+#tabAs #asSubList .as-erp-table tbody td.as-files-cell{padding:2px!important;text-overflow:clip}
+#tabAs #asSubList .as-files-cell .as-file-badge{min-width:0;max-width:100%;padding:4px;white-space:nowrap;font:inherit;letter-spacing:inherit;color:inherit}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(4){font-weight:600!important;color:var(--ledger-text)!important}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(8){font-weight:var(--ledger-emphasis-weight)!important}
+#tabAs #asSubList .as-erp-table .as-status-text{font-size:14px!important;font-weight:600!important}
+#tabAs #asSubList .as-erp-table tbody tr:hover td{background:var(--ledger-hover)!important}
+#tabAs #asSubList .as-erp-table tbody tr.selected td{background:var(--ledger-tint)!important}
+#tabAs #asSubList .as-erp-table .as-ledger-inline-error{color:#a23732!important}
+#tabAs #asSubList .as-erp-table tbody td:has(.as-ledger-inline){white-space:normal!important;overflow:visible!important;padding:8px!important}
+#asSubList .as-ledger-inline input{font-family:inherit;font-size:14px}
+#asSubList .as-ledger-help{color:#526171}
+body.as-ledger-active{overflow:hidden}
+body.as-ledger-active #dashboard>.topbar,body.as-ledger-active .layout>.sidebar{display:none!important}
+body.as-ledger-active .layout{height:100dvh;min-height:0}
+body.as-ledger-active .main{width:100%;height:100%;padding:16px 20px;overflow:hidden}
+body.as-ledger-active #tabAs{height:100%;min-height:0}
+body.as-ledger-active #asSubList{display:flex;flex-direction:column;height:100%;min-height:0}
+#asSubList>.as-toolbar,#asSubList>.as-ledger-controls,#asSubList>.as-ledger-help{flex-shrink:0}
+#tabAs #asSubList .as-table-card{display:flex;flex-direction:column;flex:1;min-height:160px}
+#asSubList .as-ledger-scroll{flex:1;min-height:0;max-height:none}
+#asSubList .as-pagination,#asSubList .as-table-footer{flex-shrink:0}
+#asLedgerMessage:empty{display:none}
+.as-ledger-counts{display:flex;align-items:center;gap:12px;min-height:32px}
+#asLedgerCount,#asSelectedCount{display:block;margin:0;padding:0;border:0;font-family:inherit;font-size:14px;font-weight:500;line-height:20px;letter-spacing:0;color:var(--ledger-text);white-space:nowrap}
+#asLedgerCount strong,#asSelectedCount strong{font:inherit;color:inherit;font-variant-numeric:tabular-nums}
+#asLedgerCount .as-ledger-count-total{margin-left:4px;font:inherit;color:inherit}
+#asSelectedCount{position:relative;padding-left:13px}
+#asSelectedCount::before{content:"";position:absolute;left:0;top:4px;width:1px;height:12px;background:var(--ledger-line)}
+#asSubList .as-ledger-actions button{color:#111}
+#asSubList .as-filter-search .as-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#526171;pointer-events:none}
+#tabAs #asSubList .as-filter-search #asSearch{padding-left:38px!important}
+#asSubList .as-filter-sr-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#asSubList .as-filter-control-icon{width:18px;height:18px;flex:0 0 18px;color:#526171}
+#asSubList .as-filter-field:nth-child(1){flex:0 0 152px}
+#asSubList .as-filter-field:nth-child(3){flex:0 0 144px}
+#asSubList .as-filter-field:nth-child(4){flex:0 0 176px}
+#asSubList .as-filter-period{flex:0 0 250px}
+#tabAs #asSubList .as-filter-field input.as-search-input,#tabAs #asSubList .toss-dd-btn,#tabAs #asSubList .toss-date-range{height:40px!important}
+#tabAs #asSubList .as-filter-buttons .as-tb-btn:not(.as-tb-btn-new),#asSubList .as-ledger-actions button,#asSubList .as-ledger-back{font-family:inherit!important;font-size:14px!important;font-weight:600!important;line-height:1.4;color:#111!important;border:1px solid #aeb9c5!important;background:#fff!important;opacity:1;box-shadow:none}
+#tabAs #asSubList .as-filter-buttons .as-tb-btn:not(.as-tb-btn-new):hover:not(:disabled),#asSubList .as-ledger-actions button:hover,#asSubList .as-ledger-back:hover{background:var(--ledger-hover)!important;border-color:#7e8d9d!important}
+#tabAs #asSubList .as-filter-buttons .as-tb-btn:disabled{color:#657181!important;background:#f3f5f7!important;border-color:#cbd3dc!important;opacity:1;cursor:not-allowed}
+body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!important}
+#asSubList .as-ledger-heading{margin-bottom:10px}
+#asSubList .as-ledger-back{min-height:36px;font-family:inherit;font-size:14px}
+#tabAs #asSubList .as-toolbar{padding:10px 12px!important;margin-bottom:10px!important}
+#asSubList .as-ledger-controls{margin-bottom:8px}
+#tabAs #asSubList .as-pagination{padding:6px 12px!important}
+#tabAs #asSubList .as-erp-table tbody tr td:nth-child(n){text-align:center!important}
+#tabAs #asSubList .as-erp-table thead .as-column-header th:first-child,#tabAs #asSubList .as-erp-table tbody td:first-child{padding-inline:5px!important;text-overflow:clip}
+#tabAs #asSubList .as-erp-table .as-truncate{width:100%;max-width:none;text-align:center!important}
+#tabAs #asSubList .as-erp-table .as-ledger-empty-line{height:var(--empty-height,36px)!important;min-height:0!important;pointer-events:none}
+#tabAs #asSubList .as-erp-table .as-ledger-empty-line td{height:var(--empty-height,36px)!important;min-height:0!important;padding:0!important;font-size:0!important;line-height:0!important}
+#tabAs #asSubList .toss-dd-btn,#tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item,#tabAs #asSubList .as-search-input,#tabAs #asSubList .toss-date-btn{font-family:inherit!important;font-size:var(--ledger-font)!important;font-weight:var(--ledger-body-weight)!important;line-height:1.4;letter-spacing:0!important;color:var(--ledger-text)}
+#tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item.is-selected{font-weight:var(--ledger-emphasis-weight)!important}
+#tabAs #asSubList .toss-dd-item span{font:inherit!important;letter-spacing:inherit!important;color:inherit!important}
+#tabAs #asSubList{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto;text-rendering:auto}
+#tabAs #asSubList .toss-dd-item:hover{background:var(--ledger-hover);color:var(--ledger-text)}
+#tabAs #asSubList .toss-dd-item.is-selected{color:var(--ledger-accent);background:var(--ledger-tint)}
+#tabAs #asSubList .toss-dd-panel{border-radius:4px;border-color:var(--ledger-line)}
+#tabAs #asSubList .toss-dd-item{border-radius:3px;min-height:36px;padding:7px 10px}
+#tabAs #asSubList .toss-dd-item-check{stroke:var(--ledger-accent)}
+#tabAs #asSubList .toss-dd.is-open .toss-dd-btn{border-color:var(--ledger-accent)!important}
+@media(max-width:768px){body.as-ledger-active .main{padding:12px}.as-ledger-heading{gap:12px}#tabAs #asSubList .as-erp-table thead .as-ledger-sticky{position:sticky!important;left:auto!important}#tabAs #asSubList .as-erp-table thead th:first-child{left:0!important}}
+@media(max-height:650px){body.as-ledger-active{overflow:auto}body.as-ledger-active .layout{height:auto;min-height:100dvh}body.as-ledger-active .main,body.as-ledger-active #tabAs,body.as-ledger-active #asSubList{height:auto}#asSubList .as-ledger-scroll{flex:auto;height:50vh;min-height:160px}}
+
+</style>
+
+<style id="as-intake-readable-style">
+/* Selected concept 2. Attachment controls retain their existing presentation. */
+#asModal{--intake-text:#202a36;--intake-muted:#526171;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;color:var(--intake-text);letter-spacing:0;padding:20px}
+#asModal>.modal-box{width:min(720px,100%);max-width:720px;max-height:calc(100dvh - 40px);border:1px solid #aebbc9;border-radius:8px;background:#fff}
+#asModal .modal-header{padding:20px 28px;border-bottom:1px solid #bbc6d2;align-items:center}
+#asModal .modal-header h3{font-size:22px;line-height:30px;font-weight:700;color:var(--intake-text);border:0;padding:0;margin:0;letter-spacing:0}
+#asModal .modal-header h3::before{display:none}
+#asModal .modal-close{width:40px;height:40px;border:1px solid #aebbc9;border-radius:4px;background:white;color:#202a36;font-size:24px}
+#asModal .modal-body{padding:24px 28px;scrollbar-gutter:stable}
+#asModal .as-intake-section{margin:0 0 24px;padding:0 0 24px;border-bottom:1px solid #d6dee7;min-width:0}
+#asModal .as-intake-section h4{margin:0 0 16px;font-size:16px;line-height:24px;font-weight:700;color:var(--intake-text)}
+#asModal .as-intake-section .modal-field{margin-bottom:20px}
+#asModal .as-intake-section>.modal-field:last-child,#asModal .as-intake-section>.modal-row:last-child .modal-field{margin-bottom:0}
+#asModal .modal-field>label:not(:has(#asFiles)){font-size:15px!important;line-height:24px;font-weight:600!important;color:var(--intake-text)!important;letter-spacing:0;margin-bottom:8px}
+#asModal .as-intake-section .modal-field input:not([type="file"]):not([type="hidden"]),#asModal .as-intake-section .modal-field select,#asModal .as-intake-section .modal-field textarea{font-family:inherit;font-size:16px!important;font-weight:500;line-height:24px;letter-spacing:0;min-height:44px;padding:9px 12px!important;border:1px solid #aebbc9!important;border-radius:4px!important;color:#202a36;background:#fff;box-shadow:none}
+#asModal .as-intake-section textarea{min-height:88px!important}
+#asModal .as-intake-section input:focus-visible,#asModal .as-intake-section select:focus-visible,#asModal .as-intake-section textarea:focus-visible,#asModal .modal-footer button:focus-visible,#asModal .modal-close:focus-visible{outline:2px solid #07549a;outline-offset:2px}
+#asModal .as-intake-section .modal-field input:not([type="file"]):not([type="hidden"])[aria-invalid="true"]{border-color:#a23732!important}
+#asModal .modal-field input::placeholder,#asModal .modal-field textarea::placeholder{color:var(--intake-muted);font-weight:400;opacity:1}
+#asModal .as-intake-section input[type="date"],#asModal #asAmount{font-variant-numeric:tabular-nums}
+#asModal .modal-field label:has(#asFiles){color:var(--intake-muted)!important;letter-spacing:0}
+#asModal .as-intake-category{max-width:none}
+#asModal .as-intake-section .modal-row{gap:12px}
+#asModal .as-amount-input #asAmount{padding-right:42px!important}
+#asModal .as-amount-unit{font-size:16px;line-height:24px;color:#202a36}
+#asModal #asAmountHint,#asModal #asDeliveryAgreedDateHint{font-size:14px;font-weight:400;line-height:22px;color:var(--intake-muted);margin-top:6px}
+#asModal #asAmountError{font-size:14px;line-height:22px}
+#asModal .modal-footer{padding:14px 28px;border-top:1px solid #bbc6d2;background:#f8fafc;gap:8px}
+#asModal .modal-footer .admin-btn{font-size:15px;font-weight:600;min-height:44px;padding:9px 20px;border-radius:4px;border:1px solid #aebbc9;box-shadow:none}
+#asModal .modal-footer .admin-btn-secondary{background:#fff;color:#202a36}
+#asModal .modal-footer .admin-btn-primary{background:#07549a;border-color:#07549a;color:#fff}
+@media(max-width:600px){#asModal{padding:10px}#asModal>.modal-box{max-height:calc(100dvh - 20px)}#asModal .modal-header,#asModal .modal-body{padding:18px 16px}#asModal .modal-header h3{font-size:22px}#asModal .modal-footer{padding:12px 16px}#asModal .modal-row.as-intake-location,#asModal .modal-row.as-intake-material{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
@@ -1841,6 +2020,10 @@ tbody tr:hover td{background:var(--surface-muted)}
     <!-- AS 접수 탭 -->
     <div id="tabAs" style="display:none">
     <div id="asSubList">
+      <header class="as-ledger-heading">
+        <h1 class="as-ledger-title">AS 접수목록</h1>
+        <button type="button" class="as-ledger-back" id="asLedgerBack" onclick="asLedgerGoBack()" aria-label="이전 화면으로 돌아가기"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 5-7 7 7 7M5 12h14"/></svg>뒤로</button>
+      </header>
 
       <!-- 툴바 -->
       <div class="as-toolbar">
@@ -1855,7 +2038,7 @@ tbody tr:hover td{background:var(--surface-muted)}
             <div class="toss-dd-panel" id="asSearchFieldPanel" role="listbox"></div>
             <input type="hidden" id="asSearchField" value="all"/>
           </div>
-          <input class="as-search-input" id="asSearch" placeholder="접수번호·호선·자재명 검색" style="flex:1;min-width:160px;max-width:240px"
+          <input class="as-search-input" id="asSearch" placeholder="검색" aria-label="접수목록 검색" style="flex:1;min-width:160px;max-width:240px"
             onkeydown="if(event.key==='Enter')_applyAsFilters()"/>
           <div class="toss-dd" id="asCategoryFilterDd">
             <button type="button" class="toss-dd-btn" id="asCategoryFilterBtn" onclick="toggleAsDd(event,'asCategoryFilter')" aria-haspopup="listbox" aria-expanded="false">
@@ -1877,7 +2060,7 @@ tbody tr:hover td{background:var(--surface-muted)}
           <span class="as-toolbar-label">기간</span>
           <div class="toss-date-range" id="asDateRange" onclick="openAsCal(event)">
             <svg class="toss-date-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <button type="button" class="toss-date-btn" id="asDateFromBtn" data-empty="1" onclick="event.stopPropagation();openAsCal(event,'from')">시작일</button>
+            <button type="button" class="toss-date-btn" id="asDateFromBtn" data-empty="1" onclick="event.stopPropagation();openAsCal(event,'from')">접수 시작일</button>
             <span class="toss-date-sep">~</span>
             <button type="button" class="toss-date-btn" id="asDateToBtn" data-empty="1" onclick="event.stopPropagation();openAsCal(event,'to')">종료일</button>
             <input type="hidden" id="asDateFrom" value=""/>
@@ -1928,14 +2111,20 @@ tbody tr:hover td{background:var(--surface-muted)}
         </div>
       </div>
 
+      <div class="as-ledger-controls">
+        <div class="as-ledger-counts"><div id="asLedgerCount" role="status" aria-live="polite" aria-atomic="true">전체 <strong>0</strong>건</div><span id="asSelectedCount" role="status" aria-live="polite" aria-atomic="true" data-selected="false">선택 <strong>0</strong>건</span></div>
+        <div class="as-ledger-actions">
+          <button type="button" onclick="resetAsFilters()">필터 초기화</button>
+        </div>
+      </div>
       <!-- 테이블 카드 -->
       <div class="as-table-card">
-        <div style="overflow-x:auto">
+        <div class="as-ledger-scroll" tabindex="0" role="region" aria-label="AS 접수목록, 가로 스크롤 가능">
           <table class="as-erp-table">
-            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
             <thead>
               <tr class="as-column-header">
-                <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" onchange="toggleAsSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>
+                <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" aria-label="현재 페이지 모두 선택" onchange="toggleAsSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>
                 <th class="as-no-col no-sort">#</th>
                 <th data-col="status" onclick="sortAsTable('status')">진행현황</th>
                 <th data-col="asNo" onclick="sortAsTable('asNo')">접수번호</th>
@@ -1951,6 +2140,7 @@ tbody tr:hover td{background:var(--surface-muted)}
                 <th class="col-file no-sort">첨부</th>
                 <th data-col="createdBy" onclick="sortAsTable('createdBy')">접수자</th>
                 <th data-col="remark" onclick="sortAsTable('remark')">비고</th>
+                <th data-col="amount" onclick="sortAsTable('amount')">금액 (원)</th>
               </tr>
             </thead>
             <tbody id="asTableBody"></tbody>
@@ -1960,11 +2150,8 @@ tbody tr:hover td{background:var(--surface-muted)}
           <span class="as-page-info" id="asPageInfo"></span>
           <div class="as-page-btns" id="asPageBtns"></div>
         </div>
-        <div class="as-table-footer">
-          <span id="asSelectedCount">선택 0건</span>
-          <button type="button" class="as-tb-btn" id="asListExampleBtn" onclick="toggleAsListExample()">예시 데이터 보기</button>
-        </div>
       </div>
+      <p class="as-ledger-help" id="asLedgerMessage" role="status"></p>
     </div><!-- /asSubList -->
 
 <section id="asSubStats" style="display:none" aria-label="A/S 현황">
@@ -1977,7 +2164,13 @@ tbody tr:hover td{background:var(--surface-muted)}
       <div><span id="asStatsPendingLabel">연간 미처리</span><strong id="asStatsPending"></strong><p id="asStatsPendingHint"></p></div>
     </div>
     <div class="as-overview-charts">
-    <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div><section class="as-daily-section as-stats-chart-panel" aria-labelledby="asDailyTitle"><div class="as-stats-chart-heading"><h3 id="asDailyTitle">일별 접수 추이</h3><span class="as-chart-unit">단위: 건</span></div><p id="asDailyHint" class="as-chart-sr-only"></p><div class="as-daily-scroll" tabindex="0" role="region" aria-label="일별 접수 그래프, 좌우로 스크롤"><div id="asDailyChart" class="as-daily-chart" role="list"></div></div><p id="asDailyEmpty" hidden>해당 월에 접수된 건이 없습니다.</p></section></div>
+    <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div>
+    <section class="as-daily-section as-stats-chart-panel" aria-labelledby="asAmountTitle">
+      <div class="as-stats-chart-heading"><h3 id="asAmountTitle">월별 금액 집계</h3><span class="as-chart-unit">단위: 원</span></div>
+      <div class="as-amount-summary" role="status" aria-live="polite" aria-atomic="true"><span><span id="asAmountMonthLabel">선택 월</span> <strong id="asAmountMonthly">0원</strong></span><span>연간 합계 <strong id="asAmountAnnual">0원</strong></span></div>
+      <p class="as-amount-basis" id="asAmountBasis">접수일 기준 · 금액 미입력 건 제외</p>
+      <div class="as-daily-scroll" tabindex="0" role="region" aria-label="월별 금액 집계, 좌우로 스크롤"><div id="asAmountChart" class="as-amount-chart" role="group" aria-label="월별 접수 금액"></div></div>
+    </section></div>
     <section class="as-stats-chart-panel" aria-labelledby="asStatsReasonsTitle">
       <h2 id="asStatsReasonsTitle">접수 사유별 집계</h2>
       <p id="asStatsReasonsHint" aria-live="polite"></p>
@@ -1987,7 +2180,7 @@ tbody tr:hover td{background:var(--surface-muted)}
     </section>
     </div>
   </div>
-  <div class="as-stats-actions"><button type="button" onclick="loadAsStatistics(true)">예시 데이터 보기</button><button type="button" onclick="loadAsStatistics()">새로고침</button></div>
+  <div class="as-stats-actions"><button type="button" onclick="loadAsStatistics(true)">예시 데이터 보기</button><button type="button" onclick="loadAsStatistics(false)">새로고침</button></div>
 </section>
 
     <!-- 제품명 관리 -->
@@ -2039,6 +2232,7 @@ tbody tr:hover td{background:var(--surface-muted)}
           <button class="modal-close" onclick="closeAsModal()" aria-label="닫기">&times;</button>
         </div>
         <div class="modal-body">
+          <section class="as-intake-section" aria-labelledby="asIntakeMaterialTitle"><h4 id="asIntakeMaterialTitle">자재 정보</h4>
           <div class="modal-field as-intake-category">
             <label for="asCategory">구분 *</label>
             <select id="asCategory"><option value="사내">사내</option><option value="사외">사외</option><option value="기타">기타</option></select>
@@ -2059,8 +2253,10 @@ tbody tr:hover td{background:var(--surface-muted)}
             <input id="asMaterialCode" name="materialCode" placeholder="자재코드 입력" maxlength="100"/>
           </div>
           </div>
+          </section>
+          <section class="as-intake-section" aria-labelledby="asIntakeContentTitle"><h4 id="asIntakeContentTitle">접수 내용</h4>
           <div class="modal-field">
-            <label>사유 *</label>
+            <label for="asReasonSelect">사유 *</label>
             <select id="asReasonSelect" onchange="onAsReasonSelect()" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px">
               <option value="">사유를 선택하세요</option>
               <option value="치수 오작">치수 오작</option>
@@ -2075,7 +2271,7 @@ tbody tr:hover td{background:var(--surface-muted)}
             <textarea id="asReason" style="width:100%;min-height:70px;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:inherit;resize:vertical;display:none;margin-top:8px" placeholder="기타 사유를 입력하세요"></textarea>
           </div>
           <div class="modal-field">
-            <label>후속조치</label>
+            <label for="asActionSelect">후속조치</label>
             <select id="asActionSelect" onchange="onAsActionSelect()" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px">
               <option value="">후속조치를 선택하세요</option>
               <option value="현장 시수">현장 시수</option>
@@ -2091,15 +2287,22 @@ tbody tr:hover td{background:var(--surface-muted)}
             <small id="asDeliveryAgreedDateHint">최종 납품 마감일입니다. 미정이면 비워두고 제작 요청 전에 지정하세요.</small>
           </div>
           <div class="modal-field">
-            <label>비고</label>
+            <label for="asAmount">금액</label>
+            <div class="as-amount-input"><input id="asAmount" name="amount" type="text" inputmode="numeric" placeholder="금액 입력" aria-label="금액 (원)" aria-describedby="asAmountHint asAmountError" onblur="formatAsAmountInput(this)"/><span class="as-amount-unit" aria-hidden="true">원</span></div>
+            <small id="asAmountHint">이체 영수증 필수 첨부</small>
+            <small id="asAmountError" class="as-ledger-inline-error" role="alert"></small>
+          </div>
+          <div class="modal-field">
+            <label for="asRemark">비고</label>
             <textarea id="asRemark" style="width:100%;min-height:60px;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:inherit;resize:vertical" placeholder="비고 사항 (출력 시 표시됩니다)"></textarea>
           </div>
+          </section>
           <div class="modal-field">
             <label>첨부파일</label>
             <div id="asExistingFiles" style="margin-bottom:8px"></div>
             <label style="display:flex;align-items:center;gap:8px;padding:12px 16px;border:2px dashed #e2e8f0;border-radius:10px;cursor:pointer;transition:all .15s;font-size:12px;color:#64748b;font-weight:600" onmouseover="this.style.borderColor='#94a3b8'" onmouseout="this.style.borderColor='#e2e8f0'">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-              <span>AS 접수건의 현장 사진, 도면 등 관련 자료를 첨부하세요 (최대 20MB)</span>
+              <span>현장 사진, 도면, 이체 영수증 등을 첨부하세요 (파일당 최대 20MB)</span>
               <input type="file" id="asFiles" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.doc,.docx,.xls,.xlsx" style="display:none" onchange="renderAsFilePreview()"/>
             </label>
             <div id="asNewFiles" style="margin-top:6px"></div>
@@ -2291,6 +2494,7 @@ tbody tr:hover td{background:var(--surface-muted)}
   </div>
 </div>
 
+<script src="/as-amount.js"></script>
 <script>
 // ── 설정 ──
 const SERVER = window.location.origin; // 같은 서버에서 서빙되므로 자동
@@ -2386,6 +2590,17 @@ async function doLogout() {
 // ── 탭 전환 ──
 let _asSubMode = 'stats';
 let _erpSubMode = 'upload';
+let _asNavigation = {tab:'home',el:null,sub:null};
+let _asLedgerReturn = null;
+
+function asLedgerGoBack() {
+  if(!asLedgerCanLeave())return;
+  const previous=_asLedgerReturn||{tab:'home',el:null,sub:null,scroll:0};
+  const button=previous.el||document.querySelector('.sidebar .tab');
+  switchTab(previous.tab,button,previous.sub);
+  if(location.hash==='#as-list')history.replaceState(null,'',location.pathname+location.search);
+  requestAnimationFrame(()=>{window.scrollTo(0,previous.scroll||0);button.focus({preventScroll:true});});
+}
 
 function showDevelopmentNotice(tab) {
   const dialog = document.getElementById('devNotice');
@@ -2393,11 +2608,17 @@ function showDevelopmentNotice(tab) {
 }
 
 function switchTab(tab, el, sub) {
+  if (!asLedgerCanLeave()) return;
   // Temporarily unavailable screens: block before changing navigation or loading data.
   if (['tracking', 'erp', 'floorplan'].includes(tab)) {
     showDevelopmentNotice(tab);
     return;
   }
+  const showLedger=tab==='as'&&sub==='list';
+  if(showLedger&&!document.body.classList.contains('as-ledger-active'))_asLedgerReturn={..._asNavigation,scroll:window.scrollY};
+  _asNavigation={tab,el,sub};
+  document.body.classList.toggle('as-ledger-active',showLedger);
+  if(showLedger)window.scrollTo(0,0);
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.tab-sub').forEach(t => t.classList.remove('on'));
   var asMenu = document.getElementById('asSubmenu');
@@ -2439,6 +2660,7 @@ function switchTab(tab, el, sub) {
   }
   if (tab === 'users') loadAdminUsers();
   if (tab === 'floorplan') loadMapEditor();
+  if(showLedger)document.getElementById('asLedgerBack').focus({preventScroll:true});
 }
 
 function toggleAsMenu(btn) {
@@ -2659,11 +2881,13 @@ function _asCalUpdateBtns() {
   const tb = document.getElementById('asDateToBtn');
   if (fb) {
     if (_asCalFrom) { fb.textContent = _asCalFmtLabel(_asCalFrom); fb.dataset.empty = '0'; }
-    else { fb.textContent = '시작일'; fb.dataset.empty = '1'; }
+    else { fb.textContent = '접수 시작일'; fb.dataset.empty = '1'; }
+    fb.setAttribute('aria-label',_asCalFrom?'접수 시작일: '+fb.textContent:'접수 시작일 선택');
   }
   if (tb) {
     if (_asCalTo) { tb.textContent = _asCalFmtLabel(_asCalTo); tb.dataset.empty = '0'; }
     else { tb.textContent = '종료일'; tb.dataset.empty = '1'; }
+    tb.setAttribute('aria-label',_asCalTo?'접수 종료일: '+tb.textContent:'접수 종료일 선택');
   }
 }
 function _asCalSyncFromInputs() {
@@ -3829,21 +4053,14 @@ let asEditingId = null;
 let _asStatsRecords = [];
 let _asStatsRequest = 0;
 let _asStatsExample = false;
+let _asListExample = ['localhost','127.0.0.1','[::1]'].includes(window.location.hostname);
+let _asExampleRecords = null;
 let _asStatsSelectedMonth = new Date().getMonth()+1;
 const AS_REASON_TYPES = ['치수 오작','품질 불량','용접 불량','도장 불량','수량 누락','납기 누락','마킹 오류'];
-function createAsStatisticsExample(year) {
-  // Preview only: synthetic records never leave browser memory.
-  // Seeded sample dates stay stable while users switch months and filters.
-  let seed=year>>>0;
-  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-  const monthly = [8,12,9,17,14,22,19,27,16,24,18,13];
-  const statuses = ['접수','제작 요청','도장 요청','납품 요청','완료'];
-  return monthly.flatMap((count,index)=>Array.from({length:count},(_,i)=>({
-    id:`example-${index+1}-${i+1}`,
-    createdAt:`${year}-${String(index+1).padStart(2,'0')}-${String(1+Math.floor(random()*new Date(year,index+1,0).getDate())).padStart(2,'0')}T09:00:00.000Z`,
-    status: i%5<3 ? '완료' : statuses[(index+i)%4],
-    reason: [...AS_REASON_TYPES, '현장 조정 필요'][(i+index)%8]
-  })));
+function getAsExampleRecords() {
+  // One browser-memory sample shared by the overview and receipt list.
+  if (!_asExampleRecords) _asExampleRecords = createAsListExample();
+  return _asExampleRecords;
 }
 function asStatsDateKey(value) {
   if (typeof value !== 'string') return null;
@@ -3855,6 +4072,7 @@ function asStatsDateKey(value) {
 }
 function summarizeAsStatistics(records, year, month) {
   const counts = Array(12).fill(0);
+  const amounts=Array(12).fill(0n),amountEntries=Array(12).fill(0);
   const reasons = Object.fromEntries([...AS_REASON_TYPES, '기타'].map(name=>[name,0]));
   const statuses = { '접수':0, '제작 요청':0, '도장 요청':0, '납품 요청':0, '완료':0 };
   let previous = 0, invalid = 0, previousYearTotal = 0;
@@ -3867,13 +4085,15 @@ function summarizeAsStatistics(records, year, month) {
     if (date.year === year-1) previousYearTotal++;
     if (date.year !== year) continue;
     counts[date.month - 1]++;
+    const amount=AsAmount.read(record.amount);
+    if(amount!==null){amounts[date.month-1]+=BigInt(amount);amountEntries[date.month-1]++;}
     const reason = typeof record.reason === 'string' ? record.reason.trim() : '';
     reasons[AS_REASON_TYPES.includes(reason) ? reason : '기타']++;
     const status = Object.prototype.hasOwnProperty.call(statuses, record.status) ? record.status : '기타';
     statuses[status] = (statuses[status] || 0) + 1;
   }
   const total = counts.reduce((sum, value) => sum + value, 0);
-  return { counts, statuses, reasons, total, previousYearTotal, current:counts[month-1], previous, previousYear, previousMonth, pending:total-statuses['완료'], invalid };
+  return { counts, amounts, amountEntries, totalAmount:amounts.reduce((sum,value)=>sum+value,0n), statuses, reasons, total, previousYearTotal, current:counts[month-1], previous, previousYear, previousMonth, pending:total-statuses['완료'], invalid };
 }
 function asAnnualChangeText(total, previous) {
   const change = total-previous;
@@ -3881,7 +4101,7 @@ function asAnnualChangeText(total, previous) {
   if (!previous) return '전년 0건 대비 '+total.toLocaleString()+'건 증가';
   return '전년 대비 '+Math.abs(change/previous*100).toFixed(1)+'% '+(change>0?'증가':'감소');
 }
-async function loadAsStatistics(useExample = false) {
+async function loadAsStatistics(useExample = _asListExample) {
   const request = ++_asStatsRequest;
   const content = document.getElementById('asStatsContent');
   const message = document.getElementById('asStatsMessage');
@@ -3892,7 +4112,7 @@ async function loadAsStatistics(useExample = false) {
   try {
     let data;
     if (useExample) {
-      data = { list: createAsStatisticsExample(new Date().getFullYear()-1) };
+      data = { list: getAsExampleRecords() };
     } else {
       const response = await fetch(`${SERVER}/api/as`);
       if (!response.ok) throw new Error('Request failed');
@@ -3902,14 +4122,16 @@ async function loadAsStatistics(useExample = false) {
     if (request !== _asStatsRequest) return;
     _asStatsRecords = data.list;
     _asStatsExample = useExample;
+    _asListExample = useExample;
     const now = new Date();
     const previousYear = Number(yearSelect.value);
     const years = new Set([now.getFullYear()]);
     _asStatsRecords.forEach(record => { const date = asStatsDateKey(record?.createdAt); if (date) years.add(date.year); });
     yearSelect.replaceChildren();
     [...years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(`${year}년`, String(year))));
-    yearSelect.value = String(useExample ? now.getFullYear()-1 : (years.has(previousYear) ? previousYear : now.getFullYear()));
-    if (useExample) _asStatsSelectedMonth = 8;
+    const latestExampleDate = useExample ? _asStatsRecords.map(record=>asStatsDateKey(record.createdAt)).filter(Boolean).sort((a,b)=>b.year-a.year||b.month-a.month)[0] : null;
+    yearSelect.value = String(latestExampleDate ? latestExampleDate.year : (years.has(previousYear) ? previousYear : now.getFullYear()));
+    if (latestExampleDate) _asStatsSelectedMonth = latestExampleDate.month;
     renderAsStatistics();
   } catch (error) {
     if (request !== _asStatsRequest) return;
@@ -3928,18 +4150,23 @@ function renderAsOverviewKpis(records) {
  const ids={pending:'kpiTotal','접수':'kpiOpen','제작 요청':'kpiReviewWait','도장 요청':'kpiApproveWait','납품 요청':'kpiProgress'};
  Object.entries(ids).forEach(([key,id])=>{document.getElementById(id).textContent=counts[key].toLocaleString();});
 }
-function summarizeAsDaily(records,year,month) {
- const counts=Array(new Date(year,month,0).getDate()).fill(0);
- records.forEach(record=>{const date=asStatsDateKey(record?.createdAt);if(date?.year===year&&date.month===month)counts[Number(record.createdAt.slice(8,10))-1]++;});
- return counts;
-}
-function renderAsDaily(year,month) {
- const counts=summarizeAsDaily(_asStatsRecords,year,month),total=counts.reduce((a,b)=>a+b,0),max=Math.max(1,...counts);
- document.getElementById('asDailyTitle').textContent='일별 접수 추이';
- document.getElementById('asDailyHint').textContent=year+'년 '+month+'월 총 '+total.toLocaleString()+'건 · 접수일 기준';
- const chart=document.getElementById('asDailyChart');chart.style.gridTemplateColumns='repeat('+counts.length+', minmax(20px, 1fr))';chart.replaceChildren();
- counts.forEach((count,index)=>{const day=document.createElement('div');day.className='as-daily-day';day.setAttribute('role','listitem');day.setAttribute('aria-label',month+'월 '+(index+1)+'일 접수 '+count+'건');day.title=month+'월 '+(index+1)+'일: '+count+'건';day.innerHTML='<div class="as-daily-plot" aria-hidden="true"><span class="as-daily-value" style="bottom:'+(count/max*176+5)+'px">'+count+'</span><span class="as-daily-bar" style="height:'+(count/max*176)+'px"></span></div><span aria-hidden="true">'+(index+1)+'</span>';chart.appendChild(day);});
- document.getElementById('asDailyEmpty').hidden=total!==0;
+function renderAsAmounts(year,month,result) {
+ const max=Math.max(1,...result.amounts.map(Number)),format=value=>value.toLocaleString('ko-KR');
+ document.getElementById('asAmountMonthLabel').textContent=year+'년 '+month+'월';
+ document.getElementById('asAmountMonthly').textContent=format(result.amounts[month-1])+'원';
+ document.getElementById('asAmountAnnual').textContent=format(result.totalAmount)+'원';
+ document.getElementById('asAmountBasis').textContent='접수일 기준 · 금액 미입력 건 제외 · '+month+'월 금액 입력 '+result.amountEntries[month-1]+'건';
+ const chart=document.getElementById('asAmountChart');chart.replaceChildren();
+ chart.style.minWidth=Math.max(960,...result.amounts.map(value=>(format(value).length*8+16)*12))+'px';
+ result.amounts.forEach((amount,index)=>{
+   const button=document.createElement('button'),height=Number(amount)/max*176,value=format(amount);
+   button.type='button';button.className='as-amount-month';button.setAttribute('aria-pressed',String(index+1===month));
+   button.setAttribute('aria-label',year+'년 '+(index+1)+'월 '+value+'원, 금액 입력 '+result.amountEntries[index]+'건');
+   button.title=(index+1)+'월 '+value+'원';
+   button.innerHTML='<span class="as-amount-plot" aria-hidden="true"><span class="as-amount-value" style="bottom:'+(height+4)+'px">'+value+'</span><span class="as-amount-bar" style="height:'+height+'px"></span></span><span>'+(index+1)+'월</span>';
+   button.onclick=()=>{showAsStatisticsMonth(year,index+1);document.getElementById('asAmountChart').children[index]?.focus?.({preventScroll:true});};
+   chart.appendChild(button);
+ });
 }
 function renderAsStatistics() {
   renderAsOverviewKpis(_asStatsRecords);
@@ -3947,8 +4174,8 @@ function renderAsStatistics() {
   const month = _asStatsSelectedMonth;
   if (!year || month<1 || month>12) return;
   const result = summarizeAsStatistics(_asStatsRecords,year,month);
-  renderAsDaily(year,month);
-  document.getElementById('asStatsMessage').textContent = _asStatsExample ? '예시 데이터입니다. 월별 추이를 보여주기 위한 가상 접수 건이며 실제 업무 데이터에 저장되지 않습니다.' : (result.invalid ? `접수일이 없거나 올바르지 않은 ${result.invalid}건은 집계에서 제외했습니다.` : '');
+  renderAsAmounts(year,month,result);
+  document.getElementById('asStatsMessage').textContent = _asStatsExample ? '접수목록과 동일한 예시 70건을 집계합니다. 실제 업무 데이터에는 저장되지 않습니다.' : (result.invalid ? `접수일이 없거나 올바르지 않은 ${result.invalid}건은 집계에서 제외했습니다.` : '');
   document.getElementById('asStatsChartHint').textContent = '월을 누르면 아래에서 해당 월의 접수 사유별 집계를 확인할 수 있습니다. 단위: 건';
   document.getElementById('asStatsContent').hidden = false;
   document.getElementById('asStatsYearLabel').textContent = `${year}년 접수`;
@@ -4033,29 +4260,22 @@ let _asFiltered = [];       // after client filters applied
 let _asSortCol = 'createdAt';
 let _asSortDir = 'desc';    // 'asc' | 'desc'
 let _asPage = 1;
-const _asPageSize = 10;
-let _asListExample = false;
-let _asListPreviewRecords = null;
+const _asPageSize = 20;
+let _asRemarkEditing = null;
 function createAsListExample() {
   const dayOffset=n=>{const d=new Date(asJobToday()+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
   const statuses=['접수','제작 요청','도장 요청','납품 요청','완료'];
-  const products=['점검구 프레임','환기 그릴','보강 브래킷','케이블 지지대','도어 패널','배관 커버','고정 플레이트'];
+  const randomInt=(min,max)=>min+Math.floor(Math.random()*(max-min+1));
   const reasons=['도장 표면 보수','치수 재확인 및 재제작','운송 중 모서리 손상','체결부 위치 수정','납품 수량 부족','용접부 마감 보수','설치 간섭 조정'];
-  return Array.from({length:35},(_,i)=>{
+  return Array.from({length:70},(_,i)=>{
     const status=statuses[i%5],stages={};
     ['제작 요청','도장 요청','납품 요청'].forEach((name,j)=>{if(i%5>j)stages[name]={requestedDate:dayOffset(-12+j),...(i%5>j+1?{completedDate:dayOffset(-10+j)}:{})};});
-    return {id:'list-example-'+(i+1),asNo:'예시-'+String(i+1).padStart(3,'0'),status,category:'사내',ship:'DEMO-'+(7100+i%6),block:['A01','B02','C03','D04'][i%4],element:'E-'+(101+i%9),product:products[i%7],materialCode:'DEMO-M'+(100+i),reason:reasons[i%7],action:'현장 확인 후 보수 및 재납품',createdBy:'예시 담당 '+(i%4+1),createdAt:dayOffset(-14-Math.floor(i/5))+'T09:00:00Z',deliveryAgreedDate:dayOffset(i%11-3),files:[],remark:'화면 확인용 예시',workflow:{revision:0,stages,history:[]},...(status==='완료'?{deliveredDate:dayOffset(-8)}:{})};
+    return {id:'list-example-'+(i+1),asNo:'예시-'+String(i+1).padStart(3,'0'),status,category:'사내',ship:String(randomInt(2600,2700)),block:'T'+randomInt(100,300)+'P',element:'CC'+randomInt(100,200)+'F',product:'VERTICAL LADDER',materialCode:'DEMO-M'+(100+i),reason:reasons[i%7],action:'현장 확인 후 보수 및 재납품',createdBy:'예시 담당 '+(i%4+1),createdAt:dayOffset(-14-Math.floor(i/5))+'T09:00:00Z',deliveryAgreedDate:dayOffset(i%11-3),files:[],remark:'화면 확인용 예시',amount:randomInt(5,500)*10000,workflow:{revision:0,stages,history:[]},...(status==='완료'?{deliveredDate:dayOffset(-8)}:{})};
   });
-}
-async function toggleAsListExample(){
-  _asListExample=!_asListExample;
-  _asListPreviewRecords=null;
-  document.getElementById('asListExampleBtn').textContent=_asListExample?'실제 데이터 보기':'예시 데이터 보기';
-  await loadAsList();resetAsFilters();
 }
 function asListExampleReadOnly(){
   if(!_asListExample)return false;
-  showAlert('예시 데이터는 조회 전용입니다. 실제 데이터 보기로 전환한 뒤 처리해주세요.','warn');return true;
+  showAlert('화면 확인용 샘플 데이터는 조회 전용입니다.','warn');return true;
 }
 
 let _productList = [];
@@ -4219,21 +4439,33 @@ document.addEventListener('click', function(e) {
   if (box && !e.target.closest('#asProduct') && !e.target.closest('#asProductSuggest')) box.style.display = 'none';
 });
 
+let _asListRequest = 0;
 async function loadAsList() {
-  if(_asListExample){_asFullList=_asListPreviewRecords||createAsListExample();_asPage=1;_applyAsFilters();return;}
+  if (_asRemarkEditing) return;
+  const request=++_asListRequest;
+  if(_asListExample){_asFullList=getAsExampleRecords();_asPage=1;_applyAsFilters();return;}
+  document.getElementById('asTableBody').innerHTML='<tr><td colspan="17"><div class="as-empty" role="status">접수목록을 불러오고 있습니다.</div></td></tr>';
+  document.getElementById('asPagination').style.display='none';
+  document.getElementById('asLedgerCount').textContent='조회 중';
+  _updateAsSelectedCount();
   try {
     const r = await fetch(`${SERVER}/api/as`);
+    if(!r.ok)throw Error('조회 실패');
     const data = await r.json();
+    if(request!==_asListRequest||_asRemarkEditing||_asListExample)return;
     _asFullList = data.list || [];
     _asPage = 1;
     _applyAsFilters();
   } catch(e) {
+    if(request!==_asListRequest||_asListExample)return;
     document.getElementById('asTableBody').innerHTML =
-      '<tr><td colspan="16" style="padding:28px;color:#dc2626;text-align:center;font-size:13px">서버 연결 오류</td></tr>';
+      '<tr><td colspan="17"><div class="as-empty" role="alert"><p>접수목록을 불러오지 못했습니다.</p><button type="button" class="as-tb-btn" onclick="loadAsList()">다시 조회</button></div></td></tr>';
+    document.getElementById('asLedgerCount').textContent='조회 오류';
   }
 }
 
 function _applyAsFilters() {
+  if (!asLedgerCanLeave()) return;
   const searchField   = document.getElementById('asSearchField')?.value || 'all';
   const search        = (document.getElementById('asSearch')?.value || '').trim().toLowerCase();
   const categoryFilter = document.getElementById('asCategoryFilter')?.value || '';
@@ -4289,6 +4521,11 @@ function _applyAsFilters() {
 
 function _sortAsListBy(list, col, dir) {
   return list.slice().sort((a, b) => {
+    if (col === 'amount') {
+      const av=AsAmount.read(a.amount),bv=AsAmount.read(b.amount);
+      if(av===null||bv===null)return av===bv?0:av===null?1:-1;
+      return dir==='asc'?av-bv:bv-av;
+    }
     let av = (a[col]||'').toString().toLowerCase();
     let bv = (b[col]||'').toString().toLowerCase();
     if (col === 'createdAt') { av = a[col]||''; bv = b[col]||''; }
@@ -4298,6 +4535,7 @@ function _sortAsListBy(list, col, dir) {
 }
 
 function sortAsTable(col) {
+  if (!asLedgerCanLeave()) return;
   if (_asSortCol === col) {
     _asSortDir = _asSortDir === 'asc' ? 'desc' : 'asc';
   } else {
@@ -4309,6 +4547,7 @@ function sortAsTable(col) {
 }
 
 function _renderAsPage() {
+  if (_asRemarkEditing) return;
   const tbody = document.getElementById('asTableBody');
   const total = _asFiltered.length;
   const totalPages = Math.max(1, Math.ceil(total / _asPageSize));
@@ -4320,11 +4559,10 @@ function _renderAsPage() {
   _updateAsSelectedCount();
 
   if (!total) {
-    tbody.innerHTML = `<tr class="as-empty-row"><td colspan="16"><div class="as-empty">
-      <div class="as-empty-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-      <p>AS 접수 내역이 없습니다</p>
-    </div></td></tr>`;
+    tbody.innerHTML = '';
     document.getElementById('asPagination').style.display = 'none';
+    _initAsColResizers();
+    _updateAsSelectedCount();
     return;
   }
 
@@ -4333,7 +4571,7 @@ function _renderAsPage() {
     const esc = encodeURIComponent(JSON.stringify(a));
 
     // status badge
-    const statusBadge = `<span class="as-status-text">${asJobEsc(a.status)}</span>`;
+    const statusBadge = `<span class="as-status-text" data-state="${asJobEsc(a.status)}">${asJobEsc(a.status)}</span>`;
 
     // 첨부 개수는 텍스트로 표시하고 파일 선택 목록으로 연결한다.
     const ff = a.files || [];
@@ -4346,7 +4584,7 @@ function _renderAsPage() {
     const dateStr = (a.createdAt||'').slice(0,10);
 
     return `<tr data-id="${a.id}" tabindex="0" aria-label="${asJobEsc(a.asNo||'접수')} 상세 보기" onkeydown="if(event.target===this&amp;&amp;(event.key==='Enter'||event.key===' ')){event.preventDefault();_onAsRowClick(event,this)}" onclick="_onAsRowClick(event,this)" ondblclick="_onAsRowDblClick(event,'${esc}')" style="cursor:pointer">
-      <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
+      <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" aria-label="${asJobEsc(a.asNo||'접수')} 선택" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
       <td class="as-no-col">${rowNum}</td>
       <td>${statusBadge}</td>
       <td><span class="as-code">${a.asNo||'—'}</span></td>
@@ -4359,17 +4597,16 @@ function _renderAsPage() {
       <td style="font-size:12px;color:#475569">${a.product||'—'}</td>
       <td><span class="as-truncate" title="${(a.reason||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#334155">${reasonShort}</span></td>
       <td><span class="as-truncate" title="${(a.action||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#64748b">${actionShort}</span></td>
-      <td style="text-align:center">${fileCell}</td>
+      <td class="as-files-cell" style="text-align:center">${fileCell}</td>
       <td style="font-size:11px;color:#64748b">${a.createdBy||'—'}</td>
       <td class="as-remark-cell" data-id="${a.id}" onclick="startRemarkEdit(event,this)" title="${(a.remark||'').replace(/"/g,'&quot;')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||'')}</td>
+      <td class="as-amount-cell" title="${AsAmount.format(a.amount)}">${AsAmount.format(a.amount)}</td>
     </tr>`;
   }).join('');
 
-  tbody.innerHTML += Array.from({length:Math.max(0,_asPageSize-pageItems.length)},()=>
-    '<tr class="as-placeholder" aria-hidden="true">'+'<td></td>'.repeat(16)+'</tr>'
-  ).join('');
   _renderAsPagination(total, totalPages);
   _initAsColResizers();
+  _updateAsSelectedCount();
 }
 
 function _renderAsPagination(total, totalPages) {
@@ -4408,6 +4645,7 @@ function _renderAsPagination(total, totalPages) {
 }
 
 function asGoPage(p) {
+  if (!asLedgerCanLeave()) return;
   const totalPages = Math.max(1, Math.ceil(_asFiltered.length / _asPageSize));
   if (p < 1 || p > totalPages) return;
   _asPage = p;
@@ -4416,8 +4654,6 @@ function asGoPage(p) {
 
 function asKpiFilter(status) {
   _asListExample = _asStatsExample;
-  _asListPreviewRecords = _asStatsExample ? _asStatsRecords.map((r,i)=>({...r,id:'list-example-stats-'+i,asNo:'예시-'+String(i+1).padStart(3,'0')})) : null;
-  document.getElementById('asListExampleBtn').textContent=_asListExample?'실제 데이터 보기':'예시 데이터 보기';
   ['asSearch','asDateFrom','asDateTo'].forEach(id=>document.getElementById(id).value='');
   setAsDdValue('asSearchField','all');setAsDdValue('asCategoryFilter','');
   _asCalSyncFromInputs();
@@ -4429,6 +4665,7 @@ function asKpiFilter(status) {
 }
 
 function resetAsFilters() {
+  if (!asLedgerCanLeave()) return;
   _asKpiSelectionMade = false;
   const ids = ['asSearch','asDateFrom','asDateTo'];
   ids.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
@@ -4500,16 +4737,19 @@ function toggleAsRowSelect(tr) {
 function _updateAsSelectedCount() {
   const cnt = document.querySelectorAll('#asTableBody tr.selected').length;
   const el = document.getElementById('asSelectedCount');
-  if (el) el.textContent = cnt ? `선택 ${cnt}건` : '';
+  if (el) {el.innerHTML = `선택 <strong>${cnt}</strong>건`;el.dataset.selected=String(cnt>0);}
+  const all=document.querySelector('#asSubList .as-column-header input[type="checkbox"]');
+  const rows=document.querySelectorAll('#asTableBody .as-row-cb');
+  if(all){all.checked=rows.length>0&&cnt===rows.length;all.indeterminate=cnt>0&&cnt<rows.length;all.disabled=rows.length===0;}
 }
 
 function exportAsExcel() {
   const list = _asFiltered;
   if (!list.length) { alert('내보낼 데이터가 없습니다.'); return; }
-  const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자'];
+  const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','비고','금액 (원)'];
   const rows = list.map(a => [
     a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.ship||'', a.block||'', a.element||'', a.product||'',
-    a.reason||'', a.action||'', a.status||'', a.createdBy||''
+    a.reason||'', a.action||'', a.status||'', a.createdBy||'', a.remark||'', AsAmount.read(a.amount)??''
   ]);
   const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>td,th{border:1px solid #999;padding:4px 8px;font-size:11px}th{background:#f2f2f2;font-weight:bold}</style></head><body><table>'
     + '<tr>' + cols.map(c => '<th>' + c + '</th>').join('') + '</tr>'
@@ -4600,6 +4840,10 @@ function closeFileViewer() {
   _viewerAsItem = null;
 }
 
+function formatAsAmountInput(input) {
+  try { const amount=AsAmount.parse(input.value);input.value=AsAmount.format(amount);input.removeAttribute('aria-invalid');document.getElementById('asAmountError').textContent=''; }
+  catch(error){input.setAttribute('aria-invalid','true');document.getElementById('asAmountError').textContent=error.message;}
+}
 function openAsModal(item) {
   if(asListExampleReadOnly())return;
   asEditingId = item ? item.id : null;
@@ -4640,6 +4884,9 @@ function openAsModal(item) {
     actionText.style.display = '';
   }
   document.getElementById('asRemark').value = item ? (item.remark||'') : '';
+  document.getElementById('asAmount').value = AsAmount.format(item?.amount);
+  document.getElementById('asAmount').removeAttribute('aria-invalid');
+  document.getElementById('asAmountError').textContent = '';
   document.getElementById('asStatus').value = item ? (item.status||'접수') : '접수';
   document.getElementById('asFiles').value = '';
   document.getElementById('asNewFiles').innerHTML = '';
@@ -4679,30 +4926,38 @@ function closeAsModal() {
 }
 
 function startRemarkEdit(e, td) {
-  if(asListExampleReadOnly())return;
   e.stopPropagation();
-  if (td.querySelector('input')) return;
-  const id = td.dataset.id;
-  const item = _asFullList.find(a => a.id === id);
-  const old = item ? (item.remark||'') : '';
-  const w = td.offsetWidth; td.style.width = w + 'px'; td.style.maxWidth = w + 'px';
-  td.innerHTML = `<input type="text" value="${old.replace(/"/g,'&quot;')}" style="width:100%;padding:4px 0;border:none;border-bottom:1px solid #cbd5e1;font-size:11px;outline:none;background:transparent;color:#334155;box-sizing:border-box" onblur="saveRemark(this,'${id}')" onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.dataset.cancel='1';this.blur();}"/>`;
-  const inp = td.querySelector('input');
-  inp.focus();
-  inp.select();
+  if(asListExampleReadOnly() || _asRemarkEditing)return;
+  const id=td.dataset.id, item=_asFullList.find(a=>String(a.id)===id);
+  if(!item)return;
+  _asRemarkEditing={id,saving:false};
+  asLedgerLayoutColumns();
+  td.innerHTML='<div class="as-ledger-inline"><input id="asRemarkInput" aria-label="비고 편집" aria-describedby="asRemarkError" value="'+asJobEsc(item.remark||'')+'"><div class="as-ledger-inline-actions"><button type="button" id="asRemarkSave">저장</button><button type="button" id="asRemarkCancel">취소</button></div><small id="asRemarkError" class="as-ledger-inline-error" role="alert"></small></div>';
+  const input=td.querySelector('input');
+  td.querySelector('#asRemarkSave').onclick=event=>{event.stopPropagation();saveRemark(input,id);};
+  td.querySelector('#asRemarkCancel').onclick=event=>{event.stopPropagation();asLedgerCancelRemark();};
+  input.onkeydown=event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();saveRemark(input,id);}if(event.key==='Escape'){event.preventDefault();asLedgerCancelRemark();}};
+  input.focus();input.select();
 }
 
 async function saveRemark(inp, id) {
-  if (inp.dataset.cancel === '1') { loadAsList(); return; }
-  const val = inp.value.trim();
+  if(!_asRemarkEditing || _asRemarkEditing.id!==id || _asRemarkEditing.saving)return;
+  const error=document.getElementById('asRemarkError'),buttons=[document.getElementById('asRemarkSave'),document.getElementById('asRemarkCancel')];
+  const value=inp.value.trim();
+  if(value.length>500){error.textContent='비고는 500자 이내로 입력하세요.';inp.setAttribute('aria-invalid','true');inp.focus();return;}
+  inp.removeAttribute('aria-invalid');error.textContent='';_asRemarkEditing.saving=true;inp.disabled=true;buttons.forEach(button=>button.disabled=true);
   try {
-    const fd = new FormData();
-    fd.append('remark', val);
-    const r = await fetch(`${SERVER}/api/as/${id}`, { method:'PUT', body: fd });
-    if (!r.ok) { const d = await r.json(); showAlert(d.error||'비고 저장 실패','error'); }
-  } catch(e) {}
-  loadAsList();
+    const fd=new FormData();fd.append('remark',value);
+    const response=await fetch(`${SERVER}/api/as/${encodeURIComponent(id)}`,{method:'PUT',body:fd});
+    if(!response.ok){const data=await response.json().catch(()=>({}));throw Error(data.error||'비고를 저장하지 못했습니다. 다시 시도하세요.');}
+  }catch(err){
+    _asRemarkEditing.saving=false;inp.disabled=false;buttons.forEach(button=>button.disabled=false);
+    error.textContent=err.message||'연결을 확인한 뒤 다시 저장하세요.';inp.focus();
+    return;
+  }
+  _asRemarkEditing=null;await loadAsList();document.getElementById('asLedgerMessage').textContent='비고를 저장했습니다.';
 }
+
 
 async function submitAs() {
   if(asListExampleReadOnly())return;
@@ -4712,7 +4967,13 @@ async function submitAs() {
   const reason = reasonSel === '기타' ? document.getElementById('asReason').value.trim() : reasonSel;
   if (!ship || !block) { const m = document.getElementById('asModalMsg'); m.className='modal-msg error'; m.textContent='호선과 블록을 입력하세요.'; return; }
   if (!reason) { const m = document.getElementById('asModalMsg'); m.className='modal-msg error'; m.textContent='사유를 선택하세요.'; return; }
+  const amountInput=document.getElementById('asAmount');
+  let amount;
+  try { amount=AsAmount.parse(amountInput.value); }
+  catch(error){amountInput.setAttribute('aria-invalid','true');document.getElementById('asAmountError').textContent=error.message;amountInput.focus();return;}
+  amountInput.removeAttribute('aria-invalid');document.getElementById('asAmountError').textContent='';
   const fd = new FormData();
+  fd.append('amount', amount===null?'':String(amount));
   fd.append('category', document.getElementById('asCategory').value);
   fd.append('ship', ship);
   fd.append('block', block);
@@ -4800,7 +5061,6 @@ function bulkEditAs() {
   const items = _getSelectedAsItems();
   if (!items) return;
   if (items.length > 1) { showAlert('수정은 1건만 선택해주세요.', 'warn'); return; }
-  if (items[0].status !== '접수' || items[0].legacyStatus) { showAlert('접수 상태에서만 수정할 수 있습니다.\n\n제작 요청 이후에는 수정이 불가합니다.', 'error'); return; }
   openAsModal(items[0]);
 }
 
@@ -4850,67 +5110,7 @@ function showConfirm(msg, type) {
 
 function showAlert(message, type) { return showToast({message, type}); }
 
-function _initAsColResizers() {
-  const table = document.querySelector('#asSubList .as-erp-table');
-  if (!table) return;
-
-  // 탭이 숨겨져 있으면 측정 불가 — 보일 때 재시도
-  if (table.offsetWidth === 0) {
-    requestAnimationFrame(() => _initAsColResizers());
-    return;
-  }
-
-  // 1) auto → 비율 측정 → 퍼센트로 고정 (창 리사이즈에 대응)
-  table.style.tableLayout = '';
-  table.style.width = '';
-  table.offsetWidth; // reflow
-  const ths = table.querySelectorAll('.as-column-header th');
-  const cols = table.querySelectorAll('colgroup col');
-  const totalW = table.offsetWidth;
-  const widths = Array.from(ths).map(th => th.offsetWidth);
-
-  if (widths.every(w => w === 0) || totalW === 0) return;
-
-  // 퍼센트로 변환하여 반응형 유지
-  ths.forEach((th, i) => {
-    const width = ((widths[i] / totalW) * 100).toFixed(2) + '%';
-    th.style.width = width;
-    cols[i].style.width = width;
-  });
-  table.style.tableLayout = 'fixed';
-  table.style.width = '100%';
-
-  // 2) resizer 핸들 부착
-  table.querySelectorAll('.as-col-resizer').forEach(r => r.remove());
-  ths.forEach((th, i) => {
-    if (th.classList.contains('as-no-col')) return;
-    const resizer = document.createElement('div');
-    resizer.className = 'as-col-resizer';
-    th.appendChild(resizer);
-    let startX, startW;
-    resizer.addEventListener('mousedown', e => {
-      e.preventDefault(); e.stopPropagation();
-      startX = e.pageX;
-      startW = th.offsetWidth;
-      resizer.classList.add('active');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      const onMove = ev => {
-        const w = Math.max(30, startW + ev.pageX - startX);
-        th.style.width = w + 'px';
-      };
-      const onUp = () => {
-        resizer.classList.remove('active');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  });
-}
+function _initAsColResizers() { asLedgerLayoutColumns(); }
 
 async function deleteAs(id) {
   if(asListExampleReadOnly())return;
@@ -6125,11 +6325,11 @@ function renderMonthlyLines(){
   document.getElementById('comparison-count').textContent=result.current.toLocaleString()+'건';
   document.getElementById('comparison-change').textContent=monthComparisonText(result);
   document.getElementById('comparison-basis').textContent=result.previousYear+'년 '+result.previousMonth+'월 '+result.previous.toLocaleString()+'건 기준';
-  document.getElementById('asDailyHint').textContent=year+'년 '+month+'월';
   renderMonthlyLines();renderReasonDonut();requestAnimationFrame(alignReasonTable);
  };
 })();
 </script>
+
 
 <script id="as-list-drawer-script">
 // 목록과 내보내기에서 동일한 접수서 렌더러를 사용한다.
@@ -6146,11 +6346,89 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
  search.addEventListener('compositionend',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(applySearch,250);});
 
  const controls=[['검색 기준','asSearchFieldDd','asSearchFieldBtn'],['검색어','asSearch','asSearch'],['구분','asCategoryFilterDd','asCategoryFilterBtn'],['진행현황','asStatusFilterDd','asStatusFilterBtn'],['접수 기간','asDateRange','asDateFromBtn']];
- const groups=controls.map(([title,id,target],i)=>{const group=document.createElement('div');group.className='as-filter-field'+(i===4?' as-filter-period':'');const label=document.createElement('label');label.className='as-filter-caption';label.htmlFor=target;label.textContent=title;group.append(label,document.getElementById(id));return group;});
+ const icons={asSearchFieldDd:'<path d="M4 5h16M4 12h10M4 19h4"/>',asCategoryFilterDd:'<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/>',asStatusFilterDd:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>'};
+ const groups=controls.map(([title,id,target],i)=>{
+  const group=document.createElement('div');group.className='as-filter-field'+(i===4?' as-filter-period':'');
+  const control=document.getElementById(id),button=document.getElementById(target);
+  if(id==='asSearch'){
+   group.classList.add('as-filter-search');group.innerHTML='<svg class="as-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>';
+  }else{
+   const label=document.createElement('span');label.id=id+'Caption';label.className='as-filter-sr-label';label.textContent=title;group.append(label);control.title=title;
+   if(icons[id]){button.insertAdjacentHTML('afterbegin','<svg class="as-filter-control-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[id]+'</svg>');button.setAttribute('aria-labelledby',label.id+' '+button.querySelector('.toss-dd-label').id);}
+   else{control.setAttribute('role','group');control.setAttribute('aria-labelledby',label.id);button.setAttribute('aria-label','접수 시작일 선택');document.getElementById('asDateToBtn').setAttribute('aria-label','접수 종료일 선택');}
+  }
+  group.append(control);return group;
+ });
  const buttons=document.createElement('div');buttons.className='as-filter-buttons';buttons.append(add);rows[0].classList.add('as-filter-grid');rows[0].replaceChildren(...groups,buttons);
  const edit=rows[1].querySelector('[onclick="bulkEditAs()"]'),del=rows[1].querySelector('[onclick="bulkDeleteAs()"]'),print=rows[1].querySelector('[onclick="bulkPrintAs()"]'),excel=rows[1].querySelector('[onclick="exportAsExcel()"]');
  const exports=document.createElement('div');exports.className='as-export-actions';print.textContent='출력';excel.textContent='Excel';exports.append(print,excel);buttons.replaceChildren(edit,del,exports,add);rows[1].remove();
  const originalUpdate=_updateAsSelectedCount;_updateAsSelectedCount=function(){originalUpdate();const count=document.querySelectorAll('#asTableBody .as-row-cb:checked').length;edit.disabled=count!==1;del.disabled=count===0;};_updateAsSelectedCount();
 })();
-</script></body>
+</script><script id="as-ledger-script">
+// Approved ledger interactions; uses the existing authenticated API and read-only preview guard.
+function asLedgerCanLeave(){if(!_asRemarkEditing)return true;document.getElementById('asLedgerMessage').textContent='편집 중인 비고를 먼저 저장하거나 취소해 주세요.';document.getElementById('asRemarkInput')?.focus();return false;}
+function asLedgerFillBlankRows(table,viewport){
+ const body=table.tBodies[0];
+ body.querySelectorAll('.as-ledger-empty-line').forEach(row=>row.remove());
+ const occupied=[...body.rows].reduce((height,row)=>height+row.getBoundingClientRect().height,0);
+ const capacity=Math.max(_asPageSize*36,viewport.clientHeight-table.tHead.getBoundingClientRect().height);
+ const remaining=Math.max(0,Math.floor(capacity-occupied)),count=Math.ceil(remaining/36);
+ if(count)body.insertAdjacentHTML('beforeend',Array.from({length:count},(_,i)=>'<tr class="as-ledger-empty-line" aria-hidden="true" style="--empty-height:'+Math.min(36,remaining-i*36)+'px">'+'<td></td>'.repeat(table.tHead.rows[0].cells.length)+'</tr>').join(''));
+}
+function asLedgerLayoutColumns(){
+ const table=document.querySelector('#asSubList .as-erp-table');
+ const viewport=table?.parentElement;
+ if(!table||!viewport.clientWidth)return;
+ asLedgerFillBlankRows(table,viewport);
+ const heads=[...table.querySelectorAll('.as-column-header th')],cols=[...table.querySelectorAll('colgroup col')];
+ const minimum=[36,36,98,112,106,106,104,72,80,104,150,110,110,58,84,84,112];
+ if(_asRemarkEditing)minimum[15]=260;
+ const desired=[...minimum],measure=document.createElement('canvas').getContext('2d');
+ measure.font='600 15px '+getComputedStyle(document.getElementById('asSubList')).fontFamily;
+ const fields=['','','status','asNo','createdAt','deliveryAgreedDate','','ship','block','element','product','reason','action','','createdBy','remark','amount'];
+ for(const item of _asFullList.slice(0,200))fields.forEach((field,i)=>{
+  if(!field)return;
+  let value=field==='amount'?AsAmount.format(item.amount):String(item[field]||'');if(field==='createdAt')value=value.slice(0,10);
+  desired[i]=Math.max(desired[i],Math.min(i>=10?240:200,Math.ceil(measure.measureText(value).width)+24));
+ });
+ const totalMinimum=minimum.reduce((a,b)=>a+b,0),totalDesired=desired.reduce((a,b)=>a+b,0);
+ const available=Math.max(totalMinimum,viewport.clientWidth);
+ const flexible=[10,11,12,15];
+ const widths=desired.map((width,i)=>totalDesired>available
+  ?minimum[i]+(width-minimum[i])*(available-totalMinimum)/Math.max(1,totalDesired-totalMinimum)
+  :width+(flexible.includes(i)?(available-totalDesired)/flexible.length:0));
+ table.style.setProperty('width',available+'px','important');
+ let left=0;
+ heads.forEach((th,i)=>{
+  const width=widths[i];cols[i].style.width=width+'px';th.style.width=width+'px';th.style.minWidth=minimum[i]+'px';
+  [th,...table.querySelectorAll('tbody tr[data-id] td:nth-child('+(i+1)+'),tbody tr.as-ledger-empty-line td:nth-child('+(i+1)+')')].forEach(cell=>{
+   cell.style.maxWidth=width+'px';
+   if(i<4){cell.classList.add('as-ledger-sticky');cell.style.position='sticky';cell.style.left=left+'px';cell.style.zIndex=cell===th?'7':'3';}
+   if(cell!==th&&i>=2&&cell.parentElement.hasAttribute('data-id')){cell.tabIndex=0;if(!cell.title)cell.title=cell.textContent.trim();}
+  });
+  if(i<4)left+=width;
+  if(th.dataset.col){th.tabIndex=0;th.setAttribute('aria-sort',th.dataset.col===_asSortCol?(_asSortDir==='asc'?'ascending':'descending'):'none');th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();th.click();}};}
+ });
+ if([...table.tBodies[0].rows].every(row=>row.hasAttribute('data-id')||row.classList.contains('as-ledger-empty-line'))){
+  const filtered=_asFiltered.length,total=_asFullList.length;
+  document.getElementById('asLedgerCount').innerHTML=filtered===total?'전체 <strong>'+total+'</strong>건':'조회 <strong>'+filtered+'</strong>건 <span class="as-ledger-count-total">/ 전체 '+total+'건</span>';
+ }
+}
+
+function asLedgerCellKey(e){const cell=e.target.closest('td[tabindex]');if(!cell||e.target.matches('input,button,a'))return;const tr=cell.parentElement;if(e.key==='Enter'){e.preventDefault();e.stopPropagation();if(cell.cellIndex===15)startRemarkEdit(e,cell);else{const item=_asFullList.find(r=>String(r.id)===tr.dataset.id);if(item)openAsDetail(item);}return;}const move={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key];if(!move)return;e.preventDefault();e.stopPropagation();const rows=[...tr.parentElement.querySelectorAll('tr[data-id]')],visible=[...tr.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none'),ri=rows.indexOf(tr),ci=visible.indexOf(cell);const targetRow=rows[Math.max(0,Math.min(rows.length-1,ri+move[0]))],targets=[...targetRow.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none');targets[Math.max(0,Math.min(targets.length-1,ci+move[1]))]?.focus();}
+function asLedgerCancelRemark(){if(_asRemarkEditing?.saving)return;_asRemarkEditing=null;_renderAsPage();document.getElementById('asLedgerMessage').textContent='비고 변경을 취소했습니다.';}
+(function setupAsLedger(){
+ const list=document.getElementById('asSubList');document.getElementById('asTableBody').addEventListener('keydown',asLedgerCellKey);
+ let layoutFrame;
+ const refreshLayout=()=>{cancelAnimationFrame(layoutFrame);layoutFrame=requestAnimationFrame(()=>{if(list.getClientRects().length)asLedgerLayoutColumns();});};
+ new ResizeObserver(refreshLayout).observe(list.querySelector('.as-ledger-scroll'));
+ window.addEventListener('resize',asLedgerLayoutColumns);
+ document.fonts.ready.then(refreshLayout);
+ list.addEventListener('click',e=>{if(_asRemarkEditing&&!e.target.closest('.as-ledger-inline')){e.preventDefault();e.stopImmediatePropagation();asLedgerCanLeave();}},true);
+ window.addEventListener('beforeunload',e=>{if(_asRemarkEditing){e.preventDefault();e.returnValue='';}});
+ document.addEventListener('DOMContentLoaded',()=>{if(location.hash==='#as-list'){document.getElementById('asSubmenu').classList.add('open');switchTab('as',document.querySelector('#asSubmenu [data-sub="list"]'),'list');}});
+})();
+
+</script>
+</body>
 </html>

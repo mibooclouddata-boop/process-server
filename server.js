@@ -6,6 +6,7 @@ const multer = require('multer');
 const XLSX = require('xlsx');
 
 const asWorkflow = require('./as-workflow');
+const AsAmount = require('./as-amount');
 const asSessions = require('./as-session').createSessionStore();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +45,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/as-workflow-ui.js', (req,res)=>res.sendFile(path.join(__dirname,'as-workflow-ui.js')));
+app.get('/as-amount.js', (req,res)=>res.sendFile(path.join(__dirname,'as-amount.js')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/miboo_logo.png', (req, res) => res.sendFile(path.join(__dirname, 'miboo_logo.png')));
 app.get('/login-bg.png', (req, res) => res.sendFile(path.join(__dirname, 'login-bg.png')));
@@ -558,6 +560,8 @@ app.get('/api/as', (req, res) => {
 });
 
 app.post('/api/as', asUpload.array('files', 10), (req, res) => {
+  let amount;
+  try { amount = AsAmount.parse(req.body.amount); } catch (error) { return res.status(400).json({error:error.message}); }
   const { ship, block, element, product, materialCode, deliveryAgreedDate, reason, action, remark, status, category, createdBy, createdDept, createdPos } = req.body;
   if (deliveryAgreedDate !== undefined && deliveryAgreedDate !== '' && !asWorkflow.dateValid(deliveryAgreedDate)) return res.status(400).json({error:'납품 협의일을 올바른 날짜로 입력하세요.'});
   if (materialCode !== undefined && (typeof materialCode !== 'string' || materialCode.trim().length > 100)) return res.status(400).json({ error: '자재코드는 100자 이내의 문자열로 입력하세요.' });
@@ -571,24 +575,25 @@ app.post('/api/as', asUpload.array('files', 10), (req, res) => {
   const asNo = 'AS-' + ym + '-' + String(data.monthSeq[ym]).padStart(2, '0');
   const files = (req.files || []).map(f => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), filename: f.filename, size: f.size }));
   const item = { id: Date.now().toString(), asNo, ship, block, element: element||'', product: product||'', materialCode: (materialCode||'').trim(), deliveryAgreedDate: deliveryAgreedDate||'', reason, action: action||'', remark: remark||'', status: '접수', category: category||'사내', createdBy: createdBy||'', createdDept: createdDept||'', createdPos: createdPos||'', files, createdAt: new Date().toISOString() };
+  item.amount = amount;
   data.list.push(item);
   saveAs(data);
   res.json({ success: true, item });
 });
 
 app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
+  let amount;
+  try { amount = AsAmount.parse(req.body.amount); } catch (error) { return res.status(400).json({error:error.message}); }
   const data = loadAs();
   const idx = data.list.findIndex(a => a.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'AS 건을 찾을 수 없습니다.' });
   const { ship, block, element, product, materialCode, deliveryAgreedDate, reason, action, remark, status, category } = req.body;
   if (deliveryAgreedDate !== undefined && deliveryAgreedDate !== '' && !asWorkflow.dateValid(deliveryAgreedDate)) return res.status(400).json({error:'납품 협의일을 올바른 날짜로 입력하세요.'});
   if (materialCode !== undefined && (typeof materialCode !== 'string' || materialCode.trim().length > 100)) return res.status(400).json({ error: '자재코드는 100자 이내의 문자열로 입력하세요.' });
-  const cur = data.list[idx].status;
-  // 상태 변경 요청이 아닌 내용 수정은 접수 상태에서만 가능
-  const isRemarkOnly = remark !== undefined && ship === undefined && block === undefined && element === undefined && product === undefined && materialCode === undefined && deliveryAgreedDate === undefined && reason === undefined && action === undefined && category === undefined && !(req.files && req.files.length) && !req.body.removeFiles && status === undefined;
-  const isContentEdit = ship !== undefined || block !== undefined || element !== undefined || product !== undefined || materialCode !== undefined || deliveryAgreedDate !== undefined || reason !== undefined || action !== undefined || category !== undefined || (req.files && req.files.length) || req.body.removeFiles;
-  const isStatusChangeOnly = status !== undefined && status !== cur && !isContentEdit && !isRemarkOnly;
-  if (isContentEdit && (cur !== '접수' || data.list[idx].legacyStatus)) return res.status(400).json({ error: '접수 상태에서만 수정할 수 있습니다.' });
+  // 내용은 모든 진행상태에서 수정할 수 있지만 상태 전환은 진행 관리에서만 처리한다.
+  if (status !== undefined && status !== data.list[idx].status) {
+    return res.status(400).json({error:'진행 관리에서 일정과 완료일을 입력하여 변경하세요.'});
+  }
   if (ship !== undefined) data.list[idx].ship = ship;
   if (block !== undefined) data.list[idx].block = block;
   if (element !== undefined) data.list[idx].element = element;
@@ -596,12 +601,10 @@ app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
   if (materialCode !== undefined) data.list[idx].materialCode = materialCode.trim();
   if (deliveryAgreedDate !== undefined) data.list[idx].deliveryAgreedDate = deliveryAgreedDate;
   if (remark !== undefined) data.list[idx].remark = remark;
+  if (req.body.amount !== undefined) data.list[idx].amount = amount;
   if (reason !== undefined) data.list[idx].reason = reason;
   if (action !== undefined) data.list[idx].action = action;
   if (category !== undefined) data.list[idx].category = category;
-  if (status !== undefined && status !== data.list[idx].status) {
-    return res.status(400).json({error:'진행 관리에서 일정과 완료일을 입력하여 변경하세요.'});
-  }
   // 새 파일 추가
   const newFiles = (req.files || []).map(f => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), filename: f.filename, size: f.size }));
   if (newFiles.length) {
