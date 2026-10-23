@@ -144,7 +144,7 @@ function asJobApprovalLine(item){
   })
  ];
  const e=asJobEsc;
- return '<table class="as-doc-approval" aria-label="결재선"><tbody><tr><th class="as-doc-approval-label" rowspan="3" scope="rowgroup">결재</th>'+slots.map(s=>'<th scope="col">'+e(s.role||'')+'</th>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signature">'+(s.date?'<span>'+e(s.label)+' 완료</span><time>'+e(s.date.slice(0,10))+'</time>':'')+'</td>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signer">'+e(s.name||'')+'</td>').join('')+'</tr></tbody></table>';
+ return '<table class="as-doc-approval" aria-label="결재선"><tbody><tr><th class="as-doc-approval-label" rowspan="3" scope="rowgroup">결재</th>'+slots.map(s=>'<th scope="col">'+e(s.role||'')+'</th>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signature">'+(s.date?'<span class="as-doc-approval-stamp" aria-label="'+e(s.label)+' 완료">승인</span><time>'+e(s.date.slice(0,10))+'</time>':'')+'</td>').join('')+'</tr><tr>'+slots.map(s=>'<td class="as-doc-signer">'+e(s.name||'')+'</td>').join('')+'</tr></tbody></table>';
 }
 function getAsCssStr(){return getLegacyAsCssStr()+`
 @page{size:A4 portrait;margin:12mm}
@@ -154,7 +154,7 @@ body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;fon
 .as-doc-approval{width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 25px;break-inside:avoid}
 .as-doc-approval th,.as-doc-approval td{border:1px solid #aeb3b9;text-align:center;padding:8px 5px;font-weight:500}
 .as-doc-approval th{background:#f3f3f3;font-size:12px;color:#444}.as-doc-approval-label{width:48px;font-weight:650!important}
-.as-doc-signature{height:60px}.as-doc-signature span{display:block;font-size:15px;font-weight:650;color:#262626}.as-doc-signature time{display:block;font-size:10px;color:#555;margin-top:3px}.as-doc-signer{height:34px;font-size:12px}
+.as-doc-signature{height:104px}.as-doc-signature .as-doc-approval-stamp{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:62px;height:62px;border:2px solid currentColor;border-radius:50%;outline:1px solid currentColor;outline-offset:-6px;color:#315779;font-size:21px;font-weight:700;letter-spacing:2px;padding-left:2px;line-height:1;print-color-adjust:exact;-webkit-print-color-adjust:exact}.as-doc-signature time{display:block;font-size:10px;color:#555;margin-top:7px}.as-doc-signer{height:34px;font-size:12px}
 .as-doc-dates{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #333;border-bottom:1px solid #aeb3b9;margin-bottom:24px;break-inside:avoid}.as-doc-dates>div{display:flex;align-items:center;gap:20px;padding:13px 10px}.as-doc-dates>div+div{border-left:1px solid #aeb3b9}.as-doc-dates span{font-size:12px;color:#606060}.as-doc-dates strong{font-size:13px;font-weight:650}
 .section{margin:0 0 22px;break-inside:auto}.section h3{font-size:13px;font-weight:650;margin:0 0 9px;color:#262626;break-after:avoid}
 .info-table{border-collapse:collapse;border:1px solid #aeb3b9;border-radius:0;margin:0;break-inside:avoid}.info-table th,.info-table td{border:1px solid #aeb3b9;padding:11px 12px;vertical-align:top;overflow-wrap:anywhere}.info-table th{width:auto;background:#f3f3f3;color:#444;text-align:left;font-size:12px;font-weight:500;white-space:normal}.info-table td{font-size:13px;color:#252525;font-weight:550}

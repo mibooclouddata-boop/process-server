@@ -65,7 +65,7 @@ test('workflow API persists only valid requests and blocks stale edits',()=>{
 ﻿test('delivery agreement date persists, clears and validates without changing production due dates',()=>{
  const src=fs.readFileSync(__dirname+'/server.js','utf8');const start=src.indexOf("app.post('/api/as',"),end=src.indexOf("app.patch('/api/as/:id/review'",start);
  let post,put,stored={list:[],monthSeq:{}};
- const context={app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>stored=data,Buffer,Date};
+ const context={app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},AsAmount:require('./as-amount'),asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>stored=data,Buffer,Date};
  vm.createContext(context);vm.runInContext(src.slice(start,end),context);
  const call=(handler,body)=>{const r={code:200,status(c){this.code=c;return this;},json(data){this.data=data;}};handler({body,files:[],params:{id:stored.list[0]?.id}},r);return r;};
  const body={ship:'TEST',block:'B',reason:'품질 불량',deliveryAgreedDate:'2026-11-01'};
@@ -74,7 +74,7 @@ test('workflow API persists only valid requests and blocks stale edits',()=>{
  assert.equal(call(put,{deliveryAgreedDate:'2026-11-02'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-02');
  assert.equal(call(put,{deliveryAgreedDate:''}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'');
  for(const value of ['2026-02-30','invalid',null,20261020]){assert.equal(call(put,{deliveryAgreedDate:value}).code,400);assert.equal(call(post,{...body,deliveryAgreedDate:value}).code,400);}
- stored.list[0].status='제작 요청';assert.equal(call(put,{deliveryAgreedDate:'2026-11-03'}).code,400);
+ stored.list[0].status='제작 요청';assert.equal(call(put,{deliveryAgreedDate:'2026-11-03'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-03');
 });
 
 test('approval slots show the authenticated completer for each stage and preserve old audit names',()=>{
@@ -86,14 +86,51 @@ test('approval slots show the authenticated completer for each stage and preserv
   const stage=item.workflow.stages[['제작 요청','도장 요청','납품 요청'][i]];
   assert.equal(stage.completedBy,people[i].name);assert.equal(stage.completedUserId,people[i].id);assert.equal(stage.completedAt,now);
  }
+ item.createdAt=now;
  const output=c.asJobApprovalLine(item);
  for(const person of [actor,...people])assert(output.includes(person.name));
- assert(!output.includes('위조된 이름'));assert(!output.includes('>검토<'));assert(!output.includes('>승인<'));
+ assert(!output.includes('위조된 이름'));assert(!output.includes('>검토<'));assert.equal((output.match(/class="as-doc-approval-stamp"/g)||[]).length,4);assert.equal((output.match(/>승인<\/span>/g)||[]).length,4);
  assert.equal((output.match(/scope="col"/g)||[]).length,4);
  delete item.workflow.stages['제작 요청'].completedBy;
  assert(c.asJobApprovalLine(item).includes('제작 담당'));
  const pending=c.asJobApprovalLine({...base(),reviewer:'과거 검토자',approver:'과거 승인자'});
- assert(!pending.includes('과거 검토자'));assert(!pending.includes('과거 승인자'));assert(!pending.includes('제작 담당'));
+ assert(!pending.includes('과거 검토자'));assert(!pending.includes('과거 승인자'));assert(!pending.includes('제작 담당'));assert(!pending.includes('as-doc-approval-stamp'));
+ const received=c.asJobApprovalLine({...base(),createdAt:now});
+ assert.equal((received.match(/class="as-doc-approval-stamp"/g)||[]).length,1);assert(received.includes('<time>'+day+'</time>'));
+});
+
+test('receipt amounts persist, clear and validate in every workflow status without changing workflow',()=>{
+ const src=fs.readFileSync(__dirname+'/server.js','utf8'),start=src.indexOf("app.post('/api/as',"),end=src.indexOf("app.patch('/api/as/:id/review'",start);
+ let post,put,stored={list:[],monthSeq:{}},writes=0;
+ const AsAmount=require('./as-amount');
+ const c={AsAmount,app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>{stored=data;writes++;},Buffer,Date};
+ vm.createContext(c);vm.runInContext(src.slice(start,end),c);
+ const call=(fn,body)=>{const r={code:200,status(code){this.code=code;return this;},json(data){this.data=data;}};fn({body,files:[],params:{id:stored.list[0]?.id}},r);return r;};
+ const body={ship:'2601',block:'T100P',reason:'품질 불량',amount:'1,234,567'};
+ assert.equal(call(post,body).code,200);assert.equal(stored.list[0].amount,1234567);
+ assert.equal(call(put,{remark:'비고 수정'}).code,200);assert.equal(stored.list[0].amount,1234567);
+ assert.equal(call(put,{amount:'0'}).code,200);assert.equal(stored.list[0].amount,0);
+ assert.equal(call(put,{amount:''}).code,200);assert.equal(stored.list[0].amount,null);
+ for(const amount of ['-1','1.5','1e3','1,23','NaN','Infinity','9007199254740992',[],{},true]){
+  const before=writes;assert.equal(call(put,{amount}).code,400);assert.equal(call(post,{...body,amount}).code,400);assert.equal(writes,before);
+ }
+ assert.equal(call(put,{amount:'9007199254740991'}).code,200);assert.equal(stored.list[0].amount,Number.MAX_SAFE_INTEGER);
+ for(const status of ['접수','제작 요청','도장 요청','납품 요청','완료']){
+  stored.list[0].status=status;stored.list[0].workflow={revision:7,stages:{'제작 요청':{completedDate:'2026-10-20'}},history:[{type:'complete',stage:'제작 요청'}]};
+  const workflow=structuredClone(stored.list[0].workflow);
+  assert.equal(call(put,{amount:'2000',product:'VERTICAL LADDER',remark:'내용 수정',status}).code,200);
+  assert.equal(stored.list[0].amount,2000);assert.equal(stored.list[0].status,status);assert.deepEqual(stored.list[0].workflow,workflow);
+  const before=writes;assert.equal(call(put,{amount:'3000',status:status==='완료'?'접수':'완료'}).code,400);assert.equal(writes,before);assert.equal(stored.list[0].amount,2000);
+ }
+ stored.list[0].legacyStatus='승인 요청';assert.equal(call(put,{amount:'5000'}).code,200);assert.equal(stored.list[0].legacyStatus,'승인 요청');
+ assert.equal(AsAmount.format(0),'0');assert.equal(AsAmount.format(null),'');assert.equal(AsAmount.format(1234567),'1,234,567');
+ const ui={AsAmount};vm.createContext(ui);const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');vm.runInContext(html.slice(html.indexOf('function _sortAsListBy('),html.indexOf('function sortAsTable(')),ui);
+ const rows=[{amount:1000},{amount:null},{amount:0},{amount:20}];
+ assert.deepEqual(Array.from(ui._sortAsListBy(rows,'amount','asc'),r=>r.amount),[0,20,1000,null]);
+ assert.deepEqual(Array.from(ui._sortAsListBy(rows,'amount','desc'),r=>r.amount),[1000,20,0,null]);
+ let selected,opened;Object.assign(ui,{_getSelectedAsItems:()=>[selected],openAsModal:item=>opened=item,showAlert:()=>assert.fail('edit unexpectedly blocked')});
+ vm.runInContext(html.slice(html.indexOf('function bulkEditAs()'),html.indexOf('async function bulkDeleteAs()')),ui);
+ for(const status of ['접수','제작 요청','도장 요청','납품 요청','완료']){selected={status,legacyStatus:'승인 요청'};ui.bulkEditAs();assert.equal(opened,selected);}
 });
 
 test('shared calendar respects stage bounds, clearing and month boundaries',()=>{
@@ -122,6 +159,52 @@ test('formal receipt keeps dates together and escapes text exactly once',()=>{
  const c={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
  const doc=c.asJobDocument({createdAt:'2026-10-14',deliveryAgreedDate:'2026-10-22',reason:'A & B <확인>',files:[{name:'검사 & 도면.pdf'}]});
  assert(doc.includes('2026.10.14'));assert(doc.includes('2026.10.22'));assert(doc.includes('A &amp; B &lt;확인&gt;'));assert(!doc.includes('&amp;amp;'));assert(doc.includes('검사 &amp; 도면.pdf'));assert(!doc.includes('처리 이력'));assert.equal((doc.match(/납품 협의일/g)||[]).length,1);
+});
+
+test('intake pagination shows 20 records per page and handles the final partial page',()=>{
+ const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
+ let visible=true;
+ const tbody={innerHTML:''},pagination={style:{}},head={getClientRects:()=>visible?[{}]:[],getBoundingClientRect:()=>({bottom:300-c.window.scrollY})};
+ const c={AsAmount:require('./as-amount'),window:{innerHeight:1000,scrollY:0},document:{querySelector:()=>head,getElementById:id=>id==='asTableBody'?tbody:pagination},_asRemarkEditing:null,_asFullList:[],_asPage:1,_asPageSize:20,_asFiltered:[],_updateAsSelectedCount(){},_renderAsPagination(){},_initAsColResizers(){},asJobEsc:String,asWorkflowDelayHtml:()=>''};
+ vm.createContext(c);
+ vm.runInContext(html.slice(html.indexOf('function _renderAsPage()'),html.indexOf('function _renderAsPagination(')),c);
+ visible=true;c._renderAsPage();assert.equal(tbody.innerHTML,'');assert.equal(pagination.style.display,'none');
+ c._asFiltered=[{id:'one',asNo:'AS-ONE',status:'접수',files:[]}];c._renderAsPage();
+ assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,1);
+ assert(!html.includes('asListExampleBtn'));assert(!html.includes('toggleAsListExample'));
+ c._asFiltered=Array.from({length:21},(_,i)=>({id:'item-'+i,asNo:'AS-'+i,status:'접수',files:[]}));
+ c._renderAsPage();assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,20);
+ c._asPage=2;c._renderAsPage();assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,1);assert(tbody.innerHTML.includes('AS-20'));
+});
+
+test('switching to sample records ignores stale real-data responses and errors',async()=>{
+ const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
+ const source=html.slice(html.indexOf('let _asListRequest = 0;'),html.indexOf('function _applyAsFilters()'));
+ for(const fail of [false,true]){
+  let resolve,reject;const pending=new Promise((yes,no)=>{resolve=yes;reject=no;});
+  const elements={},samples=[{id:'sample'}];
+  const c={_asRemarkEditing:null,_asListExample:false,_asFullList:[],_asPage:1,SERVER:'',fetch:()=>pending,getAsExampleRecords:()=>samples,_applyAsFilters(){},_updateAsSelectedCount(){},document:{getElementById:id=>elements[id]??= {style:{}}}};
+  vm.createContext(c);vm.runInContext(source,c);
+  const first=c.loadAsList();c._asListExample=true;await c.loadAsList();
+  if(fail)reject(Error('offline'));else resolve({ok:true,json:async()=>({list:[{id:'real'}]})});
+  await first;assert.equal(c._asFullList,samples);assert.notEqual(elements.asLedgerCount.textContent,'조회 오류');
+ }
+});
+
+test('remark editing preserves unsaved input on validation, HTTP and network errors',async()=>{
+ const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
+ const source=html.slice(html.indexOf('async function saveRemark('),html.indexOf('async function submitAs('));
+ for(const scenario of ['success','validation','http','network','saving']){
+  const elements={asRemarkError:{},asRemarkSave:{},asRemarkCancel:{},asLedgerMessage:{}};
+  let calls=0,refreshes=0;
+  const input={value:scenario==='validation'?'x'.repeat(501):'수정 내용',setAttribute(){},removeAttribute(){},focus(){}};
+  const c={_asRemarkEditing:{id:'one',saving:scenario==='saving'},document:{getElementById:id=>elements[id]},FormData,SERVER:'',fetch:async()=>{calls++;if(scenario==='network')throw Error('offline');return {ok:scenario!=='http',json:async()=>({error:'저장 실패'})};},loadAsList:async()=>refreshes++};
+  vm.createContext(c);vm.runInContext(source,c);await c.saveRemark(input,'one');
+  assert.equal(calls,['validation','saving'].includes(scenario)?0:1);
+  assert.equal(refreshes,scenario==='success'?1:0);
+  if(scenario==='success')assert.equal(c._asRemarkEditing,null);
+  else{assert.equal(c._asRemarkEditing.id,'one');assert.equal(input.value,scenario==='validation'?'x'.repeat(501):'수정 내용');if(scenario!=='saving')assert(elements.asRemarkError.textContent);}
+ }
 });
 
 test('bulk deletion reports server failures instead of success, refreshes partial results and honors cancel',async()=>{
