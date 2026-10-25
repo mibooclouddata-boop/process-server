@@ -1,13 +1,14 @@
 (() => {
  'use strict';
  let canvas=document.getElementById('art');
- const reduced=matchMedia('(prefers-reduced-motion: reduce)'),TAU=Math.PI*2,COUNT=16000;
+ const reduced=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false},TAU=Math.PI*2,COUNT=16000;
  let seed=73;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
  const particles=new Float32Array(COUNT*4);
  for(let i=0;i<COUNT;i++){particles[i*4]=random()*TAU;particles[i*4+1]=random()*2-1;particles[i*4+2]=random();particles[i*4+3]=random();}
  let w=600,h=600,scale=180,dpr=1,time=2.8,visible=true,frame=0,last=0,frames=0,renderer;
  function webgl(){
-  const gl=canvas.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false,powerPreference:'low-power'});
+  let gl;
+  try{gl=canvas.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false,powerPreference:'low-power'});}catch{return null;}
   if(!gl)return null;
   const vertex=`attribute vec4 aParticle;uniform vec2 uSize;uniform float uScale,uDpr,uTime,uCenter;varying vec4 vColor;
   void main(){
@@ -37,7 +38,7 @@
  }
  function fallback(){
   const replacement=canvas.cloneNode(false);canvas.replaceWith(replacement);canvas=replacement;
-  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return null;
+  let ctx;try{ctx=canvas.getContext('2d',{alpha:false});}catch{return null;}if(!ctx)return null;
   const count=3600,xs=new Float32Array(count),ys=new Float32Array(count),next=new Int32Array(count),heads=new Int32Array(24);
   const colors=Array.from({length:12},(_,i)=>{const d=(i+.5)/12;return `rgba(${Math.round(9+(1-d)*61)},${Math.round(72+(1-d)*55)},${Math.round(127+(1-d)*46)},${.21+d*.57})`});
   const cx=Math.cos(.88),sx=Math.sin(.88),cy=Math.cos(.15),sy=Math.sin(.15),cz=Math.cos(-.4),sz=Math.sin(-.4);
@@ -56,14 +57,32 @@
  }
  function draw(){if(!renderer)return;renderer.draw();frames++;canvas.dataset.frames=String(frames);canvas.dataset.ready='true';canvas.dataset.renderer=renderer.name;}
  function resize(){const rect=canvas.getBoundingClientRect();w=Math.max(1,rect.width);h=Math.max(1,rect.height);dpr=Math.min(devicePixelRatio||1,1.6);const width=Math.round(w*dpr),height=Math.round(h*dpr);if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}scale=Math.min(w*(w<450?.26:.30),h*.34)*(innerWidth<=700?1:Number(canvas.dataset.zoom)||1);draw();}
- function running(){return !!renderer&&!reduced.matches&&visible&&!document.hidden;}
- function tick(now){frame=0;if(!running())return;if(!last)last=now;time+=Math.min(.05,(now-last)/1000);last=now;draw();frame=requestAnimationFrame(tick);}
+ // Reduced motion uses a gentle pace rather than freezing the cover.
+ function running(){return !!renderer&&visible&&!document.hidden;}
+ function tick(now){frame=0;if(!running())return;if(!last)last=now;time+=Math.min(.05,(now-last)/1000)*(reduced.matches?.35:1);last=now;draw();frame=requestAnimationFrame(tick);}
  function sync(){cancelAnimationFrame(frame);last=0;canvas.dataset.running=String(running());if(running())frame=requestAnimationFrame(tick);else draw();}
  renderer=webgl()||fallback();
  if(!renderer){document.querySelector('.art-error').hidden=false;return;}
- const resizeObserver=new ResizeObserver(resize),intersection=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync()},{threshold:.01});
- canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();cancelAnimationFrame(frame);resizeObserver.unobserve(canvas);intersection.unobserve(canvas);renderer.dispose();renderer=fallback();if(!renderer){document.querySelector('.art-error').hidden=false;return;}resizeObserver.observe(canvas);intersection.observe(canvas);resize();sync();},{once:true});
- resizeObserver.observe(canvas);intersection.observe(canvas);reduced.addEventListener('change',sync);document.addEventListener('visibilitychange',sync);
- window.addEventListener('pagehide',event=>{cancelAnimationFrame(frame);last=0;if(event.persisted)return;resizeObserver.disconnect();intersection.disconnect();renderer?.dispose()});
+ // Older embedded browsers may not provide these optional observers.
+ const resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
+ const intersection=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync()},{threshold:.01}):null;
+ canvas.addEventListener('webglcontextlost',event=>{
+  event.preventDefault();cancelAnimationFrame(frame);
+  if(resizeObserver)resizeObserver.unobserve(canvas);
+  if(intersection)intersection.unobserve(canvas);
+  renderer.dispose();renderer=fallback();
+  if(!renderer){document.querySelector('.art-error').hidden=false;return;}
+  visible=true;
+  if(resizeObserver)resizeObserver.observe(canvas);
+  if(intersection)intersection.observe(canvas);
+  resize();sync();
+ },{once:true});
+ if(resizeObserver)resizeObserver.observe(canvas);
+ if(intersection)intersection.observe(canvas);
+ window.addEventListener('resize',resize);
+ if(typeof reduced.addEventListener==='function')reduced.addEventListener('change',sync);
+ else if(typeof reduced.addListener==='function')reduced.addListener(sync);
+ document.addEventListener('visibilitychange',sync);
+ window.addEventListener('pagehide',event=>{cancelAnimationFrame(frame);last=0;if(event.persisted)return;if(resizeObserver)resizeObserver.disconnect();if(intersection)intersection.disconnect();renderer.dispose();});
  window.addEventListener('pageshow',event=>{if(event.persisted){resize();sync();}});resize();sync();
 })();
