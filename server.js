@@ -41,7 +41,9 @@ const asUpload = multer({
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 // 정적 파일: login.html, dashboard.html, 로고, 업로드 파일만 서빙 (JSON 데이터 파일 노출 차단)
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'cover.html')));
+app.get('/cover.html', (req, res) => res.sendFile(path.join(__dirname, 'cover.html')));
+app.use('/cover-assets', express.static(path.join(__dirname, 'cover-assets'), { index:false, dotfiles:'deny' }));
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/as-workflow-ui.js', (req,res)=>res.sendFile(path.join(__dirname,'as-workflow-ui.js')));
