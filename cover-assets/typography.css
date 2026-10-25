@@ -1,0 +1,19 @@
+/* Approved typography concept 1: clear, balanced quotation. */
+.story h1{letter-spacing:-.045em;line-height:1.02}
+.story blockquote{font-size:22px;line-height:1.65;letter-spacing:-.025em;color:#233d51;margin-top:26px;word-break:keep-all}
+.story blockquote>span{display:block}
+.story .enter{font-size:16px;letter-spacing:-.01em}
+.stats dt{font-size:15px;color:#3e586d}
+@media(min-width:1001px) and (max-height:720px){
+ .story blockquote{font-size:20px;line-height:1.6;margin-top:20px}
+ .stats dt{font-size:14px}
+}
+@media(min-width:701px) and (max-width:1000px){
+ .story blockquote{font-size:19px;line-height:1.65}
+ .stats dt{font-size:13px}
+}
+@media(max-width:700px){
+ .story blockquote{font-size:18px;line-height:1.75;margin-top:24px}
+ .story .enter{font-size:15px}
+ .stats dt{font-size:13px}
+}
