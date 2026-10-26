@@ -1,0 +1,22 @@
+/* Approved headline motion: concept 1, sequential blue emphasis. */
+.story h1 > span,
+.story h1 > em {
+  --headline-lift: -2.8px;
+  color: var(--ink);
+  transform-origin: left center;
+  animation: cover-headline-emphasis 10.8s ease-in-out infinite;
+}
+.story h1 > :nth-child(2) { animation-delay: 3.6s; }
+.story h1 > :nth-child(3) { animation-delay: 7.2s; }
+@keyframes cover-headline-emphasis {
+  0%, 33%, 100% { color: var(--ink); transform: translateY(0); }
+  5%, 27% { color: var(--blue); transform: translateY(var(--headline-lift)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story h1 > span, .story h1 > em {
+    --headline-lift: 0px;
+    animation-duration: 16.2s;
+  }
+  .story h1 > :nth-child(2) { animation-delay: 5.4s; }
+  .story h1 > :nth-child(3) { animation-delay: 10.8s; }
+}
