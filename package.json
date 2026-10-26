@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs",
+    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs login.test.cjs as-only.test.cjs",
     "start": "node server.js"
   },
   "keywords": [],
@@ -14,7 +14,6 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "multer": "^2.1.1",
-    "xlsx": "^0.18.5"
+    "multer": "^2.1.1"
   }
 }

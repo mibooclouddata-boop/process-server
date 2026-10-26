@@ -32,8 +32,6 @@
 #tabUsers .um-permission{display:inline-block;border-radius:4px;background:#eaf2fc;color:#215b92;font-size:12px;padding:4px 7px;margin:3px 4px 3px 0;white-space:nowrap}
 #tabUsers .um-permission.is-off{background:#f1f4f7;color:#65758a}
 #tabUsers .um-muted{font-size:13px;color:#62748a}
-#tabUsers .um-steps summary{cursor:pointer;color:#215b92;font-size:13px;padding:12px 0;min-width:82px}
-#tabUsers .um-steps>div{max-width:240px;padding-bottom:6px}
 #tabUsers .um-actions{display:flex;gap:8px;white-space:nowrap}
 #tabUsers .um-actions [data-um-delete]{color:#a33b3b}
 #tabUsers .um-footer{padding:14px 20px;border-top:1px solid #e5ebf2}
