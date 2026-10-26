@@ -1976,7 +1976,7 @@ body #asSubStats .as-reason-heatmap-table :is(th,td){font-family:var(--ui-font);
 body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;font-weight:700}
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
-<link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=1">
+<link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=2">
 </head>
 <body>
 
@@ -6863,7 +6863,7 @@ function createAsReadableTrend(chart){
  root.dataset.overviewLayout='comparison';
  const context=root.querySelector('.as-overview-section:not(.as-overview-period)');
  context.querySelector('span').textContent='현재 상태 기준 · 전체 기간 · 완료 제외';
- const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><label for="asStatsYear">조회연도</label></div>';$('asKpiRow').after(basis);
+ const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><label class="as-chart-sr-only" for="asStatsYear">조회연도</label></div><span class="as-year-basis">접수일 기준</span>';$('asKpiRow').after(basis);
  basis.querySelector('label').after($('asStatsYear'));
  $('asStatsReasonsTitle').textContent='유형별 집계';
  const heading=root.querySelector('.as-trend-stack .as-stats-chart-heading');
