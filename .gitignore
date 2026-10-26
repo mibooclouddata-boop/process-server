@@ -12,3 +12,8 @@ erp_columns.json
 .artifacts/
 .env
 data/
+.env.*
+!.env.example
+*.secrets.json
+.local-supabase-test-data/
+supabase/.temp/

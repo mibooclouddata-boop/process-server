@@ -2101,7 +2101,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             </div>
             <div class="modal-field">
               <label>비밀번호 * <span class="hint" id="modalPwHint" style="display:none">(빈칸이면 유지)</span></label>
-              <input id="modalUserPw" placeholder="비밀번호" type="text" autocomplete="new-password"/>
+              <input id="modalUserPw" placeholder="비밀번호" type="password" autocomplete="new-password"/>
             </div>
           </div>
           <div class="modal-row">
@@ -2206,7 +2206,7 @@ async function doLogin() {
           document.getElementById('welcomeOverlay').classList.remove('show');
           document.getElementById('welcomeOverlay').style.animation = '';
           document.getElementById('dashboard').style.display = 'block';
-          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.id})`;
+          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.loginId || data.user.id})`;
           if (data.user.role === 'sysadmin' || data.user.role === 'admin') {
             // tabMaster removed
           }
@@ -2558,9 +2558,9 @@ function showModalMsg(text, type) {
 function openUserModal(user) {
   modalEditingId = user ? user.id : null;
   document.getElementById('modalTitle').textContent = user ? `사용자 수정: ${user.name}` : '새 사용자 추가';
-  document.getElementById('modalUserId').value = user ? user.id : '';
+  document.getElementById('modalUserId').value = user ? (user.loginId || user.id) : '';
   document.getElementById('modalUserId').disabled = !!user;
-  document.getElementById('modalUserPw').value = user ? (user.password || '') : '';
+  document.getElementById('modalUserPw').value = '';
   document.getElementById('modalPwHint').style.display = user ? '' : 'none';
   document.getElementById('modalUserName').value = user ? user.name : '';
   document.getElementById('modalUserRole').value = user ? user.role : 'worker';
@@ -2595,21 +2595,29 @@ function renderAdminUsers() {
   const department = document.getElementById('umDepartment').value;
   const order = {sysadmin:0,admin:1,worker:2};
   const names = {sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
-  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
+  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.loginId,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
     .sort((a,b) => ((order[a.role] ?? 9)-(order[b.role] ?? 9)) || String(a.name || '').localeCompare(String(b.name || ''),'ko'));
   const tbody = document.getElementById('adminUserRows');
   tbody.innerHTML = list.length ? list.map(u => {
     const roleKey = Object.hasOwn(names,u.role) ? u.role : 'worker';
     const index = adminUsersCache.indexOf(u);
     const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
-    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.id)+'</small></div></div></td>'+
+    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.loginId || u.id)+'</small></div></div></td>'+
       '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span>'+(u.passwordResetRequired?'<small>비밀번호 재설정 필요</small>':'')+'</td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
       '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
-      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
+      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.authProvider==='supabase'?'<button type="button" data-um-active="'+index+'">'+(u.active?'비활성화':'활성화')+'</button>':u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
   }).join('') : '<tr><td colspan="5" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
+  tbody.querySelectorAll('[data-um-active]').forEach(button=>button.addEventListener('click',()=>toggleAdminUserActive(adminUsersCache[Number(button.dataset.umActive)])));
   tbody.querySelectorAll('[data-um-edit]').forEach(button=>button.addEventListener('click',()=>openUserModal(adminUsersCache[Number(button.dataset.umEdit)])));
   tbody.querySelectorAll('[data-um-delete]').forEach(button=>button.addEventListener('click',()=>{const u=adminUsersCache[Number(button.dataset.umDelete)];deleteAdminUser(u.id,u.name);}));
   document.getElementById('umCount').textContent = '조회 '+list.length+'명 / 전체 '+adminUsersCache.length+'명';
+}
+async function toggleAdminUserActive(user) {
+  if(!confirm(user.name+' 계정을 '+(user.active?'비활성화':'활성화')+'하시겠습니까?'))return;
+  try {
+    const r=await fetch(`${SERVER}/api/users/${encodeURIComponent(user.id)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!user.active})});
+    const data=await r.json();if(!r.ok){alert(data.error||'계정 변경 실패');return;}await loadAdminUsers();
+  }catch{alert('서버 연결 오류');}
 }
 async function loadAdminUsers() {
   const version = ++adminUsersLoadVersion;
@@ -4075,7 +4083,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (!currentUser) return; // initAuth에서 이미 리다이렉트 처리됨
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.id})`;
+  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.loginId || currentUser.id})`;
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
     document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');

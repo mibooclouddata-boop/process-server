@@ -22,7 +22,7 @@ function applyWorkflow(source,input,actor,day=today(),now=new Date().toISOString
   if(!['save','advance'].includes(action)) fail('올바른 작업을 선택하세요.');
   const current=STAGES.indexOf(item.status);
   const wf=item.workflow||{revision:0,stages:{},history:[]};
-  const history=(type,detail)=>wf.history.push({type,...detail,at:now,by:actor.name});
+  const history=(type,detail)=>wf.history.push({type,...detail,at:now,by:actor.name,byUserId:actor.id||''});
   const agreement=input.deliveryAgreedDate ?? item.deliveryAgreedDate;
   if(!dateValid(agreement)) fail('제작 요청 전에 납품 협의일을 입력하세요.');
   if(agreement!==item.deliveryAgreedDate) history('deadline',{previousDate:item.deliveryAgreedDate||'',date:agreement});
@@ -56,7 +56,7 @@ function applyWorkflow(source,input,actor,day=today(),now=new Date().toISOString
     if(input.next==='완료') {
       if(input.completionNote) item.completionNote=text(input.completionNote,'최종 조치 내용',2000);
       item.deliveredDate=completedDate;
-      item.completedBy=actor.name;item.completedDept=actor.department||'';item.completedPos=actor.position||'';item.completedAt=now;
+      item.completedBy=actor.name;item.completedUserId=actor.id||'';item.completedDept=actor.department||'';item.completedPos=actor.position||'';item.completedAt=now;
     } else {
       plan(input.next);
     }

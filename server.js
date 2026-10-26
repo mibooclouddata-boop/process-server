@@ -9,6 +9,12 @@ const AsAmount = require('./as-amount');
 const asSessions = require('./as-session').createSessionStore();
 const app = express();
 const PORT = process.env.PORT || 3000;
+const AUTH_PROVIDER = process.env.AUTH_PROVIDER || 'local';
+if (!['local','supabase'].includes(AUTH_PROVIDER)) throw new Error('AUTH_PROVIDER 설정을 확인하세요.');
+const supabaseAuth = AUTH_PROVIDER === 'supabase' ? (()=>{
+  const auth = require('./supabase-auth');
+  return auth.createSupabaseAuth(auth.createSupabaseBackend(auth.configuration()));
+})() : null;
 const passwords = require('./passwords');
 const DATA_DIR = path.resolve(process.env.PROCESS_DATA_DIR || __dirname);
 fs.mkdirSync(DATA_DIR, {recursive:true});
@@ -83,8 +89,10 @@ function saveAs(data) { fs.writeFileSync(AS_FILE, JSON.stringify(data, null, 2))
 // ── 초기 데이터 파일 생성 ──
 if (!fs.existsSync(DATA_FILE)) saveData({records:[],users:[]});
 // Convert before listening. Known public default credentials are locked, never accepted.
-const initialData=loadData();
-if(passwords.migratePasswords(initialData))saveData(initialData);
+if(!supabaseAuth){
+  const initialData=loadData();
+  if(passwords.migratePasswords(initialData))saveData(initialData);
+}
 
 function loadData() {
   return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
@@ -101,6 +109,7 @@ let pendingLogins=0;
 const dummyHash=passwords.hashPassword(require('node:crypto').randomBytes(32).toString('hex'));
 function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],department:u.department||'',position:u.position||'',asReview:u.asReview===true,asApprove:u.asApprove===true};}
 app.post('/api/login', async (req,res)=>{
+  if(supabaseAuth)return supabaseAuth.login(req,res);
   const {id,password}=req.body||{};
   if(typeof id!=='string'||id.length>100||typeof password!=='string'||password.length>128)return res.status(400).json({error:'로그인 정보를 확인하세요.'});
   const now=Date.now();
@@ -120,6 +129,7 @@ app.post('/api/login', async (req,res)=>{
   } finally {pendingLogins--;}
 });
 function authenticate(req,res,next){
+  if(supabaseAuth)return supabaseAuth.authenticate(req,res,next);
   const id=asSessions.userId(req);
   const user=id&&loadData().users.find(u=>u.id===id);
   if(!user||user.active===false||!['sysadmin','admin','worker'].includes(user.role)||user.passwordResetRequired||!asSessions.matches(req,user))return res.status(401).json({error:'다시 로그인하세요.'});
@@ -128,12 +138,13 @@ function authenticate(req,res,next){
 function requireRoles(...roles){return (req,res,next)=>roles.includes(req.user.role)?next():res.status(403).json({error:'권한이 없습니다.'});}
 app.use('/api',authenticate);
 app.get('/api/me',(req,res)=>res.json({user:publicUser(req.user)}));
+app.get('/api/as-attachments/:id',(req,res)=>supabaseAuth?supabaseAuth.attachment(req,res):res.sendStatus(404));
 app.use('/api/users',requireRoles('sysadmin'));
+app.use('/api/users',(req,res,next)=>supabaseAuth?supabaseAuth.users(req,res):next());
 function canManageAs(user,item){
   if(user.role==='sysadmin'||user.asReview===true||user.asApprove===true)return true;
   if(item.createdById)return item.createdById===user.id;
-  // Legacy names grant ownership only when exactly one current account matches.
-  return item.createdBy===user.name && loadData().users.filter(u=>u.name===item.createdBy).length===1;
+  return false; // Legacy names must be explicitly mapped to immutable user IDs.
 }
 function authorizeAsChange(req,res,next){
   const item=loadAs().list.find(a=>a.id===req.params.id);
@@ -273,7 +284,7 @@ app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
 
 app.patch('/api/as/:id/review', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
 app.patch('/api/as/:id/approve', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
-app.post('/api/logout', (req,res)=>{asSessions.revoke(req,res);res.json({success:true});});
+app.post('/api/logout', (req,res)=>{if(supabaseAuth)return supabaseAuth.logout(req,res);asSessions.revoke(req,res);res.json({success:true});});
 function authenticateAsWorkflow(req,res,next){
   if(req.user){req.asActor=req.user;return next();}
   const userId=asSessions.userId(req);

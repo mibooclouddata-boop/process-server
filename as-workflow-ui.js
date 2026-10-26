@@ -50,7 +50,7 @@ function asWorkflowDelayHtml(item,showDate=true){
  return '<small class="as-job-due">'+(showDate?'납품 '+asJobEsc(due)+' · ':'')+(days>0?'<b>'+label+'</b>':label)+'</small>';
 }
 function openSelectedAsWorkflow(){const items=_getSelectedAsItems();if(!items)return;if(items.length!==1){showAlert('처리할 AS 건을 하나만 선택하세요.','warn');return;}openAsWorkflow(items[0]);}
-function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&currentUser&&(currentUser.role==='sysadmin'||currentUser.asReview||currentUser.asApprove||(item.createdById?currentUser.id===item.createdById:currentUser.name===item.createdBy));}
+function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&currentUser&&(currentUser.role==='sysadmin'||currentUser.asReview||currentUser.asApprove||(item.createdById&&currentUser.id===item.createdById));}
 function asJobHistoryText(h){
  if(h.type==='deadline')return '납품 협의일: '+(h.previousDate?h.previousDate+' → ':'')+h.date;
  if(h.type==='schedule')return h.stage+' 일정: '+(h.previousDueDate? h.previousDueDate+' → ':'')+h.dueDate+' / 담당 '+h.owner;

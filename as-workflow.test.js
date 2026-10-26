@@ -1,7 +1,7 @@
 ﻿const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const {applyWorkflow,normalize,dateValid}=require('./as-workflow');
-const actor={name:'테스트 담당',department:'품질'},day='2026-10-20',now='2026-10-20T00:00:00Z';
-const base=()=>({id:'test',status:'접수',deliveryAgreedDate:'2026-10-25',createdBy:actor.name,files:[]});
+const actor={id:'test',name:'테스트 담당',department:'품질'},day='2026-10-20',now='2026-10-20T00:00:00Z';
+const base=()=>({id:'test',status:'접수',deliveryAgreedDate:'2026-10-25',createdBy:actor.name,createdById:actor.id,files:[]});
 const run=(item,input)=>applyWorkflow(item,{revision:item.workflow?.revision||0,...input},actor,day,now);
 const start=item=>run(item,{action:'advance',next:'제작 요청',owner:'제작 담당',dueDate:'2026-10-21'});
 
@@ -91,6 +91,9 @@ test('workflow API persists only valid requests and blocks stale edits',()=>{
  const payload={actorId:'test',revision:0,action:'advance',next:'제작 요청',owner:'담당',dueDate:day};
  assert.equal(call({...payload,actorId:'unknown'}).code,403);assert.equal(saved,undefined);
  assert.equal(call(payload).code,200);assert.equal(saved.list[0].status,'제작 요청');assert.equal(call(payload).code,409);
+ assert.equal(context.canManageAs(actor,{createdBy:actor.name}),false);
+ assert.equal(context.canManageAs({...actor,id:'other'},base()),false);
+ assert.equal(context.canManageAs({...actor,name:'변경된 이름'},base()),true);
 });
 
 ﻿test('delivery agreement date persists, clears and validates without changing production due dates',()=>{
