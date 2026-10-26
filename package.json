@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs",
+    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs",
     "start": "node server.js"
   },
   "keywords": [],

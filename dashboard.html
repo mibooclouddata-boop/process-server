@@ -792,42 +792,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 #tabAs .as-cat-external{background:#fef2f2!important;color:#b91c1c!important}
 #tabAs .as-cat-etc{background:#f5f5f4!important;color:#57534e!important}
 
-/* ── Toss-style 사용자 관리 ── */
-#tabUsers .toss-user-new-btn{height:44px;padding:0 18px;border-radius:12px;background:#004A93;color:#fff;border:none;font-size:14px;font-weight:700;letter-spacing:-0.01em;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background .15s,transform .05s}
-#tabUsers .toss-user-new-btn:hover{background:#003a75}
-#tabUsers .toss-user-new-btn:active{transform:scale(0.98)}
-#tabUsers .toss-user-new-btn svg{width:16px;height:16px;flex-shrink:0}
-
-#tabUsers .toss-user-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
-#tabUsers .toss-user-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px 20px;box-shadow:var(--shadow-xs);display:flex;align-items:center;gap:12px;transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
-#tabUsers .toss-user-kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
-#tabUsers .toss-user-kpi-icon{width:40px;height:40px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-#tabUsers .toss-user-kpi-icon svg{width:20px;height:20px}
-#tabUsers .toss-user-kpi-label{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;margin-bottom:4px}
-#tabUsers .toss-user-kpi-value{font-size:24px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text)}
-
-#tabUsers .toss-user-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);overflow:hidden}
-
-#tabUsers .user-perm-table{font-family:'Pretendard Variable',Pretendard,sans-serif!important}
-#tabUsers .user-perm-table th{background:#fff!important;color:#6b7684!important;font-size:11.5px!important;font-weight:700!important;letter-spacing:-0.01em!important;text-transform:none!important;padding:14px 12px!important;border-bottom:1px solid #f1f3f5!important}
-#tabUsers .user-perm-table td{padding:12px 12px!important;border-bottom:1px solid #f1f3f5!important;font-size:12.5px!important;color:#333d4b!important;font-weight:500!important}
-#tabUsers .user-perm-table tbody tr:nth-child(even) td{background:#fff!important}
-#tabUsers .user-perm-table tbody tr:hover td{background:#f9fafb!important}
-#tabUsers .user-perm-table tbody tr:last-child td{border-bottom:none!important}
-
-#tabUsers .ut-name{font-size:13.5px!important;font-weight:700!important;color:#191f28!important;letter-spacing:-0.02em!important}
-#tabUsers .ut-id{font-size:12px!important;color:#8b95a1!important;font-weight:500!important}
-#tabUsers .ut-no{color:#b0b8c1!important;font-weight:500!important}
-
-#tabUsers .ut-cat{padding:4px 10px!important;border-radius:999px!important;font-size:11.5px!important;font-weight:700!important;letter-spacing:-0.01em!important;border:none!important}
-#tabUsers .ut-cat-sysadmin{background:#fef2f2!important;color:#b91c1c!important}
-#tabUsers .ut-cat-admin{background:#f5f3ff!important;color:#6d28d9!important}
-#tabUsers .ut-cat-worker{background:#ecfdf5!important;color:#047857!important}
-
-#tabUsers .ut-dot.on{background:#004A93!important;box-shadow:0 0 0 3px rgba(0,74,147,0.1)}
-#tabUsers .ut-dot.off{background:#f2f4f6!important}
-#tabUsers .ut-dot.off::after{color:#b0b8c1!important}
-
 /* footer bar */
 .as-table-footer{padding:8px 14px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;font-size:11px;color:#64748b;font-weight:600}
 /* resizer handle */
@@ -1977,6 +1941,7 @@ body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
 <link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=2">
+<link rel="stylesheet" href="/cover-assets/user-management-basic.css?v=1">
 </head>
 <body>
 
@@ -2322,82 +2287,26 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
     <!-- 사용자 관리 탭 -->
     <div id="tabUsers" style="display:none">
-      <div class="page-title-wrap with-action">
-        <div>
-          <h1 class="page-title">사용자 관리</h1>
-          <p class="page-subtitle">시스템 사용자와 권한을 관리합니다.</p>
-        </div>
-        <button onclick="openUserModal()" class="toss-user-new-btn" style="width:40px;height:40px;padding:0;justify-content:center" title="새 사용자 추가" aria-label="새 사용자 추가">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-        </button>
-      </div>
-
-      <!-- KPI 카드 -->
+      <div class="page-title-wrap with-action"><div><h1 class="page-title">사용자 관리</h1><p class="page-subtitle">사용자 정보와 공정·AS 권한을 한곳에서 관리합니다.</p></div><button type="button" class="toss-user-new-btn" onclick="openUserModal()">＋ 사용자 추가</button></div>
       <div class="toss-user-kpi-row">
-        <div class="toss-user-kpi">
-          <div class="toss-user-kpi-icon" style="background:#e6eef7;color:#004A93">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="8" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M17 4.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div>
-            <div class="toss-user-kpi-label">전체</div>
-            <div class="toss-user-kpi-value" id="uStatTotal">0</div>
-          </div>
-        </div>
-        <div class="toss-user-kpi">
-          <div class="toss-user-kpi-icon" style="background:#fef2f2;color:#dc2626">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <div>
-            <div class="toss-user-kpi-label">시스템</div>
-            <div class="toss-user-kpi-value" id="uStatSys">0</div>
-          </div>
-        </div>
-        <div class="toss-user-kpi">
-          <div class="toss-user-kpi-icon" style="background:#f5f3ff;color:#6d28d9">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-          </div>
-          <div>
-            <div class="toss-user-kpi-label">관리자</div>
-            <div class="toss-user-kpi-value" id="uStatAdmin">0</div>
-          </div>
-        </div>
-        <div class="toss-user-kpi">
-          <div class="toss-user-kpi-icon" style="background:#ecfdf5;color:#047857">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v2a3 3 0 1 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M6 22v-4a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4"/><circle cx="19" cy="9" r="2"/><circle cx="5" cy="9" r="2"/></svg>
-          </div>
-          <div>
-            <div class="toss-user-kpi-label">작업자</div>
-            <div class="toss-user-kpi-value" id="uStatWorker">0</div>
-          </div>
-        </div>
+      <div class="toss-user-kpi"><span class="toss-user-kpi-label">전체 사용자</span><strong class="toss-user-kpi-value" id="uStatTotal">0</strong></div>
+<div class="toss-user-kpi"><span class="toss-user-kpi-label">시스템 관리자</span><strong class="toss-user-kpi-value" id="uStatSys">0</strong></div>
+<div class="toss-user-kpi"><span class="toss-user-kpi-label">관리자</span><strong class="toss-user-kpi-value" id="uStatAdmin">0</strong></div>
+<div class="toss-user-kpi"><span class="toss-user-kpi-label">작업자</span><strong class="toss-user-kpi-value" id="uStatWorker">0</strong></div>
       </div>
-
-      <!-- 테이블 카드 -->
-      <div class="toss-user-card">
-        <div class="table-wrap">
-          <table class="user-perm-table">
-            <thead><tr>
-              <th style="width:32px">#</th>
-              <th class="ut-fixed">분류</th>
-              <th class="ut-fixed">이름</th>
-              <th class="ut-fixed">아이디</th>
-              <th class="ut-fixed">부서</th>
-              <th class="ut-fixed">직급</th>
-              <th class="ut-perm">입고</th>
-              <th class="ut-perm">검수대기</th>
-              <th class="ut-perm">검수완료</th>
-              <th class="ut-perm">도장대기</th>
-              <th class="ut-perm">도장완료</th>
-              <th class="ut-perm">납품대기</th>
-              <th class="ut-perm">납품완료</th>
-              <th class="ut-perm">AS검토</th>
-              <th class="ut-perm">AS승인</th>
-              <th class="ut-fixed" style="width:70px"></th>
-            </tr></thead>
-            <tbody id="adminUserRows"></tbody>
-          </table>
-        </div>
+      <div class="um-toolbar">
+        <label class="um-search">사용자 검색<input id="umSearch" type="search" placeholder="이름, 아이디, 부서 검색" oninput="renderAdminUsers()"></label>
+        <label>역할<select id="umRole" onchange="renderAdminUsers()"><option value="">전체 역할</option><option value="sysadmin">시스템 관리자</option><option value="admin">관리자</option><option value="worker">작업자</option></select></label>
+        <label>부서<select id="umDepartment" onchange="renderAdminUsers()"><option value="">전체 부서</option></select></label>
+        <button type="button" onclick="resetAdminUserFilters()">필터 초기화</button>
       </div>
+      <section class="toss-user-card" aria-labelledby="umListTitle">
+        <div class="um-panel-heading"><h2 id="umListTitle">사용자 목록</h2><span>공정 권한을 펼쳐 상세 내용을 확인하세요.</span></div>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 목록, 가로 스크롤 가능">
+          <table class="user-perm-table"><thead><tr><th scope="col">사용자</th><th scope="col">분류</th><th scope="col">부서 / 직급</th><th scope="col">공정 권한</th><th scope="col">AS 권한</th><th scope="col">관리</th></tr></thead><tbody id="adminUserRows"></tbody></table>
+        </div>
+        <div class="um-footer" id="umCount" role="status" aria-live="polite">사용자 목록을 불러오는 중입니다.</div>
+      </section>
     </div>
 
     <!-- AS 접수 탭 -->
@@ -4332,63 +4241,64 @@ const STEP_STYLE = {
 };
 
 // ── 관리자: 사용자 권한 테이블 ──
+let adminUsersCache = [];
+let adminUsersLoadVersion = 0;
+function umEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function resetAdminUserFilters() {
+  ['umSearch','umRole','umDepartment'].forEach(id => document.getElementById(id).value = '');
+  renderAdminUsers();
+}
+function renderAdminUsers() {
+  const query = document.getElementById('umSearch').value.trim().toLocaleLowerCase();
+  const role = document.getElementById('umRole').value;
+  const department = document.getElementById('umDepartment').value;
+  const order = {sysadmin:0,admin:1,worker:2};
+  const names = {sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
+  const stepNames = ['입고','검수대기','검수완료','도장대기','도장완료','납품대기','납품완료'];
+  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
+    .sort((a,b) => ((order[a.role] ?? 9)-(order[b.role] ?? 9)) || String(a.name || '').localeCompare(String(b.name || ''),'ko'));
+  const tbody = document.getElementById('adminUserRows');
+  tbody.innerHTML = list.length ? list.map(u => {
+    const steps = STEP_ORDER.filter(step => (u.allowedSteps || []).includes(step));
+    const roleKey = Object.hasOwn(names,u.role) ? u.role : 'worker';
+    const index = adminUsersCache.indexOf(u);
+    const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
+    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.id)+'</small></div></div></td>'+
+      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span></td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
+      '<td>'+(steps.length ? '<details class="um-steps"><summary>'+steps.length+'개 허용</summary><div>'+steps.map(step=>'<span class="um-permission">'+stepNames[STEP_ORDER.indexOf(step)]+'</span>').join('')+'</div></details>':'<span class="um-muted">공정 권한 없음</span>')+'</td>'+
+      '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
+      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
+  }).join('') : '<tr><td colspan="6" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
+  tbody.querySelectorAll('[data-um-edit]').forEach(button=>button.addEventListener('click',()=>openUserModal(adminUsersCache[Number(button.dataset.umEdit)])));
+  tbody.querySelectorAll('[data-um-delete]').forEach(button=>button.addEventListener('click',()=>{const u=adminUsersCache[Number(button.dataset.umDelete)];deleteAdminUser(u.id,u.name);}));
+  document.getElementById('umCount').textContent = '조회 '+list.length+'명 / 전체 '+adminUsersCache.length+'명';
+}
 async function loadAdminUsers() {
+  const version = ++adminUsersLoadVersion;
+  document.getElementById('umCount').textContent = '사용자 목록을 불러오는 중입니다.';
   try {
     const r = await fetch(`${SERVER}/api/users`);
+    if (!r.ok) throw new Error('users request failed');
     const data = await r.json();
-    const users = data.users || [];
-    const tbody = document.getElementById('adminUserRows');
-    if (!users.length) {
-      tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="empty-icon">&#128100;</div><p>사용자가 없습니다</p></td></tr>';
-      return;
-    }
-    // 시스템관리자 > 관리자 > 작업자 순 정렬
-    const roleOrder = { sysadmin: 0, admin: 1, worker: 2 };
-    const sorted = [...users].sort((a,b) => {
-      const ra = roleOrder[a.role] ?? 9, rb = roleOrder[b.role] ?? 9;
-      return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
-    });
-    // 요약 카운트
-    const rc = { sysadmin:0, admin:0, worker:0 };
-    users.forEach(u => { rc[u.role] = (rc[u.role]||0) + 1; });
-    document.getElementById('uStatTotal').textContent = users.length;
-    document.getElementById('uStatSys').textContent = rc.sysadmin;
-    document.getElementById('uStatAdmin').textContent = rc.admin;
-    document.getElementById('uStatWorker').textContent = rc.worker;
-    const checkSvg = `<svg viewBox="0 0 16 16"><path d="M12.2 4.8a.6.6 0 01.1.84l-5.5 6a.6.6 0 01-.87.02L3.7 9.4a.6.6 0 01.85-.85l1.8 1.8 5.02-5.47a.6.6 0 01.84-.1z" fill="#fff"/></svg>`;
-    const roleMap = { sysadmin:'시스템 관리자', admin:'관리자', worker:'작업자' };
-    tbody.innerHTML = sorted.map((u, idx) => {
-      const catText = roleMap[u.role] || '작업자';
-      const steps = new Set(u.allowedSteps || []);
-      const permCells = STEP_ORDER.map(s => {
-        const st = STEP_STYLE[s];
-        const on = steps.has(s);
-        return `<td class="ut-perm-cell"><span class="ut-dot ${on?'on':'off'}" style="${on?'color:'+st.color:''}">${on?checkSvg:''}</span></td>`;
-      }).join('');
-      const asReviewOn = u.asReview||false;
-      const asApproveOn = u.asApprove||false;
-      const asReviewCell = `<td class="ut-perm-cell"><span class="ut-dot ${asReviewOn?'on':'off'}" style="${asReviewOn?'color:#d97706':''}">${asReviewOn?checkSvg:''}</span></td>`;
-      const asApproveCell = `<td class="ut-perm-cell"><span class="ut-dot ${asApproveOn?'on':'off'}" style="${asApproveOn?'color:#7c3aed':''}">${asApproveOn?checkSvg:''}</span></td>`;
-      const escapedUser = encodeURIComponent(JSON.stringify({ id:u.id, password:u.password, name:u.name, role:u.role, department:u.department||'', position:u.position||'', allowedSteps:u.allowedSteps||[], asReview:asReviewOn, asApprove:asApproveOn }));
-      return `<tr>
-        <td class="ut-no">${idx+1}</td>
-        <td><span class="ut-cat ut-cat-${u.role}">${catText}</span></td>
-        <td class="ut-name">${u.name}</td>
-        <td class="ut-id">${u.id}</td>
-        <td style="font-size:12px;color:#475569">${u.department||'—'}</td>
-        <td style="font-size:12px;color:#475569">${u.position||'—'}</td>
-        ${permCells}
-        ${asReviewCell}${asApproveCell}
-        <td style="text-align:right">
-          <div style="display:flex;gap:4px;justify-content:flex-end">
-            <button class="admin-btn-edit" title="수정" onclick="openUserModal(JSON.parse(decodeURIComponent('${escapedUser}')))"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button>
-            ${u.id === 'admin' ? '' : `<button class="admin-btn-del" title="삭제" onclick="deleteAdminUser('${u.id}','${u.name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg></button>`}
-          </div>
-        </td>
-      </tr>`;
-    }).join('');
+    if (version !== adminUsersLoadVersion) return;
+    adminUsersCache = Array.isArray(data.users) ? data.users : [];
+    const counts = {sysadmin:0,admin:0,worker:0};
+    adminUsersCache.forEach(u => { if(Object.hasOwn(counts,u.role)) counts[u.role]++; });
+    for(const [id,value] of Object.entries({Total:adminUsersCache.length,Sys:counts.sysadmin,Admin:counts.admin,Worker:counts.worker})) document.getElementById('uStat'+id).textContent=value;
+    const department = document.getElementById('umDepartment');
+    const previous = department.value;
+    const departments = [...new Set(adminUsersCache.map(u=>u.department || '미지정'))].sort((a,b)=>a.localeCompare(b,'ko'));
+    department.innerHTML = '<option value="">전체 부서</option>'+departments.map(d=>'<option value="'+umEscape(d)+'">'+umEscape(d)+'</option>').join('');
+    department.value = departments.includes(previous) ? previous : '';
+    renderAdminUsers();
   } catch(e) {
-    document.getElementById('adminUserRows').innerHTML = '<tr><td colspan="12" style="padding:20px;color:#dc2626;text-align:center">서버 연결 오류</td></tr>';
+    if (version !== adminUsersLoadVersion) return;
+    adminUsersCache = [];
+    ['Total','Sys','Admin','Worker'].forEach(id=>document.getElementById('uStat'+id).textContent='—');
+    document.getElementById('adminUserRows').innerHTML = '<tr><td colspan="6" class="um-empty">사용자 목록을 불러오지 못했습니다. <button type="button" onclick="loadAdminUsers()">다시 시도</button></td></tr>';
+    document.getElementById('umCount').textContent = '서버 연결 오류';
   }
 }
 

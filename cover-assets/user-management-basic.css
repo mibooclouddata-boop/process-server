@@ -1,0 +1,47 @@
+/* 사용자관리 1안: 균형 잡힌 기본형 */
+#tabUsers{color:#243449}
+#tabUsers .page-title{font-size:28px;letter-spacing:-.035em}
+#tabUsers .page-subtitle{font-size:14px;color:#62748a}
+#tabUsers .toss-user-new-btn{min-height:44px;background:#195b9d;border-radius:6px;padding:10px 16px;font-size:14px}
+#tabUsers .toss-user-kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+#tabUsers .toss-user-kpi{display:flex;justify-content:space-between;align-items:center;min-height:88px;border:1px solid #dce4ee;border-radius:8px;padding:16px 20px;background:#fff;box-shadow:none}
+#tabUsers .toss-user-kpi-label{font-size:14px;color:#62748a}
+#tabUsers .toss-user-kpi-value{font-size:30px;color:#243449;font-weight:700}
+#tabUsers .um-toolbar{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 18px}
+#tabUsers .um-toolbar label{display:flex;flex-direction:column;gap:6px;color:#52677e;font-size:13px}
+#tabUsers .um-search{flex:1;min-width:220px;max-width:440px}
+#tabUsers .um-toolbar input,#tabUsers .um-toolbar select{height:44px;padding:9px 12px;border:1px solid #bfccdb;border-radius:5px;background:#fff;color:#243449;font:inherit;font-size:14px;min-width:0}
+#tabUsers .um-toolbar select{min-width:150px}
+#tabUsers button:not(.toss-user-new-btn){min-height:44px;padding:8px 13px;background:white;border:1px solid #bccbdc;border-radius:5px;color:#344d68;font:inherit;font-size:13px;cursor:pointer}
+#tabUsers :is(button,input,select,summary,.table-wrap):focus-visible{outline:3px solid #367dc7;outline-offset:2px}
+#tabUsers button:hover{filter:brightness(.96)}
+#tabUsers .toss-user-card{background:white;border:1px solid #dce4ee;border-radius:8px;overflow:hidden;box-shadow:none}
+#tabUsers .um-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #e5ebf2}
+#tabUsers .um-panel-heading h2{font-size:16px;margin:0;font-weight:700}
+#tabUsers .um-panel-heading span,#tabUsers .um-footer{font-size:13px;color:#62748a}
+#tabUsers .table-wrap{min-height:330px;max-height:65vh;overflow:auto}
+#tabUsers .user-perm-table{width:100%;min-width:900px;border-collapse:collapse;table-layout:auto}
+#tabUsers .user-perm-table th{position:sticky;top:0;z-index:1;background:#f3f6fa;font-size:13px;color:#52677e;text-align:left;padding:13px 20px;white-space:nowrap}
+#tabUsers .user-perm-table td{height:72px;padding:13px 20px;font-size:14px;text-align:left;border-bottom:1px solid #e8edf3;vertical-align:middle}
+#tabUsers .user-perm-table tbody tr:hover{background:#f8fbff}
+#tabUsers .um-person{display:flex;gap:11px;align-items:center}
+#tabUsers .um-avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:8px;background:#eaf2fc;color:#195b9d;font-weight:700;flex-shrink:0}
+#tabUsers .um-person strong{font-size:15px;display:block;font-weight:700}
+#tabUsers .um-person small,#tabUsers .um-position{display:block;font-size:12px;color:#62748a;margin-top:3px}
+#tabUsers .ut-cat{font-size:12px;padding:5px 8px;white-space:nowrap}
+#tabUsers .um-permission{display:inline-block;border-radius:4px;background:#eaf2fc;color:#215b92;font-size:12px;padding:4px 7px;margin:3px 4px 3px 0;white-space:nowrap}
+#tabUsers .um-permission.is-off{background:#f1f4f7;color:#65758a}
+#tabUsers .um-muted{font-size:13px;color:#62748a}
+#tabUsers .um-steps summary{cursor:pointer;color:#215b92;font-size:13px;padding:12px 0;min-width:82px}
+#tabUsers .um-steps>div{max-width:240px;padding-bottom:6px}
+#tabUsers .um-actions{display:flex;gap:8px;white-space:nowrap}
+#tabUsers .um-actions [data-um-delete]{color:#a33b3b}
+#tabUsers .um-footer{padding:14px 20px;border-top:1px solid #e5ebf2}
+#tabUsers .user-perm-table .um-empty{text-align:center;height:200px;color:#62748a}
+@media(max-width:800px){#tabUsers .toss-user-kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}#tabUsers .toss-user-kpi{padding:14px;min-height:76px}#tabUsers .toss-user-kpi-value{font-size:26px}#tabUsers .um-search{flex-basis:100%;max-width:none}#tabUsers .um-toolbar label:not(.um-search){flex:1}#tabUsers .um-toolbar select{width:100%;min-width:100px}#tabUsers .um-panel-heading{align-items:flex-start;flex-direction:column}#tabUsers .page-title-wrap{gap:12px;flex-wrap:wrap}}
+
+#tabUsers .toss-user-new-btn{color:#fff;border:0;font-family:inherit;font-weight:700;cursor:pointer}
+#tabUsers .ut-cat{border-radius:4px;font-weight:700}
+#tabUsers .ut-cat-sysadmin{background:#fef2f2;color:#b91c1c}
+#tabUsers .ut-cat-admin{background:#f5f3ff;color:#6d28d9}
+#tabUsers .ut-cat-worker{background:#ecfdf5;color:#047857}
