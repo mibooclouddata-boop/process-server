@@ -2657,10 +2657,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             <select id="asReasonSelect" onchange="onAsReasonSelect()" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px">
               <option value="">사유를 선택하세요</option>
               <option value="치수 오작">치수 오작</option>
-              <option value="품질 불량">품질 불량</option>
+              <option value="제작 오작">제작 오작</option>
               <option value="용접 불량">용접 불량</option>
               <option value="도장 불량">도장 불량</option>
-              <option value="수량 누락">수량 누락</option>
+              <option value="부재 누락">부재 누락</option>
               <option value="납기 누락">납기 누락</option>
               <option value="마킹 오류">마킹 오류</option>
               <option value="기타">기타 (직접 입력)</option>
@@ -4450,7 +4450,13 @@ let asEditingId = null;
 let _asStatsRecords = [];
 let _asStatsRequest = 0;
 let _asStatsSelectedMonth = new Date().getMonth()+1;
-const AS_REASON_TYPES = ['치수 오작','품질 불량','용접 불량','도장 불량','수량 누락','납기 누락','마킹 오류'];
+const AS_REASON_TYPES = ['치수 오작','제작 오작','용접 불량','도장 불량','부재 누락','납기 누락','마킹 오류'];
+function normalizeAsReason(value) {
+  const reason = typeof value === 'string' ? value.trim() : '';
+  if (reason === '품질 불량') return '제작 오작';
+  if (reason === '수량 누락') return '부재 누락';
+  return reason;
+}
 function asStatsDateKey(value) {
   if (typeof value !== 'string') return null;
   const match = /^(\d{4})-(\d{2})-(\d{2})(?:T|$)/.exec(value);
@@ -4476,7 +4482,7 @@ function summarizeAsStatistics(records, year, month) {
     counts[date.month - 1]++;
     const amount=AsAmount.read(record.amount);
     if(amount!==null){amounts[date.month-1]+=BigInt(amount);amountEntries[date.month-1]++;}
-    const reason = typeof record.reason === 'string' ? record.reason.trim() : '';
+    const reason = normalizeAsReason(record.reason);
     reasons[AS_REASON_TYPES.includes(reason) ? reason : '기타']++;
     const status = Object.prototype.hasOwnProperty.call(statuses, record.status) ? record.status : '기타';
     statuses[status] = (statuses[status] || 0) + 1;
@@ -4656,7 +4662,7 @@ function summarizeAsReasonHeatmap(records,year,today=asJobToday()) {
   const names=[...AS_REASON_TYPES,'기타'],values=names.map(()=>Array(12).fill(0)),totals=Array(12).fill(0);
   for(const record of records){
     const date=asStatsDateKey(record?.createdAt);if(!date||date.year!==year)continue;
-    const reason=typeof record.reason==='string'?record.reason.trim():'';
+    const reason=normalizeAsReason(record.reason);
     const row=AS_REASON_TYPES.indexOf(reason);
     values[row<0?7:row][date.month-1]++;totals[date.month-1]++;
   }
@@ -5076,7 +5082,8 @@ function _renderAsPage() {
       ? '<button type="button" class="as-file-badge" onclick="openAsAttachments(this)" aria-label="첨부파일 '+ff.length+'개 보기" title="'+asJobEsc(ff.map(f=>f.name).join(', '))+'">'+ff.length+'건</button>'
       : '<span class="as-file-empty" aria-label="첨부파일 없음">—</span>';
 
-    const reasonShort = (a.reason||'—').length > 28 ? (a.reason||'').slice(0,28)+'…' : (a.reason||'—');
+    const reasonLabel = normalizeAsReason(a.reason);
+    const reasonShort = reasonLabel.length > 28 ? reasonLabel.slice(0,28)+'…' : (reasonLabel||'—');
     const actionShort = (a.action||'—').length > 28 ? (a.action||'').slice(0,28)+'…' : (a.action||'—');
     const dateStr = (a.createdAt||'').slice(0,10);
 
@@ -5092,7 +5099,7 @@ function _renderAsPage() {
       <td style="font-size:12px;color:#475569">${a.block||'—'}</td>
       <td style="font-size:12px;color:#94a3b8">${a.element||'—'}</td>
       <td style="font-size:12px;color:#475569">${a.product||'—'}</td>
-      <td><span class="as-truncate" title="${(a.reason||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#334155">${reasonShort}</span></td>
+      <td><span class="as-truncate" title="${asJobEsc(reasonLabel)}" style="font-size:12px;color:#334155">${asJobEsc(reasonShort)}</span></td>
       <td><span class="as-truncate" title="${(a.action||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#64748b">${actionShort}</span></td>
       <td class="as-files-cell" style="text-align:center">${fileCell}</td>
       <td style="font-size:11px;color:#64748b">${a.createdBy||'—'}</td>
@@ -5246,7 +5253,7 @@ function exportAsExcel() {
   const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','비고','금액 (원)'];
   const rows = list.map(a => [
     a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.ship||'', a.block||'', a.element||'', a.product||'',
-    a.reason||'', a.action||'', a.status||'', a.createdBy||'', a.remark||'', AsAmount.read(a.amount)??''
+    normalizeAsReason(a.reason), a.action||'', a.status||'', a.createdBy||'', a.remark||'', AsAmount.read(a.amount)??''
   ]);
   // Excel's HTML importer needs explicit column widths; browser auto-layout is not retained.
   // Estimate display width in pixels at 11pt, counting Korean/full-width glyphs twice.
@@ -5365,7 +5372,7 @@ function openAsModal(item) {
   document.getElementById('asMaterialCode').value = item ? (item.materialCode||'') : '';
   document.getElementById('asProduct').value = item ? (item.product||'') : '';
   // 사유: 기존 값이 선택 옵션에 있으면 select, 없으면 기타
-  const reasonVal = item ? (item.reason||'') : '';
+  const reasonVal = normalizeAsReason(item?.reason);
   const reasonSelect = document.getElementById('asReasonSelect');
   const reasonText = document.getElementById('asReason');
   const presetReasons = AS_REASON_TYPES;
@@ -5472,7 +5479,7 @@ async function submitAs() {
   const ship = document.getElementById('asShip').value.trim();
   const block = document.getElementById('asBlock').value.trim();
   const reasonSel = document.getElementById('asReasonSelect').value;
-  const reason = reasonSel === '기타' ? document.getElementById('asReason').value.trim() : reasonSel;
+  const reason = normalizeAsReason(reasonSel === '기타' ? document.getElementById('asReason').value : reasonSel);
   if (!ship || !block) { const m = document.getElementById('asModalMsg'); m.className='modal-msg error'; m.textContent='호선과 블록을 입력하세요.'; return; }
   if (!reason) { const m = document.getElementById('asModalMsg'); m.className='modal-msg error'; m.textContent='사유를 선택하세요.'; return; }
   const amountInput=document.getElementById('asAmount');
@@ -5664,7 +5671,7 @@ async function buildAsPageHtml(a) {
   const _statusColor = _statusColors[a.status] || '#64748b';
   const _statusLabel = a.status || '접수';
   const attachPage = asFiles.length ? '<div class="attach-page"><div class="attach-label">별 첨</div><div class="attach-body">'+(otherHtml?'<div style="margin-bottom:10px">'+otherHtml+'</div>':'')+imagesHtml+pdfImagesHtml+'</div></div>' : '';
-  return { pageHtml: asJobDocument(a), attachHtml: attachPage };
+  return { pageHtml: asJobDocument({...a, reason:normalizeAsReason(a.reason)}), attachHtml: attachPage };
 }
 
 // ── AS CSS (공통) ──
