@@ -7,6 +7,7 @@ const path = require('node:path');
 const {spawn, spawnSync} = require('node:child_process');
 const {once} = require('node:events');
 const {hashPassword, verifyPassword, migratePasswords} = require('./passwords');
+const {randomUUID}=require('node:crypto');
 const password = 'Test-only-passphrase-2026!';
 
 test('password hashing uses independent salts and migration is idempotent', async () => {
@@ -42,13 +43,13 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     child.stdout.on('data',chunk=>{output+=chunk;const m=output.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve('http://127.0.0.1:'+m[1]);}});
     child.once('exit',code=>{clearTimeout(timer);reject(Error('Server exited '+code));});
   });
-  const request=(route,{method='GET',token,cookie,body,headers={}}={})=>fetch(base+route,{method,headers:{'X-Requested-With':'process-server',...(token?{Authorization:'Bearer '+token}:{}),...(cookie?{Cookie:cookie}:{}),...(body?{'Content-Type':'application/json'}:{}),...headers},...(body?{body:JSON.stringify(body)}:{})});
+  const request=(route,{method='GET',token,cookie,body,headers={}}={})=>fetch(base+route,{method,headers:{'Idempotency-Key':randomUUID(),'X-Requested-With':'process-server',...(token?{Authorization:'Bearer '+token}:{}),...(cookie?{Cookie:cookie}:{}),...(body?{'Content-Type':'application/json'}:{}),...headers},...(body?{body:JSON.stringify(body)}:{})});
   const login=async(id,mobile=true)=>{
     const r=await request('/api/login',{method:'POST',body:{id,password},headers:mobile?{'X-Client-Type':'mobile'}:{}});
     assert.equal(r.status,200);return {response:r,...await r.json()};
   };
   await t.test('all registered business routes reject anonymous callers, including case variants',async()=>{
-    const source=fs.readFileSync(path.join(__dirname,'server.js'),'utf8');
+    const source=['server.js','as-api.js'].map(name=>fs.readFileSync(path.join(__dirname,name),'utf8')).join('\n');
     const routes=new Set([...source.matchAll(/app\.(get|post|put|patch|delete)\('(\/api\/[^']+)'/g)].map(m=>m[1].toUpperCase()+' '+m[2]));
     for(const route of routes){
       const [method,raw]=route.split(' ');if(raw==='/api/login')continue;
@@ -97,7 +98,7 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
   await t.test('AS attachments, ownership and workflow remain usable',async()=>{
     const fd=new FormData();for(const [key,value] of Object.entries({ship:'TEST',block:'TEST',reason:'테스트',createdBy:'관리자'}))fd.append(key,value);
     fd.append('files',new Blob(['fixture attachment'],{type:'text/plain'}),'fixture.txt');
-    const created=await fetch(base+'/api/as',{method:'POST',headers:{Authorization:'Bearer '+worker.token,'X-Requested-With':'process-server'},body:fd});
+    const created=await fetch(base+'/api/as',{method:'POST',headers:{'Idempotency-Key':randomUUID(),Authorization:'Bearer '+worker.token,'X-Requested-With':'process-server'},body:fd});
     assert.equal(created.status,200);item=(await created.json()).item;
     assert.equal(item.createdById,'worker');assert.equal(item.createdBy,'직원');
     const route='/uploads/'+item.files[0].filename;
@@ -105,10 +106,10 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     const attachment=await request(route,{token:worker.token});assert.equal(attachment.status,200);assert.equal(await attachment.text(),'fixture attachment');
     assert.equal((await request('/uploads/unreferenced.txt',{token:worker.token})).status,404);
     for(const method of ['PUT','DELETE'])assert.equal((await request('/api/as/'+item.id,{method,token:other.token,body:method==='PUT'?{remark:'tamper'}:undefined})).status,403);
-    const payload={revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:'2026-12-31'};
+    const payload={version:0,revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:'2026-12-31'};
     assert.equal((await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:other.token,body:{...payload,actorId:'root'}})).status,403);
     assert.equal((await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:worker.token,body:payload})).status,200);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:worker.token,body:{remark:'updated'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:worker.token,body:{version:1,remark:'updated'}})).status,200);
   });
   await t.test('account creation, password reset, role changes and deletion revoke access',async()=>{
     assert.equal((await request('/api/users',{method:'POST',token:admin.token,body:{id:'new',name:'신규',password:'1234'}})).status,400);

@@ -23,10 +23,10 @@ test('stored business data is inert in real Chromium, with CSP disabled as well 
  const base=await new Promise((resolve,reject)=>{let out='';const timer=setTimeout(()=>reject(Error('startup timeout')),30000);child.stdout.on('data',data=>{out+=data;const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve('http://127.0.0.1:'+m[1]);}});child.once('exit',()=>{clearTimeout(timer);reject(Error('server exited'));});});
  browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:process.platform==='win32'?{channel:'msedge'}:{})});
  const context=await browser.newContext();
- const headers={'X-Requested-With':'process-server'};
+ const headers={'X-Requested-With':'process-server','Idempotency-Key':require('crypto').randomUUID()};
  assert.equal((await context.request.post(base+'/api/login',{headers,data:{id:'tester',password}})).status(),200);
  // Persist attacks through actual API writes, not just DOM fixture injection.
- const create=await context.request.post(base+'/api/as',{headers,data:{ship:attack,block:quote,element:attack,product:attack,reason:'기타',action:attack,remark:attack}});
+ const create=await context.request.post(base+'/api/as',{headers,data:{ship:quote,block:quote,element:attack,product:attack,reason:'기타',action:attack,remark:attack}});
  assert.equal(create.status(),200);const item=(await create.json()).item;
  const page=await context.newPage(),errors=[],forbidden=[];
  page.on('pageerror',error=>errors.push(error.message));
@@ -52,7 +52,7 @@ test('stored business data is inert in real Chromium, with CSP disabled as well 
   const dt=new DataTransfer();dt.items.add(new File(['fixture'],attack+'.txt'));document.getElementById('asFiles').files=dt.files;renderAsFilePreview();
  },{attack,quote});
  assert.equal(await page.locator('#asExistingFiles img, #asNewFiles img').count(),0);
- await page.evaluate(()=>document.querySelector('#asExistingFiles button').click());
+ await page.evaluate(()=>document.querySelector('#asExistingFiles button[aria-label]').click());
  assert.deepEqual(await page.evaluate(()=>asRemoveFiles),['fixture.txt']);
  const print=await page.evaluate(async({item,attack})=>{const data=await buildAsPageHtml({...item,files:[{filename:'fixture.txt',name:attack}]});return buildAsWrapperHtml([item],[data]);},{item,attack});
  const printPage=await context.newPage();await printPage.setContent(print);

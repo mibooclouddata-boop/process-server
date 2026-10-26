@@ -50,7 +50,7 @@ function asWorkflowDelayHtml(item,showDate=true){
  return '<small class="as-job-due">'+(showDate?'납품 '+asJobEsc(due)+' · ':'')+(days>0?'<b>'+label+'</b>':label)+'</small>';
 }
 function openSelectedAsWorkflow(){const items=_getSelectedAsItems();if(!items)return;if(items.length!==1){showAlert('처리할 AS 건을 하나만 선택하세요.','warn');return;}openAsWorkflow(items[0]);}
-function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&currentUser&&(currentUser.role==='sysadmin'||currentUser.asReview||currentUser.asApprove||(item.createdById&&currentUser.id===item.createdById));}
+function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&currentUser&&(currentUser.role==='sysadmin'||currentUser.asReview||currentUser.asApprove||!!item.createdById&&currentUser.id===item.createdById);}
 function asJobHistoryText(h){
  if(h.type==='deadline')return '납품 협의일: '+(h.previousDate?h.previousDate+' → ':'')+h.date;
  if(h.type==='schedule')return h.stage+' 일정: '+(h.previousDueDate? h.previousDueDate+' → ':'')+h.dueDate+' / 담당 '+h.owner;
@@ -82,7 +82,7 @@ function openAsWorkflow(item){
 async function saveAsJob(action){
  if(asJobState.busy)return;
  const item=asJobState.item,get=id=>document.getElementById(id)?.value||'';
- const payload={action,revision:item.workflow?.revision||0,next:asJobNext(item),completedDate:get('asJobCompleted'),completionNote:get('asJobCompletionNote')};
+  const payload={action,version:asRecordVersion(item),revision:item.workflow?.revision||0,next:asJobNext(item),completedDate:get('asJobCompleted'),completionNote:get('asJobCompletionNote')};
  if(!item.deliveryAgreedDate&&item.legacyStatus)payload.deliveryAgreedDate=get('asJobLegacyDeadline');
  const form=new FormData();form.append('payload',JSON.stringify(payload));
  const files=document.getElementById('asJobFiles')?.files||[];
@@ -91,8 +91,7 @@ async function saveAsJob(action){
  for(const f of files)form.append('files',f);
  const dialog=document.getElementById('asJobDialog');asJobState.busy=true;dialog.querySelectorAll('button').forEach(b=>b.disabled=true);error.textContent='저장 중입니다.';
  try{
-  const response=await fetch(`${SERVER}/api/as/${encodeURIComponent(item.id)}/workflow`,{method:'PATCH',body:form});
-  const data=await response.json();if(!response.ok)throw new Error(data.error||'저장에 실패했습니다.');
+   await asWrite(`${SERVER}/api/as/${encodeURIComponent(item.id)}/workflow`,'PATCH',form,'workflow:'+item.id);
   dialog.close();await loadAsList();
   if(typeof _viewerAsItem!=='undefined' && _viewerAsItem?.id===item.id)closeFileViewer();
   showToast({title:'저장 완료',message:'처리가 완료되었습니다.',type:'success'});

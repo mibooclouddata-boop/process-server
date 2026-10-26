@@ -20,9 +20,9 @@ test('bearer sessions reject forged tokens and bind to current credentials and p
  store.revokeUser(user.id);assert.equal(store.userId(req),null);
 });
 test('workflow authentication derives actor from session, not supplied actor ID',()=>{
- const src=fs.readFileSync(__dirname+'/server.js','utf8');const start=src.indexOf('function authenticateAsWorkflow('),end=src.indexOf("app.patch('/api/as/:id/workflow'",start);
- const context={asSessions:{userId:req=>req.headers?.cookie==='valid'?'worker':null},loadData:()=>({users:[{id:'worker',name:'작업자'}]})};vm.createContext(context);vm.runInContext(src.slice(start,end),context);
+ const src=fs.readFileSync(__dirname+'/server.js','utf8');const start=src.indexOf('function authenticate('),end=src.indexOf('function requireRoles(',start);
+ const context={supabaseAuth:null,asSessions:{matches:()=>true,userId:req=>req.headers?.cookie==='valid'?'worker':null},loadData:()=>({users:[{id:'worker',role:'worker',name:'작업자'}]})};vm.createContext(context);vm.runInContext(src.slice(start,end),context);
  let called=false;const res={status(code){this.code=code;return this;},json(body){this.body=body;}};
- context.authenticateAsWorkflow({body:{actorId:'admin'},headers:{}},res,()=>called=true);assert.equal(res.code,401);assert.equal(called,false);
- const req={headers:{cookie:'valid'},body:{actorId:'admin'}};context.authenticateAsWorkflow(req,res,()=>called=true);assert.equal(called,true);assert.equal(req.asActor.id,'worker');
+ context.authenticate({body:{actorId:'admin'},headers:{}},res,()=>called=true);assert.equal(res.code,401);assert.equal(called,false);
+ const req={headers:{cookie:'valid'},body:{actorId:'admin'}};context.authenticate(req,res,()=>called=true);assert.equal(called,true);assert.equal(req.user.id,'worker');
 });

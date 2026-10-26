@@ -4,10 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs auth-api.test.cjs auth-client.test.cjs login.test.cjs as-only.test.cjs supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs",
+    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs auth-api.test.cjs auth-client.test.cjs login.test.cjs as-only.test.cjs supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs as-integrity.test.cjs as-integrity-ui.test.cjs",
     "start": "node server.js",
     "test:xss": "node --test xss-browser.test.cjs",
-    "test:supabase": "node --test supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs"
+    "test:supabase": "node --test supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs",
+    "test:as-browser": "node --test as-integrity-browser.test.cjs"
   },
   "keywords": [],
   "author": "",

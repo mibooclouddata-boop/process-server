@@ -105,7 +105,7 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     child.once('exit',()=>{clearTimeout(timer);reject(Error('Test server stopped'));});
   });
   const request=(route,{method='GET',token,cookie,body,headers={}}={})=>fetch(base+route,{method,
-    headers:{'X-Requested-With':'process-server',...(token?{Authorization:'Bearer '+token}:{}),...(cookie?{Cookie:cookie}:{}),
+    headers:{'Idempotency-Key':randomUUID(),'X-Requested-With':'process-server',...(token?{Authorization:'Bearer '+token}:{}),...(cookie?{Cookie:cookie}:{}),
       ...(body?{'Content-Type':'application/json'}:{}),...headers},...(body?{body:JSON.stringify(body)}:{})});
   const login=async(id,mobile=true)=>{
     const r=await request('/api/login',{method:'POST',body:{id,password},headers:mobile?{'X-Client-Type':'mobile'}:{}});
@@ -147,12 +147,12 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     assert.equal((await request('/api/scan',{method:'POST',token:w.token,body:{}})).status,404);
     const response=await request('/api/as',{method:'POST',token:w.token,body:{ship:'TEST',block:'TEST',reason:'테스트',createdById:root.id,createdBy:'위조'}});
     assert.equal(response.status,200);const item=(await response.json()).item;assert.equal(item.createdById,worker.id);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{remark:'동명이인'}})).status,403);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{version:0,remark:'동명이인'}})).status,403);
     assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:m.token,body:{remark:'업무관리자만으로 부족'}})).status,403);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:review.token,body:{remark:'검토 권한'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:review.token,body:{version:0,remark:'검토 권한'}})).status,200);
     worker.name='변경된 이름';
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:w.token,body:{remark:'이름 변경 후 동일 작성자'}})).status,200);
-    const flow=await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:w.token,body:{revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:'2027-01-01',actorId:root.id}});
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:w.token,body:{version:1,remark:'이름 변경 후 동일 작성자'}})).status,200);
+    const flow=await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:w.token,body:{version:2,revision:2,action:'advance',next:'제작 요청',deliveryAgreedDate:'2027-01-01',actorId:root.id}});
     assert.equal(flow.status,200);
     const updated=(await (await request('/api/as',{token:w.token})).json()).list.find(x=>x.id===item.id);
     assert(updated.workflow.history.every(h=>h.byUserId===worker.id));

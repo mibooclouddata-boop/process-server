@@ -6,7 +6,7 @@ function normalize(item) {
   return item;
 }
 function dateValid(value) {
-  return typeof value==='string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10)===value;
+  return typeof value==='string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !value.startsWith('0000-') && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10)===value;
 }
 function today() { return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
 function fail(message, code=400) { const e=new Error(message);e.status=code;throw e; }

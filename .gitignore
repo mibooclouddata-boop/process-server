@@ -17,3 +17,5 @@ data/
 *.secrets.json
 .local-supabase-test-data/
 supabase/.temp/
+# AS atomic storage generations and process locks
+as.json.*
