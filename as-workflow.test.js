@@ -4,6 +4,35 @@ const actor={name:'테스트 담당',department:'품질'},day='2026-10-20',now='
 const base=()=>({id:'test',status:'접수',deliveryAgreedDate:'2026-10-25',createdBy:actor.name,files:[]});
 const run=(item,input)=>applyWorkflow(item,{revision:item.workflow?.revision||0,...input},actor,day,now);
 const start=item=>run(item,{action:'advance',next:'제작 요청',owner:'제작 담당',dueDate:'2026-10-21'});
+
+test('AS Excel export sizes Korean columns and wrapped rows without losing cell content',async()=>{
+ const source=fs.readFileSync(__dirname+'/dashboard.html','utf8');
+ const fn=source.slice(source.indexOf('function exportAsExcel()'),source.indexOf('let asRemoveFiles'));
+ async function exportRows(rows){
+  let blob,download;
+  const c={_asFiltered:rows,AsAmount:require('./as-amount'),Blob,alert(){throw Error('unexpected empty export');},
+   URL:{createObjectURL(value){blob=value;return 'blob:test';},revokeObjectURL(){}},
+   document:{createElement(){return {click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
+  vm.createContext(c);vm.runInContext(fn,c);c.exportAsExcel();
+  assert.match(download,/\.xls$/);return blob.text();
+ }
+ const short=await exportRows([{product:'ABC',reason:'점검',amount:0}]);
+ const long=await exportRows([{product:'한글제품명이길어지는경우',reason:'파손 부위 확인 및 교체 작업 요청 '.repeat(10)+'\n다음 줄',remark:'A&B <확인>',amount:1234567}]);
+ const widths=html=>[...html.matchAll(/<col width="(\d+)"/g)].map(m=>Number(m[1]));
+ assert.equal(widths(long).length,13);
+ assert(widths(long)[6]>widths(short)[6],'product width grows with its actual content');
+ assert(widths(long)[7]<=420,'long prose wraps instead of creating an unbounded column');
+ const heights=html=>[...html.matchAll(/<tr height="(\d+)"/g)].map(m=>Number(m[1]));
+ assert(heights(long)[1]>heights(short)[1],'wrapped Korean text receives a taller row');
+ assert.match(long,/다음 줄/);assert.match(long,/<br style="mso-data-placement:same-cell">/);
+ assert.match(long,/A&amp;B &lt;확인&gt;/);assert.match(long,/>1234567<\/td>/);assert.match(short,/>0<\/td>/);
+ const cells=[...long.matchAll(/<(?:td|th)\b([^>]*)>/g)];
+ assert.equal(cells.length,26);
+ for(const [,attributes] of cells){
+  assert.match(attributes,/align="center"/);assert.match(attributes,/valign="middle"/);
+  assert.match(attributes,/text-align:center;vertical-align:middle/);
+ }
+});
 test('full route preserves deadline, completion dates and audit history',()=>{
  let a=start(base());assert.equal(a.status,'제작 요청');
  a=run(a,{action:'save',deliveryAgreedDate:'2026-10-26'});assert.equal(a.deliveryAgreedDate,'2026-10-26');assert.equal(a.workflow.history.filter(h=>h.type==='deadline').length,1);
