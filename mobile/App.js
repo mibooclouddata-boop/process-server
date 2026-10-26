@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Font from 'expo-font';
 import Svg, { Path, Rect, Line, Circle, Polygon, Polyline } from 'react-native-svg';
 import LoginScreen from './LoginScreen';
+import {login, apiFetch, logout} from './api';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 const FINDER_SIZE = Math.min(SCREEN_W * 0.72, 280);
@@ -203,7 +204,8 @@ export default function App() {
           AsyncStorage.getItem('currentUser'),
           AsyncStorage.getItem('inv_logs'),
         ]);
-        if (u) setCurrentUser(JSON.parse(u));
+        // A cached profile is not a session. Tokens stay in memory; restart requires login.
+        await AsyncStorage.removeItem('currentUser');
         if (l) setLogs(JSON.parse(l));
       } catch (e) {}
       setAuthChecked(true);
@@ -222,14 +224,16 @@ export default function App() {
 
   const handleLogin = async ({ id, password }) => {
     if (!id || !password) return false;
-    const user = { id, name: id };
-    try { await AsyncStorage.setItem('currentUser', JSON.stringify(user)); } catch (e) {}
+    const user = await login(id,password);
+    if (!user) return false;
+
     setCurrentUser(user);
     showToast(`${id}님, 환영합니다`);
     return true;
   };
 
   const handleLogout = async () => {
+    await logout();
     try { await AsyncStorage.removeItem('currentUser'); } catch (e) {}
     setCurrentUser(null);
     setSelectMode(false); setSelectedIds(new Set()); setTab('scan');
@@ -410,10 +414,9 @@ export default function App() {
   async function doSend(ids) {
     const toSend = logs.filter(l => ids.has(l.id));
     if (!toSend.length) return;
-    const SERVER_URL = 'http://192.168.1.100:3000';
     let ok = false;
     try {
-      const r = await fetch(`${SERVER_URL}/api/scan`, {
+      const r = await apiFetch('/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -424,9 +427,11 @@ export default function App() {
         }),
       });
       ok = r.ok;
+      if(r.status===401){await handleLogout();showToast('세션이 만료되었습니다. 다시 로그인하세요.');return;}
+      if(!ok){const error=await r.json();showToast(error.error||'전송 실패');return;}
     } catch (e) { ok = false; }
 
-    const nl = logs.map(l => ids.has(l.id) ? { ...l, sent: true } : l);
+    const nl = logs.map(l => ok && ids.has(l.id) ? { ...l, sent: true } : l);
     setLogs(nl); saveLogs(nl);
     showToast(ok ? `${toSend.length}건 전송 완료` : `${toSend.length}건 로컬 저장 (서버 연결 실패)`);
   }

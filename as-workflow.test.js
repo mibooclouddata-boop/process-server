@@ -83,10 +83,10 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=receipt-black-7"><\/script>/g)||[]).length,1);
 });
 test('workflow API persists only valid requests and blocks stale edits',()=>{
- const src=fs.readFileSync(__dirname+'/server.js','utf8');const from=src.indexOf("app.patch('/api/as/:id/workflow'"),to=src.indexOf("app.delete('/api/as/:id'",from);
+ const src=fs.readFileSync(__dirname+'/server.js','utf8');const from=src.lastIndexOf("app.patch('/api/as/:id/workflow'"),to=src.indexOf("app.delete('/api/as/:id'",from);
  let handler,saved,stored={list:[base()]};
  const context={app:{patch:(path,...handlers)=>handler=handlers.at(-1)},authenticateAsWorkflow(){},asUpload:{array:()=>null},loadAs:()=>structuredClone(stored),loadData:()=>({users:[{...actor,id:'test'}]}),saveAs:data=>{saved=data;stored=data;},asWorkflow:{applyWorkflow:(item,input,who)=>applyWorkflow(item,input,who,day,now)},fs,Buffer};
- vm.createContext(context);vm.runInContext(src.slice(from,to),context);
+ vm.createContext(context);vm.runInContext(src.slice(src.indexOf('function canManageAs('),src.indexOf('function authorizeAsChange(')),context);vm.runInContext(src.slice(from,to),context);
  const call=body=>{const res={code:200,status(code){this.code=code;return this;},json(data){this.data=data;return this;}};handler({params:{id:'test'},asActor:body.actorId==='test'?actor:null,body,files:[]},res);return res;};
  const payload={actorId:'test',revision:0,action:'advance',next:'제작 요청',owner:'담당',dueDate:day};
  assert.equal(call({...payload,actorId:'unknown'}).code,403);assert.equal(saved,undefined);
@@ -98,7 +98,7 @@ test('workflow API persists only valid requests and blocks stale edits',()=>{
  let post,put,stored={list:[],monthSeq:{}};
  const context={app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},AsAmount:require('./as-amount'),asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>stored=data,Buffer,Date};
  vm.createContext(context);vm.runInContext(src.slice(start,end),context);
- const call=(handler,body)=>{const r={code:200,status(c){this.code=c;return this;},json(data){this.data=data;}};handler({body,files:[],params:{id:stored.list[0]?.id}},r);return r;};
+ const call=(handler,body)=>{const r={code:200,status(c){this.code=c;return this;},json(data){this.data=data;}};handler({body,user:{id:'test',name:'테스트'},files:[],params:{id:stored.list[0]?.id}},r);return r;};
  const body={ship:'TEST',block:'B',reason:'품질 불량',deliveryAgreedDate:'2026-11-01'};
  assert.equal(call(post,body).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-01');
  assert.equal(call(put,{remark:'test'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-01');
@@ -136,7 +136,7 @@ test('receipt amounts persist, clear and validate in every workflow status witho
  const AsAmount=require('./as-amount');
  const c={AsAmount,app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>{stored=data;writes++;},Buffer,Date};
  vm.createContext(c);vm.runInContext(src.slice(start,end),c);
- const call=(fn,body)=>{const r={code:200,status(code){this.code=code;return this;},json(data){this.data=data;}};fn({body,files:[],params:{id:stored.list[0]?.id}},r);return r;};
+ const call=(fn,body)=>{const r={code:200,status(code){this.code=code;return this;},json(data){this.data=data;}};fn({body,user:{id:'test',name:'테스트'},files:[],params:{id:stored.list[0]?.id}},r);return r;};
  const body={ship:'2601',block:'T100P',reason:'품질 불량',amount:'1,234,567'};
  assert.equal(call(post,body).code,200);assert.equal(stored.list[0].amount,1234567);
  assert.equal(call(put,{remark:'비고 수정'}).code,200);assert.equal(stored.list[0].amount,1234567);
@@ -201,7 +201,7 @@ test('intake pagination shows 20 records per page and handles the final partial 
  const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  let visible=true;
  const tbody={innerHTML:''},pagination={style:{}},head={getClientRects:()=>visible?[{}]:[],getBoundingClientRect:()=>({bottom:300-c.window.scrollY})};
- const c={AsAmount:require('./as-amount'),window:{innerHeight:1000,scrollY:0},document:{querySelector:()=>head,getElementById:id=>id==='asTableBody'?tbody:pagination},_asRemarkEditing:null,_asFullList:[],_asPage:1,_asPageSize:20,_asFiltered:[],_updateAsSelectedCount(){},_renderAsPagination(){},_initAsColResizers(){},asJobEsc:String,asWorkflowDelayHtml:()=>''};
+ const c={AsAmount:require('./as-amount'),window:{innerHeight:1000,scrollY:0},document:{querySelector:()=>head,getElementById:id=>id==='asTableBody'?tbody:pagination},_asRemarkEditing:null,_asFullList:[],_asPage:1,_asPageSize:20,_asFiltered:[],_updateAsSelectedCount(){},_renderAsPagination(){},_initAsColResizers(){},asJobEsc:String,escapeHtml:String,asWorkflowDelayHtml:()=>''};
  vm.createContext(c);
  vm.runInContext(html.slice(html.indexOf('function normalizeAsReason('),html.indexOf('function asStatsDateKey(')),c);
  vm.runInContext(html.slice(html.indexOf('function _renderAsPage()'),html.indexOf('function _renderAsPagination(')),c);
