@@ -1,0 +1,48 @@
+/* Approved AS KPI concept 4: compact typography and a continuous summary strip. */
+@font-face{font-family:ASCompact;src:url(regular.otf);font-weight:400;font-display:swap}
+@font-face{font-family:ASCompact;src:url(bold.otf);font-weight:700;font-display:swap}
+body #asSubStats[data-overview-theme] #asKpiRow{
+ display:grid;grid-template-columns:1.25fr repeat(4,minmax(0,1fr));gap:0;
+ padding:0;margin-bottom:24px;background:#fff;border:1px solid #d7e1eb;
+ border-radius:7px;box-shadow:none;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button{
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ grid-column:auto;grid-row:auto;gap:6px;min-width:0;min-height:100px;
+ margin:0;padding:17px 20px;border:0;border-right:1px solid #dbe4ed;
+ border-radius:0;background:#fff;box-shadow:none;color:#23394f;
+ text-align:left;font-family:ASCompact,Pretendard,'Malgun Gothic',sans-serif;
+ transition:background .18s;transform:none;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button:first-child{
+ background:#eaf2fd;color:#19569a;border-radius:6px 0 0 6px;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button:last-child{border-right:0;border-radius:0 6px 6px 0}
+body #asSubStats[data-overview-theme] #asKpiRow button>span{
+ font:700 14px/1.4 ASCompact,Pretendard,sans-serif;letter-spacing:0;color:inherit;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button strong{
+ align-self:auto;margin:0;font:700 30px/1.1 ASCompact,Pretendard,sans-serif;
+ letter-spacing:-.015em;font-variant-numeric:tabular-nums;color:inherit;
+ white-space:nowrap;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button strong::after{
+ content:'\ac74';margin-left:6px;font:400 14px/1.4 ASCompact,Pretendard,sans-serif;
+ letter-spacing:0;color:inherit;
+}
+body #asSubStats[data-overview-theme] #asKpiRow button:hover{background:#eef4fb;box-shadow:none;transform:none}
+body #asSubStats[data-overview-theme] #asKpiRow button:first-child:hover{background:#ddeafa}
+body #asSubStats[data-overview-theme] #asKpiRow button:focus-visible{outline:3px solid #2466a8;outline-offset:-3px}
+@container as-overview (max-width:1050px){
+ body #asSubStats[data-overview-theme] #asKpiRow button{padding-inline:12px}
+}
+@container as-overview (max-width:760px){
+ body #asSubStats[data-overview-theme] #asKpiRow{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body #asSubStats[data-overview-theme] #asKpiRow button{padding:17px 18px;border-bottom:1px solid #dbe4ed}
+ body #asSubStats[data-overview-theme] #asKpiRow button:first-child{grid-column:1/-1;border-right:0;border-radius:6px 6px 0 0}
+ body #asSubStats[data-overview-theme] #asKpiRow button:nth-child(3){border-right:0}
+ body #asSubStats[data-overview-theme] #asKpiRow button:nth-last-child(-n+2){border-bottom:0}
+ body #asSubStats[data-overview-theme] #asKpiRow button:nth-last-child(2){border-radius:0 0 0 6px}
+ body #asSubStats[data-overview-theme] #asKpiRow button:last-child{border-radius:0 0 6px 0}
+}
+@media(prefers-reduced-motion:reduce){body #asSubStats[data-overview-theme] #asKpiRow button{transition:none}}
