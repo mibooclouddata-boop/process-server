@@ -1,6 +1,6 @@
 const {startFixture}=require('./as-fixture.cjs');
 const path=require('node:path'),os=require('node:os'),fs=require('node:fs'),assert=require('node:assert/strict');
-const {chromium}=require(path.join(process.env.TEMP,'as-only-browser-tools/node_modules/playwright'));
+const {chromium}=require('playwright');
 (async()=>{
  const f=await startFixture();let browser;
  try{
@@ -10,14 +10,15 @@ const {chromium}=require(path.join(process.env.TEMP,'as-only-browser-tools/node_
   page.on('pageerror',e=>errors.push(e.message));
   page.on('request',req=>{if(/\/api\/(scan|records|tracking|master|map|location|erp|column-mappings|events)\b/.test(req.url()))retired.push(req.url());});
   await page.goto(f.url+'/login.html');
-  await page.locator('#identifier').fill('admin');await page.locator('#password').fill('1234');await page.locator('#submitBtn').click();
+  await page.locator('#identifier').fill('admin');await page.locator('#password').fill('Fixture-passphrase-2026!');await page.locator('#submitBtn').click();
   await page.waitForURL('**/dashboard.html');
   await page.locator('#asSubStats').waitFor({state:'visible'});
   await page.locator('#tabUsersBtn').click();await page.locator('#adminUserRows .um-person').waitFor();
   await page.locator('#umSearch').fill('no-such-user');await page.waitForFunction(()=>document.getElementById('umCount').textContent.includes('조회 0'));
   await page.locator('#umSearch').fill('');await page.locator('[data-um-edit="0"]').click();await page.locator('#modalUserName').fill('브라우저 관리자');
   await page.locator('#userModal button[onclick="submitModalUser()"]').click();await page.locator('#userModal').waitFor({state:'hidden'});
-  await page.waitForFunction(()=>document.getElementById('adminUserRows').textContent.includes('브라우저 관리자'));
+  await page.waitForURL('**/login.html');
+  await page.locator('#identifier').fill('admin');await page.locator('#password').fill('Fixture-passphrase-2026!');await page.locator('#submitBtn').click();await page.waitForURL('**/dashboard.html');
   await page.locator('#tabAsBtn').click();await page.locator('[data-sub="product"]').click();
   await page.locator('#asSubProduct').waitFor({state:'visible'});assert(await page.locator('#productListBody').textContent());
   await page.locator('[data-sub="list"]').click();await page.locator('#asSubList').waitFor({state:'visible'});

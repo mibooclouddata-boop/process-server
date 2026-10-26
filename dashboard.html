@@ -2148,22 +2148,32 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   </div>
 </div>
 
+<script src="/auth-client.js"></script>
 <script src="/as-amount.js"></script>
 <script>
+
+// Only fixed application actions are dispatched; values are never evaluated as code.
+const businessActions={
+ 'delete-product':(el)=>_deleteProduct(el.dataset.value),
+ 'as-detail':(el,event)=>{const item=_asFiltered.find(a=>String(a.id)===el.dataset.value);if(item)_onAsRowDblClick(event,encodeURIComponent(JSON.stringify(item)));}
+};
+for(const [type,key,selector] of [['click','action','[data-action]'],['dblclick','doubleAction','[data-double-action]'],['mousedown','downAction','[data-down-action]']]){
+ document.addEventListener(type,event=>{const el=event.target.closest?.(selector);if(el&&Object.hasOwn(businessActions,el.dataset[key]))businessActions[el.dataset[key]](el,event);},type==='mousedown');
+}
+
 // ── 설정 ──
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function attachmentUrl(filename){return SERVER+'/uploads/'+encodeURIComponent(String(filename));}
+function safeColor(value){return /^#[a-f0-9]{6}$/i.test(value)?value:'#64748b';}
 const SERVER = window.location.origin; // 같은 서버에서 서빙되므로 자동
 let currentUser = null;
 
 // ── 인증 체크: login.html에서 넘어온 세션이 없으면 로그인 페이지로 ──
-(function initAuth() {
-  try {
-    const raw = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
-    if (!raw) { window.location.replace('/'); return; }
-    currentUser = JSON.parse(raw);
-  } catch (e) {
-    window.location.replace('/'); return;
-  }
-})();
+const authReady = fetch(SERVER+'/api/me').then(async response=>{
+  if(!response.ok){window.location.replace('/login.html');return;}
+  currentUser=(await response.json()).user;
+  sessionStorage.setItem('currentUser',JSON.stringify(currentUser));
+}).catch(()=>window.location.replace('/login.html'));
 // ── 로그인 ──
 async function doLogin() {
   const id = document.getElementById('loginId').value.trim();
@@ -2593,7 +2603,7 @@ function renderAdminUsers() {
     const index = adminUsersCache.indexOf(u);
     const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
     return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.id)+'</small></div></div></td>'+
-      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span></td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
+      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span>'+(u.passwordResetRequired?'<small>비밀번호 재설정 필요</small>':'')+'</td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
       '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
       '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
   }).join('') : '<tr><td colspan="5" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
@@ -2641,7 +2651,7 @@ async function submitModalUser() {
 
   if (!id) { showModalMsg('아이디를 입력하세요.', 'error'); return; }
   if (!name) { showModalMsg('이름을 입력하세요.', 'error'); return; }
-  if (!modalEditingId && !pw) { showModalMsg('비밀번호를 입력하세요.', 'error'); return; }
+  if ((!modalEditingId || pw) && (pw.length < 12 || pw.length > 128)) { showModalMsg('비밀번호는 12~128자로 입력하세요.', 'error'); return; }
 
   try {
     let r;
@@ -3049,13 +3059,13 @@ function renderProductList() {
   var html = '<div style="display:grid;grid-template-columns:repeat('+colsPerRow+',1fr);gap:8px">';
   for (var j = 0; j < _productList.length; j++) {
     var p = _productList[j];
-    var esc = p.name.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    var esc = escapeHtml(p.name);
     var changed = _productEditMode && _productRenameMap[p.name] && _productRenameMap[p.name] !== p.name;
-    var displayVal = (_productRenameMap[p.name] || p.name).replace(/"/g,'&quot;');
+    var displayVal = escapeHtml(_productRenameMap[p.name] || p.name);
     html += '<div class="erp-col-cell'+(changed?' erp-col-changed':'')+'" data-name="'+esc+'">'
       + '<span class="erp-col-no">'+String(j+1).padStart(2,'0')+'</span>'
       + '<input type="text" class="erp-col-input" value="'+displayVal+'" data-orig="'+esc+'" oninput="_onProductRenameInput(this)"'+(_productEditMode?'':' readonly tabindex="-1"')+' title="'+esc+'"/>'
-      + '<button type="button" class="erp-col-del" onclick="_deleteProduct(\''+esc+'\')" aria-label="삭제" tabindex="-1">&times;</button>'
+      + '<button type="button" class="erp-col-del" data-action="delete-product" data-value="'+esc+'" aria-label="삭제" tabindex="-1">&times;</button>'
       + '</div>';
   }
   html += '</div>';
@@ -3165,9 +3175,16 @@ function showProductSuggest() {
   var matches = _productList.filter(function(p) { return !q || p.name.toLowerCase().includes(q); });
   if (!matches.length) { box.style.display = 'none'; return; }
   box.style.display = 'block';
-  box.innerHTML = matches.map(function(p) {
-    return '<div style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-body);transition:background .1s" onmousedown="selectProductSuggest(\'' + p.name.replace(/'/g,"\\'") + '\')" onmouseenter="this.style.background=\'var(--brand-soft)\'" onmouseleave="this.style.background=\'#fff\'">' + (q ? p.name.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<b style=color:var(--brand)>$1</b>') : p.name) + '</div>';
-  }).join('');
+  box.replaceChildren();
+  for(const product of matches){
+    const option=document.createElement('div');
+    option.style.cssText='padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-body)';
+    option.textContent=product.name;
+    option.addEventListener('mousedown',()=>selectProductSuggest(product.name));
+    option.addEventListener('mouseenter',()=>option.style.background='var(--brand-soft)');
+    option.addEventListener('mouseleave',()=>option.style.background='#fff');
+    box.append(option);
+  }
 }
 function selectProductSuggest(name) {
   document.getElementById('asProduct').value = name;
@@ -3322,23 +3339,23 @@ function _renderAsPage() {
     const actionShort = (a.action||'—').length > 28 ? (a.action||'').slice(0,28)+'…' : (a.action||'—');
     const dateStr = (a.createdAt||'').slice(0,10);
 
-    return `<tr data-id="${a.id}" tabindex="0" aria-label="${asJobEsc(a.asNo||'접수')} 상세 보기" onkeydown="if(event.target===this&amp;&amp;(event.key==='Enter'||event.key===' ')){event.preventDefault();_onAsRowClick(event,this)}" onclick="_onAsRowClick(event,this)" ondblclick="_onAsRowDblClick(event,'${esc}')" style="cursor:pointer">
+    return `<tr data-id="${escapeHtml(a.id)}" tabindex="0" aria-label="${asJobEsc(a.asNo||'접수')} 상세 보기" onkeydown="if(event.target===this&amp;&amp;(event.key==='Enter'||event.key===' ')){event.preventDefault();_onAsRowClick(event,this)}" onclick="_onAsRowClick(event,this)" data-double-action="as-detail" data-value="${escapeHtml(a.id)}" style="cursor:pointer">
       <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" aria-label="${asJobEsc(a.asNo||'접수')} 선택" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
       <td class="as-no-col">${rowNum}</td>
       <td>${statusBadge}</td>
-      <td><span class="as-code">${a.asNo||'—'}</span></td>
-      <td><span class="as-text-muted">${dateStr}</span></td>
+      <td><span class="as-code">${escapeHtml(a.asNo||'—')}</span></td>
+      <td><span class="as-text-muted">${escapeHtml(dateStr)}</span></td>
       <td><span class="as-text-muted" style="white-space:nowrap">${asJobEsc(a.deliveryAgreedDate||'미정')}</span></td>
       <td class="as-deadline-cell">${asWorkflowDelayHtml(a,false)}</td>
-      <td style="font-weight:700;font-size:12px;color:#0f172a">${a.ship||'—'}</td>
-      <td style="font-size:12px;color:#475569">${a.block||'—'}</td>
-      <td style="font-size:12px;color:#94a3b8">${a.element||'—'}</td>
-      <td style="font-size:12px;color:#475569">${a.product||'—'}</td>
+      <td style="font-weight:700;font-size:12px;color:#0f172a">${escapeHtml(a.ship||'—')}</td>
+      <td style="font-size:12px;color:#475569">${escapeHtml(a.block||'—')}</td>
+      <td style="font-size:12px;color:#94a3b8">${escapeHtml(a.element||'—')}</td>
+      <td style="font-size:12px;color:#475569">${escapeHtml(a.product||'—')}</td>
       <td><span class="as-truncate" title="${asJobEsc(reasonLabel)}" style="font-size:12px;color:#334155">${asJobEsc(reasonShort)}</span></td>
-      <td><span class="as-truncate" title="${(a.action||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#64748b">${actionShort}</span></td>
+      <td><span class="as-truncate" title="${escapeHtml(a.action||'')}" style="font-size:12px;color:#64748b">${escapeHtml(actionShort)}</span></td>
       <td class="as-files-cell" style="text-align:center">${fileCell}</td>
-      <td style="font-size:11px;color:#64748b">${a.createdBy||'—'}</td>
-      <td class="as-remark-cell" data-id="${a.id}" onclick="startRemarkEdit(event,this)" title="${(a.remark||'').replace(/"/g,'&quot;')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||'')}</td>
+      <td style="font-size:11px;color:#64748b">${escapeHtml(a.createdBy||'—')}</td>
+      <td class="as-remark-cell" data-id="${escapeHtml(a.id)}" onclick="startRemarkEdit(event,this)" title="${escapeHtml(a.remark||'')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
       <td class="as-amount-cell" title="${AsAmount.format(a.amount)}">${AsAmount.format(a.amount)}</td>
     </tr>`;
   }).join('');
@@ -3521,14 +3538,23 @@ function renderAsFilePreview() {
   const input = document.getElementById('asFiles');
   const wrap = document.getElementById('asNewFiles');
   if (!input.files.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = Array.from(input.files).map((f,i) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:11px;color:#166534;margin-right:4px;margin-bottom:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>${f.name}</span>`).join('');
+  wrap.innerHTML = Array.from(input.files).map((f,i) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:11px;color:#166534;margin-right:4px;margin-bottom:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>${escapeHtml(f.name)}</span>`).join('');
 }
 
 function renderExistingFiles(files) {
   const wrap = document.getElementById('asExistingFiles');
   asRemoveFiles = [];
   if (!files || !files.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = files.map(f => `<span class="as-existing-file" data-fn="${f.filename}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;color:#475569;margin-right:4px;margin-bottom:4px;cursor:pointer" onclick="openFileViewer('${f.filename}','${f.name.replace(/'/g,"\\'")}')">${f.name}<button onclick="event.stopPropagation();removeExistingFile(this,'${f.filename}')" style="border:none;background:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0 2px">&times;</button></span>`).join('');
+  wrap.replaceChildren();
+  for(const file of files){
+    const span=document.createElement('span');span.className='as-existing-file';span.dataset.fn=file.filename;
+    span.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;margin:0 4px 4px 0;cursor:pointer';
+    span.append(document.createTextNode(file.name));
+    span.addEventListener('click',()=>openFileViewer(file.filename,file.name));
+    const remove=document.createElement('button');remove.type='button';remove.textContent='×';
+    remove.addEventListener('click',event=>{event.stopPropagation();removeExistingFile(remove,file.filename);});
+    span.append(remove);wrap.append(span);
+  }
 }
 
 function removeExistingFile(btn, filename) {
@@ -3564,7 +3590,7 @@ function openAsAttachments(trigger) {
 }
 
 function openFileViewer(filename, displayName) {
-  const url = SERVER + '/uploads/' + filename;
+  const url = attachmentUrl(filename);
   const ext = filename.split('.').pop().toLowerCase();
   document.getElementById('fileViewerTitle').textContent = displayName;
   document.getElementById('fileViewerDownload').href = url;
@@ -3575,7 +3601,7 @@ function openFileViewer(filename, displayName) {
   } else if (['jpg','jpeg','png','gif','bmp','webp'].includes(ext)) {
     content.innerHTML = `<img src="${url}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px"/>`;
   } else {
-    content.innerHTML = `<div style="text-align:center;padding:40px"><div style="font-size:32px;opacity:.3;margin-bottom:12px">📄</div><p style="color:#64748b;font-size:14px">미리보기를 지원하지 않는 파일입니다.</p><a href="${url}" download="${displayName}" style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:8px;background:#0f172a;color:#fff;font-size:13px;font-weight:600;text-decoration:none">다운로드</a></div>`;
+    content.innerHTML = `<div style="text-align:center;padding:40px"><div style="font-size:32px;opacity:.3;margin-bottom:12px">📄</div><p style="color:#64748b;font-size:14px">미리보기를 지원하지 않는 파일입니다.</p><a href="${url}" download="${escapeHtml(displayName)}" style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:8px;background:#0f172a;color:#fff;font-size:13px;font-weight:600;text-decoration:none">다운로드</a></div>`;
   }
   document.getElementById('fileViewer').classList.add('open');
 }
@@ -3886,8 +3912,8 @@ async function buildAsPageHtml(a) {
   }
   let imagesHtml = '';
   for (const f of imageFiles) {
-    try { const dataUrl = await toDataUrl(SERVER + '/uploads/' + f.filename); imagesHtml += '<div class="img-wrap"><img src="' + dataUrl + '"/><div class="img-caption">' + f.name + '</div></div>'; }
-    catch(e) { imagesHtml += '<div class="img-caption">' + f.name + ' (로드 실패)</div>'; }
+    try { const dataUrl = await toDataUrl(attachmentUrl(f.filename)); imagesHtml += '<div class="img-wrap"><img src="' + dataUrl + '"/><div class="img-caption">' + escapeHtml(f.name) + '</div></div>'; }
+    catch(e) { imagesHtml += '<div class="img-caption">' + escapeHtml(f.name) + ' (로드 실패)</div>'; }
   }
   let pdfImagesHtml = '';
   if (pdfFiles.length && !window._pdfjsLoaded) {
@@ -3895,13 +3921,13 @@ async function buildAsPageHtml(a) {
     if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; window._pdfjsLoaded=true; }
   }
   for (const f of pdfFiles) {
-    pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + f.name + '</div></div>';
+    pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + escapeHtml(f.name) + '</div></div>';
     if (window.pdfjsLib) {
-      try { const pdf = await pdfjsLib.getDocument(SERVER + '/uploads/' + f.filename).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
+      try { const pdf = await pdfjsLib.getDocument({url:attachmentUrl(f.filename),isEvalSupported:false}).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
       catch(e) { pdfImagesHtml += '<div style="color:#999;font-size:11px">PDF 렌더링 실패</div>'; }
     }
   }
-  const otherHtml = otherFiles.map(f => '<span class="attach-file">' + f.name + '</span>').join('');
+  const otherHtml = otherFiles.map(f => '<span class="attach-file">' + escapeHtml(f.name) + '</span>').join('');
   const _statusColors = {'접수':'#004A93','제작 요청':'#d97706','도장 요청':'#7c3aed','납품 요청':'#4e5968','완료':'#16a34a'};
   const _statusColor = _statusColors[a.status] || '#64748b';
   const _statusLabel = a.status || '접수';
@@ -3962,7 +3988,7 @@ function getAsDocumentFontHtml() {
 function buildAsWrapperHtml(items, pages) {
   let body = '';
   for (const p of pages) { body += p.pageHtml + p.attachHtml; }
-  return '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AS 접수서 - ' + items.length + '건</title>' + getAsDocumentFontHtml() + '<style>' + getAsCssStr() + '</style></head><body>' + body + '</body></html>';
+  return '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="script-src &apos;none&apos;; object-src &apos;none&apos;; base-uri &apos;none&apos;; img-src data: blob:; style-src &apos;unsafe-inline&apos; https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AS 접수서 - ' + items.length + '건</title>' + getAsDocumentFontHtml() + '<style>' + getAsCssStr() + '</style></head><body>' + body + '</body></html>';
 }
 
 // ── AS PDF 출력 (단건) ──
@@ -3976,7 +4002,7 @@ async function printAsPdf(a, printNow = false) {
   // 상태에 맞는 버튼만 표시
   _viewerAsItem = a;
   const _isAdmin = currentUser && currentUser.role === 'sysadmin';
-  const _isCreator = currentUser && currentUser.name === a.createdBy;
+  const _isCreator = currentUser && (a.createdById ? currentUser.id === a.createdById : currentUser.name === a.createdBy);
   const workflowButton=document.getElementById('asViewerRequestReview');
   workflowButton.textContent=asJobActionLabel(a);workflowButton.style.display=asJobCanEdit(a)&&asJobNext(a)?'':'none';workflowButton.onclick=()=>openAsWorkflow(a);
   ['asViewerReview','asViewerApprove','asViewerProgress','asViewerComplete'].forEach(id=>document.getElementById(id).style.display='none');
@@ -4044,7 +4070,8 @@ function showToast(input, legacyType) {
 }
 
 // ── 페이지 로드 시 대시보드 직접 진입 (로그인은 /login.html에서 처리됨) ──
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+  await authReady;
   if (!currentUser) return; // initAuth에서 이미 리다이렉트 처리됨
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';

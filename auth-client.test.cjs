@@ -1,0 +1,26 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+test('web client adds CSRF headers only to same-origin writes and handles expiry',async()=>{
+  const calls=[],removed=[];let redirect,status=200;
+  const window={location:{origin:'https://work.example',href:'https://work.example/dashboard.html',replace:value=>redirect=value},fetch:async(input,init)=>{calls.push({input,init});return {status};}};
+  const context={window,URL,Headers,sessionStorage:{removeItem:key=>removed.push('session:'+key)},localStorage:{removeItem:key=>removed.push('local:'+key)}};
+  vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/auth-client.js','utf8'),context);
+  const body=new FormData();body.append('remark','test');
+  await window.fetch('/api/as',{method:'POST',body});
+  assert.equal(calls.at(-1).init.headers.get('X-Requested-With'),'process-server');
+  assert.equal(calls.at(-1).init.body,body);
+  assert.equal(calls.at(-1).init.headers.get('Content-Type'),null);
+  await window.fetch('https://elsewhere.example/api/as',{method:'POST'});
+  assert.equal(calls.at(-1).init.headers,undefined);
+  await window.fetch('/api/as');assert.equal(calls.at(-1).init.headers,undefined);
+  const request=new Request('https://work.example/api/as',{method:'PUT',headers:{'Content-Type':'application/json'},body:'{}'});
+  await window.fetch(request);
+  assert.equal(calls.at(-1).init.headers.get('Content-Type'),'application/json');
+  assert.equal(calls.at(-1).init.headers.get('X-Requested-With'),'process-server');
+  status=401;await window.fetch('/api/login',{method:'POST'});assert.equal(redirect,undefined);
+  await window.fetch('/api/me');assert.equal(redirect,'/login.html');
+  assert.deepEqual(removed,['session:currentUser','local:currentUser']);
+});
