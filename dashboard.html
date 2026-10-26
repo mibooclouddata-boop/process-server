@@ -115,23 +115,6 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFo
 .sidebar{width:196px;background:#fff;padding:24px 0;display:flex;flex-direction:column;gap:4px;flex-shrink:0;border-right:1px solid var(--border)}
 .main{flex:1;padding:28px 32px;max-width:1600px;overflow-y:auto}
 
-/* 통계 */
-.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:32px}
-@media (max-width: 1200px){.stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-width: 900px){.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width: 560px){.stats-row{grid-template-columns:1fr}}
-.stat-card{
-  background:var(--card);border-radius:var(--r-xl);padding:24px 22px;
-  border:1px solid var(--border);box-shadow:var(--shadow-xs);
-  transition:transform var(--ease), box-shadow var(--ease);position:relative;overflow:hidden;color:var(--text);
-}
-.stat-card::before{display:none}
-.stat-card::after{display:none}
-.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
-.stat-label{font-size:13px;color:var(--text2);font-weight:500;margin-bottom:10px;letter-spacing:-0.01em;text-transform:none}
-.stat-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text)}
-.stat-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:24px;opacity:.12;color:var(--text-muted)}
-
 /* 사이드 탭 */
 .tabs{display:flex;flex-direction:column;gap:2px;padding:0 12px}
 .tab{padding:11px 18px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text2);font-weight:600;border-radius:var(--r-md);transition:background var(--ease),color var(--ease);letter-spacing:-.01em;text-align:left;display:flex;align-items:center;gap:10px}
@@ -174,58 +157,6 @@ td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:middle
 tr:last-child td{border-bottom:none}
 tbody tr{transition:background var(--ease)}
 tbody tr:hover td{background:var(--surface-muted)}
-
-/* 공정 배지 */
-.step-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.3px}
-.step-incoming     {background:#f0fdf4;color:#4ade80;border:1px solid #bbf7d0}
-.step-inspect_wait {background:#f0fdf4;color:#22c55e;border:1px solid #86efac}
-.step-inspect_done {background:#ecfdf5;color:#16a34a;border:1px solid #4ade80}
-.step-paint_wait   {background:#dcfce7;color:#15803d;border:1px solid #22c55e}
-.step-paint_done   {background:#dcfce7;color:#166534;border:1px solid #16a34a}
-.step-deliver_wait {background:#d1fae5;color:#14532d;border:1px solid #15803d}
-.step-deliver_done {background:#d1fae5;color:#052e16;border:1px solid #166534}
-
-/* 진행 바 */
-.progress-wrap{display:flex;gap:4px;align-items:center}
-.progress-step{width:40px;height:6px;border-radius:3px;background:#e2e8f0;transition:all .3s}
-.progress-step.done-incoming     {background:#86efac}
-.progress-step.done-inspect_wait {background:#4ade80}
-.progress-step.done-inspect_done {background:#22c55e}
-.progress-step.done-paint_wait   {background:#16a34a}
-.progress-step.done-paint_done   {background:#15803d}
-.progress-step.done-deliver_wait {background:#166534}
-.progress-step.done-deliver_done {background:#14532d}
-
-/* 상세 이력 */
-.detail-row td{padding:0;background:#f8fafc}
-.detail-inner{padding:18px 20px 20px 56px}
-.detail-title{font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:12px;text-transform:uppercase;letter-spacing:.6px}
-.step-list{display:flex;flex-direction:column;gap:8px}
-.step-item{display:flex;align-items:center;gap:12px;font-size:12px;padding:6px 12px;border-radius:8px;background:#fff;border:1px solid #f1f5f9}
-.step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.step-dot-incoming     {background:#86efac}
-.step-dot-inspect_wait {background:#4ade80}
-.step-dot-inspect_done {background:#22c55e}
-.step-dot-paint_wait   {background:#16a34a}
-.step-dot-paint_done   {background:#15803d}
-.step-dot-deliver_wait {background:#166534}
-.step-dot-deliver_done {background:#14532d}
-.step-time{color:#94a3b8;font-size:11px}
-.step-user{font-weight:700;color:var(--text)}
-
-/* 스캔 결과 카드 */
-.scan-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
-.scan-card.found{border-left:4px solid var(--success)}
-.scan-card.not-found{border-left:4px solid var(--border-stronger);background:var(--surface-muted)}
-.scan-barcode{font-size:16px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text);margin-bottom:10px;letter-spacing:-.01em}
-.scan-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
-.scan-field{font-size:12px}
-.scan-field-label{color:var(--text-muted);font-weight:600;margin-bottom:2px}
-.scan-field-val{color:var(--text);font-weight:700;font-size:13px}
-.scan-alert{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r-sm);background:var(--danger-bg);color:var(--danger);font-size:13px;font-weight:600;border:1px solid var(--danger-border)}
-.scan-alert-icon{font-size:16px}
-.del-btn{padding:4px 10px;border:1px solid var(--danger-border);border-radius:var(--r-xs);background:var(--danger-bg);color:var(--danger);font-size:11px;font-weight:600;cursor:pointer;transition:background var(--ease)}
-.del-btn:hover{background:#fee2e2}
 
 /* 빈 상태 */
 .empty{padding:72px 20px;text-align:center;color:var(--text-muted)}
@@ -299,14 +230,13 @@ tbody tr:hover td{background:var(--surface-muted)}
 .modal-msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;display:block}
 @keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-/* 사용자 관리 ERP */
+/* 사용자 관리 */
 .user-summary{display:flex;gap:20px;margin-bottom:16px;font-size:12px;color:#64748b;font-weight:600}
 .user-summary span{color:#0f172a;font-weight:800}
 .user-perm-table{width:100%;border-collapse:collapse;font-size:12px}
 .user-perm-table thead{position:sticky;top:0;z-index:1}
 .user-perm-table th{padding:8px 10px;text-align:center;white-space:nowrap;font-size:11px;font-weight:700;color:var(--text2);text-transform:none;letter-spacing:-.01em;border-bottom:1px solid var(--border);background:var(--surface-muted)}
 .user-perm-table th.ut-fixed{text-align:left}
-.user-perm-table .ut-perm{width:62px;min-width:62px}
 .user-perm-table td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid var(--border)}
 .user-perm-table tbody tr:nth-child(even) td{background:#fafbfc}
 .user-perm-table tbody tr:hover td{background:var(--brand-softer)}
@@ -320,12 +250,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 .ut-cat-worker{background:var(--success-bg);color:#047857}
 .ut-name{font-weight:700;font-size:13px;color:#0f172a}
 .ut-id{font-size:12px;color:#475569}
-.ut-perm-cell{text-align:center}
-.ut-dot{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
-.ut-dot.on{background:currentColor}
-.ut-dot.on svg{width:12px;height:12px;fill:#fff}
-.ut-dot.off{background:#f1f5f9}
-.ut-dot.off::after{content:'—';color:#cbd5e1;font-size:10px;font-weight:700}
 
 /* 환영 오버레이 */
 #welcomeOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:24px}
@@ -341,91 +265,9 @@ tbody tr:hover td{background:var(--surface-muted)}
 @keyframes fadeOut{to{opacity:0}}
 .login-box.fade-out{animation:fadeOut .4s ease forwards}
 
-/* 자재 맵 */
-.map-container{position:relative;background:#fff;border:1.5px solid #e2e8f0;border-radius:16px;overflow:hidden;min-height:600px}
-.map-canvas{position:relative;width:100%;height:600px;cursor:default}
-.map-area{position:absolute;border:2px solid;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .15s}
-.map-area:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.map-area-header{padding:6px 10px;font-size:11px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:6px}
-.map-area-body{flex:1;padding:6px;overflow-y:auto;background:rgba(255,255,255,.85);font-size:11px}
-.map-area-item{padding:3px 6px;border-radius:4px;background:#f1f5f9;margin-bottom:3px;font-size:10px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.map-area-count{font-size:10px;opacity:.8;font-weight:400}
-.map-toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}
-.map-toolbar label{font-size:12px;font-weight:600;color:#64748b}
-.map-toolbar input,.map-toolbar select{padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:inherit}
-.map-btn{padding:7px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.map-btn-primary{background:var(--brand);color:#fff}
-.map-btn-primary:hover{background:var(--brand-hover)}
-.map-btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.map-btn-danger:hover{background:#fee2e2}
-.map-btn-secondary{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
-.map-btn-secondary:hover{background:#e2e8f0}
-.map-area.editing{cursor:move}
-.map-area .resize-handle{position:absolute;bottom:0;right:0;width:14px;height:14px;cursor:se-resize;background:rgba(0,0,0,.15);border-radius:4px 0}
-.map-sidebar{width:280px;border-left:1px solid #e2e8f0;padding:16px;overflow-y:auto;max-height:600px}
-.map-sidebar-title{font-size:13px;font-weight:700;color:#191f28;margin-bottom:12px;letter-spacing:-0.01em}
-.map-sidebar-item{padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:6px;font-size:12px;cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center}
-.map-sidebar-item:hover{background:#f8fafc}
-.map-sidebar-item.active{border-color:var(--brand);background:var(--brand-soft)}
-.map-assign-modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.map-assign-modal.open{display:flex}
-
-/* SVG 평면도 */
-.svg-zone{cursor:pointer;transition:opacity .12s}
-.svg-zone:hover{opacity:.9}
-.svg-zone-label{pointer-events:none;font-size:12px;font-weight:800;fill:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}
-.svg-zone-count{pointer-events:none;font-size:10px;font-weight:600;fill:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
-.svg-zone.selected rect{stroke-width:2;stroke-dasharray:5,3}
-.recent-loc{padding:6px 8px;border-radius:6px;background:#f8fafc;margin-bottom:4px;font-size:11px;border:1px solid #f1f5f9}
-.recent-loc-barcode{font-weight:700;font-family:monospace;color:#0f172a}
-.recent-loc-area{color:var(--brand);font-weight:600}
-.recent-loc-time{color:#94a3b8;font-size:10px}
-
-/* 도면 편집기 */
-.editor-tool{display:flex;align-items:center;gap:5px;padding:6px 12px;border:none;border-radius:8px;background:transparent;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;transition:all .15s;font-family:inherit}
-.editor-tool:hover{background:#e2e8f0;color:#334155}
-.editor-tool.active{background:var(--brand);color:#fff;box-shadow:0 2px 8px rgba(0,74,147,.22)}
-.toolbar-sep{width:1px;height:28px;background:#e2e8f0;flex-shrink:0}
-.color-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all .12s}
-.color-dot:hover{transform:scale(1.15)}
-.color-dot.active{border-color:var(--text);box-shadow:0 0 0 2px #fff,0 0 0 4px currentColor}
-.svg-handle{fill:#fff;stroke:var(--brand);stroke-width:1;cursor:pointer;r:4}
-.svg-handle:hover{fill:var(--brand-soft)}
-.svg-wall{stroke:#475569;stroke-width:3;stroke-linecap:square;cursor:pointer}
-.svg-wall:hover{stroke:#334155;stroke-width:4}
-.svg-wall.selected{stroke:var(--brand);stroke-width:3;stroke-dasharray:6,3}
-.prop-editor{position:absolute;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid #e2e8f0;padding:16px;z-index:100;min-width:220px}
-.prop-editor label{display:block;font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px;margin-top:10px}
-.prop-editor label:first-child{margin-top:0}
-.prop-editor input{width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:inherit}
-.prop-editor input:focus{border-color:var(--brand);outline:none;box-shadow:var(--shadow-focus)}
-.prop-editor-actions{display:flex;gap:6px;margin-top:12px}
-
-/* 반응형 */
-/* 홈 배치도 */
-.home-map-card{overflow:visible;margin-top:0;border:1px solid #f1f3f5;box-shadow:0 1px 2px rgba(0,0,0,0.02);border-radius:16px;background:#fff}
-.home-map-header{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:16px 16px 0 0;border-bottom:1px solid #f1f3f5}
-.home-map-header .admin-section-title{color:#191f28;font-size:16px;font-weight:700;letter-spacing:-0.02em}
-.home-map-header .admin-section-title::before{background:#004A93;width:3px;height:16px;border-radius:2px}
-.home-map-body{display:flex}
-.home-map-svg-wrap{flex:1;padding:20px;position:relative;min-height:200px;background:linear-gradient(180deg,#f8fafc,#f1f5f9)}
-.home-svg{width:100%;height:auto;border-radius:10px;display:block;box-shadow:0 2px 16px rgba(15,23,42,.06);border:1px solid #e2e8f0}
-.home-map-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.home-map-sidebar{width:280px;border-left:1px solid #f1f3f5;display:flex;flex-direction:column;max-height:500px;background:#fff}
-.home-map-sidebar-section{padding:16px 18px;overflow-y:auto}
-.home-map-sidebar-section+.home-map-sidebar-section{border-top:1px solid #f1f5f9}
-
-@media(max-width:900px){
-  .home-map-body{flex-direction:column}
-  .home-map-sidebar{width:100%;border-left:none;border-top:1px solid #e2e8f0;flex-direction:row;max-height:none}
-  .home-map-sidebar-section{flex:1;max-height:200px}
-  .home-map-sidebar-section+.home-map-sidebar-section{border-top:none;border-left:1px solid #e2e8f0}
-  .stats-row{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
-}
 @media(max-width:768px){
   .layout{flex-direction:column}
   .sidebar{width:100%;flex-direction:row;padding:12px 0;gap:0;border-right:none;border-bottom:1px solid var(--border-strong)}
-  .sidebar>div:first-child{display:none}
   .tabs{flex-direction:row;padding:0 12px;overflow-x:auto;flex-wrap:nowrap;align-items:center}
   .tab{white-space:nowrap;text-align:center;padding:8px 16px}
   /* 모바일 가로 탭: 서브메뉴는 인라인 플로우로 전환 */
@@ -433,16 +275,11 @@ tbody tr:hover td{background:var(--surface-muted)}
   .as-submenu .tab-sub{display:inline-flex;align-items:center;transform:none;opacity:1;white-space:nowrap;font-size:11px;padding:6px 12px;border-radius:var(--r-pill);border:1px solid var(--border-strong);background:var(--card);margin:0 2px}
   .as-submenu .tab-sub.on{background:var(--brand-soft);color:var(--brand);border-color:var(--brand)}
   .main{padding:16px}
-  .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
   .topbar{padding:0 16px;height:56px}
   .topbar-title{font-size:15px}
   .search-row{flex-direction:column}
   .search-textarea{min-width:100%}
   .filter-select,.search-btn{width:100%}
-  .stat-val{font-size:24px}
-  .home-map-sidebar{flex-direction:column}
-  .home-map-sidebar-section+.home-map-sidebar-section{border-left:none;border-top:1px solid #e2e8f0}
-  .home-map-header{flex-wrap:wrap;gap:8px;border-radius:16px 16px 0 0}
 }
 
 /* ── AS 접수 ERP ── */
@@ -547,80 +384,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 .as-erp-table .as-no-col{width:32px;text-align:center;color:#b0b8c4;font-size:11px;font-variant-numeric:tabular-nums}
 .as-erp-table .col-file{text-align:center}
 
-/* ── Toss-style overrides scoped to #tabTracking ── */
-#tabTracking .toss-toolbar{background:transparent;padding:0;border:none;box-shadow:none;margin-bottom:16px}
-#tabTracking .toss-toolbar .as-toolbar-row{gap:8px}
-#tabTracking .toss-search{height:44px!important;padding:0 16px 0 42px!important;border-radius:var(--r-lg)!important;background-color:var(--card)!important;background-image:none!important;border:1.5px solid var(--border-strong)!important;font-size:14px!important;font-weight:500;color:var(--text);letter-spacing:-0.01em;width:100%;min-width:0;outline:none;transition:background-color var(--ease-smooth),border-color var(--ease-smooth),box-shadow var(--ease-smooth);font-family:inherit;box-sizing:border-box}
-#tabTracking .toss-search::placeholder{color:var(--text-muted);transition:color .2s}
-#tabTracking .toss-search:hover{background-color:var(--surface-muted)!important;border-color:var(--border-stronger)!important}
-#tabTracking .toss-search:focus{background-color:var(--card)!important;border-color:var(--brand)!important;box-shadow:var(--shadow-focus)!important}
-#tabTracking .toss-search-wrap{display:flex;align-items:center}
-#tabTracking .toss-dd{position:relative;flex-shrink:0}
-#tabTracking .toss-dd-btn{height:44px;padding:0 14px;border:1.5px solid var(--border-strong);border-radius:var(--r-lg);background:var(--card);display:inline-flex;align-items:center;gap:8px;min-width:120px;cursor:pointer;font-family:inherit;transition:border-color var(--ease),background var(--ease)}
-#tabTracking .toss-dd-btn:hover{border-color:var(--border-stronger)}
-#tabTracking .toss-dd.is-open .toss-dd-btn{border-color:var(--brand)}
-#tabTracking .toss-dd-label{flex:1;text-align:left;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.02em;white-space:nowrap}
-#tabTracking .toss-dd-chev{width:16px;height:16px;color:var(--text-muted);flex-shrink:0;transition:transform .2s}
-#tabTracking .toss-dd.is-open .toss-dd-chev{transform:rotate(180deg);color:var(--brand)}
-#tabTracking .toss-dd-panel{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--card);border:1px solid var(--border-strong);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:6px;z-index:20;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s ease,transform .15s ease}
-#tabTracking .toss-dd.is-open .toss-dd-panel{opacity:1;transform:translateY(0);pointer-events:auto}
-#tabTracking .toss-dd-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:var(--r-sm);font-size:13px;font-weight:600;color:var(--text-body);letter-spacing:-0.01em;cursor:pointer;white-space:nowrap;transition:background var(--ease)}
-#tabTracking .toss-dd-item:hover{background:var(--surface-muted);color:var(--text)}
-#tabTracking .toss-dd-item.is-selected{color:var(--brand);font-weight:700;background:var(--brand-softer)}
-#tabTracking .toss-dd-item-check{width:16px;height:16px;flex-shrink:0;opacity:0}
-#tabTracking .toss-dd-item.is-selected .toss-dd-item-check{opacity:1}
-#tabTracking .toss-btn{height:44px!important;padding:0 16px!important;border-radius:12px!important;font-size:13px!important;font-weight:700!important;letter-spacing:-0.02em;border:1.5px solid transparent!important;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease,transform .05s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px!important;font-family:inherit;white-space:nowrap;line-height:1}
-#tabTracking .toss-btn:active{transform:scale(0.98)}
-#tabTracking .toss-btn svg{flex-shrink:0;width:18px;height:18px}
-#tabTracking .toss-btn-icon{width:44px!important;padding:0!important;justify-content:center}
-#tabTracking .toss-btn-icon svg{width:16px!important;height:16px!important}
-#tabTracking .toss-btn-primary{background:var(--brand)!important;color:#fff!important;border-color:var(--brand)!important}
-#tabTracking .toss-btn-primary:hover{background:var(--brand-hover)!important;border-color:var(--brand-hover)!important;box-shadow:0 4px 12px var(--brand-ring)}
-#tabTracking .toss-btn-secondary{background:var(--card)!important;color:var(--text-body)!important;border-color:var(--border-strong)!important}
-#tabTracking .toss-btn-secondary:hover{background:var(--surface-muted)!important;color:var(--text)!important;border-color:var(--border-stronger)!important}
-#tabTracking .toss-btn-danger{background:var(--card)!important;color:var(--text2)!important;border-color:var(--border-strong)!important}
-#tabTracking .toss-btn-danger:hover{background:var(--danger-bg)!important;color:var(--danger)!important;border-color:var(--danger-border)!important}
-
-#tabTracking .toss-table-card{border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);overflow:hidden;background:#fff}
-#tabTracking .toss-table-header{padding:18px 20px;border-bottom:1px solid #f1f3f5;background:#fff}
-#tabTracking .toss-table-title{font-size:15px;font-weight:700;color:#191f28;letter-spacing:-0.02em}
-#tabTracking .toss-selected-pill{padding:4px 10px;background:#e6eef7;color:#004A93;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:-0.01em}
-#tabTracking .toss-selected-pill:empty{display:none}
-
-#tabTracking .toss-table thead th{background:#fff!important;color:#6b7684!important;font-size:12px!important;font-weight:700!important;letter-spacing:-0.01em;padding:14px 12px!important;border-bottom:1px solid #f1f3f5!important;border-right:none!important;text-align:left;position:sticky;top:0}
-#tabTracking .toss-table thead th:hover{color:#191f28!important}
-#tabTracking .toss-table tbody td{background:#fff!important;border-bottom:1px solid #f1f3f5!important;border-right:none!important;padding:12px!important;font-size:12px;color:#333d4b;font-weight:500}
-#tabTracking .toss-table tbody tr:nth-child(even) td{background:#fff!important}
-#tabTracking .toss-table tbody tr:hover td{background:#f9fafb!important}
-#tabTracking .toss-table tbody tr.selected td{background:#e6eef7!important;color:#191f28}
-#tabTracking .toss-table tbody tr:last-child td{border-bottom:none!important}
-#tabTracking .toss-table .as-no-col{color:#b0b8c1;font-weight:500}
-
-/* ── Toss-style ERP Upload & Column Status ── */
-.toss-upload-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);padding:16px}
-.toss-upload-dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;border:2px dashed #e5e8eb;border-radius:14px;cursor:pointer;transition:border-color .15s,background .15s;background:#f9fafb;padding:40px 24px;text-align:center;font-family:inherit}
-.toss-upload-dropzone:hover,.toss-upload-dropzone.is-dragover{border-color:#004A93;background:#f2f6fb}
-.toss-upload-icon-wrap{width:56px;height:56px;border-radius:14px;background:#e6eef7;color:#004A93;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:transform .15s}
-.toss-upload-dropzone:hover .toss-upload-icon-wrap{transform:scale(1.05)}
-.toss-upload-title{font-size:16px;font-weight:700;color:#191f28;letter-spacing:-0.02em;margin-bottom:6px}
-.toss-upload-sub{font-size:13px;font-weight:500;color:#8b95a1;letter-spacing:-0.01em;margin-bottom:20px}
-.toss-upload-cta{display:inline-flex;align-items:center;justify-content:center;padding:0 22px;height:40px;border-radius:10px;background:#004A93;color:#fff;font-size:13px;font-weight:700;letter-spacing:-0.01em;transition:background .15s}
-.toss-upload-dropzone:hover .toss-upload-cta{background:#003a75}
-
-.toss-col-pill{padding:6px 14px;background:#e6eef7;border-radius:999px;font-size:13px;font-weight:600;color:#004A93;letter-spacing:-0.01em}
-.toss-col-pill b{font-weight:800;margin-right:2px}
-
-/* Toss KPI Card */
-.toss-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,280px));gap:12px}
-.toss-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:22px 22px 20px;box-shadow:var(--shadow-xs);position:relative;overflow:hidden;transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
-.toss-kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-strong)}
-.toss-kpi-label{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:-0.01em;margin-bottom:10px}
-.toss-kpi-val{font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:var(--text);display:flex;align-items:baseline;gap:4px}
-.toss-kpi-unit{font-size:15px;font-weight:700;color:var(--text2);letter-spacing:-0.02em;margin-left:2px}
-.toss-kpi-accent{width:32px;height:3px;border-radius:2px;background:var(--brand);margin-top:12px;opacity:.85}
-.toss-col-card{background:#fff;border:1px solid #f1f3f5;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,0.02);padding:20px 22px}
-.toss-col-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-
 .toss-btn-mini{height:36px;padding:0 14px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:-0.01em;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1.5px solid transparent;font-family:inherit;transition:background .15s,border-color .15s,color .15s,transform .05s}
 .toss-btn-mini svg{width:14px;height:14px;flex-shrink:0}
 .toss-btn-mini:active{transform:scale(0.97)}
@@ -632,19 +395,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 .toss-btn-mini-success:hover{background:var(--success-strong);border-color:var(--success-strong)}
 .toss-btn-mini-icon{width:36px;padding:0!important;justify-content:center}
 .toss-btn-mini-icon svg{width:15px;height:15px}
-
-#erpColGrid .erp-col-cell{display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;border:1px solid var(--border);background:var(--surface-muted);border-radius:var(--r-md);transition:background .15s,border-color .15s;font-family:'Pretendard Variable',Pretendard,sans-serif;cursor:default}
-#erpColGrid.is-editing .erp-col-cell{background:#fff;cursor:text}
-#erpColGrid .erp-col-cell:hover{background:var(--surface-subtle);border-color:var(--border-strong)}
-#erpColGrid.is-editing .erp-col-cell:hover{background:#fff;border-color:var(--brand)}
-#erpColGrid .erp-col-cell.erp-col-changed{border-color:#f59e0b;background:#fffbeb}
-#erpColGrid .erp-col-cell.erp-col-changed:hover{border-color:#f59e0b;background:#fffbeb}
-#erpColGrid .erp-col-no{font-size:11px;font-weight:700;color:var(--text-faint);min-width:24px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;flex-shrink:0}
-#erpColGrid .erp-col-input{flex:1;min-width:0;padding:0;border:none;font-size:13px;font-weight:600;font-family:inherit;color:var(--text);letter-spacing:-0.02em;outline:none;background:transparent;cursor:inherit;text-overflow:ellipsis;width:100%}
-#erpColGrid .erp-col-input[readonly]{pointer-events:none}
-#erpColGrid .erp-col-del{width:22px;height:22px;border:none;background:transparent;color:var(--text-faint);font-size:18px;line-height:1;padding:0;border-radius:var(--r-xs);cursor:pointer;flex-shrink:0;visibility:hidden;opacity:0;transition:opacity .18s ease,color .12s,background .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center}
-#erpColGrid.is-editing .erp-col-del{visibility:visible;opacity:1}
-#erpColGrid .erp-col-del:hover{color:var(--danger);background:var(--danger-bg)}
 
 /* 제품명 관리 — 칼럼 현황과 동일 스타일 적용 */
 #productListBody .erp-col-cell{display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;border:1px solid var(--border);background:var(--surface-muted);border-radius:var(--r-md);transition:background .15s,border-color .15s;font-family:'Pretendard Variable',Pretendard,sans-serif;cursor:default}
@@ -691,7 +441,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 #tabAs .as-filter-select:hover{border-color:var(--border-stronger)!important}
 #tabAs .as-filter-select:focus{border-color:var(--brand)!important;outline:none;box-shadow:var(--shadow-focus)}
 
-/* ── AS 탭 Toss 스타일 커스텀 드롭다운 (#tabTracking과 크기만 다름: 40px / r-md) ── */
 #tabAs .toss-dd{position:relative;flex-shrink:0}
 #tabAs .toss-dd-btn{height:40px;padding:0 12px;border:1.5px solid var(--border-strong);border-radius:var(--r-md);background:var(--card);display:inline-flex;align-items:center;gap:8px;min-width:110px;cursor:pointer;font-family:inherit;transition:border-color var(--ease),background var(--ease)}
 #tabAs .toss-dd-btn:hover{border-color:var(--border-stronger)}
@@ -882,7 +631,6 @@ tbody tr:hover td{background:var(--surface-muted)}
   .as-tb-btn-new{margin-left:0}
 }
 
-/* ── ERP 칼럼 그리드 (셀 스타일은 #erpColGrid 스코프에서 정의) ── */
 
 /* ── AS 서브메뉴 ── */
 .as-submenu{transition:max-height .3s cubic-bezier(.4,0,.2,1),opacity .25s ease;max-height:0;opacity:0;overflow:hidden;padding-left:18px}
@@ -995,20 +743,6 @@ tbody tr:hover td{background:var(--surface-muted)}
 #asDeliveryAgreedDateHint{display:block;font-size:13px;color:#526174;margin-top:6px}
 @media(max-width:480px){#asModal .modal-row.as-intake-location,#asModal .modal-row.as-intake-material{grid-template-columns:1fr!important}}
 
-/* Development notice: centered, readable and scoped to this dialog. */
-#devNotice{border:0;padding:0;margin:auto;background:transparent;width:min(340px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;border-radius:16px;color:#202c3a;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
-#devNotice::backdrop{background:rgba(15,23,42,.42);backdrop-filter:blur(2px)}
-#devNotice .modal-box{position:relative;max-width:none;min-height:260px;max-height:none;border-radius:16px;background:#fcfdff;box-shadow:0 16px 48px rgba(15,35,60,.18);animation:none}
-#devNotice .modal-header{display:flex;align-items:center;justify-content:center;flex:1;padding:64px 44px 36px}
-#devNotice .modal-header h3{display:block;width:100%;margin:0;font-size:24px;font-weight:700;line-height:1.4;letter-spacing:-.02em;text-align:center;color:#202c3a;word-break:keep-all}
-#devNotice .modal-header h3::before{display:none}
-#devNotice .modal-close{position:absolute;right:10px;top:10px;width:40px;height:40px;background:transparent;color:#526174;font-family:inherit;font-size:26px;font-weight:400;line-height:1;border-radius:10px;display:flex;align-items:center;justify-content:center}
-#devNotice .modal-close:hover{background:#eaf0f6;color:#202c3a}
-#devNotice .modal-footer{padding:0 24px 24px;flex-shrink:0;display:block}
-#devNotice .admin-btn{width:100%;min-height:48px;margin:0;padding:12px 20px;border:1px solid #004a93;border-radius:10px;background:#004a93;color:#fff;font-family:inherit;font-size:16px;font-weight:650;line-height:1.4;white-space:nowrap;box-shadow:none}
-#devNotice .admin-btn:hover{background:#003a75;border-color:#003a75}
-#devNotice .admin-btn:active{transform:scale(.98)}
-#devNotice button:focus-visible{outline:3px solid #397cba;outline-offset:3px}
 /* Sidebar typography preserves the existing navigation and brand. */
 .sidebar .tabs{gap:4px;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
 .sidebar .tab{font-family:inherit;font-size:14px;font-weight:650;line-height:1.5;min-height:42px;padding:10px 14px;color:#526174;letter-spacing:-.01em;white-space:nowrap}
@@ -1984,310 +1718,19 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   <div class="layout">
   <aside class="sidebar">
     <div class="tabs">
-      <button class="tab on" onclick="switchTab('home',this)">홈</button>
-      <button class="tab" onclick="switchTab('tracking',this)">DB 관리</button>
-      <button class="tab" onclick="toggleErpMenu(this)">업로드</button>
-      <div class="as-submenu" id="erpSubmenu">
-        <button class="tab-sub" onclick="switchTab('erp',this,'upload')" data-sub="upload">엑셀 업로드</button>
-        <button class="tab-sub" onclick="switchTab('erp',this,'colstatus')" data-sub="colstatus">칼럼 현황</button>
-      </div>
-      <button class="tab" onclick="toggleAsMenu(this)">AS 접수</button>
+      <button class="tab" id="tabAsBtn" onclick="toggleAsMenu(this)">AS 접수 현황</button>
       <div class="as-submenu" id="asSubmenu">
-        <button class="tab-sub" onclick="switchTab('as',this,'list')" data-sub="list">접수 목록</button>
+        <button class="tab-sub" onclick="switchTab('as',this,'list')" data-sub="list">AS 접수</button>
+        <button class="tab-sub" onclick="switchTab('as',this,'product')" data-sub="product">제품 목록</button>
       </div>
       <button class="tab" onclick="switchTab('users',this)" id="tabUsersBtn" style="display:none">사용자 관리</button>
-      <button class="tab" onclick="switchTab('floorplan',this)" id="tabFloorplanBtn" style="display:none">평면도 편집</button>
     </div>
   </aside>
   <div class="main">
 
-    <!-- 홈 탭 -->
-    <div id="tabHome">
-      <div class="page-title-wrap">
-        <h1 class="page-title">DB 관리 시스템</h1>
-        <p class="page-subtitle">공정·자재·AS를 한눈에 관리합니다.</p>
-      </div>
-      <div class="stats-row" id="statsRow"></div>
-      <!-- 공장 배치도 -->
-      <div class="card home-map-card">
-        <div class="home-map-header">
-          <div class="admin-section-title" style="margin-bottom:0">공장 배치도</div>
-        </div>
-        <div id="mapWrap">
-          <div class="home-map-body">
-            <div class="home-map-svg-wrap">
-              <svg id="svgFloorPlan" viewBox="0 0 1000 600" class="home-svg">
-                <defs>
-                  <pattern id="gridPattern" width="25" height="25" patternUnits="userSpaceOnUse">
-                    <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#e2e8f0" stroke-width="0.5" opacity="0.6"/>
-                  </pattern>
-                </defs>
-                <rect width="1000" height="600" fill="#f8fafc"/>
-                <rect width="1000" height="600" fill="url(#gridPattern)"/>
-                <g id="svgWalls"></g>
-                <g id="svgZones"></g>
-              </svg>
-              <div class="home-map-empty" id="homeMapEmpty" style="display:none">
-                <div style="font-size:32px;opacity:.3">&#128506;</div>
-                <div style="font-size:13px;color:#94a3b8;margin-top:8px">관리자 탭에서 구역을 추가하세요</div>
-              </div>
-            </div>
-            <div class="home-map-sidebar" id="mapSidebar">
-              <div class="home-map-sidebar-section">
-                <div class="map-sidebar-title">구역 현황</div>
-                <div id="mapAreaList"></div>
-              </div>
-              <div class="home-map-sidebar-section">
-                <div class="map-sidebar-title" style="font-size:11px;color:#94a3b8">최근 위치 스캔</div>
-                <div id="recentLocations"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DB 관리 탭 -->
-    <div id="tabTracking" style="display:none">
-      <div class="page-title-wrap with-action">
-        <div>
-          <h1 class="page-title">DB 관리</h1>
-          <p class="page-subtitle">ERP 데이터를 조회하고 관리합니다.</p>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span id="trackNewBadge" style="padding:6px 14px;background:var(--brand-soft);border-radius:var(--r-pill);font-size:13px;font-weight:700;color:var(--brand);letter-spacing:-0.01em;display:none">신규 0건</span>
-          <span id="trackTotalBadge" style="padding:6px 14px;background:var(--surface-subtle);border-radius:var(--r-pill);font-size:13px;font-weight:700;color:var(--text2);letter-spacing:-0.01em">총 0건</span>
-        </div>
-      </div>
-      <!-- 툴바 -->
-      <div class="as-toolbar toss-toolbar">
-        <div class="as-toolbar-row">
-          <div class="toss-search-group" style="display:flex;align-items:center;gap:8px;flex:1;min-width:280px;max-width:520px">
-            <div class="toss-dd" id="trackFieldDd">
-              <button type="button" class="toss-dd-btn" id="trackFieldBtn" onclick="toggleTrackFieldDd(event)" aria-haspopup="listbox" aria-expanded="false">
-                <span class="toss-dd-label" id="trackFieldLabel">전체</span>
-                <svg class="toss-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <div class="toss-dd-panel" id="trackFieldPanel" role="listbox"></div>
-              <input type="hidden" id="trackSearchField" value="all"/>
-            </div>
-            <div class="toss-search-wrap" style="flex:1;min-width:0;position:relative">
-              <svg class="toss-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b95a1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:none"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-              <input class="as-search-input toss-search" id="trackSearch" placeholder="검색어 입력" oninput="_debounceTrackSearch()"/>
-            </div>
-          </div>
-          <button class="as-tb-btn as-tb-btn-secondary toss-btn toss-btn-secondary toss-btn-icon" onclick="loadTracking()" title="조회" aria-label="조회">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-          </button>
-          <div style="flex:1"></div>
-          <button class="as-tb-btn toss-btn toss-btn-secondary toss-btn-icon" onclick="toggleGridPanel()" id="gridSettingBtn" title="그리드 설정" aria-label="그리드 설정">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          </button>
-          <button class="as-tb-btn as-tb-btn-excel toss-btn toss-btn-secondary toss-btn-icon" onclick="exportErpExcel()" title="Excel 다운로드" aria-label="Excel 다운로드">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M7 11l5 5 5-5"/><path d="M4 21h16"/></svg>
-          </button>
-          <button class="as-tb-btn as-tb-btn-danger toss-btn toss-btn-danger toss-btn-icon" onclick="deleteAllErp()" title="삭제" aria-label="삭제">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
-          </button>
-        </div>
-      </div>
-      <!-- 테이블 카드 -->
-      <div class="as-table-card toss-table-card">
-        <div class="as-table-header toss-table-header">
-          <span class="as-table-title toss-table-title">ERP 데이터</span>
-          <span class="as-result-count toss-selected-pill" id="trackSelectedCount"></span>
-        </div>
-        <div style="overflow-x:auto;max-height:70vh">
-          <table class="as-erp-table toss-table" id="trackTable" style="font-size:11px;table-layout:auto">
-            <thead id="trackHead" style="position:sticky;top:0;z-index:1"></thead>
-            <tbody id="trackingBody"></tbody>
-          </table>
-        </div>
-        <div style="padding:12px 20px;border-top:1px solid #f1f3f5;display:flex;justify-content:flex-end">
-          <span style="font-size:12px;color:#8b95a1;font-weight:500" id="trackCount"></span>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ERP 데이터 탭 -->
-    <div id="tabErp" style="display:none">
-    <div id="erpSubUpload">
-      <div class="page-title-wrap">
-        <h1 class="page-title">엑셀 업로드</h1>
-        <p class="page-subtitle">삼성중공업 ERP 자료를 업로드하면 칼럼을 자동으로 인식합니다.</p>
-      </div>
-      <!-- 엑셀 업로드 영역 -->
-      <div class="toss-upload-card">
-        <label class="toss-upload-dropzone" id="erpUploadDropzone" ondragover="event.preventDefault();this.classList.add('is-dragover')" ondragleave="this.classList.remove('is-dragover')" ondrop="event.preventDefault();this.classList.remove('is-dragover');document.getElementById('erpFile').files=event.dataTransfer.files;_onErpFileSelect()">
-          <div class="toss-upload-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <div class="toss-upload-title">파일을 끌어다 놓거나 선택하세요</div>
-          <div class="toss-upload-sub">xlsx · xls · csv 지원</div>
-          <div class="toss-upload-cta">파일 선택</div>
-          <input type="file" id="erpFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="_onErpFileSelect()"/>
-        </label>
-      </div>
-    </div><!-- /erpSubUpload -->
-
-    <!-- 칼럼 현황 -->
-    <div id="erpSubColstatus" style="display:none">
-      <div class="page-title-wrap with-action">
-        <div>
-          <h1 class="page-title">칼럼 현황</h1>
-          <p class="page-subtitle">ERP 자료의 칼럼명을 편집하거나 추가·삭제할 수 있습니다.<span id="erpColSubText" style="margin-left:8px;color:#d97706;font-weight:700;font-variant-numeric:tabular-nums"></span></p>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span style="display:inline-flex;align-items:center;height:40px;padding:0 14px;background:var(--surface-subtle);border-radius:var(--r-md);font-size:13px;font-weight:600;color:var(--text2);letter-spacing:-0.01em">총 <b style="color:var(--text);font-weight:800;margin:0 3px 0 4px;font-variant-numeric:tabular-nums" id="erpTotalColCount">0</b>건</span>
-          <button id="erpEditModeBtn" class="toss-btn-mini toss-btn-mini-secondary" style="width:40px;height:40px;padding:0;justify-content:center" onclick="toggleErpEditMode()" title="수정" aria-label="수정">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-          </button>
-          <button class="toss-btn-mini toss-btn-mini-primary" style="width:40px;height:40px;padding:0;justify-content:center" onclick="openAddColModal()" title="추가" aria-label="추가">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-          </button>
-        </div>
-      </div>
-      <div id="erpColStatus" class="toss-col-card">
-        <div id="erpColGrid"></div>
-      </div>
-    </div><!-- /erpSubColstatus -->
-    </div>
-
-    <!-- 칼럼 추가 팝업 -->
-    <div id="addColModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.5);align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-      <div style="background:#fff;border-radius:16px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .25s ease;overflow:hidden">
-        <div style="padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:16px;font-weight:800;color:#0f172a">칼럼 추가</div>
-          <button onclick="closeAddColModal()" style="width:32px;height:32px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:18px;color:#64748b;display:flex;align-items:center;justify-content:center">&times;</button>
-        </div>
-        <div style="padding:20px 24px">
-          <div style="font-size:12px;color:#64748b;margin-bottom:12px">추가할 칼럼명을 입력하세요.</div>
-          <input type="text" id="addColInput" placeholder="칼럼명" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onkeydown="if(event.key==='Enter')confirmAddCol()"/>
-        </div>
-        <div style="padding:0 24px 20px;display:flex;gap:10px;justify-content:flex-end">
-          <button onclick="closeAddColModal()" style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#64748b">취소</button>
-          <button onclick="confirmAddCol()" style="padding:10px 24px;border:none;border-radius:10px;background:#0f172a;color:#fff;cursor:pointer;font-size:13px;font-weight:700">추가</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 칼럼 삭제 팝업 -->
-    <div id="delColModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.5);align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-      <div style="background:#fff;border-radius:16px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .25s ease;overflow:hidden">
-        <div style="padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:16px;font-weight:800;color:#dc2626">칼럼 삭제</div>
-          <button onclick="closeDelColModal()" style="width:32px;height:32px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:18px;color:#64748b;display:flex;align-items:center;justify-content:center">&times;</button>
-        </div>
-        <div style="padding:20px 24px">
-          <div style="padding:14px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;display:flex;align-items:center;gap:10px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <div style="font-size:13px;font-weight:700;color:#991b1b" id="delColName"></div>
-          </div>
-        </div>
-        <div style="padding:0 24px 20px;display:flex;gap:10px;justify-content:flex-end">
-          <button onclick="closeDelColModal()" style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#64748b">취소</button>
-          <button onclick="confirmDelCol()" style="padding:10px 24px;border:none;border-radius:10px;background:#dc2626;color:#fff;cursor:pointer;font-size:13px;font-weight:700">삭제</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 칼럼 수정 저장 확인 팝업 -->
-    <div id="saveColModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.5);align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-      <div style="background:#fff;border-radius:16px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .25s ease;overflow:hidden">
-        <div style="padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:16px;font-weight:800;color:#0f172a">칼럼명 변경</div>
-          <button onclick="closeSaveColModal()" style="width:32px;height:32px;border:none;background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:18px;color:#64748b;display:flex;align-items:center;justify-content:center">&times;</button>
-        </div>
-        <div style="padding:20px 24px">
-          <div style="padding:14px 16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;display:flex;align-items:center;gap:10px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            <div style="font-size:13px;font-weight:700;color:#1e40af" id="saveColText"></div>
-          </div>
-        </div>
-        <div style="padding:0 24px 20px;display:flex;gap:10px;justify-content:flex-end">
-          <button onclick="closeSaveColModal()" style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#64748b">취소</button>
-          <button onclick="confirmSaveCol()" style="padding:10px 24px;border:none;border-radius:10px;background:#0f172a;color:#fff;cursor:pointer;font-size:13px;font-weight:700">저장</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ERP 미리보기 팝업 -->
-    <div id="erpPreviewModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:16px;width:95vw;max-width:1200px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
-        <!-- 헤더 -->
-        <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:12px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <div>
-              <div style="font-size:16px;font-weight:800;color:#0f172a" id="erpPreviewTitle">파일 미리보기</div>
-              <div style="font-size:12px;color:#94a3b8;margin-top:2px" id="erpPreviewInfo"></div>
-            </div>
-          </div>
-          <button onclick="closeErpPreview()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;padding:4px 8px">&times;</button>
-        </div>
-        <!-- 미리보기 테이블 -->
-        <div style="flex:1;overflow:auto;padding:0">
-          <table id="erpPreviewTable" style="width:100%;border-collapse:collapse;font-size:11px">
-            <thead id="erpPreviewHead" style="position:sticky;top:0;z-index:1"></thead>
-            <tbody id="erpPreviewBody"></tbody>
-          </table>
-        </div>
-        <!-- 중복 처리 + 하단 버튼 -->
-        <div style="padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:16px">
-            <div id="erpPreviewStatus" style="font-size:13px;color:#64748b"></div>
-            <div id="erpDupOption" style="display:none;align-items:center;gap:6px;padding:6px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px">
-              <span style="font-size:12px;color:#92400e;font-weight:600" id="erpDupLabel"></span>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px">
-            <button onclick="closeErpPreview()" style="padding:10px 24px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;font-size:13px">취소</button>
-            <button id="erpUploadConfirmBtn" onclick="confirmErpUpload()" style="padding:10px 32px;border:none;border-radius:var(--r-md);background:var(--brand);color:#fff;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:-0.01em">업로드 확인</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 칼럼 설정 모달 -->
-    <!-- 그리드 설정 팝업 -->
-    <div id="gridSettingModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:16px;width:95vw;max-width:1000px;height:85vh;display:flex;flex-direction:column;overflow:hidden">
-        <!-- 헤더 -->
-        <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:12px">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <div>
-              <div style="font-size:16px;font-weight:800;color:#0f172a">그리드 설정</div>
-              <div style="font-size:12px;color:#94a3b8;margin-top:2px" id="trackColInfo">DB 관리 테이블에 표시할 칼럼을 선택하세요</div>
-            </div>
-          </div>
-          <button onclick="closeGridModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;padding:4px 8px">&times;</button>
-        </div>
-        <!-- 검색 + 버튼 -->
-        <div style="padding:14px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between">
-          <input type="text" id="trackColSearch" placeholder="칼럼명 검색..." oninput="renderTrackColList()" style="padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;width:240px"/>
-          <div style="display:flex;gap:8px">
-            <button onclick="trackColSelectAll(true)" style="padding:6px 14px;font-size:12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer">전체 선택</button>
-            <button onclick="trackColSelectAll(false)" style="padding:6px 14px;font-size:12px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer">전체 해제</button>
-          </div>
-        </div>
-        <!-- 체크박스 목록 -->
-        <div id="trackColList" style="padding:16px 24px;overflow-y:auto;flex:1"></div>
-        <!-- 하단 -->
-        <div style="padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:13px;color:#64748b" id="trackColCount"></span>
-          <div style="display:flex;gap:10px">
-            <button onclick="closeGridModal()" style="padding:10px 24px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;font-size:13px">취소</button>
-            <button onclick="saveTrackCols()" style="padding:10px 32px;border:none;border-radius:var(--r-md);background:var(--brand);color:#fff;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:-0.01em">저장</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- 사용자 관리 탭 -->
     <div id="tabUsers" style="display:none">
-      <div class="page-title-wrap with-action"><div><h1 class="page-title">사용자 관리</h1><p class="page-subtitle">사용자 정보와 공정·AS 권한을 한곳에서 관리합니다.</p></div><button type="button" class="toss-user-new-btn" onclick="openUserModal()">＋ 사용자 추가</button></div>
+      <div class="page-title-wrap with-action"><div><h1 class="page-title">사용자 관리</h1><p class="page-subtitle">사용자 정보와 AS 권한을 한곳에서 관리합니다.</p></div><button type="button" class="toss-user-new-btn" onclick="openUserModal()">＋ 사용자 추가</button></div>
       <div class="toss-user-kpi-row">
       <div class="toss-user-kpi"><span class="toss-user-kpi-label">전체 사용자</span><strong class="toss-user-kpi-value" id="uStatTotal">0</strong></div>
 <div class="toss-user-kpi"><span class="toss-user-kpi-label">시스템 관리자</span><strong class="toss-user-kpi-value" id="uStatSys">0</strong></div>
@@ -2301,9 +1744,9 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <button type="button" onclick="resetAdminUserFilters()">필터 초기화</button>
       </div>
       <section class="toss-user-card" aria-labelledby="umListTitle">
-        <div class="um-panel-heading"><h2 id="umListTitle">사용자 목록</h2><span>공정 권한을 펼쳐 상세 내용을 확인하세요.</span></div>
+        <div class="um-panel-heading"><h2 id="umListTitle">사용자 목록</h2><span>AS 권한을 확인하고 관리하세요.</span></div>
         <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 목록, 가로 스크롤 가능">
-          <table class="user-perm-table"><thead><tr><th scope="col">사용자</th><th scope="col">분류</th><th scope="col">부서 / 직급</th><th scope="col">공정 권한</th><th scope="col">AS 권한</th><th scope="col">관리</th></tr></thead><tbody id="adminUserRows"></tbody></table>
+          <table class="user-perm-table"><thead><tr><th scope="col">사용자</th><th scope="col">분류</th><th scope="col">부서 / 직급</th><th scope="col">AS 권한</th><th scope="col">관리</th></tr></thead><tbody id="adminUserRows"></tbody></table>
         </div>
         <div class="um-footer" id="umCount" role="status" aria-live="polite">사용자 목록을 불러오는 중입니다.</div>
       </section>
@@ -2643,90 +2086,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
       </div>
     </div>
 
-    <!-- 평면도 편집 탭 -->
-    <div id="tabFloorplan" style="display:none">
-      <div class="page-title-wrap">
-        <h1 class="page-title">평면도 편집</h1>
-        <p class="page-subtitle">공장 배치도를 편집하고 구역을 관리합니다.</p>
-      </div>
-        <div class="card" style="overflow:visible">
-          <!-- 도구 모음 -->
-          <div class="map-toolbar" id="mapToolbar" style="flex-wrap:wrap;gap:8px;padding:12px 16px">
-            <!-- 도구 선택 -->
-            <div style="display:flex;align-items:center;gap:4px;background:#f1f5f9;padding:4px;border-radius:10px">
-              <button class="editor-tool active" id="toolSelect" onclick="setEditorTool('select')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
-                선택
-              </button>
-              <button class="editor-tool" id="toolDraw" onclick="setEditorTool('draw')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                구역
-              </button>
-              <button class="editor-tool" id="toolWall" onclick="setEditorTool('wall')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="12" x2="20" y2="12"/></svg>
-                벽
-              </button>
-            </div>
-            <span class="toolbar-sep"></span>
-            <!-- 색상 -->
-            <div style="display:flex;align-items:center;gap:4px" id="colorPicker">
-              <span style="font-size:12px;font-weight:600;color:#64748b">색상</span>
-              <div style="display:flex;gap:3px">
-                <span class="color-dot active" data-color="#004A93" style="background:#004A93" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#059669" style="background:#059669" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#d97706" style="background:#d97706" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#dc2626" style="background:#dc2626" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#7c3aed" style="background:#7c3aed" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#0891b2" style="background:#0891b2" onclick="pickEditorColor(this)"></span>
-                <span class="color-dot" data-color="#64748b" style="background:#64748b" onclick="pickEditorColor(this)"></span>
-              </div>
-            </div>
-            <span class="toolbar-sep"></span>
-            <!-- 액션 -->
-            <button class="map-btn map-btn-danger" id="mapDeleteBtn" style="display:none" onclick="deleteSelectedItem()">삭제</button>
-            <button class="map-btn map-btn-secondary" onclick="editorUndo()" title="Ctrl+Z">되돌리기</button>
-            <button class="map-btn map-btn-secondary" onclick="editorClear()">초기화</button>
-            <div style="flex:1"></div>
-            <button class="map-btn map-btn-primary" onclick="saveMapAreas()">저장</button>
-          </div>
-          <div style="display:flex">
-            <div style="flex:1;padding:16px;overflow:auto">
-              <svg id="svgFloorPlanAdmin" viewBox="0 0 1000 600" style="width:100%;height:auto;background:#fcfcfd;border-radius:8px;border:1px solid #eef1f5;cursor:crosshair"
-                   onmousedown="svgMouseDown(event)" onmousemove="svgMouseMove(event)" onmouseup="svgMouseUp(event)">
-                <defs>
-                  <pattern id="gridAdmin" width="25" height="25" patternUnits="userSpaceOnUse">
-                    <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#eef1f5" stroke-width="0.5"/>
-                  </pattern>
-                </defs>
-                <rect width="1000" height="600" fill="url(#gridAdmin)"/>
-                <rect x="0" y="0" width="1000" height="600" fill="none" stroke="#cbd5e1" stroke-width="1"/>
-                <g id="svgZonesAdmin"></g>
-                <g id="svgWallsAdmin"></g>
-                <rect id="svgDrawRect" fill="rgba(0,74,147,0.1)" stroke="#004A93" stroke-width="2" stroke-dasharray="6,3" rx="4" style="display:none"/>
-                <line id="svgDrawLine" stroke="#64748b" stroke-width="2" stroke-dasharray="4,3" style="display:none"/>
-              </svg>
-            </div>
-            <div class="map-sidebar" style="max-height:500px">
-              <div class="map-sidebar-title">구역 목록</div>
-              <div id="mapAreaListAdmin"></div>
-            </div>
-          </div>
-        </div>
-    </div>
-
     <!-- 사용자 추가/수정 모달 -->
-    <dialog id="devNotice" aria-labelledby="devNoticeTitle" onclick="if(event.target===this)this.close()">
-      <div class="modal-box">
-        <div class="modal-header">
-          <h3 id="devNoticeTitle">현재 개발중</h3>
-          <button type="button" class="modal-close" aria-label="닫기" onclick="document.getElementById('devNotice').close()">&times;</button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="admin-btn admin-btn-primary" autofocus onclick="document.getElementById('devNotice').close()">확인</button>
-        </div>
-      </div>
-    </dialog>
-
     <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeUserModal()">
       <div class="modal-box">
         <div class="modal-header">
@@ -2768,18 +2128,6 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
               <input id="modalUserPos" placeholder="직급"/>
             </div>
           </div>
-          <div class="modal-field">
-            <label>권한 부여</label>
-            <div class="modal-steps" id="modalStepsGrid">
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#4ade80" data-step="incoming" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#86efac" aria-hidden="true"></span><span class="mst-txt">입고</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#22c55e" data-step="inspect_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#4ade80" aria-hidden="true"></span><span class="mst-txt">검수 대기</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#16a34a" data-step="inspect_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#22c55e" aria-hidden="true"></span><span class="mst-txt">검수 완료</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#15803d" data-step="paint_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#16a34a" aria-hidden="true"></span><span class="mst-txt">도장 대기</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#166534" data-step="paint_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#15803d" aria-hidden="true"></span><span class="mst-txt">도장 완료</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#14532d" data-step="deliver_wait" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#166534" aria-hidden="true"></span><span class="mst-txt">납품 대기</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#052e16" data-step="deliver_done" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#14532d" aria-hidden="true"></span><span class="mst-txt">납품 완료</span></div>
-            </div>
-          </div>
           <div class="modal-field" style="margin-top:8px">
             <label>AS 결재 권한</label>
             <div class="modal-steps" id="modalAsPerms">
@@ -2816,19 +2164,6 @@ let currentUser = null;
     window.location.replace('/'); return;
   }
 })();
-let expandedBarcodes = new Set();
-
-const TYPE_INFO = {
-  incoming:     { label:'입고',     cls:'step-incoming',     dot:'step-dot-incoming',     prog:'done-incoming' },
-  inspect_wait: { label:'검수 대기', cls:'step-inspect_wait', dot:'step-dot-inspect_wait', prog:'done-inspect_wait' },
-  inspect_done: { label:'검수 완료', cls:'step-inspect_done', dot:'step-dot-inspect_done', prog:'done-inspect_done' },
-  paint_wait:   { label:'도장 대기', cls:'step-paint_wait',   dot:'step-dot-paint_wait',   prog:'done-paint_wait' },
-  paint_done:   { label:'도장 완료', cls:'step-paint_done',   dot:'step-dot-paint_done',   prog:'done-paint_done' },
-  deliver_wait: { label:'납품 대기', cls:'step-deliver_wait', dot:'step-dot-deliver_wait', prog:'done-deliver_wait' },
-  deliver_done: { label:'납품 완료', cls:'step-deliver_done', dot:'step-dot-deliver_done', prog:'done-deliver_done' },
-};
-const STEP_ORDER = ['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'];
-
 // ── 로그인 ──
 async function doLogin() {
   const id = document.getElementById('loginId').value.trim();
@@ -2867,12 +2202,11 @@ async function doLogin() {
           }
           if (data.user.role === 'sysadmin') {
             document.getElementById('tabUsersBtn').style.display = '';
-            document.getElementById('tabFloorplanBtn').style.display = '';
           }
           if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
           if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
           if (currentUser.role === 'sysadmin') { document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none'); document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none'); }
-          loadStats(); loadMapView(); connectSSE();
+          switchTab('as',document.getElementById('tabAsBtn'),'stats');
         }, 400);
       }, 2500);
     }, 400);
@@ -2885,7 +2219,6 @@ async function doLogout() {
   try { await fetch(SERVER+'/api/logout',{method:'POST'}); } catch {}
 
   currentUser = null;
-  if (typeof evtSource !== 'undefined' && evtSource) { evtSource.close(); evtSource = null; }
   try {
     sessionStorage.removeItem('currentUser');
     localStorage.removeItem('currentUser');
@@ -2895,77 +2228,47 @@ async function doLogout() {
 
 // ── 탭 전환 ──
 let _asSubMode = 'stats';
-let _erpSubMode = 'upload';
-let _asNavigation = {tab:'home',el:null,sub:null};
+let _asNavigation = {tab:'as',el:null,sub:'stats'};
 let _asLedgerReturn = null;
 
 function asLedgerGoBack() {
   if(!asLedgerCanLeave())return;
-  const previous=_asLedgerReturn||{tab:'home',el:null,sub:null,scroll:0};
+  const previous=_asLedgerReturn||{tab:'as',el:null,sub:'stats',scroll:0};
   const button=previous.el||document.querySelector('.sidebar .tab');
   switchTab(previous.tab,button,previous.sub);
   if(location.hash==='#as-list')history.replaceState(null,'',location.pathname+location.search);
   requestAnimationFrame(()=>{window.scrollTo(0,previous.scroll||0);button.focus({preventScroll:true});});
 }
 
-function showDevelopmentNotice(tab) {
-  const dialog = document.getElementById('devNotice');
-  if (!dialog.open) dialog.showModal();
-}
-
 function switchTab(tab, el, sub) {
-  if (!asLedgerCanLeave()) return;
-  // Temporarily unavailable screens: block before changing navigation or loading data.
-  if (['tracking', 'erp', 'floorplan'].includes(tab)) {
-    showDevelopmentNotice(tab);
-    return;
-  }
+  if (!asLedgerCanLeave() || !['as','users'].includes(tab)) return;
   const showLedger=tab==='as'&&sub==='list';
   if(showLedger&&!document.body.classList.contains('as-ledger-active'))_asLedgerReturn={..._asNavigation,scroll:window.scrollY};
   _asNavigation={tab,el,sub};
   document.body.classList.toggle('as-ledger-active',showLedger);
   if(showLedger)window.scrollTo(0,0);
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-  document.querySelectorAll('.tab-sub').forEach(t => t.classList.remove('on'));
-  var asMenu = document.getElementById('asSubmenu');
-  var erpMenu = document.getElementById('erpSubmenu');
-  if (tab === 'as') {
-    document.querySelector('.tabs .tab[onclick*="toggleAsMenu"]').classList.add('on');
-    if (el && el.classList.contains('tab-sub')) el.classList.add('on');
-    _asSubMode = sub || 'stats';
-    erpMenu.classList.remove('open');
-  } else if (tab === 'erp') {
-    document.querySelector('.tabs .tab[onclick*="toggleErpMenu"]').classList.add('on');
-    if (el && el.classList.contains('tab-sub')) el.classList.add('on');
-    _erpSubMode = sub || 'upload';
+  document.querySelectorAll('.tab,.tab-sub').forEach(t=>t.classList.remove('on'));
+  const asMenu=document.getElementById('asSubmenu');
+  if(tab==='as'){
+    document.getElementById('tabAsBtn').classList.add('on');
+    asMenu.classList.add('open');
+    if(el&&el.classList.contains('tab-sub'))el.classList.add('on');
+    _asSubMode=['list','stats','product'].includes(sub)?sub:'stats';
+  }else{
+    if(el)el.classList.add('on');
     asMenu.classList.remove('open');
-  } else {
-    el.classList.add('on');
-    asMenu.classList.remove('open');
-    erpMenu.classList.remove('open');
   }
-  ['tabHome','tabTracking','tabErp','tabAs','tabUsers','tabFloorplan'].forEach(id => {
-    var e = document.getElementById(id); if (e) e.style.display = 'none';
-  });
-  var tabMap = { home:'tabHome', tracking:'tabTracking', erp:'tabErp', as:'tabAs', users:'tabUsers', floorplan:'tabFloorplan' };
-  document.getElementById(tabMap[tab]).style.display = 'block';
-  if (tab === 'home') { loadStats(); loadMapView(); }
-  if (tab === 'tracking') loadTracking();
-  if (tab === 'erp') {
-    document.getElementById('erpSubUpload').style.display = _erpSubMode === 'upload' ? '' : 'none';
-    document.getElementById('erpSubColstatus').style.display = _erpSubMode === 'colstatus' ? '' : 'none';
-    loadErpData();
-  }
-  if (tab === 'as') {
-    document.getElementById('asSubList').style.display = _asSubMode === 'list' ? '' : 'none';
-    document.getElementById('asSubProduct').style.display = _asSubMode === 'product' ? '' : 'none';
-    document.getElementById('asSubStats').style.display = _asSubMode === 'stats' ? '' : 'none';
-    if (_asSubMode === 'list') loadAsList();
-    if (_asSubMode === 'stats') loadAsStatistics();
+  document.getElementById('tabAs').style.display=tab==='as'?'block':'none';
+  document.getElementById('tabUsers').style.display=tab==='users'?'block':'none';
+  if(tab==='as'){
+    document.getElementById('asSubList').style.display=_asSubMode==='list'?'':'none';
+    document.getElementById('asSubProduct').style.display=_asSubMode==='product'?'':'none';
+    document.getElementById('asSubStats').style.display=_asSubMode==='stats'?'':'none';
+    if(_asSubMode==='list')loadAsList();
+    if(_asSubMode==='stats')loadAsStatistics();
     loadProductList();
   }
-  if (tab === 'users') loadAdminUsers();
-  if (tab === 'floorplan') loadMapEditor();
+  if(tab==='users')loadAdminUsers();
   if(showLedger)document.getElementById('asLedgerBack').focus({preventScroll:true});
 }
 
@@ -2975,94 +2278,11 @@ function toggleAsMenu(btn) {
   switchTab('as', btn, 'stats');
 }
 
-function toggleErpMenu(btn) {
-  switchTab('erp', btn, 'upload');
-}
-
-// ── 통계 ──
-async function loadStats() {
-  try {
-    const r = await fetch(`${SERVER}/api/records`);
-    const data = await r.json();
-    const records = data.records || [];
-    const counts = { total: records.length, incoming:0, inspect_wait:0, inspect_done:0, paint_wait:0, paint_done:0, deliver_wait:0, deliver_done:0 };
-    records.forEach(r => { if (counts[r.type] !== undefined) counts[r.type]++; });
-    document.getElementById('statsRow').innerHTML = [
-      { label:'전체 기록',  val: counts.total,        accent:'#64748b' },
-      { label:'입고',       val: counts.incoming,     accent:'#86efac' },
-      { label:'검수 대기',  val: counts.inspect_wait, accent:'#4ade80' },
-      { label:'검수 완료',  val: counts.inspect_done, accent:'#22c55e' },
-      { label:'도장 대기',  val: counts.paint_wait,   accent:'#16a34a' },
-      { label:'도장 완료',  val: counts.paint_done,   accent:'#15803d' },
-      { label:'납품 대기',  val: counts.deliver_wait, accent:'#166534' },
-      { label:'납품 완료',  val: counts.deliver_done, accent:'#14532d' },
-    ].map(s => `
-      <div class="stat-card" style="--accent:${s.accent}">
-        <div class="stat-label">${s.label}</div>
-        <div class="stat-val">${s.val}</div>
-        <div style="width:28px;height:3px;border-radius:2px;background:${s.accent};margin-top:10px;opacity:.6"></div>
-      </div>
-    `).join('');
-  } catch(e) {}
-}
-
 // ── 텍스트영역 자동 크기 ──
 function autoResizeTextarea(el) {
   const lines = el.value.split('\n').length;
   el.classList.toggle('multi', lines > 1);
 }
-
-// ── DB 관리 검색 필드 드롭다운 (토스 스타일) ──
-const TRACK_FIELD_OPTIONS = [
-  { value: 'all',      label: '전체' },
-  { value: '프로젝트', label: '프로젝트' },
-  { value: 'UID',      label: 'UID' },
-  { value: '자재코드', label: '자재코드' },
-  { value: '블록',     label: '블록' },
-];
-function renderTrackFieldDd() {
-  const panel = document.getElementById('trackFieldPanel');
-  if (!panel) return;
-  const cur = document.getElementById('trackSearchField').value || 'all';
-  panel.innerHTML = TRACK_FIELD_OPTIONS.map(o => `
-    <div class="toss-dd-item${o.value === cur ? ' is-selected' : ''}" role="option" data-val="${o.value}" onclick="selectTrackField('${o.value}','${o.label.replace(/'/g,"\\'")}')">
-      <span>${o.label}</span>
-      <svg class="toss-dd-item-check" viewBox="0 0 24 24" fill="none" stroke="#004A93" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>
-    </div>
-  `).join('');
-}
-function toggleTrackFieldDd(e) {
-  if (e) e.stopPropagation();
-  const dd = document.getElementById('trackFieldDd');
-  const opening = !dd.classList.contains('is-open');
-  document.querySelectorAll('.toss-dd.is-open').forEach(el => el.classList.remove('is-open'));
-  if (opening) {
-    renderTrackFieldDd();
-    dd.classList.add('is-open');
-    const btn = document.getElementById('trackFieldBtn');
-    if (btn) btn.setAttribute('aria-expanded', 'true');
-  } else {
-    const btn = document.getElementById('trackFieldBtn');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  }
-}
-function selectTrackField(value, label) {
-  document.getElementById('trackSearchField').value = value;
-  document.getElementById('trackFieldLabel').textContent = label;
-  const dd = document.getElementById('trackFieldDd');
-  if (dd) dd.classList.remove('is-open');
-  const btn = document.getElementById('trackFieldBtn');
-  if (btn) btn.setAttribute('aria-expanded', 'false');
-  loadTracking();
-}
-document.addEventListener('click', (e) => {
-  const dd = document.getElementById('trackFieldDd');
-  if (dd && dd.classList.contains('is-open') && !dd.contains(e.target)) {
-    dd.classList.remove('is-open');
-    const btn = document.getElementById('trackFieldBtn');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  }
-});
 
 // ── AS 접수 커스텀 드롭다운 (DB관리와 동일 패턴) ──
 const AS_DD_CONFIG = {
@@ -3309,877 +2529,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ── 검색어 파싱 (줄바꿈 다중검색) ──
-function parseSearchTerms(raw) {
-  return raw.split('\n').map(s => s.trim()).filter(Boolean);
-}
-
-// ── 기준 데이터 캐시 ──
-let masterCache = {};
-let masterLoaded = false;
-async function refreshMasterCache(force) {
-  if (masterLoaded && !force) return;
-  try {
-    const r = await fetch(`${SERVER}/api/master`);
-    const data = await r.json();
-    masterCache = {};
-    (data.materials || []).forEach(m => { masterCache[m.barcode] = m; });
-    masterLoaded = true;
-  } catch(e) {}
-}
-
-// ── DB 관리 (자재 목록) ──
-async function loadTracking() {
-  const q = document.getElementById('trackSearch').value.trim().toLowerCase();
-  try {
-    const r = await fetch(`${SERVER}/api/erp`);
-    const data = await r.json();
-    erpAllColumns = data.columns || [];
-    erpVisibleColumns = data.visible || [];
-    const visCols = erpVisibleColumns.length ? erpVisibleColumns : erpAllColumns.slice(0, 20);
-    _trackVisibleCols = [...visCols];
-    let rows = data.rows || [];
-
-    // 사이드바 렌더링
-    renderTrackColList();
-
-    // 검색 필터
-    if (q) {
-      const fieldSelect = document.getElementById('trackSearchField');
-      const fieldKey = fieldSelect ? fieldSelect.value : 'all';
-      if (fieldKey && fieldKey !== 'all') {
-        // 선택 필드의 정규화 매칭 (공백 무시)
-        const norm = s => String(s || '').replace(/\s/g, '').toLowerCase();
-        const target = norm(fieldKey);
-        const matchedCol = erpAllColumns.find(c => norm(c) === target) || fieldKey;
-        rows = rows.filter(row => String(row[matchedCol] || '').toLowerCase().includes(q));
-      } else {
-        rows = rows.filter(row => visCols.some(col => String(row[col]||'').toLowerCase().includes(q)));
-      }
-    }
-
-    // 정렬
-    if (_trackSortCol && _trackSortDir) {
-      rows.sort((a, b) => {
-        const va = String(a[_trackSortCol] || '');
-        const vb = String(b[_trackSortCol] || '');
-        const na = parseFloat(va), nb = parseFloat(vb);
-        let cmp = (!isNaN(na) && !isNaN(nb)) ? na - nb : va.localeCompare(vb, 'ko');
-        return _trackSortDir === 'desc' ? -cmp : cmp;
-      });
-    }
-
-    document.getElementById('trackCount').textContent = `${rows.length}건`;
-    const totalBadge = document.getElementById('trackTotalBadge');
-    if (totalBadge) totalBadge.textContent = `총 ${rows.length.toLocaleString()}건`;
-    const newBadge = document.getElementById('trackNewBadge');
-    if (newBadge) {
-      const today = new Date().toISOString().slice(0, 10);
-      const newCount = rows.filter(r => r._addedAt && r._addedAt.startsWith(today)).length;
-      if (newCount > 0) {
-        newBadge.textContent = `신규 ${newCount.toLocaleString()}건`;
-        newBadge.style.display = '';
-      } else {
-        newBadge.style.display = 'none';
-      }
-    }
-
-    // 칼럼 너비 자동 계산
-    function _colW(name) {
-      var n = name;
-      if (/^(순번|번호|No|#|seq)$/i.test(n)) return 'width:48px;min-width:48px;max-width:48px';
-      if (/^UID$/i.test(n)) return 'min-width:80px;max-width:100px';
-      if (/자재코드|자재내역|P\/O번호|모자재코드|설계.*도면|자재그룹명/i.test(n)) return 'min-width:160px;max-width:260px';
-      if (/블록|호선|Stage|단위|구분$/i.test(n)) return 'min-width:55px;max-width:85px';
-      if (/일$|일자$|완료일|착수일|인수일|반출일|생성일|확정일|출력일|예정일/i.test(n)) return 'min-width:88px;max-width:105px';
-      if (/메모|비고|내역|사유|장소/i.test(n)) return 'min-width:110px;max-width:200px';
-      if (/수량|중량|단가|금액/i.test(n)) return 'min-width:65px;max-width:95px';
-      if (/여부|유형|삭제|개별/i.test(n)) return 'min-width:50px;max-width:75px';
-      return 'min-width:75px;max-width:150px';
-    }
-    document.getElementById('trackTable').style.minWidth = '';
-    document.getElementById('trackTable').style.tableLayout = 'auto';
-
-    // 헤더
-    document.getElementById('trackHead').innerHTML = '<tr>'
-      + '<th style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#f8fafc"><input type="checkbox" onchange="toggleTrackSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>'
-      + visCols.map(c => {
-        const esc = c.replace(/"/g,'&quot;');
-        const isSort = _trackSortCol === c;
-        const arrow = isSort ? (_trackSortDir === 'asc' ? ' ↑' : ' ↓') : '';
-        return `<th data-col="${esc}" onclick="sortTrackTable('${esc}')" style="white-space:nowrap;position:relative;${_colW(c)};cursor:pointer;user-select:none">${c}<span style="color:var(--brand)">${arrow}</span><div class="col-resize-handle"></div></th>`;
-      }).join('')
-      + '</tr>';
-    initColResize();
-
-    // 바디
-    const tbody = document.getElementById('trackingBody');
-    if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="${(visCols.length||1)+1}"><div class="empty"><div class="empty-icon">\u{1F4CB}</div><p>업로드된 데이터가 없습니다</p></div></td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = rows.slice(0, 500).map(row => `<tr>`
-      + `<td style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;background:#fff;z-index:1"><input type="checkbox" class="track-row-cb" onchange="toggleTrackRowSelect(this)" style="width:16px;height:16px;accent-color:var(--brand);cursor:pointer;vertical-align:middle"/></td>`
-      + visCols.map(col => {
-        const v = row[col] || '';
-        const isUid = col === 'UID';
-        return `<td style="white-space:nowrap;${_colW(col)};overflow:hidden;text-overflow:ellipsis;${isUid?'font-weight:700;color:var(--brand)':''}" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
-      }).join('')
-      + '</tr>').join('');
-  } catch(e) {
-    document.getElementById('trackingBody').innerHTML = `<tr><td colspan="10" style="padding:20px;color:#c0392b;text-align:center">서버 연결 오류</td></tr>`;
-  }
-}
-
-// ── DB 관리 행 선택 ──
-function toggleTrackRowSelect(cb) {
-  const tr = cb.closest('tr');
-  if (cb.checked) tr.classList.add('selected'); else tr.classList.remove('selected');
-  _updateTrackSelectedCount();
-}
-
-function toggleTrackSelectAll(cb) {
-  document.querySelectorAll('#trackingBody .track-row-cb').forEach(c => {
-    c.checked = cb.checked;
-    const tr = c.closest('tr');
-    if (cb.checked) tr.classList.add('selected'); else tr.classList.remove('selected');
-  });
-  _updateTrackSelectedCount();
-}
-
-function _updateTrackSelectedCount() {
-  const cnt = document.querySelectorAll('#trackingBody tr.selected').length;
-  document.getElementById('trackSelectedCount').textContent = cnt ? `선택 ${cnt}건` : '';
-}
-
-// ── ERP Excel 다운로드 ──
-async function exportErpExcel() {
-  try {
-    const r = await fetch(`${SERVER}/api/erp`);
-    const data = await r.json();
-    const cols = (data.visible && data.visible.length) ? data.visible : (data.columns || []);
-    const rows = data.rows || [];
-    if (!rows.length) { showToast({ title:'다운로드 실패', message:'데이터가 없습니다', type:'error' }); return; }
-
-    const dataRows = rows.map(row => cols.map(c => row[c] || ''));
-    const html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>td,th{border:1px solid #999;padding:4px 8px;font-size:11px}th{background:#f2f2f2;font-weight:bold}</style></head><body><table>'
-      + '<tr>' + cols.map(c => '<th>' + c + '</th>').join('') + '</tr>'
-      + dataRows.map(r => '<tr>' + r.map(v => '<td>' + String(v).replace(/</g,'&lt;') + '</td>').join('') + '</tr>').join('')
-      + '</table></body></html>';
-    const blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const now = new Date();
-    a.href = url;
-    a.download = `ERP_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.xls`;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-    showToast({ title:'Excel 다운로드', message:`${rows.length}행 · ${cols.length}칼럼`, type:'success' });
-  } catch(e) {
-    showToast({ title:'다운로드 실패', message:'서버 연결 오류', type:'error' });
-  }
-}
-
-// ── 칼럼 리사이즈 ──
-function initColResize() {
-  const handles = document.querySelectorAll('#trackHead .col-resize-handle');
-  handles.forEach(handle => {
-    handle.addEventListener('mousedown', function(e) {
-      e.preventDefault();
-      const th = this.parentElement;
-      const startX = e.clientX;
-      const startW = th.offsetWidth;
-      this.classList.add('active');
-
-      const onMove = (e2) => {
-        const w = Math.max(40, startW + e2.clientX - startX);
-        th.style.width = w + 'px';
-        cols[i].style.width = w + 'px';
-        th.style.minWidth = w + 'px';
-        // 같은 인덱스 td도 맞춤
-        const idx = Array.from(th.parentElement.children).indexOf(th);
-        document.querySelectorAll('#trackingBody tr').forEach(tr => {
-          const td = tr.children[idx];
-          if (td) { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; }
-        });
-      };
-      const onUp = () => {
-        handle.classList.remove('active');
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  });
-}
-
-let _trackSortCol = '';
-let _trackSortDir = '';
-
-function sortTrackTable(col) {
-  if (_trackSortCol === col) {
-    _trackSortDir = _trackSortDir === 'asc' ? 'desc' : _trackSortDir === 'desc' ? '' : 'asc';
-    if (!_trackSortDir) _trackSortCol = '';
-  } else {
-    _trackSortCol = col;
-    _trackSortDir = 'asc';
-  }
-  loadTracking();
-}
-
-let _trackSearchTimer = null;
-function _debounceTrackSearch() {
-  clearTimeout(_trackSearchTimer);
-  _trackSearchTimer = setTimeout(loadTracking, 200);
-}
-
-// ── DB 관리 칼럼 설정 ──
-let _trackVisibleCols = [];
-
-function toggleGridPanel() {
-  const modal = document.getElementById('gridSettingModal');
-  if (!erpAllColumns.length) { alert('먼저 데이터를 업로드하세요.'); return; }
-  modal.style.display = 'flex';
-  document.getElementById('trackColSearch').value = '';
-  renderTrackColList();
-}
-
-function closeGridModal() {
-  document.getElementById('gridSettingModal').style.display = 'none';
-}
-
-
-function renderTrackColList() {
-  const q = (document.getElementById('trackColSearch')?.value || '').toLowerCase();
-  const cols = erpAllColumns.filter(c => !q || c.toLowerCase().includes(q));
-  const vis = new Set(_trackVisibleCols);
-  document.getElementById('trackColInfo').textContent = `${_trackVisibleCols.length} / ${erpAllColumns.length}개 선택`;
-  document.getElementById('trackColCount').textContent = `${_trackVisibleCols.length}개 칼럼 선택됨`;
-  const colsPerRow = 5;
-  let html = '<div style="display:grid;grid-template-columns:repeat('+colsPerRow+',1fr);gap:6px">';
-  for (let j = 0; j < cols.length; j++) {
-    const c = cols[j];
-    const idx = erpAllColumns.indexOf(c) + 1;
-    const checked = vis.has(c);
-    html += `<label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid ${checked?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${checked?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:11px;min-height:32px;transition:background var(--ease),border-color var(--ease)">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${checked?'checked':''} onchange="toggleTrackCol(this)" style="accent-color:var(--brand);margin:0;width:14px;height:14px;flex-shrink:0"/>
-      <span style="color:#94a3b8;font-size:10px;font-weight:700;min-width:20px">${idx}</span>
-      <span style="color:${checked?'#1e40af':'#64748b'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c}">${c}</span>
-    </label>`;
-  }
-  html += '</div>';
-  document.getElementById('trackColList').innerHTML = html;
-}
-
-function toggleTrackCol(cb) {
-  const col = cb.dataset.col;
-  const set = new Set(_trackVisibleCols);
-  if (cb.checked) set.add(col); else set.delete(col);
-  _trackVisibleCols = erpAllColumns.filter(c => set.has(c));
-  renderTrackColList();
-}
-
-function trackColSelectAll(checked) {
-  const q = (document.getElementById('trackColSearch')?.value || '').toLowerCase();
-  const filtered = erpAllColumns.filter(c => !q || c.toLowerCase().includes(q));
-  const set = new Set(_trackVisibleCols);
-  filtered.forEach(c => { if (checked) set.add(c); else set.delete(c); });
-  _trackVisibleCols = erpAllColumns.filter(c => set.has(c));
-  renderTrackColList();
-}
-
-async function saveTrackCols() {
-  try {
-    await fetch(`${SERVER}/api/erp/columns`, {
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ visible: _trackVisibleCols })
-    });
-    closeGridModal();
-    await loadTracking();
-    showToast({ title:'그리드 설정 저장', message:`${_trackVisibleCols.length}개 칼럼 표시`, type:'success' });
-  } catch(e) { alert('저장 실패'); }
-}
-
-// ── ERP 데이터 ──
-let erpAllColumns = [];
-let erpVisibleColumns = [];
-let _erpPendingFile = null;
-
-function _onErpFileSelect() {
-  const f = document.getElementById('erpFile').files[0];
-  if (!f) return;
-  _erpPendingFile = f;
-  _openErpPreview(f);
-}
-
-async function _openErpPreview(file) {
-  const modal = document.getElementById('erpPreviewModal');
-  modal.style.display = 'flex';
-  document.getElementById('erpPreviewTitle').textContent = file.name;
-  document.getElementById('erpPreviewInfo').textContent = '파싱 중...';
-  document.getElementById('erpPreviewHead').innerHTML = '';
-  document.getElementById('erpPreviewBody').innerHTML = '<tr><td style="padding:40px;text-align:center;color:#64748b">데이터를 읽는 중...</td></tr>';
-  document.getElementById('erpPreviewStatus').textContent = '';
-
-  // 기존 등록 칼럼 가져오기
-  let existingCols = new Set();
-  try {
-    const er = await fetch(`${SERVER}/api/erp`);
-    const ed = await er.json();
-    (ed.columns || []).forEach(c => existingCols.add(c));
-  } catch(e) {}
-  const form = new FormData();
-  form.append('file', file);
-  try {
-    const r = await fetch(`${SERVER}/api/erp/preview`, { method:'POST', body: form });
-    const data = await r.json();
-    if (!r.ok) { document.getElementById('erpPreviewBody').innerHTML = `<tr><td style="padding:40px;text-align:center;color:#dc2626">${data.error}</td></tr>`; return; }
-
-    const cols = data.columns;
-    const rows = data.preview;
-    const isFirst = existingCols.size === 0;
-    const colMatch = c => existingCols.has(c);
-    const matchCnt = cols.filter(c => colMatch(c)).length;
-    const newCnt = cols.length - matchCnt;
-
-    let infoText = `총 ${cols.length}개 칼럼 / ${data.totalRows}행`;
-    if (!isFirst) {
-      infoText += ` — <span style="color:#16a34a">일치 ${matchCnt}건</span> · <span style="color:#dc2626">불일치 ${newCnt}건</span>`;
-    }
-    // BOM 수량/중량 SUM
-    const bomParts = [];
-    if (data.bomQtySum !== undefined) bomParts.push(`BOM 수량 합계: <b>${Number(data.bomQtySum).toLocaleString()}</b>`);
-    if (data.bomWeightSum !== undefined) bomParts.push(`BOM 중량 합계: <b>${Number(data.bomWeightSum).toLocaleString(undefined,{maximumFractionDigits:2})} KG</b>`);
-    if (bomParts.length) infoText += ` — ${bomParts.join(' · ')}`;
-
-    document.getElementById('erpPreviewInfo').innerHTML = infoText;
-
-    // 불일치 칼럼이 있으면 업로드 차단
-    const uploadBtn = document.getElementById('erpUploadConfirmBtn');
-    const dupOpt = document.getElementById('erpDupOption');
-    if (!isFirst && newCnt > 0) {
-      uploadBtn.disabled = true;
-      uploadBtn.style.background = '#94a3b8';
-      uploadBtn.style.cursor = 'not-allowed';
-      document.getElementById('erpPreviewStatus').innerHTML = `<span style="color:#dc2626;font-weight:600">불일치 칼럼 ${newCnt}건 — 칼럼이 일치해야 업로드할 수 있습니다</span>`;
-      dupOpt.style.display = 'none';
-    } else {
-      uploadBtn.disabled = false;
-      uploadBtn.style.background = 'var(--brand)';
-      uploadBtn.style.cursor = 'pointer';
-      document.getElementById('erpPreviewStatus').textContent = `미리보기 ${rows.length}행 (전체 ${data.totalRows}행)`;
-    }
-
-    // BOM ID 중복 옵션
-    if (data.dupCount > 0) {
-      dupOpt.style.display = 'flex';
-      document.getElementById('erpDupLabel').textContent = `중복 ${data.dupCount}건 / 신규 ${data.newCount}건`;
-    } else {
-      dupOpt.style.display = 'none';
-    }
-
-    // 헤더 (순번 + 칼럼, 일치=초록, 신규=빨강)
-    document.getElementById('erpPreviewHead').innerHTML = '<tr>'
-      + '<th style="padding:8px 10px;background:#f1f5f9;border-bottom:2px solid #e2e8f0;font-size:11px;color:#64748b;position:sticky;left:0;z-index:2;min-width:40px;text-align:center">#</th>'
-      + cols.map(c => {
-        const isMatch = isFirst || colMatch(c);
-        const bg = isMatch ? '#f0fdf4' : '#fef2f2';
-        const bc = isMatch ? '#22c55e' : '#ef4444';
-        const tc = isMatch ? '#16a34a' : '#dc2626';
-        return `<th style="padding:8px 10px;background:${bg};border-bottom:3px solid ${bc};white-space:nowrap;font-size:11px;font-weight:700;color:${tc}">${c}</th>`;
-      }).join('')
-      + '</tr>';
-
-    // BOM ID 기준 중복 판별용
-    const bomIdCol = data.bomIdCol;
-    const existingBomIds = new Set();
-    if (bomIdCol) {
-      try {
-        const er2 = await fetch(`${SERVER}/api/erp`);
-        const ed2 = await er2.json();
-        (ed2.rows || []).forEach(r => { if (r[bomIdCol]) existingBomIds.add(r[bomIdCol]); });
-      } catch(e) {}
-    }
-
-    // 바디 (중복=노란, 신규=초록)
-    document.getElementById('erpPreviewBody').innerHTML = rows.map((row, i) => {
-      const isDup = bomIdCol && row[bomIdCol] && existingBomIds.has(row[bomIdCol]);
-      const rowBg = isDup ? '#fffbeb' : (existingBomIds.size > 0 ? '#f0fdf4' : '');
-      const numBg = isDup ? '#fffbeb' : (existingBomIds.size > 0 ? '#f0fdf4' : '#fff');
-      const numColor = isDup ? '#d97706' : (existingBomIds.size > 0 ? '#16a34a' : '#94a3b8');
-      return `<tr style="background:${rowBg}">`
-      + `<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;font-size:11px;color:${numColor};font-weight:600;text-align:center;position:sticky;left:0;background:${numBg}">${i+1}</td>`
-      + cols.map(c => {
-        const v = row[c] || '';
-        return `<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap;font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
-      }).join('')
-      + '</tr>';
-    }).join('');
-  } catch(e) {
-    document.getElementById('erpPreviewBody').innerHTML = '<tr><td style="padding:40px;text-align:center;color:#dc2626">서버 연결 오류</td></tr>';
-  }
-}
-
-function closeErpPreview() {
-  document.getElementById('erpPreviewModal').style.display = 'none';
-  document.getElementById('erpFile').value = '';
-  _erpPendingFile = null;
-}
-
-async function confirmErpUpload() {
-  if (!_erpPendingFile) return;
-  const statusEl = document.getElementById('erpPreviewStatus');
-  statusEl.textContent = '업로드 중...';
-  const dupMode = document.querySelector('input[name="dupMode"]:checked')?.value || 'overwrite';
-  const form = new FormData();
-  form.append('file', _erpPendingFile);
-  form.append('dupMode', dupMode);
-  try {
-    const r = await fetch(`${SERVER}/api/erp/upload`, { method:'POST', body: form });
-    const data = await r.json();
-    if (r.ok) {
-      closeErpPreview();
-      loadErpData();
-      let msg = `신규 ${data.newProcessed}건`;
-      if (data.dupProcessed) msg += ` · 갱신 ${data.dupProcessed}건`;
-      if (data.skipped) msg += ` · 스킵 ${data.skipped}건`;
-      msg += ` · 총 ${data.total}행`;
-      showToast({ title:'업로드 완료', message: msg, type:'success' });
-    } else {
-      statusEl.textContent = data.error;
-    }
-  } catch(e) {
-    statusEl.textContent = '서버 연결 오류';
-  }
-}
-
-let _erpEditMode = false;
-let _erpRenameMap = {};
-
-async function loadErpData() {
-  try {
-    const r = await fetch(`${SERVER}/api/erp`);
-    const data = await r.json();
-    erpAllColumns = data.columns || [];
-    erpVisibleColumns = data.visible || [];
-
-    const statusEl = document.getElementById('erpColStatus');
-    if (!erpAllColumns.length) {
-      if (statusEl) statusEl.style.display = 'none';
-      return;
-    }
-    if (statusEl) statusEl.style.display = 'block';
-
-    document.getElementById('erpTotalColCount').textContent = erpAllColumns.length;
-    _erpEditMode = false;
-    _erpRenameMap = {};
-    const _editBtn = document.getElementById('erpEditModeBtn');
-    _editBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
-    _editBtn.title = '수정';
-    _editBtn.setAttribute('aria-label', '수정');
-    _editBtn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success');
-    _editBtn.classList.add('toss-btn-mini-secondary');
-    _editBtn.style.background = '';
-    _editBtn.style.color = '';
-    _editBtn.style.borderColor = '';
-    document.getElementById('erpColSubText').textContent = '';
-
-    renderErpColGrid();
-  } catch(e) {}
-}
-
-function renderErpColGrid() {
-  const colsPerRow = 5;
-  let html = '<div style="display:grid;grid-template-columns:repeat('+colsPerRow+',1fr);gap:8px">';
-  for (let j = 0; j < erpAllColumns.length; j++) {
-    const c = erpAllColumns[j];
-    const esc = c.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    const changed = _erpEditMode && _erpRenameMap[c] && _erpRenameMap[c] !== c;
-    const displayVal = (_erpRenameMap[c] || c).replace(/"/g,'&quot;');
-    html += `<div class="erp-col-cell${changed?' erp-col-changed':''}" data-col="${esc}">`
-      + `<span class="erp-col-no">${String(j+1).padStart(2,'0')}</span>`
-      + `<input type="text" class="erp-col-input" value="${displayVal}" data-orig="${esc}" oninput="_onErpRenameInput(this)"${_erpEditMode?'':' readonly tabindex="-1"'} title="${esc}"/>`
-      + `<button type="button" class="erp-col-del" onclick="_deleteErpCol('${esc}')" aria-label="삭제" tabindex="-1">&times;</button>`
-      + `</div>`;
-  }
-  html += '</div>';
-  const root = document.getElementById('erpColGrid');
-  root.classList.toggle('is-editing', _erpEditMode);
-  root.innerHTML = html;
-}
-
-function _onErpRenameInput(input) {
-  const orig = input.dataset.orig;
-  const val = input.value.trim();
-  if (val && val !== orig) {
-    _erpRenameMap[orig] = val;
-  } else {
-    delete _erpRenameMap[orig];
-  }
-  const changed = !!(_erpRenameMap[orig] && _erpRenameMap[orig] !== orig);
-  input.parentElement.classList.toggle('erp-col-changed', changed);
-  const cnt = Object.keys(_erpRenameMap).length;
-  document.getElementById('erpColSubText').textContent = cnt ? `${cnt}개 변경됨` : '';
-}
-
-function openAddColModal() {
-  document.getElementById('addColModal').style.display = 'flex';
-  var input = document.getElementById('addColInput');
-  input.value = '';
-  setTimeout(function() { input.focus(); }, 100);
-}
-function closeAddColModal() { document.getElementById('addColModal').style.display = 'none'; }
-
-async function confirmAddCol() {
-  var input = document.getElementById('addColInput');
-  var raw = input.value.trim();
-  if (!raw) { showToast({ title:'입력 오류', message:'칼럼명을 입력하세요', type:'error' }); return; }
-  try {
-    var r = await fetch(SERVER + '/api/erp/columns/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ names: [raw] }) });
-    var data = await r.json();
-    if (!r.ok) { showToast({ title:'추가 실패', message: data.error || '오류', type:'error' }); return; }
-    if (data.duplicates && data.duplicates.length) { showToast({ title:'중복 칼럼', message:'"' + raw + '" 은(는) 이미 존재합니다', type:'error' }); return; }
-    showToast({ title:'칼럼 추가', message:'"' + raw + '" 추가 완료', type:'success' });
-    input.value = '';
-    closeAddColModal();
-    loadErpData();
-  } catch(e) { showToast({ title:'서버 오류', message:'서버 연결 오류', type:'error' }); }
-}
-
-let _delColTarget = '';
-function _deleteErpCol(name) {
-  _delColTarget = name;
-  document.getElementById('delColName').textContent = '"' + name + '" 칼럼을 삭제하시겠습니까?';
-  document.getElementById('delColModal').style.display = 'flex';
-}
-function closeDelColModal() { document.getElementById('delColModal').style.display = 'none'; _delColTarget = ''; }
-async function confirmDelCol() {
-  if (!_delColTarget) return;
-  try {
-    var r = await fetch(SERVER + '/api/erp/columns/' + encodeURIComponent(_delColTarget), { method:'DELETE' });
-    if (!r.ok) { var d = await r.json(); showToast({ title:'삭제 실패', message: d.error, type:'error' }); closeDelColModal(); return; }
-    showToast({ title:'칼럼 삭제', message:'"' + _delColTarget + '" 삭제 완료', type:'success' });
-    closeDelColModal();
-    loadErpData();
-  } catch(e) { showToast({ title:'서버 오류', message:'서버 연결 오류', type:'error' }); closeDelColModal(); }
-}
-
-function closeSaveColModal() { document.getElementById('saveColModal').style.display = 'none'; }
-function confirmSaveCol() {
-  closeSaveColModal();
-  fetch(SERVER + '/api/erp/columns/rename', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ rename: _erpRenameMap }) })
-  .then(function(r) {
-    if (r.ok) { showToast({ title:'칼럼 수정', message: Object.keys(_erpRenameMap).length + '개 칼럼명 변경 완료', type:'success' }); loadErpData(); }
-    else r.json().then(function(d) { showToast({ title:'저장 실패', message: d.error, type:'error' }); });
-  }).catch(function() { showToast({ title:'서버 오류', message:'서버 연결 오류', type:'error' }); });
-}
-
-function toggleErpEditMode() {
-  if (!_erpEditMode) {
-    _erpEditMode = true;
-    _erpRenameMap = {};
-    const btn = document.getElementById('erpEditModeBtn');
-    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
-    btn.title = '저장';
-    btn.setAttribute('aria-label', '저장');
-    btn.classList.remove('toss-btn-mini-secondary','toss-btn-mini-primary');
-    btn.classList.add('toss-btn-mini-success');
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.style.borderColor = '';
-    document.getElementById('erpColSubText').textContent = '';
-    // DOM 재생성 없이 수정 모드로 전환 (레이아웃 안정 유지)
-    const grid = document.getElementById('erpColGrid');
-    grid.classList.add('is-editing');
-    grid.querySelectorAll('.erp-col-input').forEach(i => { i.removeAttribute('readonly'); i.removeAttribute('tabindex'); });
-  } else {
-    const cnt = Object.keys(_erpRenameMap).length;
-    if (!cnt) {
-      // 변경 없이 종료: 재요청 없이 클래스/버튼만 되돌림 (부드러운 전환)
-      _erpEditMode = false;
-      const btn = document.getElementById('erpEditModeBtn');
-      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
-      btn.title = '수정';
-      btn.setAttribute('aria-label', '수정');
-      btn.classList.remove('toss-btn-mini-primary','toss-btn-mini-success');
-      btn.classList.add('toss-btn-mini-secondary');
-      const grid = document.getElementById('erpColGrid');
-      grid.classList.remove('is-editing');
-      grid.querySelectorAll('.erp-col-input').forEach(i => { i.setAttribute('readonly',''); i.setAttribute('tabindex','-1'); });
-      document.getElementById('erpColSubText').textContent = '';
-      return;
-    }
-    document.getElementById('saveColText').textContent = cnt + '개 칼럼명을 변경하시겠습니까?';
-    document.getElementById('saveColModal').style.display = 'flex';
-  }
-}
-
-function openErpColumnModal() {
-  if (!erpAllColumns.length) { alert('먼저 ERP 데이터를 업로드하세요.'); return; }
-  const modal = document.getElementById('erpColumnModal');
-  modal.style.display = 'flex';
-  document.getElementById('erpColSearch').value = '';
-  renderErpColumnList();
-}
-function closeErpColumnModal() {
-  document.getElementById('erpColumnModal').style.display = 'none';
-}
-
-function renderErpColumnList() {
-  const q = (document.getElementById('erpColSearch')?.value || '').toLowerCase();
-  const cols = erpAllColumns.filter(c => !q || c.toLowerCase().includes(q));
-  const vis = new Set(erpVisibleColumns);
-  const container = document.getElementById('erpColumnList');
-  container.innerHTML = cols.map((c, i) => `
-    <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;margin:3px;border:1px solid ${vis.has(c)?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${vis.has(c)?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:12px;transition:background var(--ease),border-color var(--ease)">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${vis.has(c)?'checked':''} onchange="toggleErpCol(this)" style="accent-color:var(--brand)"/>
-      ${c}
-    </label>
-  `).join('');
-}
-function filterErpColumns() { renderErpColumnList(); }
-
-function toggleErpCol(cb) {
-  const col = cb.dataset.col;
-  const set = new Set(erpVisibleColumns);
-  if (cb.checked) set.add(col); else set.delete(col);
-  erpVisibleColumns = erpAllColumns.filter(c => set.has(c));
-  renderErpColumnList();
-}
-
-function erpColSelectAll(checked) {
-  const q = (document.getElementById('erpColSearch')?.value || '').toLowerCase();
-  const filtered = erpAllColumns.filter(c => !q || c.toLowerCase().includes(q));
-  const set = new Set(erpVisibleColumns);
-  filtered.forEach(c => { if (checked) set.add(c); else set.delete(c); });
-  erpVisibleColumns = erpAllColumns.filter(c => set.has(c));
-  renderErpColumnList();
-}
-
-async function saveErpColumns() {
-  try {
-    await fetch(`${SERVER}/api/erp/columns`, {
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ visible: erpVisibleColumns })
-    });
-    closeErpColumnModal();
-    loadErpData();
-  } catch(e) { alert('저장 실패'); }
-}
-
-async function deleteAllErp() {
-  if (!confirm('ERP 데이터를 전체 삭제하시겠습니까?')) return;
-  try {
-    await fetch(`${SERVER}/api/erp/all`, { method:'DELETE' });
-    loadErpData();
-  } catch(e) { alert('삭제 실패'); }
-}
-
-// ── 전체 기록 ──
-async function loadRecords() {
-  const raw = document.getElementById('recSearch').value.trim();
-  const terms = parseSearchTerms(raw);
-  const filter = document.getElementById('recFilter').value;
-  const params = new URLSearchParams();
-  if (terms.length === 1) params.set('barcode', terms[0]);
-  if (filter) params.set('type', filter);
-  try {
-    const r = await fetch(`${SERVER}/api/records?${params}`);
-    const data = await r.json();
-    let records = data.records || [];
-    if (terms.length > 1) records = records.filter(r => terms.some(t => r.barcode.includes(t)));
-    document.getElementById('recCount').textContent = terms.length ? `검색 결과: ${records.length}건 (검색어 ${terms.length}개)` : '';
-    const tbody = document.getElementById('recordsBody');
-    if (!records.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></div><p>기록이 없습니다</p></div></td></tr>`;
-      return;
-    }
-    tbody.innerHTML = records.map(r => {
-      const t = TYPE_INFO[r.type] || { label:r.type, cls:'' };
-      const time = r.time || r.receivedAt?.substring(0,16).replace('T',' ') || '-';
-      return `<tr>
-        <td style="color:#888;font-size:12px">${time}</td>
-        <td><span style="font-size:12px;font-weight:700">${r.barcode}</span></td>
-        <td style="font-size:12px;color:#888">${r.name || '-'}</td>
-        <td><span class="step-badge ${t.cls}">${t.label}</span></td>
-        <td style="font-size:13px;font-weight:700">${r.qty}개</td>
-        <td style="font-size:12px;font-weight:600">${r.userName || r.userId || '-'}</td>
-      </tr>`;
-    }).join('');
-  } catch(e) {
-    document.getElementById('recordsBody').innerHTML = `<tr><td colspan="6" style="padding:20px;color:#c0392b;text-align:center">서버 연결 오류</td></tr>`;
-  }
-}
-
-// ── 스캔 조회 ──
-async function doScanLookup() {
-  const raw = document.getElementById('scanInput').value.trim();
-  const terms = parseSearchTerms(raw);
-  const container = document.getElementById('scanResults');
-  if (!terms.length) { container.innerHTML = ''; return; }
-
-  container.innerHTML = '<div style="padding:20px;color:#94a3b8;text-align:center">조회 중...</div>';
-  const results = [];
-
-  for (const barcode of terms) {
-    try {
-      const r = await fetch(`${SERVER}/api/master/lookup?barcode=${encodeURIComponent(barcode)}`);
-      const data = await r.json();
-      results.push(data);
-    } catch(e) {
-      results.push({ found: false, barcode, error: true });
-    }
-  }
-
-  container.innerHTML = results.map(r => {
-    if (r.found) {
-      const m = r.material;
-      return `<div class="scan-card found">
-        <div class="scan-barcode">${m.barcode}</div>
-        <div class="scan-info">
-          ${m.project ? `<div class="scan-field"><div class="scan-field-label">프로젝트</div><div class="scan-field-val">${m.project}</div></div>` : ''}
-          ${m.block ? `<div class="scan-field"><div class="scan-field-label">블럭</div><div class="scan-field-val">${m.block}</div></div>` : ''}
-          ${m.element ? `<div class="scan-field"><div class="scan-field-label">엘레멘트</div><div class="scan-field-val">${m.element}</div></div>` : ''}
-          ${m.group ? `<div class="scan-field"><div class="scan-field-label">자재그룹</div><div class="scan-field-val">${m.group}</div></div>` : ''}
-          ${m.name ? `<div class="scan-field"><div class="scan-field-label">제품명</div><div class="scan-field-val">${m.name}</div></div>` : ''}
-          ${m.spec ? `<div class="scan-field"><div class="scan-field-label">규격</div><div class="scan-field-val">${m.spec}</div></div>` : ''}
-        </div>
-      </div>`;
-    } else {
-      return `<div class="scan-card not-found">
-        <div class="scan-barcode">${r.barcode}</div>
-        <div class="scan-alert"><span class="scan-alert-icon">&#9888;</span> 확인 필요: 등록되지 않은 자재코드</div>
-      </div>`;
-    }
-  }).join('');
-}
-
-function _onMasterFileSelect() {
-  const f = document.getElementById('masterFile').files[0];
-  const info = document.getElementById('masterFileInfo');
-  if (!f) { info.style.display = 'none'; return; }
-  document.getElementById('masterFileName').textContent = f.name;
-  document.getElementById('masterFileSize').textContent = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
-  info.style.display = '';
-}
-
-// ── 기준 데이터 엑셀 업로드 ──
-async function uploadMaster() {
-  const fileEl = document.getElementById('masterFile');
-  const resultEl = document.getElementById('uploadResult');
-  if (!fileEl.files.length) { resultEl.innerHTML = '<span style="color:#dc2626">파일을 선택하세요.</span>'; return; }
-
-  const form = new FormData();
-  form.append('file', fileEl.files[0]);
-  resultEl.innerHTML = '<span style="color:var(--brand)">업로드 중...</span>';
-
-  try {
-    const r = await fetch(`${SERVER}/api/master/upload`, { method: 'POST', body: form });
-    const data = await r.json();
-    if (r.ok) {
-      resultEl.innerHTML = `<span style="color:#059669">업로드 완료: ${data.count}건 처리 (총 ${data.total}건)</span>`;
-      loadMasterList();
-    } else {
-      resultEl.innerHTML = `<span style="color:#dc2626">${data.error}</span>`;
-    }
-  } catch(e) {
-    resultEl.innerHTML = '<span style="color:#dc2626">서버 연결 오류</span>';
-  }
-}
-
-// ── 기준 데이터 수동 추가 ──
-async function addMasterManual() {
-  const barcode = document.getElementById('addBarcode').value.trim();
-  if (!barcode) { alert('자재코드를 입력하세요.'); return; }
-  const body = {
-    barcode,
-    project: document.getElementById('addProject').value.trim(),
-    block: document.getElementById('addBlock').value.trim(),
-    element: document.getElementById('addElement').value.trim(),
-    group: document.getElementById('addGroup').value.trim(),
-    name: document.getElementById('addName').value.trim(),
-    spec: document.getElementById('addSpec').value.trim(),
-  };
-  try {
-    const r = await fetch(`${SERVER}/api/master`, {
-      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
-    });
-    if (r.ok) {
-      ['addBarcode','addProject','addBlock','addElement','addGroup','addName','addSpec'].forEach(id => document.getElementById(id).value = '');
-      loadMasterList();
-    }
-  } catch(e) {}
-}
-
-// ── 기준 데이터 목록 ──
-async function loadMasterList() {
-  try {
-    const r = await fetch(`${SERVER}/api/master`);
-    const data = await r.json();
-    let items = data.materials || [];
-    const raw = document.getElementById('masterSearch').value.trim();
-    const terms = parseSearchTerms(raw);
-    if (terms.length) items = items.filter(m => terms.some(t => m.barcode.includes(t)));
-    document.getElementById('masterCount').textContent = `총 ${items.length}건`;
-
-    const tbody = document.getElementById('masterBody');
-    if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128203;</div><p>기준 데이터가 없습니다</p></div></td></tr>';
-      return;
-    }
-    tbody.innerHTML = items.slice(0, 200).map(m => `<tr>
-      <td><span style="font-size:12px;font-weight:700">${m.barcode}</span></td>
-      <td style="font-size:12px">${m.project || '-'}</td>
-      <td style="font-size:12px">${m.block || '-'}</td>
-      <td style="font-size:12px">${m.element || '-'}</td>
-      <td style="font-size:12px">${m.group || '-'}</td>
-      <td style="font-size:12px">${m.name || '-'}</td>
-      <td style="font-size:12px">${m.spec || '-'}</td>
-      <td><button class="del-btn" onclick="deleteMaster('${m.barcode}')">삭제</button></td>
-    </tr>`).join('');
-  } catch(e) {
-    document.getElementById('masterBody').innerHTML = '<tr><td colspan="8" style="padding:20px;color:#dc2626;text-align:center">서버 연결 오류</td></tr>';
-  }
-}
-
-// ── 기준 데이터 삭제 ──
-async function deleteMaster(barcode) {
-  if (!confirm(`${barcode} 기준 데이터를 삭제하시겠습니까?`)) return;
-  try {
-    await fetch(`${SERVER}/api/master/${encodeURIComponent(barcode)}`, { method: 'DELETE' });
-    loadMasterList();
-  } catch(e) {}
-}
-
-// ── SSE 실시간 연결 ──
-let evtSource = null;
-function connectSSE() {
-  if (evtSource) evtSource.close();
-  evtSource = new EventSource(`${SERVER}/api/events`);
-
-  evtSource.onmessage = (e) => {
-    if (e.data === 'connected') return;
-    try {
-      const evt = JSON.parse(e.data);
-      if (evt.type === 'master') masterLoaded = false;
-      if (evt.type === 'erp') loadErpData();
-      if (evt.type === 'map') loadMapData();
-      if (evt.type === 'location') { loadMapView(); }
-    } catch(ex) {}
-    if (currentUser) {
-      loadStats();
-      loadTracking();
-    }
-  };
-
-  evtSource.onerror = () => {
-    evtSource.close();
-    setTimeout(connectSSE, 3000);
-  };
-}
-
 // ── 관리자: 모달 ──
 let modalEditingId = null;
 
@@ -4187,10 +2536,6 @@ let modalEditingId = null;
 function toggleStep(el) {
   el.classList.toggle('on');
   el.setAttribute('aria-checked', el.classList.contains('on') ? 'true' : 'false');
-}
-
-function getModalSteps() {
-  return Array.from(document.querySelectorAll('#modalStepsGrid .modal-step-item.on')).map(el => el.dataset.step);
 }
 
 function showModalMsg(text, type) {
@@ -4212,11 +2557,6 @@ function openUserModal(user) {
   document.getElementById('modalUserDept').value = user ? (user.department || '') : '';
   document.getElementById('modalUserPos').value = user ? (user.position || '') : '';
   document.getElementById('modalMsg').className = 'modal-msg';
-  document.querySelectorAll('#modalStepsGrid .modal-step-item').forEach(el => {
-    const isOn = user ? (user.allowedSteps || []).includes(el.dataset.step) : false;
-    el.classList.toggle('on', isOn);
-    el.setAttribute('aria-checked', isOn ? 'true' : 'false');
-  });
   document.querySelectorAll('#modalAsPerms .modal-step-item').forEach(el => {
     const isOn = user ? (user[el.dataset.perm] === true) : false;
     el.classList.toggle('on', isOn);
@@ -4230,17 +2570,6 @@ function closeUserModal() {
   modalEditingId = null;
 }
 
-const STEP_STYLE = {
-  incoming:     { bg:'#f0fdf4', color:'#4ade80' },
-  inspect_wait: { bg:'#f0fdf4', color:'#22c55e' },
-  inspect_done: { bg:'#ecfdf5', color:'#16a34a' },
-  paint_wait:   { bg:'#dcfce7', color:'#15803d' },
-  paint_done:   { bg:'#dcfce7', color:'#166534' },
-  deliver_wait: { bg:'#d1fae5', color:'#14532d' },
-  deliver_done: { bg:'#d1fae5', color:'#052e16' },
-};
-
-// ── 관리자: 사용자 권한 테이블 ──
 let adminUsersCache = [];
 let adminUsersLoadVersion = 0;
 function umEscape(value) {
@@ -4256,21 +2585,18 @@ function renderAdminUsers() {
   const department = document.getElementById('umDepartment').value;
   const order = {sysadmin:0,admin:1,worker:2};
   const names = {sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
-  const stepNames = ['입고','검수대기','검수완료','도장대기','도장완료','납품대기','납품완료'];
   const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
     .sort((a,b) => ((order[a.role] ?? 9)-(order[b.role] ?? 9)) || String(a.name || '').localeCompare(String(b.name || ''),'ko'));
   const tbody = document.getElementById('adminUserRows');
   tbody.innerHTML = list.length ? list.map(u => {
-    const steps = STEP_ORDER.filter(step => (u.allowedSteps || []).includes(step));
     const roleKey = Object.hasOwn(names,u.role) ? u.role : 'worker';
     const index = adminUsersCache.indexOf(u);
     const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
     return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.id)+'</small></div></div></td>'+
       '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span></td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
-      '<td>'+(steps.length ? '<details class="um-steps"><summary>'+steps.length+'개 허용</summary><div>'+steps.map(step=>'<span class="um-permission">'+stepNames[STEP_ORDER.indexOf(step)]+'</span>').join('')+'</div></details>':'<span class="um-muted">공정 권한 없음</span>')+'</td>'+
       '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
       '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
-  }).join('') : '<tr><td colspan="6" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
+  }).join('') : '<tr><td colspan="5" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
   tbody.querySelectorAll('[data-um-edit]').forEach(button=>button.addEventListener('click',()=>openUserModal(adminUsersCache[Number(button.dataset.umEdit)])));
   tbody.querySelectorAll('[data-um-delete]').forEach(button=>button.addEventListener('click',()=>{const u=adminUsersCache[Number(button.dataset.umDelete)];deleteAdminUser(u.id,u.name);}));
   document.getElementById('umCount').textContent = '조회 '+list.length+'명 / 전체 '+adminUsersCache.length+'명';
@@ -4297,7 +2623,7 @@ async function loadAdminUsers() {
     if (version !== adminUsersLoadVersion) return;
     adminUsersCache = [];
     ['Total','Sys','Admin','Worker'].forEach(id=>document.getElementById('uStat'+id).textContent='—');
-    document.getElementById('adminUserRows').innerHTML = '<tr><td colspan="6" class="um-empty">사용자 목록을 불러오지 못했습니다. <button type="button" onclick="loadAdminUsers()">다시 시도</button></td></tr>';
+    document.getElementById('adminUserRows').innerHTML = '<tr><td colspan="5" class="um-empty">사용자 목록을 불러오지 못했습니다. <button type="button" onclick="loadAdminUsers()">다시 시도</button></td></tr>';
     document.getElementById('umCount').textContent = '서버 연결 오류';
   }
 }
@@ -4310,7 +2636,6 @@ async function submitModalUser() {
   const role = document.getElementById('modalUserRole').value;
   const department = document.getElementById('modalUserDept').value.trim();
   const position = document.getElementById('modalUserPos').value.trim();
-  const allowedSteps = getModalSteps();
   const asReview = document.querySelector('#modalAsPerms [data-perm="asReview"]')?.classList.contains('on') || false;
   const asApprove = document.querySelector('#modalAsPerms [data-perm="asApprove"]')?.classList.contains('on') || false;
 
@@ -4321,7 +2646,7 @@ async function submitModalUser() {
   try {
     let r;
     if (modalEditingId) {
-      const body = { name, role, department, position, allowedSteps, asReview, asApprove };
+      const body = { name, role, department, position, asReview, asApprove };
       if (pw) body.password = pw;
       r = await fetch(`${SERVER}/api/users/${encodeURIComponent(modalEditingId)}`, {
         method:'PUT', headers:{'Content-Type':'application/json'},
@@ -4330,7 +2655,7 @@ async function submitModalUser() {
     } else {
       r = await fetch(`${SERVER}/api/users`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ id, password: pw, name, role, department, position, allowedSteps, asReview, asApprove })
+        body: JSON.stringify({ id, password: pw, name, role, department, position, asReview, asApprove })
       });
     }
     const data = await r.json();
@@ -5687,905 +4012,6 @@ async function printAsFrame(frame) {
 }
 
 // ── 공장 배치도 ──
-let mapAreas = [];
-let mapWalls = [];
-let mapAssignments = {};
-let mapLocations = {};
-let mapSelectedArea = null;
-let mapTrackingCache = [];
-let selectedWall = null;
-
-// Editor tool state
-let editorTool = 'select'; // 'select' | 'draw' | 'wall'
-let undoStack = [];
-
-// SVG drawing state (admin)
-let svgDrawing = false;
-let svgDrawStart = null;
-let svgDragging = null;
-let svgDragOffset = null;
-let svgResizing = null; // { areaId, handle, origArea, startPt }
-let svgWallDrawing = false;
-let svgWallStart = null;
-let svgWallDragging = null;
-let svgWallDragStart = null;
-let svgWallDragOrig = null;
-
-
-const GRID = 25;
-function snap(v) { return Math.round(v / GRID) * GRID; }
-function svgPoint(svg, e, noSnap) {
-  const rect = svg.getBoundingClientRect();
-  const vb = svg.viewBox.baseVal;
-  const rawX = (e.clientX - rect.left) / rect.width * vb.width;
-  const rawY = (e.clientY - rect.top) / rect.height * vb.height;
-  return noSnap ? { x: Math.round(rawX), y: Math.round(rawY) } : { x: snap(rawX), y: snap(rawY) };
-}
-
-let editorColor = '#004A93';
-function pickEditorColor(el) {
-  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-  el.classList.add('active');
-  editorColor = el.dataset.color;
-  // 선택된 구역/벽 색상 즉시 변경
-  if (mapSelectedArea) {
-    const a = mapAreas.find(x => x.id === mapSelectedArea);
-    if (a) { pushUndo(); a.color = editorColor; renderSvgMap('svgZonesAdmin','mapAreaListAdmin',true); }
-  }
-}
-function syncColorPicker(color) {
-  document.querySelectorAll('.color-dot').forEach(d => {
-    d.classList.toggle('active', d.dataset.color === color);
-  });
-  editorColor = color;
-}
-
-function setEditorTool(tool) {
-  editorTool = tool;
-  ['select','draw','wall'].forEach(t => {
-    const id = 'tool' + t.charAt(0).toUpperCase() + t.slice(1);
-    const btn = document.getElementById(id);
-    if (btn) btn.classList.toggle('active', t === tool);
-  });
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  if (svg) {
-    svg.style.cursor = tool === 'select' ? 'default' : 'crosshair';
-  }
-  if (tool !== 'select') {
-    mapSelectedArea = null;
-    selectedWall = null;
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-  }
-}
-
-function pushUndo() {
-  undoStack.push({
-    areas: JSON.parse(JSON.stringify(mapAreas)),
-    walls: JSON.parse(JSON.stringify(mapWalls))
-  });
-  if (undoStack.length > 50) undoStack.shift();
-}
-
-function editorUndo() {
-  if (!undoStack.length) return;
-  const state = undoStack.pop();
-  mapAreas = state.areas;
-  mapWalls = state.walls;
-  mapSelectedArea = null;
-  selectedWall = null;
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-function editorClear() {
-  if (!mapAreas.length && !mapWalls.length) return;
-  if (!confirm('모든 구역과 벽을 초기화하시겠습니까?')) return;
-  pushUndo();
-  mapAreas = [];
-  mapWalls = [];
-  mapSelectedArea = null;
-  selectedWall = null;
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-
-async function fetchMapData() {
-  const [mapRes, trackRes, locRes] = await Promise.all([
-    fetch(`${SERVER}/api/map`),
-    fetch(`${SERVER}/api/tracking`),
-    fetch(`${SERVER}/api/locations`)
-  ]);
-  const mapData = await mapRes.json();
-  const trackData = await trackRes.json();
-  const locData = await locRes.json();
-  mapAreas = mapData.areas || [];
-  mapWalls = mapData.walls || [];
-  mapAssignments = mapData.assignments || {};
-  mapLocations = locData.locations || {};
-  mapTrackingCache = trackData.tracking || [];
-}
-
-async function loadMapView() {
-  try {
-    await fetchMapData();
-    renderSvgMap('svgZones', 'mapAreaList', false);
-    renderRecentLocations();
-  } catch(e) {}
-}
-
-async function loadMapEditor() {
-  try {
-    await fetchMapData();
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-  } catch(e) {}
-}
-
-async function loadMapData() {
-  try {
-    await fetchMapData();
-    renderSvgMap('svgZones', 'mapAreaList', false);
-    renderRecentLocations();
-    if (currentUser && (currentUser.role === 'sysadmin' || currentUser.role === 'admin')) {
-      renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    }
-  } catch(e) {}
-}
-
-function buildAreaItems() {
-  const areaItems = {};
-  for (const [barcode, areaId] of Object.entries(mapAssignments)) {
-    if (!areaItems[areaId]) areaItems[areaId] = [];
-    const t = mapTrackingCache.find(i => i.barcode === barcode);
-    const loc = mapLocations[barcode];
-    areaItems[areaId].push({
-      barcode,
-      name: t ? t.name : '',
-      step: t ? t.currentStep : '',
-      locTime: loc ? loc.time : '',
-      locUser: loc ? loc.userName : ''
-    });
-  }
-  return areaItems;
-}
-
-function renderSvgMap(zoneGroupId, listId, editable) {
-  const group = document.getElementById(zoneGroupId);
-  if (!group) return;
-  const areaItems = buildAreaItems();
-  // 홈 빈 상태
-  const emptyEl = document.getElementById('homeMapEmpty');
-  if (emptyEl && !editable) {
-    emptyEl.style.display = mapAreas.length ? 'none' : 'flex';
-  }
-
-  const HANDLES = ['nw','n','ne','e','se','s','sw','w'];
-
-  group.innerHTML = mapAreas.map(a => {
-    const items = areaItems[a.id] || [];
-    const count = items.length;
-    const isSelected = editable && mapSelectedArea === a.id;
-    const opacity = count > 0 ? 0.75 : 0.6;
-    const dblClick = editable ? `ondblclick="showPropEditor(event,'${a.id}')"` : '';
-    let handles = '';
-
-    if (isSelected && editable) {
-      const hx = { nw: a.x, n: a.x+a.w/2, ne: a.x+a.w, e: a.x+a.w, se: a.x+a.w, s: a.x+a.w/2, sw: a.x, w: a.x };
-      const hy = { nw: a.y, n: a.y, ne: a.y, e: a.y+a.h/2, se: a.y+a.h, s: a.y+a.h, sw: a.y+a.h, w: a.y+a.h/2 };
-      const cursors = { nw:'nw-resize', n:'n-resize', ne:'ne-resize', e:'e-resize', se:'se-resize', s:'s-resize', sw:'sw-resize', w:'w-resize' };
-      handles = HANDLES.map(h =>
-        `<circle class="svg-handle" cx="${hx[h]}" cy="${hy[h]}" r="4"
-          style="cursor:${cursors[h]}"
-          onmousedown="startHandleResize(event,'${a.id}','${h}')"/>`
-      ).join('');
-    }
-    return `
-      <g class="svg-zone${isSelected ? ' selected' : ''}" data-id="${a.id}"
-         onclick="${editable ? `selectMapArea('${a.id}')` : `showAreaDetail('${a.id}')`}" ${dblClick}>
-        <rect x="${a.x}" y="${a.y}" width="${a.w}" height="${a.h}" rx="6"
-              fill="${a.color}" opacity="${opacity}" stroke="${isSelected ? '#0f172a' : 'rgba(0,0,0,.15)'}" stroke-width="${isSelected ? 2 : 1}" rx="4"/>
-        <text x="${a.x + a.w/2}" y="${a.y + a.h/2 - 6}" text-anchor="middle" class="svg-zone-label">${a.name}</text>
-        <text x="${a.x + a.w/2}" y="${a.y + a.h/2 + 10}" text-anchor="middle" class="svg-zone-count">${count}개</text>
-        ${handles}
-      </g>`;
-  }).join('');
-
-  // Render walls
-  const wallGroupId = editable ? 'svgWallsAdmin' : zoneGroupId.replace('Zones', 'Walls');
-  const wallGroup = document.getElementById(wallGroupId);
-  if (wallGroup) {
-    wallGroup.innerHTML = mapWalls.map(w => {
-      const isSel = editable && selectedWall === w.id;
-      const evts = editable ? `ondblclick="showWallPropEditor(event,'${w.id}')" onclick="selectWall(event,'${w.id}')"` : '';
-      return `<line class="svg-wall${isSel ? ' selected' : ''}" data-wall-id="${w.id}"
-        x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}"
-        ${evts}/>`;
-    }).join('');
-  }
-
-  const list = document.getElementById(listId);
-  if (!list) return;
-  if (!mapAreas.length && !mapWalls.length) {
-    list.innerHTML = '<p style="color:#94a3b8;font-size:12px">구역이 없습니다</p>';
-    return;
-  }
-  let html = '';
-  if (editable) {
-    html += `<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;display:flex;gap:12px">
-      <span>구역 <b style="color:#0f172a">${mapAreas.length}</b></span>
-      <span>벽 <b style="color:#0f172a">${mapWalls.length}</b></span>
-    </div>`;
-  }
-  html += mapAreas.map(a => {
-    const count = (areaItems[a.id] || []).length;
-    const isSelected = editable && mapSelectedArea === a.id;
-    return `<div class="map-sidebar-item${isSelected ? ' active' : ''}"
-                onclick="${editable ? `selectMapArea('${a.id}')` : `showAreaDetail('${a.id}')`}">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="width:10px;height:10px;border-radius:3px;background:${a.color};display:inline-block"></span>
-        <span style="font-weight:700;font-size:12px">${a.name}</span>
-      </div>
-      <span style="font-size:11px;color:#94a3b8">${count}개</span>
-    </div>`;
-  }).join('');
-
-  if (editable && mapSelectedArea) {
-    const selArea = mapAreas.find(a => a.id === mapSelectedArea);
-    html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">
-        <b style="color:#0f172a">${selArea ? selArea.name : ''}</b> 선택됨
-        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">x:${selArea?.x} y:${selArea?.y} w:${selArea?.w} h:${selArea?.h}</span>
-      </div>
-      <button class="map-btn map-btn-primary" style="width:100%;margin-bottom:6px" onclick="openAssignModal()">자재 배정</button>
-      <button class="map-btn map-btn-danger" style="width:100%" onclick="deleteSelectedItem()">구역 삭제</button>
-    </div>`;
-  }
-  if (editable && selectedWall) {
-    const selWall = mapWalls.find(w => w.id === selectedWall);
-    html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">
-        <b style="color:#0f172a">벽</b> 선택됨
-        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">(${selWall?.x1},${selWall?.y1}) → (${selWall?.x2},${selWall?.y2})</span>
-      </div>
-      <button class="map-btn map-btn-danger" style="width:100%" onclick="deleteSelectedItem()">벽 삭제</button>
-    </div>`;
-  }
-  list.innerHTML = html;
-
-  if (editable) {
-    const deleteBtn = document.getElementById('mapDeleteBtn');
-    if (deleteBtn) deleteBtn.style.display = (mapSelectedArea || selectedWall) ? '' : 'none';
-  }
-}
-
-// ── 속성 편집기 (구역 더블클릭) ──
-function showPropEditor(event, areaId) {
-  event.stopPropagation();
-  closePropEditor();
-  const a = mapAreas.find(x => x.id === areaId);
-  if (!a) return;
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  const svgRect = svg.getBoundingClientRect();
-  const vb = svg.viewBox.baseVal;
-  const scaleX = svgRect.width / vb.width;
-  const scaleY = svgRect.height / vb.height;
-  const px = svgRect.left + a.x * scaleX;
-  const py = svgRect.top + a.y * scaleY;
-  const container = svg.closest('div[style*="position:relative"]') || svg.parentElement;
-  const containerRect = container.getBoundingClientRect();
-
-  const div = document.createElement('div');
-  div.className = 'prop-editor';
-  div.id = 'propEditorPanel';
-  div.style.left = (px - containerRect.left + 10) + 'px';
-  div.style.top = (py - containerRect.top + 10) + 'px';
-  div.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:#0f172a">구역 속성</span>
-      <button onclick="closePropEditor()" style="border:none;background:none;cursor:pointer;font-size:16px;color:#94a3b8;line-height:1">×</button>
-    </div>
-    <label>이름</label>
-    <input id="pe_name" value="${a.name}"/>
-    <label>색상</label>
-    <select id="pe_color" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-strong);border-radius:var(--r-xs);font-size:12px;font-family:inherit">
-      <option value="#004A93"${a.color==='#004A93'||a.color==='#2563eb'?' selected':''}>파랑</option>
-      <option value="#059669"${a.color==='#059669'?' selected':''}>초록</option>
-      <option value="#d97706"${a.color==='#d97706'?' selected':''}>주황</option>
-      <option value="#dc2626"${a.color==='#dc2626'?' selected':''}>빨강</option>
-      <option value="#7c3aed"${a.color==='#7c3aed'?' selected':''}>보라</option>
-      <option value="#0891b2"${a.color==='#0891b2'?' selected':''}>청록</option>
-      <option value="#64748b"${a.color==='#64748b'?' selected':''}>회색</option>
-    </select>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-      <div><label>X</label><input id="pe_x" type="number" value="${Math.round(a.x)}"/></div>
-      <div><label>Y</label><input id="pe_y" type="number" value="${Math.round(a.y)}"/></div>
-      <div><label>너비</label><input id="pe_w" type="number" value="${Math.round(a.w)}"/></div>
-      <div><label>높이</label><input id="pe_h" type="number" value="${Math.round(a.h)}"/></div>
-    </div>
-    <div class="prop-editor-actions">
-      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyPropEditor('${areaId}')">적용</button>
-      <button class="map-btn map-btn-secondary" style="font-size:11px;padding:5px" onclick="closePropEditor()">취소</button>
-    </div>`;
-  container.style.position = 'relative';
-  container.appendChild(div);
-}
-
-function showWallPropEditor(event, wallId) {
-  event.stopPropagation();
-  closePropEditor();
-  const w = mapWalls.find(x => x.id === wallId);
-  if (!w) return;
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  const svgRect = svg.getBoundingClientRect();
-  const vb = svg.viewBox.baseVal;
-  const scaleX = svgRect.width / vb.width;
-  const scaleY = svgRect.height / vb.height;
-  const px = svgRect.left + w.x1 * scaleX;
-  const py = svgRect.top + w.y1 * scaleY;
-  const container = svg.closest('div[style*="position:relative"]') || svg.parentElement;
-  const containerRect = container.getBoundingClientRect();
-
-  const div = document.createElement('div');
-  div.className = 'prop-editor';
-  div.id = 'propEditorPanel';
-  div.style.left = (px - containerRect.left + 10) + 'px';
-  div.style.top = (py - containerRect.top + 10) + 'px';
-  div.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:#0f172a">벽 속성</span>
-      <button onclick="closePropEditor()" style="border:none;background:none;cursor:pointer;font-size:16px;color:#94a3b8;line-height:1">×</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-      <div><label>X1</label><input id="pw_x1" type="number" value="${Math.round(w.x1)}"/></div>
-      <div><label>Y1</label><input id="pw_y1" type="number" value="${Math.round(w.y1)}"/></div>
-      <div><label>X2</label><input id="pw_x2" type="number" value="${Math.round(w.x2)}"/></div>
-      <div><label>Y2</label><input id="pw_y2" type="number" value="${Math.round(w.y2)}"/></div>
-    </div>
-    <div class="prop-editor-actions">
-      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyWallPropEditor('${wallId}')">적용</button>
-      <button class="map-btn map-btn-secondary" style="font-size:11px;padding:5px" onclick="closePropEditor()">취소</button>
-    </div>`;
-  container.style.position = 'relative';
-  container.appendChild(div);
-}
-
-function closePropEditor() {
-  const el = document.getElementById('propEditorPanel');
-  if (el) el.remove();
-}
-
-function applyPropEditor(areaId) {
-  const a = mapAreas.find(x => x.id === areaId);
-  if (!a) return;
-  pushUndo();
-  a.name = document.getElementById('pe_name').value.trim() || a.name;
-  a.color = document.getElementById('pe_color').value;
-  const nx = parseInt(document.getElementById('pe_x').value);
-  const ny = parseInt(document.getElementById('pe_y').value);
-  const nw = parseInt(document.getElementById('pe_w').value);
-  const nh = parseInt(document.getElementById('pe_h').value);
-  if (!isNaN(nx)) a.x = nx;
-  if (!isNaN(ny)) a.y = ny;
-  if (!isNaN(nw) && nw > 10) a.w = nw;
-  if (!isNaN(nh) && nh > 10) a.h = nh;
-  closePropEditor();
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-function applyWallPropEditor(wallId) {
-  const w = mapWalls.find(x => x.id === wallId);
-  if (!w) return;
-  pushUndo();
-  const nx1 = parseInt(document.getElementById('pw_x1').value);
-  const ny1 = parseInt(document.getElementById('pw_y1').value);
-  const nx2 = parseInt(document.getElementById('pw_x2').value);
-  const ny2 = parseInt(document.getElementById('pw_y2').value);
-  if (!isNaN(nx1)) w.x1 = nx1;
-  if (!isNaN(ny1)) w.y1 = ny1;
-  if (!isNaN(nx2)) w.x2 = nx2;
-  if (!isNaN(ny2)) w.y2 = ny2;
-  closePropEditor();
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-function selectWall(event, wallId) {
-  event.stopPropagation();
-  if (editorTool !== 'select') return;
-  selectedWall = selectedWall === wallId ? null : wallId;
-  mapSelectedArea = null;
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-function startHandleResize(event, areaId, handle) {
-  event.stopPropagation();
-  event.preventDefault();
-  const a = mapAreas.find(x => x.id === areaId);
-  if (!a) return;
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  const pt = svgPoint(svg, event);
-  pushUndo();
-  svgResizing = { areaId, handle, origArea: { ...a }, startPt: pt };
-}
-
-function renderRecentLocations() {
-  const el = document.getElementById('recentLocations');
-  if (!el) return;
-  const entries = Object.entries(mapLocations)
-    .sort((a,b) => (b[1].updatedAt || '').localeCompare(a[1].updatedAt || ''))
-    .slice(0, 10);
-  if (!entries.length) {
-    el.innerHTML = '<p style="color:#94a3b8;font-size:11px">스캔 기록 없음</p>';
-    return;
-  }
-  el.innerHTML = entries.map(([barcode, loc]) => {
-    const area = mapAreas.find(a => a.id === loc.areaId);
-    const areaName = area ? area.name : loc.areaId;
-    const time = loc.time ? new Date(loc.time).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
-    return `<div class="recent-loc">
-      <div><span class="recent-loc-barcode">${barcode}</span></div>
-      <div><span class="recent-loc-area">${areaName}</span> <span class="recent-loc-time">${time} · ${loc.userName || ''}</span></div>
-    </div>`;
-  }).join('');
-}
-
-function showAreaDetail(areaId) {
-  const area = mapAreas.find(a => a.id === areaId);
-  if (!area) return;
-  const areaItems = buildAreaItems();
-  const items = areaItems[areaId] || [];
-
-  let html = `<div class="modal-box" style="max-width:500px">
-    <div class="modal-header">
-      <h3 style="display:flex;align-items:center;gap:8px">
-        <span style="width:12px;height:12px;border-radius:3px;background:${area.color};display:inline-block"></span>
-        ${area.name}
-      </h3>
-      <button class="modal-close" onclick="closeAreaDetail()">&times;</button>
-    </div>
-    <div class="modal-body" style="max-height:400px;overflow-y:auto">
-      <div style="font-size:13px;color:#64748b;margin-bottom:12px">자재 ${items.length}개</div>`;
-
-  if (items.length) {
-    html += items.map(i => {
-      const stepInfo = TYPE_INFO[i.step];
-      const stepLabel = stepInfo ? `<span class="step-badge ${stepInfo.cls}" style="font-size:10px;padding:2px 8px">${stepInfo.label}</span>` : '';
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:4px">
-        <div>
-          <div style="font-size:12px;font-weight:700;font-family:monospace">${i.barcode}</div>
-          <div style="font-size:11px;color:#94a3b8">${i.name || '-'}</div>
-        </div>
-        ${stepLabel}
-      </div>`;
-    }).join('');
-  } else {
-    html += '<div style="text-align:center;color:#94a3b8;padding:20px">자재가 없습니다</div>';
-  }
-
-  html += `<div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:8px;font-size:11px;color:#64748b">
-    <strong>QR 코드 ID:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace">AREA_${area.id}</code>
-  </div>`;
-
-  html += '</div><div class="modal-footer"><button class="admin-btn admin-btn-secondary" onclick="closeAreaDetail()">닫기</button></div></div>';
-
-  let overlay = document.getElementById('areaDetailModal');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'areaDetailModal';
-    overlay.className = 'map-assign-modal';
-    overlay.onclick = (e) => { if (e.target === overlay) closeAreaDetail(); };
-    document.body.appendChild(overlay);
-  }
-  overlay.innerHTML = html;
-  overlay.classList.add('open');
-}
-
-function closeAreaDetail() {
-  const m = document.getElementById('areaDetailModal');
-  if (m) m.classList.remove('open');
-}
-
-function selectMapArea(id) {
-  if (editorTool !== 'select') return;
-  selectedWall = null;
-  mapSelectedArea = mapSelectedArea === id ? null : id;
-  closePropEditor();
-  // 색상 팔레트를 선택된 구역 색상으로 동기화
-  if (mapSelectedArea) {
-    const a = mapAreas.find(x => x.id === mapSelectedArea);
-    if (a) syncColorPicker(a.color);
-  }
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-async function saveMapAreas() {
-  try {
-    const r = await fetch(`${SERVER}/api/map/areas`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ areas: mapAreas, walls: mapWalls })
-    });
-    if (!r.ok) throw new Error();
-    showToast('저장 완료');
-    loadMapData();
-  } catch(e) { showToast('저장 실패', 'error'); }
-}
-
-function deleteSelectedItem() {
-  if (mapSelectedArea) {
-    pushUndo();
-    mapAreas = mapAreas.filter(a => a.id !== mapSelectedArea);
-    mapSelectedArea = null;
-  } else if (selectedWall) {
-    pushUndo();
-    mapWalls = mapWalls.filter(w => w.id !== selectedWall);
-    selectedWall = null;
-  } else return;
-  closePropEditor();
-  renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-}
-
-// ── SVG Drawing (admin) ──
-function svgMouseDown(e) {
-  if (e.target.closest('.svg-handle')) return; // handled by startHandleResize
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  const pt = svgPoint(svg, e);
-
-  if (editorTool === 'select') {
-    // 구역 클릭
-    const clickedZone = e.target.closest('.svg-zone');
-    if (clickedZone) {
-      const id = clickedZone.dataset.id;
-      const area = mapAreas.find(a => a.id === id);
-      if (!area) return;
-      mapSelectedArea = id;
-      selectedWall = null;
-      syncColorPicker(area.color);
-      svgDragging = id;
-      svgDragOffset = { x: pt.x - area.x, y: pt.y - area.y };
-      pushUndo();
-      renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-      return;
-    }
-    // 벽 클릭 (직선 line 또는 곡선 path)
-    const clickedWall = e.target.closest('.svg-wall') || e.target.closest('[data-wall-id]');
-    if (clickedWall) {
-      const wid = clickedWall.dataset.wallId;
-      const w = mapWalls.find(x => x.id === wid);
-      if (!w) return;
-      selectedWall = wid;
-      mapSelectedArea = null;
-      svgWallDragging = wid;
-      svgWallDragStart = pt;
-      svgWallDragOrig = { x1: w.x1, y1: w.y1, x2: w.x2, y2: w.y2, cx: w.cx, cy: w.cy };
-      pushUndo();
-      renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-      return;
-    }
-    // 빈 공간 클릭 — 탈선택
-    mapSelectedArea = null;
-    selectedWall = null;
-    closePropEditor();
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    return;
-  }
-
-  if (editorTool === 'draw') {
-    svgDrawing = true;
-    svgDrawStart = pt;
-    const drawRect = document.getElementById('svgDrawRect');
-    drawRect.setAttribute('x', pt.x);
-    drawRect.setAttribute('y', pt.y);
-    drawRect.setAttribute('width', 0);
-    drawRect.setAttribute('height', 0);
-    drawRect.style.display = '';
-    return;
-  }
-
-  if (editorTool === 'wall') {
-    svgWallDrawing = true;
-    svgWallStart = pt;
-    const drawLine = document.getElementById('svgDrawLine');
-    drawLine.setAttribute('x1', pt.x);
-    drawLine.setAttribute('y1', pt.y);
-    drawLine.setAttribute('x2', pt.x);
-    drawLine.setAttribute('y2', pt.y);
-    drawLine.style.display = '';
-    return;
-  }
-
-}
-
-function svgMouseMove(e) {
-  const svg = document.getElementById('svgFloorPlanAdmin');
-  const pt = svgPoint(svg, e);
-
-  // Resize handle drag
-  if (svgResizing) {
-    const { areaId, handle, origArea, startPt } = svgResizing;
-    const a = mapAreas.find(x => x.id === areaId);
-    if (!a) return;
-    const dx = pt.x - startPt.x;
-    const dy = pt.y - startPt.y;
-    let { x, y, w, h } = origArea;
-    const MIN = 20;
-    if (handle.includes('e')) { w = Math.max(MIN, origArea.w + dx); }
-    if (handle.includes('s')) { h = Math.max(MIN, origArea.h + dy); }
-    if (handle.includes('w')) { const nw = Math.max(MIN, origArea.w - dx); x = origArea.x + origArea.w - nw; w = nw; }
-    if (handle.includes('n')) { const nh = Math.max(MIN, origArea.h - dy); y = origArea.y + origArea.h - nh; h = nh; }
-    a.x = Math.round(x); a.y = Math.round(y); a.w = Math.round(w); a.h = Math.round(h);
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    return;
-  }
-
-  if (svgDragging) {
-    const area = mapAreas.find(a => a.id === svgDragging);
-    if (!area) return;
-    let dx = pt.x - svgDragOffset.x;
-    let dy = pt.y - svgDragOffset.y;
-    // Shift: 수평/수직/45도 대각선 제한
-    if (e.shiftKey) {
-      const absDx = Math.abs(dx), absDy = Math.abs(dy);
-      const angle = Math.atan2(absDy, absDx) * 180 / Math.PI;
-      if (angle < 22.5) { dy = 0; }
-      else if (angle > 67.5) { dx = 0; }
-      else { const d = Math.min(absDx, absDy); dx = d * Math.sign(dx); dy = d * Math.sign(dy); }
-    }
-    area.x = Math.max(10, Math.min(990 - area.w, Math.round(pt.x - svgDragOffset.x)));
-    area.y = Math.max(10, Math.min(590 - area.h, Math.round(pt.y - svgDragOffset.y)));
-    const rect = document.querySelector(`#svgZonesAdmin .svg-zone[data-id="${svgDragging}"] rect`);
-    const texts = document.querySelectorAll(`#svgZonesAdmin .svg-zone[data-id="${svgDragging}"] text`);
-    if (rect) { rect.setAttribute('x', area.x); rect.setAttribute('y', area.y); }
-    if (texts[0]) { texts[0].setAttribute('x', area.x + area.w/2); texts[0].setAttribute('y', area.y + area.h/2 - 6); }
-    if (texts[1]) { texts[1].setAttribute('x', area.x + area.w/2); texts[1].setAttribute('y', area.y + area.h/2 + 10); }
-    return;
-  }
-
-  if (svgWallDragging) {
-    const w = mapWalls.find(x => x.id === svgWallDragging);
-    if (!w) return;
-    const dx = pt.x - svgWallDragStart.x;
-    const dy = pt.y - svgWallDragStart.y;
-    w.x1 = svgWallDragOrig.x1 + dx;
-    w.y1 = svgWallDragOrig.y1 + dy;
-    w.x2 = svgWallDragOrig.x2 + dx;
-    w.y2 = svgWallDragOrig.y2 + dy;
-    const line = document.querySelector(`#svgWallsAdmin .svg-wall[data-wall-id="${svgWallDragging}"]`);
-    if (line) { line.setAttribute('x1',w.x1); line.setAttribute('y1',w.y1); line.setAttribute('x2',w.x2); line.setAttribute('y2',w.y2); }
-    return;
-  }
-
-  if (svgDrawing && svgDrawStart) {
-    const drawRect = document.getElementById('svgDrawRect');
-    const x = Math.min(pt.x, svgDrawStart.x);
-    const y = Math.min(pt.y, svgDrawStart.y);
-    const w = Math.abs(pt.x - svgDrawStart.x);
-    const h = Math.abs(pt.y - svgDrawStart.y);
-    drawRect.setAttribute('x', x);
-    drawRect.setAttribute('y', y);
-    drawRect.setAttribute('width', w);
-    drawRect.setAttribute('height', h);
-    return;
-  }
-
-  if (svgWallDrawing && svgWallStart) {
-    const drawLine = document.getElementById('svgDrawLine');
-    let x2 = pt.x, y2 = pt.y;
-    // Shift 누르면 수평/수직 스냅, 안 누르면 자유 대각선
-    if (e.shiftKey) {
-      const dx = Math.abs(pt.x - svgWallStart.x);
-      const dy = Math.abs(pt.y - svgWallStart.y);
-      if (dx >= dy) { y2 = svgWallStart.y; }
-      else { x2 = svgWallStart.x; }
-    }
-    drawLine.setAttribute('x2', x2);
-    drawLine.setAttribute('y2', y2);
-    return;
-  }
-
-}
-
-function svgMouseUp(e) {
-  const svg = document.getElementById('svgFloorPlanAdmin');
-
-  if (svgResizing) {
-    svgResizing = null;
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    return;
-  }
-
-  if (svgDragging) {
-    svgDragging = null;
-    svgDragOffset = null;
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    return;
-  }
-
-  if (svgWallDragging) {
-    svgWallDragging = null;
-    svgWallDragStart = null;
-    svgWallDragOrig = null;
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    return;
-  }
-
-  if (svgDrawing && svgDrawStart) {
-    const pt = svgPoint(svg, e);
-    const x = Math.min(pt.x, svgDrawStart.x);
-    const y = Math.min(pt.y, svgDrawStart.y);
-    const w = Math.abs(pt.x - svgDrawStart.x);
-    const h = Math.abs(pt.y - svgDrawStart.y);
-    svgDrawing = false;
-    svgDrawStart = null;
-    const drawRect = document.getElementById('svgDrawRect');
-    drawRect.style.display = 'none';
-    if (w > 20 && h > 20) {
-      const name = prompt('구역 이름을 입력하세요:');
-      if (name && name.trim()) {
-        pushUndo();
-        const color = editorColor;
-        const id = name.trim().replace(/\s+/g, '_') + '_' + Date.now().toString(36);
-        mapAreas.push({ id, name: name.trim(), x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h), color });
-        renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-      }
-    }
-    return;
-  }
-
-  if (svgWallDrawing && svgWallStart) {
-    const pt = svgPoint(svg, e);
-    let x2 = pt.x, y2 = pt.y;
-    if (e.shiftKey) {
-      const dx = Math.abs(pt.x - svgWallStart.x);
-      const dy = Math.abs(pt.y - svgWallStart.y);
-      if (dx >= dy) { y2 = svgWallStart.y; }
-      else { x2 = svgWallStart.x; }
-    }
-    const drawLine = document.getElementById('svgDrawLine');
-    drawLine.style.display = 'none';
-    svgWallDrawing = false;
-    const len = Math.sqrt((x2 - svgWallStart.x)**2 + (y2 - svgWallStart.y)**2);
-    if (len > 15) {
-      pushUndo();
-      mapWalls.push({
-        id: 'w_' + Date.now().toString(36),
-        x1: Math.round(svgWallStart.x), y1: Math.round(svgWallStart.y),
-        x2: Math.round(x2), y2: Math.round(y2)
-      });
-      renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-    }
-    svgWallStart = null;
-    return;
-  }
-}
-
-// Keyboard shortcut
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-    e.preventDefault();
-    editorUndo();
-  }
-  if (e.key === 'Escape') {
-    closePropEditor();
-    mapSelectedArea = null;
-    selectedWall = null;
-    renderSvgMap('svgZonesAdmin', 'mapAreaListAdmin', true);
-  }
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
-    if (mapSelectedArea || selectedWall) {
-      e.preventDefault();
-      deleteSelectedItem();
-    }
-  }
-});
-
-// ── QR Code Generation ──
-
-// ── 자재 배정 모달 ──
-function openAssignModal() {
-  if (!mapSelectedArea) return;
-  const area = mapAreas.find(a => a.id === mapSelectedArea);
-  const areaName = area ? area.name : '';
-
-  // Get all tracked barcodes
-  fetch(`${SERVER}/api/tracking`).then(r => r.json()).then(data => {
-    const items = data.tracking || [];
-    const assigned = Object.entries(mapAssignments)
-      .filter(([,aid]) => aid === mapSelectedArea)
-      .map(([bc]) => bc);
-
-    let html = `<div class="modal-box" style="max-width:480px">
-      <div class="modal-header">
-        <h3>${areaName}에 자재 배정</h3>
-        <button class="modal-close" onclick="closeAssignModal()">&times;</button>
-      </div>
-      <div class="modal-body" style="max-height:400px;overflow-y:auto">
-        <div style="margin-bottom:12px">
-          <input id="assignSearch" class="field-input" placeholder="바코드 검색..." oninput="filterAssignList()" style="padding:10px 14px;font-size:13px"/>
-        </div>
-        <div id="assignList">`;
-
-    items.forEach(i => {
-      const checked = assigned.includes(i.barcode);
-      const stepInfo = TYPE_INFO[i.currentStep];
-      const stepLabel = stepInfo ? stepInfo.label : '';
-      html += `<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;border:1px solid ${checked ? 'var(--brand)' : 'var(--border-strong)'};background:${checked ? 'var(--brand-soft)' : '#fff'};margin-bottom:4px" onclick="toggleAssign(this,'${i.barcode}')">
-        <input type="checkbox" ${checked ? 'checked' : ''} style="display:none" data-barcode="${i.barcode}">
-        <span style="width:18px;height:18px;border-radius:4px;border:2px solid ${checked ? 'var(--brand)' : 'var(--border-stronger)'};background:${checked ? 'var(--brand)' : '#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
-          ${checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
-        </span>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:12px;font-weight:700;font-family:monospace">${i.barcode}</div>
-          <div style="font-size:11px;color:#94a3b8">${i.name || '-'}${stepLabel ? ' · ' + stepLabel : ''}</div>
-        </div>
-      </label>`;
-    });
-
-    html += `</div></div>
-      <div class="modal-footer">
-        <button class="admin-btn admin-btn-secondary" onclick="closeAssignModal()">닫기</button>
-        <button class="admin-btn admin-btn-primary" onclick="saveAssignments()">저장</button>
-      </div>
-    </div>`;
-
-    let overlay = document.getElementById('assignModal');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'assignModal';
-      overlay.className = 'map-assign-modal';
-      overlay.onclick = (e) => { if (e.target === overlay) closeAssignModal(); };
-      document.body.appendChild(overlay);
-    }
-    overlay.innerHTML = html;
-    overlay.classList.add('open');
-  });
-}
-
-function closeAssignModal() {
-  const m = document.getElementById('assignModal');
-  if (m) m.classList.remove('open');
-}
-
-function toggleAssign(label, barcode) {
-  const cb = label.querySelector('input');
-  cb.checked = !cb.checked;
-  const checked = cb.checked;
-  label.style.borderColor = checked ? '#004A93' : '#e5e8eb';
-  label.style.background = checked ? '#e6eef7' : '#fff';
-  const box = label.querySelector('span');
-  box.style.borderColor = checked ? '#004A93' : '#d1d6db';
-  box.style.background = checked ? '#004A93' : '#fff';
-  box.innerHTML = checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '';
-}
-
-function filterAssignList() {
-  const q = document.getElementById('assignSearch').value.trim().toLowerCase();
-  document.querySelectorAll('#assignList label').forEach(el => {
-    const bc = el.querySelector('input').dataset.barcode.toLowerCase();
-    const text = el.textContent.toLowerCase();
-    el.style.display = (!q || bc.includes(q) || text.includes(q)) ? 'flex' : 'none';
-  });
-}
-
-async function saveAssignments() {
-  const checkboxes = document.querySelectorAll('#assignList input[type="checkbox"]');
-  const promises = [];
-  checkboxes.forEach(cb => {
-    const barcode = cb.dataset.barcode;
-    const wasAssigned = mapAssignments[barcode] === mapSelectedArea;
-    if (cb.checked && !wasAssigned) {
-      promises.push(fetch(`${SERVER}/api/map/assign`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ barcode, areaId: mapSelectedArea })
-      }));
-    } else if (!cb.checked && wasAssigned) {
-      promises.push(fetch(`${SERVER}/api/map/assign/${encodeURIComponent(barcode)}`, {
-        method: 'DELETE'
-      }));
-    }
-  });
-  await Promise.all(promises);
-  closeAssignModal();
-  loadMapData();
-}
 // ── 토스트 알림 ──
 function showToast(input, legacyType) {
   const options=typeof input==='string'?{message:input,type:legacyType}:input||{};
@@ -6625,15 +4051,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.id})`;
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
-    document.getElementById('tabFloorplanBtn').style.display = '';
     document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
     document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   }
   if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
   if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
-  if (typeof loadStats === 'function') loadStats();
-  if (typeof loadMapView === 'function') loadMapView();
-  if (typeof connectSSE === 'function') connectSSE();
+  switchTab('as',document.getElementById('tabAsBtn'),location.hash==='#as-list'?'list':'stats');
 });
 </script>
 <script src="/as-workflow-ui.js?v=receipt-black-7"></script>
