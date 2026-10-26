@@ -1256,6 +1256,11 @@ tbody tr:hover td{background:var(--surface-muted)}
 #asSubStats .as-overview-charts>section.as-stats-chart-panel{height:100%}
 @container as-overview (max-width:1080px){#asSubStats .as-overview-charts{align-items:start}#asSubStats .as-trend-stack{grid-template-rows:auto auto}#asSubStats .as-overview-charts>section.as-stats-chart-panel{height:auto}}
 @container as-overview (max-width:560px){#asSubStats .as-daily-section{min-height:352px}}
+/* Decorative rows keep the intake grid visible without creating records. */
+#tabAs #asSubList .as-erp-table tbody tr.as-ledger-filler{height:var(--ledger-row)!important;cursor:default;pointer-events:none}
+#tabAs #asSubList .as-erp-table tbody tr.as-ledger-filler td{height:var(--ledger-row)!important;padding:0!important;background:#fafbfd!important;border-bottom:1px solid #e1e7ed!important;border-right:1px solid #e4e8ed!important}
+#tabAs #asSubList .as-erp-table tbody tr.as-ledger-filler:nth-child(even) td{background:#f7f9fb!important}
+#tabAs #asSubList .as-erp-table tbody tr.as-ledger-filler td:last-child{border-right:0!important}
 </style>
 <style id="as-overview-final-styles">
 #asSubStats .as-amount-summary{display:flex;gap:8px 24px;flex-wrap:wrap;margin:10px 0 16px;font-size:14px;line-height:1.6;color:var(--text)}
@@ -6913,6 +6918,25 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
 </script><script id="as-ledger-script">
 // Approved ledger interactions; uses the existing authenticated API and read-only preview guard.
 function asLedgerCanLeave(){if(!_asRemarkEditing)return true;document.getElementById('asLedgerMessage').textContent='편집 중인 비고를 먼저 저장하거나 취소해 주세요.';document.getElementById('asRemarkInput')?.focus();return false;}
+function asLedgerFillRows(table,viewport,rowHeight,columnCount){
+ const body=table.tBodies[0];
+ body.querySelectorAll('.as-ledger-filler').forEach(row=>row.remove());
+ const rows=[...body.rows];
+ // Loading and error rows must remain distinct from an empty result.
+ if(!rows.length||rows.some(row=>!row.hasAttribute('data-id')&&!row.classList.contains('as-ledger-no-results')))return;
+ const available=Math.max(0,viewport.clientHeight-table.tHead.getBoundingClientRect().height);
+ const occupied=rows.reduce((height,row)=>height+row.getBoundingClientRect().height,0);
+ const count=Math.max(0,Math.ceil((available-occupied)/rowHeight));
+ const fragment=document.createDocumentFragment();
+ for(let i=0;i<count;i++){
+  const row=document.createElement('tr');
+  row.className='as-ledger-filler';row.setAttribute('aria-hidden','true');
+  for(let j=0;j<columnCount;j++)row.appendChild(document.createElement('td'));
+  fragment.appendChild(row);
+ }
+ body.appendChild(fragment);
+}
+
 function asLedgerLayoutColumns(){
  const table=document.querySelector('#asSubList .as-erp-table');
  const viewport=table?.parentElement;
@@ -6935,10 +6959,15 @@ function asLedgerLayoutColumns(){
   ?minimum[i]+(width-minimum[i])*(available-totalMinimum)/Math.max(1,totalDesired-totalMinimum)
   :width+(flexible.includes(i)?(available-totalDesired)/flexible.length:0));
  table.style.setProperty('width',available+'px','important');
+ // Keep 20-record pages readable while using the available height on larger screens.
+ // Divide by the page capacity so a short final page does not create oversized rows.
+ const rowHeight=Math.max(40,Math.floor((viewport.clientHeight-table.tHead.getBoundingClientRect().height)/_asPageSize));
+ document.getElementById('asSubList').style.setProperty('--ledger-row',rowHeight+'px');
+ asLedgerFillRows(table,viewport,rowHeight,heads.length);
  let left=0;
  heads.forEach((th,i)=>{
   const width=widths[i];cols[i].style.width=width+'px';th.style.width=width+'px';th.style.minWidth=minimum[i]+'px';
-  [th,...table.querySelectorAll('tbody tr[data-id] td:nth-child('+(i+1)+')')].forEach(cell=>{
+  [th,...table.querySelectorAll('tbody tr[data-id] td:nth-child('+(i+1)+'), tbody tr.as-ledger-filler td:nth-child('+(i+1)+')')].forEach(cell=>{
    cell.style.maxWidth=width+'px';
    if(i<4){cell.classList.add('as-ledger-sticky');cell.style.position='sticky';cell.style.left=left+'px';cell.style.zIndex=cell===th?'7':'3';}
    if(cell!==th&&i>=2&&cell.parentElement.hasAttribute('data-id')){cell.tabIndex=0;if(!cell.title)cell.title=cell.textContent.trim();}
@@ -6946,11 +6975,7 @@ function asLedgerLayoutColumns(){
   if(i<4)left+=width;
   if(th.dataset.col){th.tabIndex=0;th.setAttribute('aria-sort',th.dataset.col===_asSortCol?(_asSortDir==='asc'?'ascending':'descending'):'none');th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();th.click();}};}
  });
- // Keep 20-record pages readable while using the available height on larger screens.
- // Divide by the page capacity so a short final page does not create oversized rows.
- const rowHeight=Math.max(40,Math.floor((viewport.clientHeight-table.tHead.getBoundingClientRect().height)/_asPageSize));
- document.getElementById('asSubList').style.setProperty('--ledger-row',rowHeight+'px');
- if([...table.tBodies[0].rows].every(row=>row.hasAttribute('data-id')||row.classList.contains('as-ledger-no-results'))){
+ if([...table.tBodies[0].rows].every(row=>row.hasAttribute('data-id')||row.classList.contains('as-ledger-no-results')||row.classList.contains('as-ledger-filler'))){
   const filtered=_asFiltered.length,total=_asFullList.length;
   document.getElementById('asLedgerCount').innerHTML=filtered===total?'전체 <strong>'+total+'</strong>건':'조회 <strong>'+filtered+'</strong>건 <span class="as-ledger-count-total">/ 전체 '+total+'건</span>';
  }
