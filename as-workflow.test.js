@@ -13,10 +13,12 @@ test('AS Excel export sizes Korean columns and wrapped rows without losing cell 
   const c={_asFiltered:rows,AsAmount:require('./as-amount'),Blob,alert(){throw Error('unexpected empty export');},
    URL:{createObjectURL(value){blob=value;return 'blob:test';},revokeObjectURL(){}},
    document:{createElement(){return {click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
-  vm.createContext(c);vm.runInContext(fn,c);c.exportAsExcel();
+  vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function normalizeAsReason('),source.indexOf('function asStatsDateKey(')),c);vm.runInContext(fn,c);c.exportAsExcel();
   assert.match(download,/\.xls$/);return blob.text();
  }
  const short=await exportRows([{product:'ABC',reason:'점검',amount:0}]);
+ const renamed=await exportRows([{reason:'품질 불량'},{reason:'수량 누락'}]);
+ assert(renamed.includes('제작 오작'));assert(renamed.includes('부재 누락'));assert(!renamed.includes('품질 불량'));assert(!renamed.includes('수량 누락'));
  const long=await exportRows([{product:'한글제품명이길어지는경우',reason:'파손 부위 확인 및 교체 작업 요청 '.repeat(10)+'\n다음 줄',remark:'A&B <확인>',amount:1234567}]);
  const widths=html=>[...html.matchAll(/<col width="(\d+)"/g)].map(m=>Number(m[1]));
  assert.equal(widths(long).length,13);
@@ -201,9 +203,11 @@ test('intake pagination shows 20 records per page and handles the final partial 
  const tbody={innerHTML:''},pagination={style:{}},head={getClientRects:()=>visible?[{}]:[],getBoundingClientRect:()=>({bottom:300-c.window.scrollY})};
  const c={AsAmount:require('./as-amount'),window:{innerHeight:1000,scrollY:0},document:{querySelector:()=>head,getElementById:id=>id==='asTableBody'?tbody:pagination},_asRemarkEditing:null,_asFullList:[],_asPage:1,_asPageSize:20,_asFiltered:[],_updateAsSelectedCount(){},_renderAsPagination(){},_initAsColResizers(){},asJobEsc:String,asWorkflowDelayHtml:()=>''};
  vm.createContext(c);
+ vm.runInContext(html.slice(html.indexOf('function normalizeAsReason('),html.indexOf('function asStatsDateKey(')),c);
  vm.runInContext(html.slice(html.indexOf('function _renderAsPage()'),html.indexOf('function _renderAsPagination(')),c);
  visible=true;c._renderAsPage();assert(tbody.innerHTML.includes('조건에 맞는 접수 내역이 없습니다.'));assert(!tbody.innerHTML.includes('data-id='));assert.equal(pagination.style.display,'none');
- c._asFiltered=[{id:'one',asNo:'AS-ONE',status:'접수',files:[]}];c._renderAsPage();
+ c._asFiltered=[{id:'one',asNo:'AS-ONE',status:'접수',reason:'수량 누락',files:[]}];c._renderAsPage();
+ assert(tbody.innerHTML.includes('부재 누락'));assert(!tbody.innerHTML.includes('수량 누락'));
  assert.equal((tbody.innerHTML.match(/<tr /g)||[]).length,1);
  assert(!html.includes('asListExampleBtn'));assert(!html.includes('toggleAsListExample'));
  c._asFiltered=Array.from({length:21},(_,i)=>({id:'item-'+i,asNo:'AS-'+i,status:'접수',files:[]}));

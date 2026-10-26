@@ -20,7 +20,14 @@ let s=c.summarizeAsStatistics(sample,2026,1);assert.equal(s.total,4);assert.equa
 s=c.summarizeAsStatistics([],2026,1);assert.equal(s.total,0);assert.equal(s.previous,0);
 const reasonCases=['치수 오작',' 품질 불량 ','현장 추가 요청','',null,'__proto__','용접 불량'];
 const reasonSummary=c.summarizeAsStatistics(reasonCases.map(reason=>({createdAt:'2026-01-01',reason})).concat([{createdAt:'2025-01-01',reason:'도장 불량'},{createdAt:'invalid',reason:'도장 불량'}]),2026,1);
-assert.equal(reasonSummary.reasons['치수 오작'],1);assert.equal(reasonSummary.reasons['품질 불량'],1);assert.equal(reasonSummary.reasons['기타'],4);assert.equal(Object.keys(reasonSummary.reasons).length,8);assert.equal(reasonSummary.reasons['도장 불량'],0);assert.equal(Object.values(reasonSummary.reasons).reduce((a,b)=>a+b,0),reasonSummary.total);
+assert.equal(reasonSummary.reasons['치수 오작'],1);assert.equal(reasonSummary.reasons['제작 오작'],1);assert.equal(reasonSummary.reasons['기타'],4);assert.equal(Object.keys(reasonSummary.reasons).length,8);assert.equal(reasonSummary.reasons['도장 불량'],0);assert.equal(Object.values(reasonSummary.reasons).reduce((a,b)=>a+b,0),reasonSummary.total);
+const renamedRecords=['품질 불량','제작 오작',' 수량 누락 ','부재 누락'].map(reason=>({createdAt:'2026-01-01',reason}));
+const renamedSummary=c.summarizeAsStatistics(renamedRecords,2026,1);
+assert.equal(renamedSummary.reasons['제작 오작'],2);assert.equal(renamedSummary.reasons['부재 누락'],2);assert.equal(renamedSummary.reasons['기타'],0);
+const renamedHeat=c.summarizeAsReasonHeatmap(renamedRecords,2026,'2026-10-23');
+for(const name of ['제작 오작','부재 누락']){assert.equal(renamedHeat.values[renamedHeat.names.indexOf(name)][0],2);assert(html.includes('<option value="'+name+'">'+name+'</option>'));}
+assert(!html.includes('<option value="품질 불량">'));assert(!html.includes('<option value="수량 누락">'));
+assert.equal(c.normalizeAsReason('__proto__'),'__proto__');assert.equal(c.normalizeAsReason('현장 추가 요청'),'현장 추가 요청');assert.equal(renamedRecords[0].reason,'품질 불량');
 assert.equal(Object.values(c.summarizeAsStatistics([],2026,1).reasons).reduce((a,b)=>a+b,0),0);
 const heatRecords=reasonCases.map(reason=>({createdAt:'2026-01-01',reason})).concat([
  {createdAt:'2026-02-01',reason:'치수 오작'},{createdAt:'2026-02-15',reason:'치수 오작'},
