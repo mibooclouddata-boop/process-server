@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs",
+    "test": "node --test as-workflow.test.js as-session.test.js as-statistics.test.cjs cover-motion.test.cjs user-management.test.cjs auth-api.test.cjs auth-client.test.cjs login.test.cjs supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs dashboard-security.test.cjs",
+    "test:supabase": "node --test supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs",
     "start": "node server.js"
   },
   "keywords": [],
@@ -12,9 +13,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "multer": "^2.1.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11"
   }
 }

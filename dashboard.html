@@ -2741,7 +2741,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             </div>
             <div class="modal-field">
               <label>비밀번호 * <span class="hint" id="modalPwHint" style="display:none">(빈칸이면 유지)</span></label>
-              <input id="modalUserPw" placeholder="비밀번호" type="text" autocomplete="new-password"/>
+              <input id="modalUserPw" placeholder="비밀번호" type="password" autocomplete="new-password"/>
             </div>
           </div>
           <div class="modal-row">
@@ -2800,6 +2800,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   </div>
 </div>
 
+<script src="/auth-client.js"></script>
 <script src="/as-amount.js"></script>
 <script>
 // ── 설정 ──
@@ -2807,15 +2808,11 @@ const SERVER = window.location.origin; // 같은 서버에서 서빙되므로 �
 let currentUser = null;
 
 // ── 인증 체크: login.html에서 넘어온 세션이 없으면 로그인 페이지로 ──
-(function initAuth() {
-  try {
-    const raw = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
-    if (!raw) { window.location.replace('/'); return; }
-    currentUser = JSON.parse(raw);
-  } catch (e) {
-    window.location.replace('/'); return;
-  }
-})();
+const authReady = fetch(SERVER+'/api/me').then(async response=>{
+  if(!response.ok){window.location.replace('/login.html');return;}
+  currentUser=(await response.json()).user;
+  sessionStorage.setItem('currentUser',JSON.stringify(currentUser));
+}).catch(()=>window.location.replace('/login.html'));
 let expandedBarcodes = new Set();
 
 const TYPE_INFO = {
@@ -2861,7 +2858,7 @@ async function doLogin() {
           document.getElementById('welcomeOverlay').classList.remove('show');
           document.getElementById('welcomeOverlay').style.animation = '';
           document.getElementById('dashboard').style.display = 'block';
-          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.id})`;
+          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.loginId || data.user.id})`;
           if (data.user.role === 'sysadmin' || data.user.role === 'admin') {
             // tabMaster removed
           }
@@ -3404,10 +3401,10 @@ async function loadTracking() {
     document.getElementById('trackHead').innerHTML = '<tr>'
       + '<th style="width:36px;min-width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#f8fafc"><input type="checkbox" onchange="toggleTrackSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>'
       + visCols.map(c => {
-        const esc = c.replace(/"/g,'&quot;');
+        const esc = asJobEsc(c);
         const isSort = _trackSortCol === c;
         const arrow = isSort ? (_trackSortDir === 'asc' ? ' ↑' : ' ↓') : '';
-        return `<th data-col="${esc}" onclick="sortTrackTable('${esc}')" style="white-space:nowrap;position:relative;${_colW(c)};cursor:pointer;user-select:none">${c}<span style="color:var(--brand)">${arrow}</span><div class="col-resize-handle"></div></th>`;
+        return `<th data-col="${esc}" onclick="sortTrackTable(this.dataset.col)" style="white-space:nowrap;position:relative;${_colW(c)};cursor:pointer;user-select:none">${asJobEsc(c)}<span style="color:var(--brand)">${arrow}</span><div class="col-resize-handle"></div></th>`;
       }).join('')
       + '</tr>';
     initColResize();
@@ -3424,7 +3421,7 @@ async function loadTracking() {
       + visCols.map(col => {
         const v = row[col] || '';
         const isUid = col === 'UID';
-        return `<td style="white-space:nowrap;${_colW(col)};overflow:hidden;text-overflow:ellipsis;${isUid?'font-weight:700;color:var(--brand)':''}" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
+        return `<td style="white-space:nowrap;${_colW(col)};overflow:hidden;text-overflow:ellipsis;${isUid?'font-weight:700;color:var(--brand)':''}" title="${asJobEsc(String(v))}">${asJobEsc(v || '-')}</td>`;
       }).join('')
       + '</tr>').join('');
   } catch(e) {
@@ -3564,9 +3561,9 @@ function renderTrackColList() {
     const idx = erpAllColumns.indexOf(c) + 1;
     const checked = vis.has(c);
     html += `<label style="display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid ${checked?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${checked?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:11px;min-height:32px;transition:background var(--ease),border-color var(--ease)">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${checked?'checked':''} onchange="toggleTrackCol(this)" style="accent-color:var(--brand);margin:0;width:14px;height:14px;flex-shrink:0"/>
+      <input type="checkbox" data-col="${asJobEsc(c)}" ${checked?'checked':''} onchange="toggleTrackCol(this)" style="accent-color:var(--brand);margin:0;width:14px;height:14px;flex-shrink:0"/>
       <span style="color:#94a3b8;font-size:10px;font-weight:700;min-width:20px">${idx}</span>
-      <span style="color:${checked?'#1e40af':'#64748b'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c}">${c}</span>
+      <span style="color:${checked?'#1e40af':'#64748b'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${asJobEsc(c)}">${asJobEsc(c)}</span>
     </label>`;
   }
   html += '</div>';
@@ -3635,7 +3632,7 @@ async function _openErpPreview(file) {
   try {
     const r = await fetch(`${SERVER}/api/erp/preview`, { method:'POST', body: form });
     const data = await r.json();
-    if (!r.ok) { document.getElementById('erpPreviewBody').innerHTML = `<tr><td style="padding:40px;text-align:center;color:#dc2626">${data.error}</td></tr>`; return; }
+    if (!r.ok) { document.getElementById('erpPreviewBody').innerHTML = `<tr><td style="padding:40px;text-align:center;color:#dc2626">${asJobEsc(data.error)}</td></tr>`; return; }
 
     const cols = data.columns;
     const rows = data.preview;
@@ -3688,7 +3685,7 @@ async function _openErpPreview(file) {
         const bg = isMatch ? '#f0fdf4' : '#fef2f2';
         const bc = isMatch ? '#22c55e' : '#ef4444';
         const tc = isMatch ? '#16a34a' : '#dc2626';
-        return `<th style="padding:8px 10px;background:${bg};border-bottom:3px solid ${bc};white-space:nowrap;font-size:11px;font-weight:700;color:${tc}">${c}</th>`;
+        return `<th style="padding:8px 10px;background:${bg};border-bottom:3px solid ${bc};white-space:nowrap;font-size:11px;font-weight:700;color:${tc}">${asJobEsc(c)}</th>`;
       }).join('')
       + '</tr>';
 
@@ -3713,7 +3710,7 @@ async function _openErpPreview(file) {
       + `<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;font-size:11px;color:${numColor};font-weight:600;text-align:center;position:sticky;left:0;background:${numBg}">${i+1}</td>`
       + cols.map(c => {
         const v = row[c] || '';
-        return `<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap;font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${String(v).replace(/"/g,'&quot;')}">${v || '-'}</td>`;
+        return `<td style="padding:6px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap;font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${asJobEsc(String(v))}">${asJobEsc(v || '-')}</td>`;
       }).join('')
       + '</tr>';
     }).join('');
@@ -3795,13 +3792,13 @@ function renderErpColGrid() {
   let html = '<div style="display:grid;grid-template-columns:repeat('+colsPerRow+',1fr);gap:8px">';
   for (let j = 0; j < erpAllColumns.length; j++) {
     const c = erpAllColumns[j];
-    const esc = c.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const esc = asJobEsc(c);
     const changed = _erpEditMode && _erpRenameMap[c] && _erpRenameMap[c] !== c;
-    const displayVal = (_erpRenameMap[c] || c).replace(/"/g,'&quot;');
+    const displayVal = asJobEsc(_erpRenameMap[c] || c);
     html += `<div class="erp-col-cell${changed?' erp-col-changed':''}" data-col="${esc}">`
       + `<span class="erp-col-no">${String(j+1).padStart(2,'0')}</span>`
       + `<input type="text" class="erp-col-input" value="${displayVal}" data-orig="${esc}" oninput="_onErpRenameInput(this)"${_erpEditMode?'':' readonly tabindex="-1"'} title="${esc}"/>`
-      + `<button type="button" class="erp-col-del" onclick="_deleteErpCol('${esc}')" aria-label="삭제" tabindex="-1">&times;</button>`
+      + `<button type="button" class="erp-col-del" onclick="_deleteErpCol(this.parentElement.dataset.col)" aria-label="삭제" tabindex="-1">&times;</button>`
       + `</div>`;
   }
   html += '</div>';
@@ -3934,8 +3931,8 @@ function renderErpColumnList() {
   const container = document.getElementById('erpColumnList');
   container.innerHTML = cols.map((c, i) => `
     <label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;margin:3px;border:1px solid ${vis.has(c)?'var(--brand)':'var(--border-strong)'};border-radius:var(--r-sm);background:${vis.has(c)?'var(--brand-soft)':'#fff'};cursor:pointer;font-size:12px;transition:background var(--ease),border-color var(--ease)">
-      <input type="checkbox" data-col="${c.replace(/"/g,'&quot;')}" ${vis.has(c)?'checked':''} onchange="toggleErpCol(this)" style="accent-color:var(--brand)"/>
-      ${c}
+      <input type="checkbox" data-col="${asJobEsc(c)}" ${vis.has(c)?'checked':''} onchange="toggleErpCol(this)" style="accent-color:var(--brand)"/>
+      ${asJobEsc(c)}
     </label>
   `).join('');
 }
@@ -3972,9 +3969,10 @@ async function saveErpColumns() {
 async function deleteAllErp() {
   if (!confirm('ERP 데이터를 전체 삭제하시겠습니까?')) return;
   try {
-    await fetch(`${SERVER}/api/erp/all`, { method:'DELETE' });
+    const response=await fetch(`${SERVER}/api/erp/all`, { method:'DELETE' });
+    if(!response.ok){const data=await response.json();throw new Error(data.error||'삭제 실패');}
     loadErpData();
-  } catch(e) { alert('삭제 실패'); }
+  } catch(e) { alert(e.message||'삭제 실패'); }
 }
 
 // ── 전체 기록 ──
@@ -4000,12 +3998,12 @@ async function loadRecords() {
       const t = TYPE_INFO[r.type] || { label:r.type, cls:'' };
       const time = r.time || r.receivedAt?.substring(0,16).replace('T',' ') || '-';
       return `<tr>
-        <td style="color:#888;font-size:12px">${time}</td>
-        <td><span style="font-size:12px;font-weight:700">${r.barcode}</span></td>
-        <td style="font-size:12px;color:#888">${r.name || '-'}</td>
-        <td><span class="step-badge ${t.cls}">${t.label}</span></td>
-        <td style="font-size:13px;font-weight:700">${r.qty}개</td>
-        <td style="font-size:12px;font-weight:600">${r.userName || r.userId || '-'}</td>
+        <td style="color:#888;font-size:12px">${asJobEsc(time)}</td>
+        <td><span style="font-size:12px;font-weight:700">${asJobEsc(r.barcode)}</span></td>
+        <td style="font-size:12px;color:#888">${asJobEsc(r.name || '-')}</td>
+        <td><span class="step-badge ${t.cls}">${asJobEsc(t.label)}</span></td>
+        <td style="font-size:13px;font-weight:700">${asJobEsc(r.qty)}개</td>
+        <td style="font-size:12px;font-weight:600">${asJobEsc(r.userName || r.userId || '-')}</td>
       </tr>`;
     }).join('');
   } catch(e) {
@@ -4037,19 +4035,19 @@ async function doScanLookup() {
     if (r.found) {
       const m = r.material;
       return `<div class="scan-card found">
-        <div class="scan-barcode">${m.barcode}</div>
+        <div class="scan-barcode">${asJobEsc(m.barcode)}</div>
         <div class="scan-info">
-          ${m.project ? `<div class="scan-field"><div class="scan-field-label">프로젝트</div><div class="scan-field-val">${m.project}</div></div>` : ''}
-          ${m.block ? `<div class="scan-field"><div class="scan-field-label">블럭</div><div class="scan-field-val">${m.block}</div></div>` : ''}
-          ${m.element ? `<div class="scan-field"><div class="scan-field-label">엘레멘트</div><div class="scan-field-val">${m.element}</div></div>` : ''}
-          ${m.group ? `<div class="scan-field"><div class="scan-field-label">자재그룹</div><div class="scan-field-val">${m.group}</div></div>` : ''}
-          ${m.name ? `<div class="scan-field"><div class="scan-field-label">제품명</div><div class="scan-field-val">${m.name}</div></div>` : ''}
-          ${m.spec ? `<div class="scan-field"><div class="scan-field-label">규격</div><div class="scan-field-val">${m.spec}</div></div>` : ''}
+          ${m.project ? `<div class="scan-field"><div class="scan-field-label">프로젝트</div><div class="scan-field-val">${asJobEsc(m.project)}</div></div>` : ''}
+          ${m.block ? `<div class="scan-field"><div class="scan-field-label">블럭</div><div class="scan-field-val">${asJobEsc(m.block)}</div></div>` : ''}
+          ${m.element ? `<div class="scan-field"><div class="scan-field-label">엘레멘트</div><div class="scan-field-val">${asJobEsc(m.element)}</div></div>` : ''}
+          ${m.group ? `<div class="scan-field"><div class="scan-field-label">자재그룹</div><div class="scan-field-val">${asJobEsc(m.group)}</div></div>` : ''}
+          ${m.name ? `<div class="scan-field"><div class="scan-field-label">제품명</div><div class="scan-field-val">${asJobEsc(m.name)}</div></div>` : ''}
+          ${m.spec ? `<div class="scan-field"><div class="scan-field-label">규격</div><div class="scan-field-val">${asJobEsc(m.spec)}</div></div>` : ''}
         </div>
       </div>`;
     } else {
       return `<div class="scan-card not-found">
-        <div class="scan-barcode">${r.barcode}</div>
+        <div class="scan-barcode">${asJobEsc(r.barcode)}</div>
         <div class="scan-alert"><span class="scan-alert-icon">&#9888;</span> 확인 필요: 등록되지 않은 자재코드</div>
       </div>`;
     }
@@ -4082,7 +4080,7 @@ async function uploadMaster() {
       resultEl.innerHTML = `<span style="color:#059669">업로드 완료: ${data.count}건 처리 (총 ${data.total}건)</span>`;
       loadMasterList();
     } else {
-      resultEl.innerHTML = `<span style="color:#dc2626">${data.error}</span>`;
+      resultEl.innerHTML = `<span style="color:#dc2626">${asJobEsc(data.error)}</span>`;
     }
   } catch(e) {
     resultEl.innerHTML = '<span style="color:#dc2626">서버 연결 오류</span>';
@@ -4130,14 +4128,14 @@ async function loadMasterList() {
       return;
     }
     tbody.innerHTML = items.slice(0, 200).map(m => `<tr>
-      <td><span style="font-size:12px;font-weight:700">${m.barcode}</span></td>
-      <td style="font-size:12px">${m.project || '-'}</td>
-      <td style="font-size:12px">${m.block || '-'}</td>
-      <td style="font-size:12px">${m.element || '-'}</td>
-      <td style="font-size:12px">${m.group || '-'}</td>
-      <td style="font-size:12px">${m.name || '-'}</td>
-      <td style="font-size:12px">${m.spec || '-'}</td>
-      <td><button class="del-btn" onclick="deleteMaster('${m.barcode}')">삭제</button></td>
+      <td><span style="font-size:12px;font-weight:700">${asJobEsc(m.barcode)}</span></td>
+      <td style="font-size:12px">${asJobEsc(m.project || '-')}</td>
+      <td style="font-size:12px">${asJobEsc(m.block || '-')}</td>
+      <td style="font-size:12px">${asJobEsc(m.element || '-')}</td>
+      <td style="font-size:12px">${asJobEsc(m.group || '-')}</td>
+      <td style="font-size:12px">${asJobEsc(m.name || '-')}</td>
+      <td style="font-size:12px">${asJobEsc(m.spec || '-')}</td>
+      <td><button class="del-btn" onclick="deleteMaster(${asJobEsc(JSON.stringify(m.barcode))})">삭제</button></td>
     </tr>`).join('');
   } catch(e) {
     document.getElementById('masterBody').innerHTML = '<tr><td colspan="8" style="padding:20px;color:#dc2626;text-align:center">서버 연결 오류</td></tr>';
@@ -4203,9 +4201,9 @@ function showModalMsg(text, type) {
 function openUserModal(user) {
   modalEditingId = user ? user.id : null;
   document.getElementById('modalTitle').textContent = user ? `사용자 수정: ${user.name}` : '새 사용자 추가';
-  document.getElementById('modalUserId').value = user ? user.id : '';
+  document.getElementById('modalUserId').value = user ? (user.loginId || user.id) : '';
   document.getElementById('modalUserId').disabled = !!user;
-  document.getElementById('modalUserPw').value = user ? (user.password || '') : '';
+  document.getElementById('modalUserPw').value = '';
   document.getElementById('modalPwHint').style.display = user ? '' : 'none';
   document.getElementById('modalUserName').value = user ? user.name : '';
   document.getElementById('modalUserRole').value = user ? user.role : 'worker';
@@ -4257,7 +4255,7 @@ function renderAdminUsers() {
   const order = {sysadmin:0,admin:1,worker:2};
   const names = {sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
   const stepNames = ['입고','검수대기','검수완료','도장대기','도장완료','납품대기','납품완료'];
-  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
+  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.loginId,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
     .sort((a,b) => ((order[a.role] ?? 9)-(order[b.role] ?? 9)) || String(a.name || '').localeCompare(String(b.name || ''),'ko'));
   const tbody = document.getElementById('adminUserRows');
   tbody.innerHTML = list.length ? list.map(u => {
@@ -4265,15 +4263,23 @@ function renderAdminUsers() {
     const roleKey = Object.hasOwn(names,u.role) ? u.role : 'worker';
     const index = adminUsersCache.indexOf(u);
     const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
-    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.id)+'</small></div></div></td>'+
-      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span></td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
+    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.loginId || u.id)+(u.active===false?' · 비활성':'')+'</small></div></div></td>'+
+      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span>'+(u.passwordResetRequired?'<small>비밀번호 재설정 필요</small>':'')+'</td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
       '<td>'+(steps.length ? '<details class="um-steps"><summary>'+steps.length+'개 허용</summary><div>'+steps.map(step=>'<span class="um-permission">'+stepNames[STEP_ORDER.indexOf(step)]+'</span>').join('')+'</div></details>':'<span class="um-muted">공정 권한 없음</span>')+'</td>'+
       '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
-      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
+      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.authProvider==='supabase'?'<button type="button" data-um-active="'+index+'">'+(u.active?'비활성화':'활성화')+'</button>':u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
   }).join('') : '<tr><td colspan="6" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
   tbody.querySelectorAll('[data-um-edit]').forEach(button=>button.addEventListener('click',()=>openUserModal(adminUsersCache[Number(button.dataset.umEdit)])));
+  tbody.querySelectorAll('[data-um-active]').forEach(button=>button.addEventListener('click',()=>toggleAdminUserActive(adminUsersCache[Number(button.dataset.umActive)])));
   tbody.querySelectorAll('[data-um-delete]').forEach(button=>button.addEventListener('click',()=>{const u=adminUsersCache[Number(button.dataset.umDelete)];deleteAdminUser(u.id,u.name);}));
   document.getElementById('umCount').textContent = '조회 '+list.length+'명 / 전체 '+adminUsersCache.length+'명';
+}
+async function toggleAdminUserActive(user) {
+  if(!confirm(user.name+' 계정을 '+(user.active?'비활성화':'활성화')+'하시겠습니까?'))return;
+  try {
+    const r=await fetch(`${SERVER}/api/users/${encodeURIComponent(user.id)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!user.active})});
+    const data=await r.json();if(!r.ok){alert(data.error||'계정 변경 실패');return;}await loadAdminUsers();
+  }catch{alert('서버 연결 오류');}
 }
 async function loadAdminUsers() {
   const version = ++adminUsersLoadVersion;
@@ -4316,7 +4322,7 @@ async function submitModalUser() {
 
   if (!id) { showModalMsg('아이디를 입력하세요.', 'error'); return; }
   if (!name) { showModalMsg('이름을 입력하세요.', 'error'); return; }
-  if (!modalEditingId && !pw) { showModalMsg('비밀번호를 입력하세요.', 'error'); return; }
+  if ((!modalEditingId || pw) && (pw.length < 12 || pw.length > 128)) { showModalMsg('비밀번호는 12~128자로 입력하세요.', 'error'); return; }
 
   try {
     let r;
@@ -4724,13 +4730,13 @@ function renderProductList() {
   var html = '<div style="display:grid;grid-template-columns:repeat('+colsPerRow+',1fr);gap:8px">';
   for (var j = 0; j < _productList.length; j++) {
     var p = _productList[j];
-    var esc = p.name.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    var esc = asJobEsc(p.name);
     var changed = _productEditMode && _productRenameMap[p.name] && _productRenameMap[p.name] !== p.name;
-    var displayVal = (_productRenameMap[p.name] || p.name).replace(/"/g,'&quot;');
+    var displayVal = asJobEsc(_productRenameMap[p.name] || p.name);
     html += '<div class="erp-col-cell'+(changed?' erp-col-changed':'')+'" data-name="'+esc+'">'
       + '<span class="erp-col-no">'+String(j+1).padStart(2,'0')+'</span>'
       + '<input type="text" class="erp-col-input" value="'+displayVal+'" data-orig="'+esc+'" oninput="_onProductRenameInput(this)"'+(_productEditMode?'':' readonly tabindex="-1"')+' title="'+esc+'"/>'
-      + '<button type="button" class="erp-col-del" onclick="_deleteProduct(\''+esc+'\')" aria-label="삭제" tabindex="-1">&times;</button>'
+      + '<button type="button" class="erp-col-del" onclick="_deleteProduct(this.parentElement.dataset.name)" aria-label="삭제" tabindex="-1">&times;</button>'
       + '</div>';
   }
   html += '</div>';
@@ -4840,9 +4846,16 @@ function showProductSuggest() {
   var matches = _productList.filter(function(p) { return !q || p.name.toLowerCase().includes(q); });
   if (!matches.length) { box.style.display = 'none'; return; }
   box.style.display = 'block';
-  box.innerHTML = matches.map(function(p) {
-    return '<div style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-body);transition:background .1s" onmousedown="selectProductSuggest(\'' + p.name.replace(/'/g,"\\'") + '\')" onmouseenter="this.style.background=\'var(--brand-soft)\'" onmouseleave="this.style.background=\'#fff\'">' + (q ? p.name.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<b style=color:var(--brand)>$1</b>') : p.name) + '</div>';
-  }).join('');
+  box.replaceChildren();
+  for (const p of matches) {
+    const row=document.createElement('div');
+    row.style.cssText='padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-body)';
+    row.textContent=p.name;
+    row.onmousedown=()=>selectProductSuggest(p.name);
+    row.onmouseenter=()=>row.style.background='var(--brand-soft)';
+    row.onmouseleave=()=>row.style.background='#fff';
+    box.appendChild(row);
+  }
 }
 function selectProductSuggest(name) {
   document.getElementById('asProduct').value = name;
@@ -4981,7 +4994,7 @@ function _renderAsPage() {
 
   tbody.innerHTML = pageItems.map((a, i) => {
     const rowNum = start + i + 1;
-    const esc = encodeURIComponent(JSON.stringify(a));
+    const esc = encodeURIComponent(JSON.stringify(a)).replace(/'/g,'%27');
 
     // status badge
     const statusBadge = `<span class="as-status-text" data-state="${asJobEsc(a.status)}">${asJobEsc(a.status)}</span>`;
@@ -4997,23 +5010,23 @@ function _renderAsPage() {
     const actionShort = (a.action||'—').length > 28 ? (a.action||'').slice(0,28)+'…' : (a.action||'—');
     const dateStr = (a.createdAt||'').slice(0,10);
 
-    return `<tr data-id="${a.id}" tabindex="0" aria-label="${asJobEsc(a.asNo||'접수')} 상세 보기" onkeydown="if(event.target===this&amp;&amp;(event.key==='Enter'||event.key===' ')){event.preventDefault();_onAsRowClick(event,this)}" onclick="_onAsRowClick(event,this)" ondblclick="_onAsRowDblClick(event,'${esc}')" style="cursor:pointer">
+    return `<tr data-id="${asJobEsc(a.id)}" tabindex="0" aria-label="${asJobEsc(a.asNo||'접수')} 상세 보기" onkeydown="if(event.target===this&amp;&amp;(event.key==='Enter'||event.key===' ')){event.preventDefault();_onAsRowClick(event,this)}" onclick="_onAsRowClick(event,this)" ondblclick="_onAsRowDblClick(event,'${esc}')" style="cursor:pointer">
       <td style="width:36px;min-width:36px;text-align:center"><input type="checkbox" class="as-row-cb" aria-label="${asJobEsc(a.asNo||'접수')} 선택" onchange="toggleAsRowCb(this)" style="accent-color:var(--brand);cursor:pointer"/></td>
       <td class="as-no-col">${rowNum}</td>
       <td>${statusBadge}</td>
-      <td><span class="as-code">${a.asNo||'—'}</span></td>
-      <td><span class="as-text-muted">${dateStr}</span></td>
+      <td><span class="as-code">${asJobEsc(a.asNo||'—')}</span></td>
+      <td><span class="as-text-muted">${asJobEsc(dateStr)}</span></td>
       <td><span class="as-text-muted" style="white-space:nowrap">${asJobEsc(a.deliveryAgreedDate||'미정')}</span></td>
       <td class="as-deadline-cell">${asWorkflowDelayHtml(a,false)}</td>
-      <td style="font-weight:700;font-size:12px;color:#0f172a">${a.ship||'—'}</td>
-      <td style="font-size:12px;color:#475569">${a.block||'—'}</td>
-      <td style="font-size:12px;color:#94a3b8">${a.element||'—'}</td>
-      <td style="font-size:12px;color:#475569">${a.product||'—'}</td>
+      <td style="font-weight:700;font-size:12px;color:#0f172a">${asJobEsc(a.ship||'—')}</td>
+      <td style="font-size:12px;color:#475569">${asJobEsc(a.block||'—')}</td>
+      <td style="font-size:12px;color:#94a3b8">${asJobEsc(a.element||'—')}</td>
+      <td style="font-size:12px;color:#475569">${asJobEsc(a.product||'—')}</td>
       <td><span class="as-truncate" title="${asJobEsc(reasonLabel)}" style="font-size:12px;color:#334155">${asJobEsc(reasonShort)}</span></td>
-      <td><span class="as-truncate" title="${(a.action||'').replace(/"/g,'&quot;')}" style="font-size:12px;color:#64748b">${actionShort}</span></td>
+      <td><span class="as-truncate" title="${asJobEsc((a.action||''))}" style="font-size:12px;color:#64748b">${asJobEsc(actionShort)}</span></td>
       <td class="as-files-cell" style="text-align:center">${fileCell}</td>
-      <td style="font-size:11px;color:#64748b">${a.createdBy||'—'}</td>
-      <td class="as-remark-cell" data-id="${a.id}" onclick="startRemarkEdit(event,this)" title="${(a.remark||'').replace(/"/g,'&quot;')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||'')}</td>
+      <td style="font-size:11px;color:#64748b">${asJobEsc(a.createdBy||'—')}</td>
+      <td class="as-remark-cell" data-id="${asJobEsc(a.id)}" onclick="startRemarkEdit(event,this)" title="${asJobEsc((a.remark||''))}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${asJobEsc((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
       <td class="as-amount-cell" title="${AsAmount.format(a.amount)}">${AsAmount.format(a.amount)}</td>
     </tr>`;
   }).join('');
@@ -5196,14 +5209,22 @@ function renderAsFilePreview() {
   const input = document.getElementById('asFiles');
   const wrap = document.getElementById('asNewFiles');
   if (!input.files.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = Array.from(input.files).map((f,i) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:11px;color:#166534;margin-right:4px;margin-bottom:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>${f.name}</span>`).join('');
+  wrap.innerHTML = Array.from(input.files).map((f,i) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:11px;color:#166534;margin-right:4px;margin-bottom:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>${asJobEsc(f.name)}</span>`).join('');
 }
 
 function renderExistingFiles(files) {
   const wrap = document.getElementById('asExistingFiles');
   asRemoveFiles = [];
   if (!files || !files.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = files.map(f => `<span class="as-existing-file" data-fn="${f.filename}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;color:#475569;margin-right:4px;margin-bottom:4px;cursor:pointer" onclick="openFileViewer('${f.filename}','${f.name.replace(/'/g,"\\'")}')">${f.name}<button onclick="event.stopPropagation();removeExistingFile(this,'${f.filename}')" style="border:none;background:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0 2px">&times;</button></span>`).join('');
+  wrap.replaceChildren();
+  for(const f of files){
+    const row=document.createElement('span');row.className='as-existing-file';row.dataset.fn=f.filename;
+    row.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;color:#475569;margin:0 4px 4px 0;cursor:pointer';
+    row.appendChild(document.createTextNode(f.name));row.onclick=()=>openFileViewer(f.filename,f.name);
+    const remove=document.createElement('button');remove.textContent='×';remove.type='button';
+    remove.onclick=event=>{event.stopPropagation();removeExistingFile(remove,f.filename);};
+    row.appendChild(remove);wrap.appendChild(row);
+  }
 }
 
 function removeExistingFile(btn, filename) {
@@ -5239,7 +5260,7 @@ function openAsAttachments(trigger) {
 }
 
 function openFileViewer(filename, displayName) {
-  const url = SERVER + '/uploads/' + filename;
+  const url = SERVER + '/uploads/' + encodeURIComponent(filename);
   const ext = filename.split('.').pop().toLowerCase();
   document.getElementById('fileViewerTitle').textContent = displayName;
   document.getElementById('fileViewerDownload').href = url;
@@ -5250,7 +5271,7 @@ function openFileViewer(filename, displayName) {
   } else if (['jpg','jpeg','png','gif','bmp','webp'].includes(ext)) {
     content.innerHTML = `<img src="${url}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px"/>`;
   } else {
-    content.innerHTML = `<div style="text-align:center;padding:40px"><div style="font-size:32px;opacity:.3;margin-bottom:12px">📄</div><p style="color:#64748b;font-size:14px">미리보기를 지원하지 않는 파일입니다.</p><a href="${url}" download="${displayName}" style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:8px;background:#0f172a;color:#fff;font-size:13px;font-weight:600;text-decoration:none">다운로드</a></div>`;
+    content.innerHTML = `<div style="text-align:center;padding:40px"><div style="font-size:32px;opacity:.3;margin-bottom:12px">📄</div><p style="color:#64748b;font-size:14px">미리보기를 지원하지 않는 파일입니다.</p><a href="${url}" download="${asJobEsc(displayName)}" style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:8px;background:#0f172a;color:#fff;font-size:13px;font-weight:600;text-decoration:none">다운로드</a></div>`;
   }
   document.getElementById('fileViewer').classList.add('open');
 }
@@ -5561,8 +5582,8 @@ async function buildAsPageHtml(a) {
   }
   let imagesHtml = '';
   for (const f of imageFiles) {
-    try { const dataUrl = await toDataUrl(SERVER + '/uploads/' + f.filename); imagesHtml += '<div class="img-wrap"><img src="' + dataUrl + '"/><div class="img-caption">' + f.name + '</div></div>'; }
-    catch(e) { imagesHtml += '<div class="img-caption">' + f.name + ' (로드 실패)</div>'; }
+    try { const dataUrl = await toDataUrl(SERVER + '/uploads/' + encodeURIComponent(f.filename)); imagesHtml += '<div class="img-wrap"><img src="' + dataUrl + '"/><div class="img-caption">' + asJobEsc(f.name) + '</div></div>'; }
+    catch(e) { imagesHtml += '<div class="img-caption">' + asJobEsc(f.name) + ' (로드 실패)</div>'; }
   }
   let pdfImagesHtml = '';
   if (pdfFiles.length && !window._pdfjsLoaded) {
@@ -5570,13 +5591,13 @@ async function buildAsPageHtml(a) {
     if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; window._pdfjsLoaded=true; }
   }
   for (const f of pdfFiles) {
-    pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + f.name + '</div></div>';
+    pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + asJobEsc(f.name) + '</div></div>';
     if (window.pdfjsLib) {
-      try { const pdf = await pdfjsLib.getDocument(SERVER + '/uploads/' + f.filename).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
+      try { const pdf = await pdfjsLib.getDocument({url:SERVER + '/uploads/' + encodeURIComponent(f.filename),isEvalSupported:false}).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
       catch(e) { pdfImagesHtml += '<div style="color:#999;font-size:11px">PDF 렌더링 실패</div>'; }
     }
   }
-  const otherHtml = otherFiles.map(f => '<span class="attach-file">' + f.name + '</span>').join('');
+  const otherHtml = otherFiles.map(f => '<span class="attach-file">' + asJobEsc(f.name) + '</span>').join('');
   const _statusColors = {'접수':'#004A93','제작 요청':'#d97706','도장 요청':'#7c3aed','납품 요청':'#4e5968','완료':'#16a34a'};
   const _statusColor = _statusColors[a.status] || '#64748b';
   const _statusLabel = a.status || '접수';
@@ -5651,7 +5672,7 @@ async function printAsPdf(a, printNow = false) {
   // 상태에 맞는 버튼만 표시
   _viewerAsItem = a;
   const _isAdmin = currentUser && currentUser.role === 'sysadmin';
-  const _isCreator = currentUser && currentUser.name === a.createdBy;
+  const _isCreator = currentUser && !!a.createdById && currentUser.id === a.createdById;
   const workflowButton=document.getElementById('asViewerRequestReview');
   workflowButton.textContent=asJobActionLabel(a);workflowButton.style.display=asJobCanEdit(a)&&asJobNext(a)?'':'none';workflowButton.onclick=()=>openAsWorkflow(a);
   ['asViewerReview','asViewerApprove','asViewerProgress','asViewerComplete'].forEach(id=>document.getElementById(id).style.display='none');
@@ -5864,7 +5885,7 @@ function renderSvgMap(zoneGroupId, listId, editable) {
     const count = items.length;
     const isSelected = editable && mapSelectedArea === a.id;
     const opacity = count > 0 ? 0.75 : 0.6;
-    const dblClick = editable ? `ondblclick="showPropEditor(event,'${a.id}')"` : '';
+    const dblClick = editable ? `ondblclick="showPropEditor(event,${asJobEsc(JSON.stringify(a.id))})"` : '';
     let handles = '';
 
     if (isSelected && editable) {
@@ -5872,18 +5893,18 @@ function renderSvgMap(zoneGroupId, listId, editable) {
       const hy = { nw: a.y, n: a.y, ne: a.y, e: a.y+a.h/2, se: a.y+a.h, s: a.y+a.h, sw: a.y+a.h, w: a.y+a.h/2 };
       const cursors = { nw:'nw-resize', n:'n-resize', ne:'ne-resize', e:'e-resize', se:'se-resize', s:'s-resize', sw:'sw-resize', w:'w-resize' };
       handles = HANDLES.map(h =>
-        `<circle class="svg-handle" cx="${hx[h]}" cy="${hy[h]}" r="4"
+        `<circle class="svg-handle" cx="${asJobEsc(hx[h])}" cy="${asJobEsc(hy[h])}" r="4"
           style="cursor:${cursors[h]}"
-          onmousedown="startHandleResize(event,'${a.id}','${h}')"/>`
+          onmousedown="startHandleResize(event,${asJobEsc(JSON.stringify(a.id))},'${h}')"/>`
       ).join('');
     }
     return `
-      <g class="svg-zone${isSelected ? ' selected' : ''}" data-id="${a.id}"
-         onclick="${editable ? `selectMapArea('${a.id}')` : `showAreaDetail('${a.id}')`}" ${dblClick}>
-        <rect x="${a.x}" y="${a.y}" width="${a.w}" height="${a.h}" rx="6"
-              fill="${a.color}" opacity="${opacity}" stroke="${isSelected ? '#0f172a' : 'rgba(0,0,0,.15)'}" stroke-width="${isSelected ? 2 : 1}" rx="4"/>
-        <text x="${a.x + a.w/2}" y="${a.y + a.h/2 - 6}" text-anchor="middle" class="svg-zone-label">${a.name}</text>
-        <text x="${a.x + a.w/2}" y="${a.y + a.h/2 + 10}" text-anchor="middle" class="svg-zone-count">${count}개</text>
+      <g class="svg-zone${isSelected ? ' selected' : ''}" data-id="${asJobEsc(a.id)}"
+         onclick="${editable ? `selectMapArea(${asJobEsc(JSON.stringify(a.id))})` : `showAreaDetail(${asJobEsc(JSON.stringify(a.id))})`}" ${dblClick}>
+        <rect x="${asJobEsc(a.x)}" y="${asJobEsc(a.y)}" width="${asJobEsc(a.w)}" height="${asJobEsc(a.h)}" rx="6"
+              fill="${/^#[0-9a-f]{6}$/i.test(a.color)?a.color:'#64748b'}" opacity="${opacity}" stroke="${isSelected ? '#0f172a' : 'rgba(0,0,0,.15)'}" stroke-width="${isSelected ? 2 : 1}" rx="4"/>
+        <text x="${asJobEsc(a.x + a.w/2)}" y="${asJobEsc(a.y + a.h/2 - 6)}" text-anchor="middle" class="svg-zone-label">${asJobEsc(a.name)}</text>
+        <text x="${asJobEsc(a.x + a.w/2)}" y="${asJobEsc(a.y + a.h/2 + 10)}" text-anchor="middle" class="svg-zone-count">${count}개</text>
         ${handles}
       </g>`;
   }).join('');
@@ -5894,9 +5915,9 @@ function renderSvgMap(zoneGroupId, listId, editable) {
   if (wallGroup) {
     wallGroup.innerHTML = mapWalls.map(w => {
       const isSel = editable && selectedWall === w.id;
-      const evts = editable ? `ondblclick="showWallPropEditor(event,'${w.id}')" onclick="selectWall(event,'${w.id}')"` : '';
-      return `<line class="svg-wall${isSel ? ' selected' : ''}" data-wall-id="${w.id}"
-        x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}"
+      const evts = editable ? `ondblclick="showWallPropEditor(event,${asJobEsc(JSON.stringify(w.id))})" onclick="selectWall(event,${asJobEsc(JSON.stringify(w.id))})"` : '';
+      return `<line class="svg-wall${isSel ? ' selected' : ''}" data-wall-id="${asJobEsc(w.id)}"
+        x1="${asJobEsc(w.x1)}" y1="${asJobEsc(w.y1)}" x2="${asJobEsc(w.x2)}" y2="${asJobEsc(w.y2)}"
         ${evts}/>`;
     }).join('');
   }
@@ -5918,10 +5939,10 @@ function renderSvgMap(zoneGroupId, listId, editable) {
     const count = (areaItems[a.id] || []).length;
     const isSelected = editable && mapSelectedArea === a.id;
     return `<div class="map-sidebar-item${isSelected ? ' active' : ''}"
-                onclick="${editable ? `selectMapArea('${a.id}')` : `showAreaDetail('${a.id}')`}">
+                onclick="${editable ? `selectMapArea(${asJobEsc(JSON.stringify(a.id))})` : `showAreaDetail(${asJobEsc(JSON.stringify(a.id))})`}">
       <div style="display:flex;align-items:center;gap:6px">
-        <span style="width:10px;height:10px;border-radius:3px;background:${a.color};display:inline-block"></span>
-        <span style="font-weight:700;font-size:12px">${a.name}</span>
+        <span style="width:10px;height:10px;border-radius:3px;background:${/^#[0-9a-f]{6}$/i.test(a.color)?a.color:'#64748b'};display:inline-block"></span>
+        <span style="font-weight:700;font-size:12px">${asJobEsc(a.name)}</span>
       </div>
       <span style="font-size:11px;color:#94a3b8">${count}개</span>
     </div>`;
@@ -5931,8 +5952,8 @@ function renderSvgMap(zoneGroupId, listId, editable) {
     const selArea = mapAreas.find(a => a.id === mapSelectedArea);
     html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0">
       <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">
-        <b style="color:#0f172a">${selArea ? selArea.name : ''}</b> 선택됨
-        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">x:${selArea?.x} y:${selArea?.y} w:${selArea?.w} h:${selArea?.h}</span>
+        <b style="color:#0f172a">${asJobEsc(selArea ? selArea.name : '')}</b> 선택됨
+        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">x:${asJobEsc(selArea?.x)} y:${asJobEsc(selArea?.y)} w:${asJobEsc(selArea?.w)} h:${asJobEsc(selArea?.h)}</span>
       </div>
       <button class="map-btn map-btn-primary" style="width:100%;margin-bottom:6px" onclick="openAssignModal()">자재 배정</button>
       <button class="map-btn map-btn-danger" style="width:100%" onclick="deleteSelectedItem()">구역 삭제</button>
@@ -5943,7 +5964,7 @@ function renderSvgMap(zoneGroupId, listId, editable) {
     html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0">
       <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">
         <b style="color:#0f172a">벽</b> 선택됨
-        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">(${selWall?.x1},${selWall?.y1}) → (${selWall?.x2},${selWall?.y2})</span>
+        <span style="display:block;margin-top:4px;font-family:monospace;font-size:10px">(${asJobEsc(selWall?.x1)},${asJobEsc(selWall?.y1)}) → (${asJobEsc(selWall?.x2)},${asJobEsc(selWall?.y2)})</span>
       </div>
       <button class="map-btn map-btn-danger" style="width:100%" onclick="deleteSelectedItem()">벽 삭제</button>
     </div>`;
@@ -5983,7 +6004,7 @@ function showPropEditor(event, areaId) {
       <button onclick="closePropEditor()" style="border:none;background:none;cursor:pointer;font-size:16px;color:#94a3b8;line-height:1">×</button>
     </div>
     <label>이름</label>
-    <input id="pe_name" value="${a.name}"/>
+    <input id="pe_name" value="${asJobEsc(a.name)}"/>
     <label>색상</label>
     <select id="pe_color" style="width:100%;padding:6px 10px;border:1.5px solid var(--border-strong);border-radius:var(--r-xs);font-size:12px;font-family:inherit">
       <option value="#004A93"${a.color==='#004A93'||a.color==='#2563eb'?' selected':''}>파랑</option>
@@ -6001,7 +6022,7 @@ function showPropEditor(event, areaId) {
       <div><label>높이</label><input id="pe_h" type="number" value="${Math.round(a.h)}"/></div>
     </div>
     <div class="prop-editor-actions">
-      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyPropEditor('${areaId}')">적용</button>
+      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyPropEditor(${asJobEsc(JSON.stringify(areaId))})">적용</button>
       <button class="map-btn map-btn-secondary" style="font-size:11px;padding:5px" onclick="closePropEditor()">취소</button>
     </div>`;
   container.style.position = 'relative';
@@ -6040,7 +6061,7 @@ function showWallPropEditor(event, wallId) {
       <div><label>Y2</label><input id="pw_y2" type="number" value="${Math.round(w.y2)}"/></div>
     </div>
     <div class="prop-editor-actions">
-      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyWallPropEditor('${wallId}')">적용</button>
+      <button class="map-btn map-btn-primary" style="flex:1;font-size:11px;padding:5px" onclick="applyWallPropEditor(${asJobEsc(JSON.stringify(wallId))})">적용</button>
       <button class="map-btn map-btn-secondary" style="font-size:11px;padding:5px" onclick="closePropEditor()">취소</button>
     </div>`;
   container.style.position = 'relative';
@@ -6120,8 +6141,8 @@ function renderRecentLocations() {
     const areaName = area ? area.name : loc.areaId;
     const time = loc.time ? new Date(loc.time).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
     return `<div class="recent-loc">
-      <div><span class="recent-loc-barcode">${barcode}</span></div>
-      <div><span class="recent-loc-area">${areaName}</span> <span class="recent-loc-time">${time} · ${loc.userName || ''}</span></div>
+      <div><span class="recent-loc-barcode">${asJobEsc(barcode)}</span></div>
+      <div><span class="recent-loc-area">${asJobEsc(areaName)}</span> <span class="recent-loc-time">${asJobEsc(time)} · ${asJobEsc(loc.userName || '')}</span></div>
     </div>`;
   }).join('');
 }
@@ -6135,8 +6156,8 @@ function showAreaDetail(areaId) {
   let html = `<div class="modal-box" style="max-width:500px">
     <div class="modal-header">
       <h3 style="display:flex;align-items:center;gap:8px">
-        <span style="width:12px;height:12px;border-radius:3px;background:${area.color};display:inline-block"></span>
-        ${area.name}
+        <span style="width:12px;height:12px;border-radius:3px;background:${/^#[0-9a-f]{6}$/i.test(area.color)?area.color:'#64748b'};display:inline-block"></span>
+        ${asJobEsc(area.name)}
       </h3>
       <button class="modal-close" onclick="closeAreaDetail()">&times;</button>
     </div>
@@ -6149,8 +6170,8 @@ function showAreaDetail(areaId) {
       const stepLabel = stepInfo ? `<span class="step-badge ${stepInfo.cls}" style="font-size:10px;padding:2px 8px">${stepInfo.label}</span>` : '';
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:4px">
         <div>
-          <div style="font-size:12px;font-weight:700;font-family:monospace">${i.barcode}</div>
-          <div style="font-size:11px;color:#94a3b8">${i.name || '-'}</div>
+          <div style="font-size:12px;font-weight:700;font-family:monospace">${asJobEsc(i.barcode)}</div>
+          <div style="font-size:11px;color:#94a3b8">${asJobEsc(i.name || '-')}</div>
         </div>
         ${stepLabel}
       </div>`;
@@ -6160,7 +6181,7 @@ function showAreaDetail(areaId) {
   }
 
   html += `<div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:8px;font-size:11px;color:#64748b">
-    <strong>QR 코드 ID:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace">AREA_${area.id}</code>
+    <strong>QR 코드 ID:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace">AREA_${asJobEsc(area.id)}</code>
   </div>`;
 
   html += '</div><div class="modal-footer"><button class="admin-btn admin-btn-secondary" onclick="closeAreaDetail()">닫기</button></div></div>';
@@ -6493,7 +6514,7 @@ function openAssignModal() {
 
     let html = `<div class="modal-box" style="max-width:480px">
       <div class="modal-header">
-        <h3>${areaName}에 자재 배정</h3>
+        <h3>${asJobEsc(areaName)}에 자재 배정</h3>
         <button class="modal-close" onclick="closeAssignModal()">&times;</button>
       </div>
       <div class="modal-body" style="max-height:400px;overflow-y:auto">
@@ -6506,14 +6527,14 @@ function openAssignModal() {
       const checked = assigned.includes(i.barcode);
       const stepInfo = TYPE_INFO[i.currentStep];
       const stepLabel = stepInfo ? stepInfo.label : '';
-      html += `<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;border:1px solid ${checked ? 'var(--brand)' : 'var(--border-strong)'};background:${checked ? 'var(--brand-soft)' : '#fff'};margin-bottom:4px" onclick="toggleAssign(this,'${i.barcode}')">
-        <input type="checkbox" ${checked ? 'checked' : ''} style="display:none" data-barcode="${i.barcode}">
+      html += `<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;border:1px solid ${checked ? 'var(--brand)' : 'var(--border-strong)'};background:${checked ? 'var(--brand-soft)' : '#fff'};margin-bottom:4px" onclick="toggleAssign(this,${asJobEsc(JSON.stringify(i.barcode))})">
+        <input type="checkbox" ${checked ? 'checked' : ''} style="display:none" data-barcode="${asJobEsc(i.barcode)}">
         <span style="width:18px;height:18px;border-radius:4px;border:2px solid ${checked ? 'var(--brand)' : 'var(--border-stronger)'};background:${checked ? 'var(--brand)' : '#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
           ${checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
         </span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12px;font-weight:700;font-family:monospace">${i.barcode}</div>
-          <div style="font-size:11px;color:#94a3b8">${i.name || '-'}${stepLabel ? ' · ' + stepLabel : ''}</div>
+          <div style="font-size:12px;font-weight:700;font-family:monospace">${asJobEsc(i.barcode)}</div>
+          <div style="font-size:11px;color:#94a3b8">${asJobEsc(i.name || '-')}${stepLabel ? ' · ' + stepLabel : ''}</div>
         </div>
       </label>`;
     });
@@ -6618,11 +6639,12 @@ function showToast(input, legacyType) {
 }
 
 // ── 페이지 로드 시 대시보드 직접 진입 (로그인은 /login.html에서 처리됨) ──
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+  await authReady;
   if (!currentUser) return; // initAuth에서 이미 리다이렉트 처리됨
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.id})`;
+  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.loginId || currentUser.id})`;
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
     document.getElementById('tabFloorplanBtn').style.display = '';

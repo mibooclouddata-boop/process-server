@@ -10,20 +10,29 @@ const AsAmount = require('./as-amount');
 const asSessions = require('./as-session').createSessionStore();
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'data.json');
-const MASTER_FILE = path.join(__dirname, 'master.json');
-const MAP_FILE = path.join(__dirname, 'map.json');
-const LOC_FILE = path.join(__dirname, 'location.json');
-const AS_FILE = path.join(__dirname, 'as.json');
-const ERP_FILE = path.join(__dirname, 'erp.json');
-const ERP_COLS_FILE = path.join(__dirname, 'erp_columns.json');
-const COL_MAP_FILE = path.join(__dirname, 'column-mappings.json');
-const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+const AUTH_PROVIDER = process.env.AUTH_PROVIDER || 'local';
+if (!['local','supabase'].includes(AUTH_PROVIDER)) throw new Error('AUTH_PROVIDER 설정을 확인하세요.');
+const supabaseAuth = AUTH_PROVIDER === 'supabase' ? (()=>{
+  const auth = require('./supabase-auth');
+  return auth.createSupabaseAuth(auth.createSupabaseBackend(auth.configuration()));
+})() : null;
+const passwords = require('./passwords');
+const DATA_DIR = path.resolve(process.env.PROCESS_DATA_DIR || __dirname);
+fs.mkdirSync(DATA_DIR, {recursive:true});
+const DATA_FILE = path.join(DATA_DIR, 'data.json');
+const MASTER_FILE = path.join(DATA_DIR, 'master.json');
+const MAP_FILE = path.join(DATA_DIR, 'map.json');
+const LOC_FILE = path.join(DATA_DIR, 'location.json');
+const AS_FILE = path.join(DATA_DIR, 'as.json');
+const ERP_FILE = path.join(DATA_DIR, 'erp.json');
+const ERP_COLS_FILE = path.join(DATA_DIR, 'erp_columns.json');
+const COL_MAP_FILE = path.join(DATA_DIR, 'column-mappings.json');
+const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB
 
 // AS 첨부파일용 디스크 저장
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
 const ALLOWED_EXTS = ['.pdf','.jpg','.jpeg','.png','.gif','.bmp','.webp','.doc','.docx','.xls','.xlsx','.ppt','.pptx','.hwp','.txt','.csv','.zip'];
 const asUpload = multer({
@@ -38,7 +47,16 @@ const asUpload = multer({
   limits: { fileSize: 20 * 1024 * 1024 } // 20MB
 });
 
-app.use(cors());
+app.disable('x-powered-by');
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').filter(Boolean);
+app.use(cors({origin:allowedOrigins, credentials:true}));
+// Custom headers plus an explicit CORS allowlist block cross-site form writes.
+app.use('/api', (req,res,next)=>{
+  res.set('Cache-Control','no-store');
+  if (!['GET','HEAD','OPTIONS'].includes(req.method) && req.get('X-Requested-With') !== 'process-server')
+    return res.status(403).json({error:'인증 요청 헤더가 필요합니다.'});
+  next();
+});
 app.use(express.json({ limit: '10mb' }));
 // 정적 파일: login.html, dashboard.html, 로고, 업로드 파일만 서빙 (JSON 데이터 파일 노출 차단)
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'cover.html')));
@@ -47,11 +65,19 @@ app.use('/cover-assets', express.static(path.join(__dirname, 'cover-assets'), { 
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/as-workflow-ui.js', (req,res)=>res.sendFile(path.join(__dirname,'as-workflow-ui.js')));
+app.get('/auth-client.js', (req,res)=>res.sendFile(path.join(__dirname,'auth-client.js')));
 app.get('/as-amount.js', (req,res)=>res.sendFile(path.join(__dirname,'as-amount.js')));
 app.get('/dashboard.html', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/miboo_logo.png', (req, res) => res.sendFile(path.join(__dirname, 'miboo_logo.png')));
 app.get('/login-bg.png', (req, res) => res.sendFile(path.join(__dirname, 'login-bg.png')));
-app.use('/uploads', express.static(UPLOADS_DIR));
+// Authenticate before looking up a file; only attachments referenced by AS records are served.
+app.get('/uploads/:filename', authenticate, (req,res)=>{
+  const filename=req.params.filename;
+  if (path.basename(filename)!==filename || filename.includes('\\')) return res.sendStatus(404);
+  if (!loadAs().list.some(item=>(item.files||[]).some(f=>f.filename===filename))) return res.sendStatus(404);
+  res.set({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"sandbox; default-src 'none'"});
+  res.sendFile(path.join(UPLOADS_DIR,filename));
+});
 
 // ── 기준 데이터 초기화 ──
 if (!fs.existsSync(MASTER_FILE)) {
@@ -198,38 +224,89 @@ function loadColMap() { return JSON.parse(fs.readFileSync(COL_MAP_FILE, 'utf8'))
 function saveColMap(data) { fs.writeFileSync(COL_MAP_FILE, JSON.stringify(data, null, 2)); }
 
 // ── 초기 데이터 파일 생성 ──
-if (!fs.existsSync(DATA_FILE)) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify({ records: [], users: [
-    { id: 'admin',   password: '1234', name: '관리자',   role: 'sysadmin' },
-    { id: 'user01',  password: '1234', name: '김입고',   role: 'worker' },
-    { id: 'user02',  password: '1234', name: '이도장',   role: 'worker' },
-    { id: 'user03',  password: '1234', name: '박조립',   role: 'worker' },
-    { id: 'user04',  password: '1234', name: '최출고',   role: 'worker' },
-  ]}, null, 2));
+if (!fs.existsSync(DATA_FILE)) saveData({records:[],users:[]});
+// Convert before listening. Known public default credentials are locked, never accepted.
+if (!supabaseAuth) {
+  const initialData=loadData();
+  if(passwords.migratePasswords(initialData))saveData(initialData);
 }
 
 function loadData() {
   return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 }
 function saveData(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  const temporary=DATA_FILE+'.tmp';
+  fs.writeFileSync(temporary, JSON.stringify(data,null,2), {mode:0o600});
+  fs.renameSync(temporary,DATA_FILE);
 }
 
 // ── 로그인 ──
-app.post('/api/login', (req, res) => {
-  const { id, password } = req.body;
-  const data = loadData();
-  const user = data.users.find(u => u.id === id && u.password === password);
-  if (!user) return res.status(401).json({ error: '아이디 또는 비밀번호가 틀렸습니다.' });
-  asSessions.issue(req,res,user.id);
-  res.json({ success: true, user: { id: user.id, name: user.name, role: user.role, department: user.department||'', position: user.position||'', asReview: user.asReview||false, asApprove: user.asApprove||false } });
+const loginAttempts=new Map();
+let pendingLogins=0;
+const dummyHash=passwords.hashPassword(require('node:crypto').randomBytes(32).toString('hex'));
+function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],department:u.department||'',position:u.position||'',asReview:u.asReview===true,asApprove:u.asApprove===true};}
+app.post('/api/login', async (req,res)=>{
+  if(supabaseAuth)return supabaseAuth.login(req,res);
+  const {id,password}=req.body||{};
+  if(typeof id!=='string'||id.length>100||typeof password!=='string'||password.length>128)return res.status(400).json({error:'로그인 정보를 확인하세요.'});
+  const now=Date.now();
+  for(const [key,v] of loginAttempts)if(v.until<=now)loginAttempts.delete(key);
+  const key=req.ip;
+  const attempts=loginAttempts.get(key)||{count:0,until:now+15*60*1000};
+  if(attempts.count>=20 || pendingLogins>=2 || loginAttempts.size>=10000)return res.status(429).json({error:'잠시 후 다시 시도하세요.'});
+  attempts.count++;loginAttempts.set(key,attempts);pendingLogins++;
+  try {
+    const user=loadData().users.find(u=>u.id===id);
+    const valid=await passwords.verifyPassword(password,user?.passwordHash||dummyHash);
+    const latest=loadData().users.find(u=>u.id===id);
+    if(!valid||!latest||latest.active===false||!['sysadmin','admin','worker'].includes(latest.role)||latest.passwordResetRequired||latest.passwordHash!==user.passwordHash)return res.status(401).json({error:'아이디 또는 비밀번호가 올바르지 않거나 관리자 재설정이 필요합니다.'});
+    attempts.count--;
+    const token=asSessions.issue(req,res,latest.id,latest);
+    res.json({success:true,user:publicUser(latest),...(req.get('X-Client-Type')==='mobile'?{token}:{})});
+  } finally {pendingLogins--;}
 });
+function authenticate(req,res,next){
+  if(supabaseAuth)return supabaseAuth.authenticate(req,res,next);
+  const id=asSessions.userId(req);
+  const user=id&&loadData().users.find(u=>u.id===id);
+  if(!user||user.active===false||!['sysadmin','admin','worker'].includes(user.role)||user.passwordResetRequired||!asSessions.matches(req,user))return res.status(401).json({error:'다시 로그인하세요.'});
+  req.user=user;next();
+}
+function requireRoles(...roles){return (req,res,next)=>roles.includes(req.user.role)?next():res.status(403).json({error:'권한이 없습니다.'});}
+app.use('/api',authenticate);
+app.get('/api/me',(req,res)=>res.json({user:publicUser(req.user)}));
+if(supabaseAuth)app.get('/api/as-attachments/:id',(req,res)=>supabaseAuth.attachment(req,res));
+app.use('/api/users',requireRoles('sysadmin'));
+if(supabaseAuth)app.use('/api/users',(req,res)=>supabaseAuth.users(req,res));
+app.delete('/api/erp/all',requireRoles('sysadmin'));
+// ERP imports and structural changes can overwrite or remove existing business data.
+app.use('/api/erp',(req,res,next)=>['GET','HEAD'].includes(req.method)?next():requireRoles('sysadmin','admin')(req,res,next));
+app.delete('/api/records/:id',requireRoles('sysadmin','admin'));
+app.use(['/api/master','/api/column-mappings'],(req,res,next)=>['GET','HEAD'].includes(req.method)?next():requireRoles('sysadmin','admin')(req,res,next));
+app.put('/api/map/areas',requireRoles('sysadmin','admin'));
+function canManageAs(user,item){
+  if(user.role==='sysadmin'||user.asReview===true||user.asApprove===true)return true;
+  if(item.createdById)return item.createdById===user.id;
+  // Unmapped historical names never grant ownership. Resolve legacy IDs during migration.
+  return false;
+}
+function authorizeAsChange(req,res,next){
+  const item=loadAs().list.find(a=>a.id===req.params.id);
+  if(!item)return res.status(404).json({error:'AS 건을 찾을 수 없습니다.'});
+  if(!canManageAs(req.user,item))return res.status(403).json({error:'접수자 또는 AS 관리 권한이 필요합니다.'});
+  next();
+}
+app.put('/api/as/:id',authorizeAsChange);
+app.delete('/api/as/:id',authorizeAsChange);
+app.patch('/api/as/:id/workflow',authorizeAsChange);
 
-// ── 앱에서 스캔 데이터 전송 ──
 app.post('/api/scan', (req, res) => {
-  const { records, userId, userName, sentAt } = req.body;
+  const { records } = req.body || {};
   if (!records || !Array.isArray(records)) return res.status(400).json({ error: 'records 필드가 필요합니다.' });
 
+  const steps=['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'];
+  if(records.some(r=>!r||typeof r.barcode!=='string'||!steps.includes(r.type)))return res.status(400).json({error:'올바른 스캔 기록이 필요합니다.'});
+  if(!['sysadmin','admin'].includes(req.user.role)&&records.some(r=>!(req.user.allowedSteps||[]).includes(r.type)))return res.status(403).json({error:'허용되지 않은 공정입니다.'});
   const data = loadData();
   const now = new Date().toISOString();
 
@@ -240,8 +317,8 @@ app.post('/api/scan', (req, res) => {
       name: r.name || '',
       type: r.type,       // incoming / inspect_wait / inspect_done / paint_wait / paint_done / deliver_wait / deliver_done
       qty: r.qty || 1,
-      userId: userId || r.userId || 'unknown',
-      userName: userName || r.userName || '미상',
+      userId: req.user.id,
+      userName: req.user.name,
       time: r.time,
       receivedAt: now,
     });
@@ -306,29 +383,38 @@ app.get('/api/tracking', (req, res) => {
 // ── 사용자 목록 (관리자용) ──
 app.get('/api/users', (req, res) => {
   const data = loadData();
-  res.json({ users: data.users.map(u => ({ id: u.id, name: u.name, role: u.role, icon: u.icon || '', allowedSteps: u.allowedSteps || [], department: u.department || '', position: u.position || '', asReview: u.asReview || false, asApprove: u.asApprove || false })) });
+  res.json({ users: data.users.map(u => ({ ...publicUser(u), passwordResetRequired:u.passwordResetRequired===true })) });
 });
 
 // ── 사용자 추가 ──
-app.post('/api/users', (req, res) => {
+function validateUser(req,res,next){
+ const b=req.body||{};
+ if((b.role!==undefined&&!['worker','admin','sysadmin'].includes(b.role)) || ['asReview','asApprove'].some(k=>b[k]!==undefined&&typeof b[k]!=='boolean') || (b.allowedSteps!==undefined&&(!Array.isArray(b.allowedSteps)||b.allowedSteps.some(v=>!['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'].includes(v)))) || ['name','department','position','icon'].some(k=>b[k]!==undefined&&(typeof b[k]!=='string'||b[k].length>100)))return res.status(400).json({error:'사용자 정보를 확인하세요.'});
+ if((req.method==='POST'||b.password)&&!passwords.validPassword(b.password))return res.status(400).json({error:'비밀번호는 12~128자로 입력하세요.'});
+ if(req.method==='POST'&&(typeof b.id!=='string'||!b.id.trim()||b.id.length>100||typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'아이디와 이름이 필요합니다.'});
+ next();
+}
+app.post('/api/users', validateUser, (req, res) => {
   const { id, password, name, role, allowedSteps } = req.body;
   const data = loadData();
   if (data.users.find(u => u.id === id)) return res.status(400).json({ error: '이미 존재하는 아이디입니다.' });
   const icon = req.body.icon || '';
   const department = req.body.department || '';
   const position = req.body.position || '';
-  data.users.push({ id, password, name, role: role || 'worker', icon, allowedSteps: allowedSteps || [], department, position, asReview: req.body.asReview || false, asApprove: req.body.asApprove || false });
+  data.users.push({ id, passwordHash: passwords.hashPassword(password), name, role: role || 'worker', icon, allowedSteps: allowedSteps || [], department, position, asReview: req.body.asReview || false, asApprove: req.body.asApprove || false });
   saveData(data);
   res.json({ success: true });
 });
 
 // ── 사용자 수정 ──
-app.put('/api/users/:id', (req, res) => {
+app.put('/api/users/:id', validateUser, (req, res) => {
   const { password, name, role, allowedSteps } = req.body;
   const data = loadData();
   const idx = data.users.findIndex(u => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
-  if (password) data.users[idx].password = password;
+  if(data.users[idx].role==='sysadmin' && role && role!=='sysadmin' && data.users.filter(u=>u.role==='sysadmin'&&!u.passwordResetRequired).length<=1)return res.status(400).json({error:'마지막 시스템 관리자는 변경할 수 없습니다.'});
+  if (password) {data.users[idx].passwordHash=passwords.hashPassword(password);delete data.users[idx].password;delete data.users[idx].passwordResetRequired;}
+  asSessions.revokeUser(req.params.id);
   if (name) data.users[idx].name = name;
   if (role) data.users[idx].role = role;
   if (req.body.icon !== undefined) data.users[idx].icon = req.body.icon;
@@ -347,6 +433,8 @@ app.delete('/api/users/:id', (req, res) => {
   const data = loadData();
   const idx = data.users.findIndex(u => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+  if(data.users[idx].role==='sysadmin' && data.users.filter(u=>u.role==='sysadmin'&&!u.passwordResetRequired).length<=1)return res.status(400).json({error:'마지막 시스템 관리자는 삭제할 수 없습니다.'});
+  asSessions.revokeUser(req.params.id);
   data.users.splice(idx, 1);
   saveData(data);
   res.json({ success: true });
@@ -524,8 +612,8 @@ app.post('/api/location', (req, res) => {
   const loc = loadLocations();
   loc.locations[barcode] = {
     areaId,
-    userId: userId || 'unknown',
-    userName: userName || '미상',
+    userId: req.user.id,
+    userName: req.user.name,
     time: time || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -576,7 +664,7 @@ app.post('/api/as', asUpload.array('files', 10), (req, res) => {
   data.monthSeq[ym] = (data.monthSeq[ym] || 0) + 1;
   const asNo = 'AS-' + ym + '-' + String(data.monthSeq[ym]).padStart(2, '0');
   const files = (req.files || []).map(f => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), filename: f.filename, size: f.size }));
-  const item = { id: Date.now().toString(), asNo, ship, block, element: element||'', product: product||'', materialCode: (materialCode||'').trim(), deliveryAgreedDate: deliveryAgreedDate||'', reason, action: action||'', remark: remark||'', status: '접수', category: category||'사내', createdBy: createdBy||'', createdDept: createdDept||'', createdPos: createdPos||'', files, createdAt: new Date().toISOString() };
+  const item = { id: Date.now().toString(), asNo, ship, block, element: element||'', product: product||'', materialCode: (materialCode||'').trim(), deliveryAgreedDate: deliveryAgreedDate||'', reason, action: action||'', remark: remark||'', status: '접수', category: category||'사내', createdById: req.user.id, createdBy: req.user.name, createdDept: req.user.department||'', createdPos: req.user.position||'', files, createdAt: new Date().toISOString() };
   item.amount = amount;
   data.list.push(item);
   saveAs(data);
@@ -624,8 +712,9 @@ app.put('/api/as/:id', asUpload.array('files', 10), (req, res) => {
 
 app.patch('/api/as/:id/review', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
 app.patch('/api/as/:id/approve', (req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
-app.post('/api/logout', (req,res)=>{asSessions.revoke(req,res);res.json({success:true});});
+app.post('/api/logout', (req,res)=>{if(supabaseAuth)return supabaseAuth.logout(req,res);asSessions.revoke(req,res);res.json({success:true});});
 function authenticateAsWorkflow(req,res,next){
+  if(req.user){req.asActor=req.user;return next();}
   const userId=asSessions.userId(req);
   const actor=userId && loadData().users.find(user=>user.id===userId);
   if(!actor)return res.status(401).json({error:'다시 로그인한 후 진행 관리를 이용하세요.'});
@@ -639,7 +728,7 @@ app.patch('/api/as/:id/workflow', authenticateAsWorkflow, asUpload.array('files'
     if(index<0) {cleanUploads();return res.status(404).json({error:'AS 건을 찾을 수 없습니다.'});}
     const payload=typeof req.body.payload==='string'?JSON.parse(req.body.payload):req.body;
     const actor=req.asActor;
-    if(!actor || !(actor.role==='sysadmin'||actor.asReview||actor.asApprove||actor.name===data.list[index].createdBy)) {cleanUploads();return res.status(403).json({error:'접수자 또는 AS 관리 권한이 필요합니다.'});}
+    if(!actor || !canManageAs(actor,data.list[index])) {cleanUploads();return res.status(403).json({error:'접수자 또는 AS 관리 권한이 필요합니다.'});}
     const item=asWorkflow.applyWorkflow(data.list[index],payload,actor);
     const files=(req.files||[]).map(f=>({name:Buffer.from(f.originalname,'latin1').toString('utf8'),filename:f.filename,size:f.size}));
     item.files=[...(item.files||[]),...files];
@@ -949,12 +1038,21 @@ app.get('/api/events', (req, res) => {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': '*',
   });
   res.flushHeaders();
   res.write('data: connected\n\n');
   sseClients.add(res);
-  req.on('close', () => sseClients.delete(res));
+  let checkingSession=false;
+  const expiry=setInterval(async()=>{
+    if(checkingSession)return;
+    checkingSession=true;
+    try {
+      const user=supabaseAuth ? await supabaseAuth.resolve(req) : loadData().users.find(u=>u.id===asSessions.userId(req));
+      if(!user||user.active===false||(!supabaseAuth&&!asSessions.matches(req,user)))res.end();
+    }catch{res.end();}finally{checkingSession=false;}
+  },supabaseAuth?15000:1000);
+  expiry.unref();
+  req.on('close', () => {clearInterval(expiry);sseClients.delete(res);});
 });
 
 function notifyClients(type) {
@@ -1017,7 +1115,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`서버 실행 중: http://localhost:${PORT}`);
+const server=app.listen(PORT, process.env.HOST || '0.0.0.0', () => {
+  console.log(`서버 실행 중: http://localhost:${server.address().port}`);
   console.log(`대시보드: http://localhost:${PORT}`);
 });

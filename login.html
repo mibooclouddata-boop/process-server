@@ -616,7 +616,7 @@ form.addEventListener('submit',async e=>{
  busy=true;btn.disabled=true;btn.classList.remove('is-error');btn.classList.add('is-loading');btn.setAttribute('aria-busy','true');btn.setAttribute('aria-label','로그인 중');message.textContent='';
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);let succeeded=false;
  try{
-  const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:idInput.value.trim(),password:pw.value}),signal:controller.signal});
+  const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'process-server'},body:JSON.stringify({id:idInput.value.trim(),password:pw.value}),signal:controller.signal});
   const data=await res.json().catch(()=>({}));
   if(!res.ok||!data.success){showError(res.status>=500?'서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.':'로그인에 실패했습니다. 아이디와 비밀번호를 확인해 주세요.');return;}
   try{sessionStorage.setItem('currentUser',JSON.stringify(data.user));if(document.getElementById('keep').checked)localStorage.setItem('currentUser',JSON.stringify(data.user));else localStorage.removeItem('currentUser');}catch(error){showError('로그인 정보를 저장하지 못했습니다. 브라우저의 저장소 설정을 확인해 주세요.');return;}

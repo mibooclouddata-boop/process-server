@@ -7,3 +7,11 @@ location.json
 as.json
 erp.json
 erp_columns.json
+data/
+.env
+.env.*
+!.env.example
+!mobile/.env.example
+*.secrets.json
+.local-supabase-test-data/
+supabase/.temp/
