@@ -523,48 +523,28 @@
     .nav { display: none; }
   }
 </style>
-</head>
+
+<style id="centered-layout">
+/* Only layout changes. Original typography, form styles and animation remain intact. */
+.main{display:grid;grid-template-columns:minmax(0,1fr);place-items:center;gap:0;max-width:none;min-height:100vh;min-height:100svh;padding:40px 24px;margin:0}
+.form-card{justify-self:center;width:100%;max-width:360px;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+.centered-logo{display:block;width:188px;max-width:100%;height:auto;margin:0 auto 36px}
+@media(max-width:900px){.main{grid-template-columns:minmax(0,1fr);gap:0;padding:32px 24px}.form-card{justify-self:center;max-width:360px;padding:0}}
+</style>
+<style id="refinements">
+:root{--text-400:#626f7d;--danger:#bf2638}.login-group{width:100%;max-width:360px;justify-self:center}.centered-logo{width:208px;height:auto;aspect-ratio:1921 / 414;margin:0 auto 36px;opacity:1;transform:none;filter:none}.form-card{width:100%}.form-card:not(.is-leaving){animation:refinedEnter .5s ease .1s backwards}@keyframes refinedEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{font-size:12px}.input-field input{padding-right:16px}#password{padding-right:60px}.toggle-eye{width:44px;height:44px;right:6px;top:10px;transform:none}.input-field label{top:32px}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{top:10px}.checkbox{min-height:44px}.row{margin-bottom:24px}.input-stack{margin-bottom:16px}.checkbox input{border-color:#83909e}.field-error,.form-message{font-size:13px;line-height:1.6;color:var(--danger);margin-top:8px}.field-error:empty,.form-message:empty{display:none}.form-message{margin-top:14px}.input-field input[aria-invalid=true]{border-color:var(--danger)}button:focus-visible,a:focus-visible,input[type=checkbox]:focus-visible{outline:3px solid var(--toss-blue);outline-offset:4px}.login-group.is-leaving>.centered-logo{visibility:hidden}.btn-primary.is-loading:disabled{background:var(--toss-blue);color:transparent}.btn-primary.is-loading::before{border-top-color:#fff}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.form-card.is-leaving{opacity:0}.greeting.is-active{opacity:1}}
+</style></head>
 <body>
 
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">
-        <img src="miboo_logo.png" alt="HANKUK MIBOO" />
-      </div>
-    </div>
-  </header>
+
 
   <main class="main">
 
-    <section class="hero">
-      <h1 class="rotator" aria-label="대한민국 조선산업 수호기업">
-        <span class="line"><span class="word w1">대한민국</span></span>
-        <span class="line"><span class="word w2">조선산업</span></span>
-        <span class="line"><span class="word w3">수호기업</span></span>
-      </h1>
-      <p class="lead">
-        무슨 일이든 할 수 있다고<br/>
-        생각하는 사람이 해내는 법이다.
-      </p>
 
-      <div class="stats">
-        <div class="stat">
-          <div class="num"><em>50</em>년+</div>
-          <div class="label">업계 경력</div>
-        </div>
-        <div class="stat">
-          <div class="num"><em>5</em>개</div>
-          <div class="label">계열사</div>
-        </div>
-        <div class="stat">
-          <div class="num"><em>3</em>개국</div>
-          <div class="label">글로벌 거점</div>
-        </div>
-      </div>
-    </section>
 
-    <aside class="form-card" aria-label="로그인 폼">
-      <h2 class="form-title">시스템 로그인</h2>
+    <div class="login-group"><img class="centered-logo" src="miboo_logo.png" alt="HANKUK MIBOO" width="1921" height="414" decoding="sync" /><aside class="form-card" aria-label="로그인 폼">
+
 
       <form id="loginForm" autocomplete="on" novalidate>
         <div class="input-stack">
@@ -572,30 +552,30 @@
           <div class="input-field">
             <input
               id="identifier"
-              name="identifier"
+              name="identifier" aria-describedby="identifierError"
               type="text"
               placeholder=" "
               autocomplete="username"
               required
             />
-            <label for="identifier">아이디</label>
+            <label for="identifier">아이디</label><p class="field-error" id="identifierError"></p>
           </div>
 
           <div class="input-field">
             <input
               id="password"
-              name="password"
+              name="password" aria-describedby="passwordError"
               type="password"
               placeholder=" "
               autocomplete="current-password"
               required
             />
             <label for="password">비밀번호</label>
-            <button type="button" class="toggle-eye" id="togglePw" aria-label="비밀번호 표시">
+            <button type="button" class="toggle-eye" id="togglePw" aria-label="비밀번호 표시" aria-pressed="false">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
-            </button>
+            </button><p class="field-error" id="passwordError"></p>
           </div>
 
         </div>
@@ -605,98 +585,48 @@
             <input type="checkbox" id="keep" />
             <span>로그인 상태 유지</span>
           </label>
-          <button type="button" class="link-ghost">비밀번호 찾기</button>
+
         </div>
 
-        <button type="submit" class="btn-primary" id="submitBtn">로그인</button>
+        <button type="submit" class="btn-primary" id="submitBtn">로그인</button><p class="form-message" id="loginMessage" role="alert" tabindex="-1"></p>
 
-        <p class="form-footer">
-          <a href="#">관리자 문의</a>
-        </p>
+
       </form>
-    </aside>
+    </aside></div>
   </main>
 
   <!-- 로그인 성공 인사 메시지 -->
-  <div class="greeting" id="greeting" aria-hidden="true">
+  <div class="greeting" id="greeting" aria-hidden="true" role="status" aria-live="polite">
     <div class="greeting-text">안녕하세요, <em id="greetingName">OO</em>님</div>
   </div>
 
   <script>
-  const pw = document.getElementById('password');
-  const toggle = document.getElementById('togglePw');
-  toggle.addEventListener('click', () => {
-    pw.type = pw.type === 'password' ? 'text' : 'password';
-  });
-
-  const form = document.getElementById('loginForm');
-  const idInput = document.getElementById('identifier');
-  const btn = document.getElementById('submitBtn');
-
-  function validate() {
-    btn.disabled = !(idInput.value.trim().length > 0 && pw.value.length >= 4);
-  }
-  [idInput, pw].forEach(el => el.addEventListener('input', validate));
-  validate();
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btn.classList.remove('is-error');
-    btn.classList.add('is-loading');
-    btn.disabled = true;
-
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: idInput.value.trim(),
-          password: pw.value
-        })
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok && data.success) {
-        const storage = document.getElementById('keep').checked ? localStorage : sessionStorage;
-        storage.setItem('currentUser', JSON.stringify(data.user));
-        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-
-        // 사용자 이름
-        const displayName = (data.user && data.user.name) ? data.user.name : idInput.value.trim();
-        document.getElementById('greetingName').textContent = displayName;
-
-        // 카드 + 히어로 페이드아웃
-        document.querySelector('.form-card').classList.add('is-leaving');
-        document.querySelector('.hero').classList.add('is-leaving');
-
-        // 인사 메시지 등장
-        setTimeout(() => {
-          document.getElementById('greeting').classList.add('is-active');
-        }, 300);
-
-        // 대시보드로 이동
-        setTimeout(() => {
-          window.location.href = '/dashboard.html';
-        }, 5000);
-      } else {
-        btn.classList.remove('is-loading');
-        btn.classList.add('is-error');
-        setTimeout(() => {
-          btn.classList.remove('is-error');
-          btn.disabled = false;
-        }, 500);
-      }
-    } catch (err) {
-      btn.classList.remove('is-loading');
-      btn.classList.add('is-error');
-      setTimeout(() => {
-        btn.classList.remove('is-error');
-        btn.disabled = false;
-      }, 500);
-    }
-  });
-</script>
+const pw=document.getElementById('password'),toggle=document.getElementById('togglePw'),form=document.getElementById('loginForm'),idInput=document.getElementById('identifier'),btn=document.getElementById('submitBtn'),message=document.getElementById('loginMessage');
+let busy=false;
+toggle.addEventListener('click',()=>{const show=pw.type==='password';pw.type=show?'text':'password';toggle.setAttribute('aria-pressed',String(show));toggle.setAttribute('aria-label',show?'비밀번호 숨기기':'비밀번호 표시');});
+function fieldError(input,text){document.getElementById(input===pw?'passwordError':'identifierError').textContent=text;input.setAttribute('aria-invalid',String(!!text));}
+[idInput,pw].forEach(input=>input.addEventListener('input',()=>{fieldError(input,'');message.textContent='';}));
+function showError(text){message.textContent=text;message.focus();btn.classList.add('is-error');setTimeout(()=>btn.classList.remove('is-error'),500);}
+form.addEventListener('submit',async e=>{
+ e.preventDefault();if(busy)return;
+ const missingId=!idInput.value.trim(),badPassword=pw.value.length<4;
+ fieldError(idInput,missingId?'아이디를 입력해 주세요.':'');fieldError(pw,badPassword?'비밀번호를 4자 이상 입력해 주세요.':'');
+ if(missingId||badPassword){(missingId?idInput:pw).focus();return;}
+ if(location.protocol==='file:'){showError('실제 로그인은 process-server에서 이 HTML을 열어 이용해 주세요.');return;}
+ busy=true;btn.disabled=true;btn.classList.remove('is-error');btn.classList.add('is-loading');btn.setAttribute('aria-busy','true');btn.setAttribute('aria-label','로그인 중');message.textContent='';
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);let succeeded=false;
+ try{
+  const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:idInput.value.trim(),password:pw.value}),signal:controller.signal});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||!data.success){showError(res.status>=500?'서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.':'로그인에 실패했습니다. 아이디와 비밀번호를 확인해 주세요.');return;}
+  try{sessionStorage.setItem('currentUser',JSON.stringify(data.user));if(document.getElementById('keep').checked)localStorage.setItem('currentUser',JSON.stringify(data.user));else localStorage.removeItem('currentUser');}catch(error){showError('로그인 정보를 저장하지 못했습니다. 브라우저의 저장소 설정을 확인해 주세요.');return;}
+  succeeded=true;document.getElementById('greetingName').textContent=data.user?.name||idInput.value.trim();document.querySelector('.form-card').classList.add('is-leaving');document.querySelector('.login-group').classList.add('is-leaving');
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(()=>{const greeting=document.getElementById('greeting');greeting.setAttribute('aria-hidden','false');greeting.classList.add('is-active');},reduced?0:300);
+  setTimeout(()=>{window.location.href='/dashboard.html';},reduced?250:1500);
+ }catch(error){showError(error.name==='AbortError'?'서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.':'서버에 연결하지 못했습니다. 네트워크를 확인하고 다시 시도해 주세요.');}
+ finally{clearTimeout(timeout);if(!succeeded){busy=false;btn.disabled=false;btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');}}
+});</script>
 
 </body>
 </html>
