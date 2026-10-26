@@ -2101,7 +2101,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             </div>
             <div class="modal-field">
               <label>비밀번호 * <span class="hint" id="modalPwHint" style="display:none">(빈칸이면 유지)</span></label>
-              <input id="modalUserPw" placeholder="비밀번호" type="text" autocomplete="new-password"/>
+              <input id="modalUserPw" placeholder="비밀번호" type="password" autocomplete="new-password"/>
             </div>
           </div>
           <div class="modal-row">
@@ -2206,7 +2206,7 @@ async function doLogin() {
           document.getElementById('welcomeOverlay').classList.remove('show');
           document.getElementById('welcomeOverlay').style.animation = '';
           document.getElementById('dashboard').style.display = 'block';
-          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.id})`;
+          document.getElementById('topbarUser').textContent = `${data.user.name} (${data.user.loginId || data.user.id})`;
           if (data.user.role === 'sysadmin' || data.user.role === 'admin') {
             // tabMaster removed
           }
@@ -2560,7 +2560,7 @@ function openUserModal(user) {
   document.getElementById('modalTitle').textContent = user ? `사용자 수정: ${user.name}` : '새 사용자 추가';
   document.getElementById('modalUserId').value = user ? (user.loginId || user.id) : '';
   document.getElementById('modalUserId').disabled = !!user;
-  document.getElementById('modalUserPw').value = user ? (user.password || '') : '';
+  document.getElementById('modalUserPw').value = '';
   document.getElementById('modalPwHint').style.display = user ? '' : 'none';
   document.getElementById('modalUserName').value = user ? user.name : '';
   document.getElementById('modalUserRole').value = user ? user.role : 'worker';
@@ -4083,7 +4083,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (!currentUser) return; // initAuth에서 이미 리다이렉트 처리됨
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.id})`;
+  document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.loginId || currentUser.id})`;
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
     document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
