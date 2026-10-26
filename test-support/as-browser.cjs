@@ -1,0 +1,46 @@
+const {startFixture}=require('./as-fixture.cjs');
+const path=require('node:path'),os=require('node:os'),fs=require('node:fs'),assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+(async()=>{
+ const f=await startFixture();let browser;
+ try{
+  browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+  const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+  const errors=[],retired=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('request',req=>{if(/\/api\/(scan|records|tracking|master|map|location|erp|column-mappings|events)\b/.test(req.url()))retired.push(req.url());});
+  await page.goto(f.url+'/login.html');
+  await page.locator('#identifier').fill('admin');await page.locator('#password').fill('Fixture-passphrase-2026!');await page.locator('#submitBtn').click();
+  await page.waitForURL('**/dashboard.html');
+  await page.locator('#asSubStats').waitFor({state:'visible'});
+  await page.locator('#tabUsersBtn').click();await page.locator('#adminUserRows .um-person').waitFor();
+  await page.locator('#umSearch').fill('no-such-user');await page.waitForFunction(()=>document.getElementById('umCount').textContent.includes('조회 0'));
+  await page.locator('#umSearch').fill('');await page.locator('[data-um-edit="0"]').click();await page.locator('#modalUserName').fill('브라우저 관리자');
+  await page.locator('#userModal button[onclick="submitModalUser()"]').click();await page.locator('#userModal').waitFor({state:'hidden'});
+  await page.waitForURL('**/login.html');
+  await page.locator('#identifier').fill('admin');await page.locator('#password').fill('Fixture-passphrase-2026!');await page.locator('#submitBtn').click();await page.waitForURL('**/dashboard.html');
+  await page.locator('#tabAsBtn').click();await page.locator('[data-sub="product"]').click();
+  await page.locator('#asSubProduct').waitFor({state:'visible'});assert(await page.locator('#productListBody').textContent());
+  await page.locator('[data-sub="list"]').click();await page.locator('#asSubList').waitFor({state:'visible'});
+  await page.locator('button[onclick="openAsModal()"]').click();await page.locator('#asModal').waitFor({state:'visible'});
+  await page.locator('#asModal button[onclick="closeAsModal()"]').first().click();
+  await page.locator('#asLedgerBack').click();await page.locator('#asSubProduct').waitFor({state:'visible'});
+  await page.locator('#tabAsBtn').click();
+  const screenshots=path.join(os.tmpdir(),'as-only-browser-qa');fs.mkdirSync(screenshots,{recursive:true});
+  await page.waitForFunction(()=>{const card=document.querySelector('.as-readable-trend');return card?._layout?.W>300;});
+  await page.evaluate(()=>document.fonts.ready);
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  console.log('Trend layout',await page.locator('.as-readable-trend .plot').evaluate(p=>({width:p.clientWidth,svg:p.querySelector('svg').getAttribute('viewBox')})));
+  await page.screenshot({path:path.join(screenshots,'desktop.png'),fullPage:true});
+  await page.setViewportSize({width:375,height:812});
+  await page.locator('#tabAsBtn').click();await page.locator('[data-sub="list"]').click();
+  await page.locator('#asSubList').waitFor({state:'visible'});
+  await page.screenshot({path:path.join(screenshots,'mobile.png'),fullPage:true});
+  await page.locator('#asLedgerBack').click();
+  await page.setViewportSize({width:812,height:375});
+  await page.locator('#tabUsersBtn').click();await page.locator('#adminUserRows .um-person').waitFor();
+  await page.locator('.logout-btn').click();await page.waitForURL(f.url+'/');
+  assert.deepEqual(errors,[]);assert.deepEqual(retired,[]);
+  console.log('PASS browser: login; default AS statistics; user search/edit; products; intake modal; back navigation; 1440/375/landscape; logout; zero runtime errors or retired API requests. Screenshots: '+screenshots);
+ }finally{if(browser)await browser.close();await f.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

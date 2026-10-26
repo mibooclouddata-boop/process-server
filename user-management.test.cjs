@@ -8,7 +8,7 @@ function setup(){
  const elements=new Map();
  const get=id=>{if(!elements.has(id))elements.set(id,{value:'',innerHTML:'',textContent:'',querySelectorAll:()=>[]});return elements.get(id)};
  let response={ok:true,json:async()=>({users:[]})};
- const ctx={document:{getElementById:get},SERVER:'',STEP_ORDER:['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'],fetch:async()=>response};
+ const ctx={document:{getElementById:get},SERVER:'',fetch:async()=>response};
  vm.createContext(ctx);vm.runInContext(source,ctx);
  return {ctx,get,respond:r=>response=r,seed:users=>vm.runInContext('adminUsersCache='+JSON.stringify(users),ctx)};
 }
@@ -16,7 +16,7 @@ test('user summary escapes untrusted names, keeps actual permissions and protect
  const {ctx,get,seed}=setup();
  seed([{id:'admin',name:"<img onerror='x'>",role:'sysadmin',allowedSteps:['incoming','unknown'],asReview:true,asApprove:false}]);
  ctx.renderAdminUsers();const rows=get('adminUserRows').innerHTML;
- assert(!rows.includes('<img'));assert(rows.includes('&lt;img'));assert(rows.includes('1개 허용'));assert(rows.includes('AS 검토 허용'));assert(rows.includes('AS 승인 없음'));assert(!rows.includes('data-um-delete'));
+ assert(!rows.includes('<img'));assert(rows.includes('&lt;img'));assert(!rows.includes('개 허용'));assert(rows.includes('AS 검토 허용'));assert(rows.includes('AS 승인 없음'));assert(!rows.includes('data-um-delete'));
 });
 test('combined search, department and role filters, reset and no-results',()=>{
  const {ctx,get,seed}=setup();
