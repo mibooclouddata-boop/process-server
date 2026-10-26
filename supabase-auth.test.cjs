@@ -144,13 +144,7 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     for(const account of [w,o,m,review])assert.equal((await request('/api/users',{token:account.token})).status,403);
     assert.equal((await request('/api/users',{token:r.token})).status,200);
     assert.equal((await request('/api/users',{method:'POST',token:r.token,body:{id:'no-json-fallback'}})).status,400);
-    assert.equal((await request('/api/master',{method:'POST',token:w.token,body:{barcode:'test'}})).status,403);
-    const scan={records:[{barcode:'fixture',type:'incoming',userId:root.id}],userId:root.id};
-    assert.equal((await request('/api/scan',{method:'POST',token:w.token,body:scan})).status,200);
-    assert.equal((await request('/api/scan',{method:'POST',token:o.token,body:scan})).status,403);
-    assert.equal((await request('/api/scan',{method:'POST',token:m.token,body:scan})).status,200);
-    const records=(await (await request('/api/records',{token:w.token})).json()).records;
-    assert(records.some(record=>record.userId===worker.id));assert(records.every(record=>record.userId!==root.id));
+    assert.equal((await request('/api/scan',{method:'POST',token:w.token,body:{}})).status,404);
     const response=await request('/api/as',{method:'POST',token:w.token,body:{ship:'TEST',block:'TEST',reason:'테스트',createdById:root.id,createdBy:'위조'}});
     assert.equal(response.status,200);const item=(await response.json()).item;assert.equal(item.createdById,worker.id);
     assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{remark:'동명이인'}})).status,403);
@@ -162,7 +156,7 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     assert.equal(flow.status,200);
     const updated=(await (await request('/api/as',{token:w.token})).json()).list.find(x=>x.id===item.id);
     assert(updated.workflow.history.every(h=>h.byUserId===worker.id));
-    assert.equal((await request('/api/erp/all',{method:'DELETE',token:m.token})).status,403);
+    assert.equal((await request('/api/erp/all',{method:'DELETE',token:m.token})).status,404);
   });
   await t.test('private Storage download uses an employee JWT and streams without a public URL',async()=>{
     assert.equal((await request('/api/as-attachments/'+attachmentId)).status,401);
@@ -182,14 +176,6 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     authUnavailable=true;const unavailable=await request('/api/me',{token:w.token});assert.equal(unavailable.status,503);assert(!(await unavailable.text()).includes('private upstream'));authUnavailable=false;
     assert.equal((await request('/api/logout',{method:'POST',token:w.token})).status,200);assert.equal((await request('/api/me',{token:w.token})).status,401);
     tokens.clear();assert.equal((await request('/api/me',{token:o.token})).status,401);
-  });
-  await t.test('actual mobile client keeps tokens in memory and can query /api/me',async()=>{
-    attempts.clear();
-    const source=fs.readFileSync(path.join(__dirname,'mobile/api.js'),'utf8').replace(/export async function /g,'async function ');
-    const c={process:{env:{EXPO_PUBLIC_SERVER_URL:base}},fetch,URL,Error};vm.createContext(c);vm.runInContext(source,c);
-    const user=await c.login('staff01',password);assert.equal(user.id,worker.id);
-    assert.equal((await c.apiFetch('/api/me')).status,200);
-    await c.logout();assert.equal((await c.apiFetch('/api/me')).status,401);
   });
   await t.test('shared login rate limits stop repeated attempts without storing identifiers',async()=>{
     attempts.clear();let last;

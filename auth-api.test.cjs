@@ -29,6 +29,7 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
   const write=(name,data)=>fs.writeFileSync(path.join(dir,name),JSON.stringify(data));
   write('data.json',{records:[],users:[
     {id:'root',name:'관리자',role:'sysadmin',password},
+    {id:'disabled-admin',name:'Inactive fixture',role:'sysadmin',active:false,password},
     {id:'worker',name:'직원',role:'worker',password,allowedSteps:['incoming']},
     {id:'other',name:'다른 직원',role:'worker',password,allowedSteps:[]},
     {id:'manager',name:'업무 관리자',role:'admin',password},
@@ -66,7 +67,7 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     const cookie=web.response.headers.get('set-cookie');
     assert.match(cookie,/HttpOnly/);assert.match(cookie,/SameSite=Strict/);
     assert.equal((await request('/api/me',{cookie:cookie.split(';')[0]})).status,200);
-    const denied=await fetch(base+'/api/scan',{method:'POST',headers:{Cookie:cookie.split(';')[0],'Content-Type':'application/json'},body:'{"records":[]}'});
+    const denied=await fetch(base+'/api/as',{method:'POST',headers:{Cookie:cookie.split(';')[0],'Content-Type':'application/json'},body:'{"records":[]}'});
     assert.equal(denied.status,403);
     const me=await (await request('/api/me',{token:worker.token})).json();
     assert.equal(me.user.password,undefined);assert.equal(me.user.passwordHash,undefined);
@@ -78,43 +79,21 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     assert(disk.users.every(u=>!Object.hasOwn(u,'password')));
     assert.equal(disk.users.find(u=>u.id==='default').passwordResetRequired,true);
   });
-  await t.test('staff and business admins cannot manage users or erase ERP',async()=>{
+  await t.test('staff and business admins cannot manage users and retired endpoints stay unavailable',async()=>{
     for(const token of [worker.token,manager.token]){
       for(const method of ['GET','POST','PUT','DELETE']){
         const route=method==='PUT'||method==='DELETE'?'/api/users/root':'/api/users';
         assert.equal((await request(route,{method,token,body:method==='POST'||method==='PUT'?{id:'evil',role:'sysadmin',password}:undefined})).status,403);
       }
-      assert.equal((await request('/api/erp/all',{method:'DELETE',token})).status,403);
+      assert.equal((await request('/api/erp/all',{method:'DELETE',token})).status,404);
     }
-    assert.equal((await request('/api/master/all',{method:'DELETE',token:worker.token})).status,403);
-    assert.equal((await request('/api/erp/upload',{method:'POST',token:worker.token})).status,403);
-    assert.equal((await request('/api/erp/columns/name',{method:'DELETE',token:worker.token})).status,403);
+    assert.equal((await request('/api/master/all',{method:'DELETE',token:worker.token})).status,404);
+    assert.equal((await request('/api/erp/upload',{method:'POST',token:worker.token})).status,404);
+    assert.equal((await request('/api/erp/columns/name',{method:'DELETE',token:worker.token})).status,404);
     assert.equal((await request('/api/users',{token:admin.token})).status,200);
-    assert.equal((await request('/api/erp/all',{method:'DELETE',token:admin.token})).status,200);
-  });
-  await t.test('scan permissions and attribution are server controlled',async()=>{
-    const records=[{barcode:'TEST-ONLY',type:'incoming',userId:'root',userName:'위조'}];
-    assert.equal((await request('/api/scan',{method:'POST',token:worker.token,body:{records,userId:'root',userName:'위조'}})).status,200);
-    assert.equal((await request('/api/scan',{method:'POST',token:other.token,body:{records}})).status,403);
-    assert.equal((await request('/api/scan',{method:'POST',token:worker.token,body:{records:[{barcode:'TEST',type:'deliver_done'}]}})).status,403);
-    const result=await (await request('/api/records',{token:worker.token})).json();
-    assert.equal(result.records[0].userId,'worker');assert.equal(result.records[0].userName,'직원');
-    for(const route of ['/api/master','/api/map','/api/locations','/api/tracking','/api/erp','/api/products'])assert.equal((await request(route,{token:worker.token})).status,200,route);
+    assert.equal((await request('/api/erp/all',{method:'DELETE',token:admin.token})).status,404);
   });
   let item;
-  await t.test('authorized ERP imports and SSE remain functional',async()=>{
-    const XLSX=require('xlsx'),wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{'BOM ID':'TEST-BOM',name:'fixture'}]),'test');
-    const form=new FormData();form.append('file',new Blob([XLSX.write(wb,{type:'buffer',bookType:'xlsx'})]),'fixture.xlsx');
-    const uploaded=await fetch(base+'/api/erp/upload',{method:'POST',headers:{Authorization:'Bearer '+manager.token,'X-Requested-With':'process-server'},body:form});
-    assert.equal(uploaded.status,200);
-    const data=await (await request('/api/erp',{token:worker.token})).json();
-    assert.equal(data.rows[0]['BOM ID'],'TEST-BOM');
-    const stream=await request('/api/events',{token:other.token});
-    assert.equal(stream.status,200);
-    const reader=stream.body.getReader();assert.match(new TextDecoder().decode((await reader.read()).value),/connected/);
-    await reader.cancel();
-  });
   await t.test('AS attachments, ownership and workflow remain usable',async()=>{
     const fd=new FormData();for(const [key,value] of Object.entries({ship:'TEST',block:'TEST',reason:'테스트',createdBy:'관리자'}))fd.append(key,value);
     fd.append('files',new Blob(['fixture attachment'],{type:'text/plain'}),'fixture.txt');
@@ -148,17 +127,6 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     assert.equal((await request('/api/logout',{method:'POST',token:worker.token})).status,200);
     assert.equal((await request('/api/me',{token:worker.token})).status,401);
     assert.equal((await request('/uploads/'+item.files[0].filename,{token:worker.token})).status,401);
-  });
-  await t.test('mobile client uses actual login, bearer requests and logout',async()=>{
-    process.env.EXPO_PUBLIC_SERVER_URL=base;
-    const source=fs.readFileSync(path.join(__dirname,'mobile/api.js'),'utf8');
-    const mobile=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
-    assert.equal((await mobile.login('worker',password)).id,'worker');
-    assert.equal((await mobile.apiFetch('/api/records')).status,200);
-    await mobile.logout();
-    assert.equal((await mobile.apiFetch('/api/records')).status,401);
-    assert.equal(await mobile.login('worker','incorrect'),null);
-    delete process.env.EXPO_PUBLIC_SERVER_URL;
   });
   await t.test('login throttling bounds repeated failures',async()=>{
     let status;

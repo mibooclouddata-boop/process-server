@@ -13,7 +13,7 @@
 7. 이후 관리자 화면에서 계정 발급·권한 수정·비밀번호 재설정·활성 상태를 관리한다. 비밀번호 변경은 계정 잠금/세션 폐기 → Auth 변경 → 성공한 경우만 활성 복구 순서다. 마지막 활성 sysadmin의 비활성화·강등·비밀번호 재설정은 차단한다. 재설정하려면 두 번째 관리자를 준비한다. 비밀번호는 12~128자이며 별도 안전한 채널로 전달한다.
 8. Node 22 이상에서 `node --env-file=.env.local server.js`로 검증 서버를 실행한다. 일반 `npm start`는 .env 파일을 자동으로 읽지 않는다. 서버 환경변수로 주입한 경우 `npm start`를 사용한다.
 
-운영에서는 HTTPS와 `SESSION_COOKIE_SECURE=true`가 필수다. Reverse proxy 신뢰 범위·CORS 허용 origin은 배포 환경에 맞게 한정한다. 임의 X-Forwarded-For를 신뢰하지 않는다. 모바일에는 `mobile/.env.example`의 `EXPO_PUBLIC_SERVER_URL`만 설정한다. `EXPO_PUBLIC_`, `VITE_`, `NEXT_PUBLIC_` 변수에 관리자 키를 넣지 않는다.
+운영에서는 HTTPS와 `SESSION_COOKIE_SECURE=true`가 필수다. Reverse proxy 신뢰 범위·CORS 허용 origin은 배포 환경에 맞게 한정한다. 임의 X-Forwarded-For를 신뢰하지 않는다. 최신 main에서 모바일 앱은 제거되었으며 이 PR은 모바일용 HTTP bearer 계약만 유지한다. 향후 클라이언트에는 서버 URL만 전달하고 `EXPO_PUBLIC_`, `VITE_`, `NEXT_PUBLIC_` 변수에 관리자 키를 넣지 않는다.
 
 ## API 계약
 
@@ -25,7 +25,7 @@
 
 세션은 DB에 해시된 토큰과 암호화한 upstream access token을 저장한다. Auth getUser와 최신 프로필을 요청마다 확인한다. refresh token은 보관하지 않으며 Auth token 수명 또는 8시간 중 짧은 시점에 만료한다. 화면의 기존 로그인 상태 유지가 이 만료 시간을 연장하지는 않는다. 모바일 재시작 후에는 다시 로그인한다. 관리자 권한/활성 상태 변경 시 SQL 트리거가 세션 버전을 올린다. 단순 이름 변경은 사용자 ID와 소유권을 바꾸지 않는다.
 
-SSE 연결은 Supabase 모드에서 15초마다 인증을 다시 확인하고 실패 시 종료한다. 이벤트에는 업무 내용 대신 갱신 종류와 시간만 있다. 일반 API는 매 요청마다 검증한다.
+일반 API는 매 요청마다 검증한다. 최신 main에서 제거된 SSE·공정·ERP API는 복원하지 않으며 계속 404를 반환한다.
 
 ## 로컬 검증
 
@@ -44,7 +44,7 @@ npm test
 - 운영 규모에 맞는 만료 세션·rate-limit 정리 작업과 로그인 속도 제한 튜닝. 내부 주소·인증 요청 본문이 프록시/APM 로그에 남지 않도록 필터링.
 - DB·Storage의 실제 RLS 역할 테스트, 파일 업로드·메타데이터 원자성/보상 처리, MIME 검사/악성 파일 검사, 기존 첨부 URL 연결.
 - 업무 JSON 전체를 Postgres 저장소로 바꾸는 작업, 사번/동명이인/삭제 계정과 UUID 매핑, 기존 데이터 대조. 현재 로컬 AS/공정 데이터 쓰기는 JSON이다.
-- 모바일 실기기/Expo 빌드, 웹 실제 브라우저, HTTPS 쿠키·CORS·SSE·다중 서버 동작 확인.
+- 향후 모바일 클라이언트 실기기, 실제 Supabase 연결 웹 로그인, HTTPS 쿠키·CORS·다중 서버 동작 확인. 현재 AS 화면의 XSS 방어는 로컬 실제 브라우저에서 검증했다.
 - 전체 Supabase 전환 및 운영 배포는 별도 작업이다. 현재 업무 JSON의 동시 쓰기·충돌·백업/복구 개선도 남아 있다.
 
 ## 참고
