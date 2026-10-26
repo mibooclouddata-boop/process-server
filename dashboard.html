@@ -5248,9 +5248,22 @@ function exportAsExcel() {
     a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.ship||'', a.block||'', a.element||'', a.product||'',
     a.reason||'', a.action||'', a.status||'', a.createdBy||'', a.remark||'', AsAmount.read(a.amount)??''
   ]);
-  const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>td,th{border:1px solid #999;padding:4px 8px;font-size:11px}th{background:#f2f2f2;font-weight:bold}</style></head><body><table>'
-    + '<tr>' + cols.map(c => '<th>' + c + '</th>').join('') + '</tr>'
-    + rows.map(r => '<tr>' + r.map(v => '<td>' + String(v).replace(/</g,'&lt;') + '</td>').join('') + '</tr>').join('')
+  // Excel's HTML importer needs explicit column widths; browser auto-layout is not retained.
+  // Estimate display width in pixels at 11pt, counting Korean/full-width glyphs twice.
+  const linesOf = value => String(value).replace(/\r\n?/g, '\n').split('\n');
+  const textWidth = text => Array.from(text).reduce((width, ch) => width + (ch === '\t' ? 28 : ch.codePointAt(0) > 255 ? 14 : 7), 0);
+  const maxWidths = [210,110,100,150,150,190,280,420,420,140,150,420,160];
+  const widths = cols.map((title, column) => Math.min(maxWidths[column], Math.max(90, textWidth(title) + 24)));
+  rows.forEach(row => row.forEach((value, column) => {
+    linesOf(value).forEach(line => { widths[column] = Math.min(maxWidths[column], Math.max(widths[column], textWidth(line) + 24)); });
+  }));
+  const escapeCell = value => String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\r\n?|\n/g,'<br style="mso-data-placement:same-cell">');
+  const rowHeight = row => Math.max(30, ...row.map((value, column) =>
+    linesOf(value).reduce((count, line) => count + Math.max(1, Math.ceil(textWidth(line) / (widths[column] - 24))), 0) * 22 + 12));
+  const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>table{border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #999;padding:6px 10px;font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:11pt;font-weight:400;vertical-align:top;white-space:normal;word-wrap:break-word;overflow-wrap:anywhere}tr{mso-height-source:auto}th{background:#f2f2f2;text-align:center;vertical-align:middle;font-weight:700}</style></head><body><table>'
+    + '<colgroup>' + widths.map(width => '<col width="' + width + '" style="width:' + width + 'px;mso-width-source:userset">').join('') + '</colgroup>'
+    + '<tr height="32">' + cols.map((c, i) => '<th width="' + widths[i] + '" align="center" valign="middle" style="text-align:center;vertical-align:middle;font-weight:700"><b>' + escapeCell(c) + '</b></th>').join('') + '</tr>'
+    + rows.map(r => '<tr height="' + rowHeight(r) + '" style="height:' + rowHeight(r) + 'px">' + r.map((v, i) => '<td width="' + widths[i] + '" align="center" valign="middle" style="text-align:center;vertical-align:middle">' + escapeCell(v) + '</td>').join('') + '</tr>').join('')
     + '</table></body></html>';
   const blob = new Blob(['\uFEFF' + htmlExport], { type: 'application/vnd.ms-excel;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
