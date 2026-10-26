@@ -1,4 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {randomUUID}=require('node:crypto');
 const {startFixture}=require('./test-support/as-fixture.cjs');
 const removed=[
 '/api/scan','/api/records','/api/records/example','/api/tracking','/api/master/upload','/api/master','/api/master/lookup','/api/master/all','/api/master/example',
@@ -14,7 +15,7 @@ test('retired APIs return 404 for every method and leave all fixture data untouc
   const names=fs.readdirSync(f.dir).filter(n=>n.endsWith('.json'));
   const before=Object.fromEntries(names.map(n=>[n,fs.readFileSync(path.join(f.dir,n),'utf8')]));
   for(const endpoint of removed)for(const method of ['GET','POST','PUT','PATCH','DELETE']){
-   const response=await fetch(f.url+endpoint,{method,headers:{cookie,'X-Requested-With':'process-server','Content-Type':'application/json'},...(method==='GET'?{}:{body:'{}'})});
+   const response=await fetch(f.url+endpoint,{method,headers:{cookie,'Idempotency-Key':randomUUID(),'X-Requested-With':'process-server','Content-Type':'application/json'},...(method==='GET'?{}:{body:'{}'})});
    assert.equal(response.status,404,method+' '+endpoint);await response.text();
   }
   for(const n of names)assert.equal(fs.readFileSync(path.join(f.dir,n),'utf8'),before[n],n);
@@ -25,7 +26,7 @@ test('login, users, products, AS attachments and workflow operate without retire
  const f=await startFixture();
  try{
   let cookie='';
-  const request=(endpoint,method='GET',body)=>fetch(f.url+endpoint,{method,headers:{cookie,'X-Requested-With':'process-server',...(body instanceof FormData?{}:{'Content-Type':'application/json'})},...(body?{body:body instanceof FormData?body:JSON.stringify(body)}:{})});
+  const request=(endpoint,method='GET',body)=>fetch(f.url+endpoint,{method,headers:{cookie,'Idempotency-Key':randomUUID(),'X-Requested-With':'process-server',...(body instanceof FormData?{}:{'Content-Type':'application/json'})},...(body?{body:body instanceof FormData?body:JSON.stringify(body)}:{})});
   const login=async()=>{const r=await request('/api/login','POST',{id:'admin',password:'Fixture-passphrase-2026!'});assert.equal(r.status,200);cookie=r.headers.get('set-cookie').split(';')[0];};
   assert.equal((await request('/api/login','POST',{id:'admin',password:'wrong'})).status,401);
   await login();
@@ -43,14 +44,14 @@ test('login, users, products, AS attachments and workflow operate without retire
   const created=await request('/api/as','POST',form);assert.equal(created.status,200);const item=(await created.json()).item;
   assert.equal(item.materialCode,'AS-MATERIAL');assert.equal(item.files.length,1);
   assert.equal(await (await request('/uploads/'+item.files[0].filename)).text(),'attachment fixture');
-  const update=new FormData();update.set('remark','Updated');assert.equal((await request('/api/as/'+item.id,'PUT',update)).status,200);
-  const transition=new FormData();transition.set('payload',JSON.stringify({action:'advance',next:'제작 요청',revision:0,owner:'Owner',dueDate:'2099-12-30'}));
+  const update=new FormData();update.set('remark','Updated');update.set('version','0');assert.equal((await request('/api/as/'+item.id,'PUT',update)).status,200);
+  const transition=new FormData();transition.set('payload',JSON.stringify({action:'advance',next:'제작 요청',revision:1,version:1,owner:'Owner',dueDate:'2099-12-30'}));
   assert.equal((await request('/api/as/'+item.id+'/workflow','PATCH',transition)).status,200);
-  assert.equal((await request('/api/as/'+item.id,'DELETE')).status,200);
+  assert.equal((await request('/api/as/'+item.id,'DELETE',{version:2,changeReason:'fixture cleanup'})).status,200);
   assert.equal((await request('/api/products/Renamed','DELETE')).status,200);
   assert.equal((await request('/api/logout','POST',{})).status,200);
   assert.equal((await request('/api/as')).status,401);
-  for(const resource of ['/','/login.html','/dashboard.html','/auth-client.js','/as-workflow-ui.js','/as-amount.js','/cover-assets/user-management-basic.css'])assert.equal((await fetch(f.url+resource)).status,200,resource);
+  for(const resource of ['/','/login.html','/dashboard.html','/auth-client.js','/as-integrity-ui.js','/as-workflow-ui.js','/as-amount.js','/cover-assets/user-management-basic.css'])assert.equal((await fetch(f.url+resource)).status,200,resource);
   for(const resource of ['/data.json','/as.json','/products.json','/dashboard_old.html','/dashboard%20(6).html'])assert.equal((await fetch(f.url+resource)).status,404,resource);
  }finally{await f.close();}
 });

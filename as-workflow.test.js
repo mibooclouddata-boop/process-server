@@ -80,36 +80,9 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  const context={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
  const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',product:'<script>bad</script>',materialCode:'MAT-01',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
  assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('as-doc-header'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
- assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=receipt-black-7"><\/script>/g)||[]).length,1);
+ assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=integrity-1"><\/script>/g)||[]).length,1);
 });
-test('workflow API persists only valid requests and blocks stale edits',()=>{
- const src=fs.readFileSync(__dirname+'/server.js','utf8');const from=src.lastIndexOf("app.patch('/api/as/:id/workflow'"),to=src.indexOf("app.delete('/api/as/:id'",from);
- let handler,saved,stored={list:[base()]};
- const context={app:{patch:(path,...handlers)=>handler=handlers.at(-1)},authenticateAsWorkflow(){},asUpload:{array:()=>null},loadAs:()=>structuredClone(stored),loadData:()=>({users:[{...actor,id:'test'}]}),saveAs:data=>{saved=data;stored=data;},asWorkflow:{applyWorkflow:(item,input,who)=>applyWorkflow(item,input,who,day,now)},fs,Buffer};
- vm.createContext(context);vm.runInContext(src.slice(src.indexOf('function canManageAs('),src.indexOf('function authorizeAsChange(')),context);vm.runInContext(src.slice(from,to),context);
- const call=body=>{const res={code:200,status(code){this.code=code;return this;},json(data){this.data=data;return this;}};handler({params:{id:'test'},asActor:body.actorId==='test'?actor:null,body,files:[]},res);return res;};
- const payload={actorId:'test',revision:0,action:'advance',next:'제작 요청',owner:'담당',dueDate:day};
- assert.equal(call({...payload,actorId:'unknown'}).code,403);assert.equal(saved,undefined);
- assert.equal(call(payload).code,200);assert.equal(saved.list[0].status,'제작 요청');assert.equal(call(payload).code,409);
- assert.equal(context.canManageAs(actor,{createdBy:actor.name}),false);
- assert.equal(context.canManageAs({...actor,id:'other'},base()),false);
- assert.equal(context.canManageAs({...actor,name:'변경된 이름'},base()),true);
-});
-
-﻿test('delivery agreement date persists, clears and validates without changing production due dates',()=>{
- const src=fs.readFileSync(__dirname+'/server.js','utf8');const start=src.indexOf("app.post('/api/as',"),end=src.indexOf("app.patch('/api/as/:id/review'",start);
- let post,put,stored={list:[],monthSeq:{}};
- const context={app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},AsAmount:require('./as-amount'),asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>stored=data,Buffer,Date};
- vm.createContext(context);vm.runInContext(src.slice(start,end),context);
- const call=(handler,body)=>{const r={code:200,status(c){this.code=c;return this;},json(data){this.data=data;}};handler({body,user:{id:'test',name:'테스트'},files:[],params:{id:stored.list[0]?.id}},r);return r;};
- const body={ship:'TEST',block:'B',reason:'품질 불량',deliveryAgreedDate:'2026-11-01'};
- assert.equal(call(post,body).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-01');
- assert.equal(call(put,{remark:'test'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-01');
- assert.equal(call(put,{deliveryAgreedDate:'2026-11-02'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-02');
- assert.equal(call(put,{deliveryAgreedDate:''}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'');
- for(const value of ['2026-02-30','invalid',null,20261020]){assert.equal(call(put,{deliveryAgreedDate:value}).code,400);assert.equal(call(post,{...body,deliveryAgreedDate:value}).code,400);}
- stored.list[0].status='제작 요청';assert.equal(call(put,{deliveryAgreedDate:'2026-11-03'}).code,200);assert.equal(stored.list[0].deliveryAgreedDate,'2026-11-03');
-});
+// API persistence, validation, authorization and conflicts are exercised by as-integrity.test.cjs.
 
 test('approval slots show the authenticated completer for each stage and preserve old audit names',()=>{
  const c={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
@@ -133,30 +106,8 @@ test('approval slots show the authenticated completer for each stage and preserv
  assert.equal((received.match(/class="as-doc-approval-stamp"/g)||[]).length,1);assert(received.includes('<time datetime="'+day+'">'+day.replace(/-/g,'.')+'</time>'));
 });
 
-test('receipt amounts persist, clear and validate in every workflow status without changing workflow',()=>{
- const src=fs.readFileSync(__dirname+'/server.js','utf8'),start=src.indexOf("app.post('/api/as',"),end=src.indexOf("app.patch('/api/as/:id/review'",start);
- let post,put,stored={list:[],monthSeq:{}},writes=0;
+test('receipt amounts format, sort and remain editable across workflow states',()=>{
  const AsAmount=require('./as-amount');
- const c={AsAmount,app:{post:(path,m,fn)=>post=fn,put:(path,m,fn)=>put=fn},asUpload:{array:()=>null},asWorkflow:require('./as-workflow'),loadAs:()=>structuredClone(stored),saveAs:data=>{stored=data;writes++;},Buffer,Date};
- vm.createContext(c);vm.runInContext(src.slice(start,end),c);
- const call=(fn,body)=>{const r={code:200,status(code){this.code=code;return this;},json(data){this.data=data;}};fn({body,user:{id:'test',name:'테스트'},files:[],params:{id:stored.list[0]?.id}},r);return r;};
- const body={ship:'2601',block:'T100P',reason:'품질 불량',amount:'1,234,567'};
- assert.equal(call(post,body).code,200);assert.equal(stored.list[0].amount,1234567);
- assert.equal(call(put,{remark:'비고 수정'}).code,200);assert.equal(stored.list[0].amount,1234567);
- assert.equal(call(put,{amount:'0'}).code,200);assert.equal(stored.list[0].amount,0);
- assert.equal(call(put,{amount:''}).code,200);assert.equal(stored.list[0].amount,null);
- for(const amount of ['-1','1.5','1e3','1,23','NaN','Infinity','9007199254740992',[],{},true]){
-  const before=writes;assert.equal(call(put,{amount}).code,400);assert.equal(call(post,{...body,amount}).code,400);assert.equal(writes,before);
- }
- assert.equal(call(put,{amount:'9007199254740991'}).code,200);assert.equal(stored.list[0].amount,Number.MAX_SAFE_INTEGER);
- for(const status of ['접수','제작 요청','도장 요청','납품 요청','완료']){
-  stored.list[0].status=status;stored.list[0].workflow={revision:7,stages:{'제작 요청':{completedDate:'2026-10-20'}},history:[{type:'complete',stage:'제작 요청'}]};
-  const workflow=structuredClone(stored.list[0].workflow);
-  assert.equal(call(put,{amount:'2000',product:'VERTICAL LADDER',remark:'내용 수정',status}).code,200);
-  assert.equal(stored.list[0].amount,2000);assert.equal(stored.list[0].status,status);assert.deepEqual(stored.list[0].workflow,workflow);
-  const before=writes;assert.equal(call(put,{amount:'3000',status:status==='완료'?'접수':'완료'}).code,400);assert.equal(writes,before);assert.equal(stored.list[0].amount,2000);
- }
- stored.list[0].legacyStatus='승인 요청';assert.equal(call(put,{amount:'5000'}).code,200);assert.equal(stored.list[0].legacyStatus,'승인 요청');
  assert.equal(AsAmount.format(0),'0');assert.equal(AsAmount.format(null),'');assert.equal(AsAmount.format(1234567),'1,234,567');
  const ui={AsAmount};vm.createContext(ui);const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');vm.runInContext(html.slice(html.indexOf('function _sortAsListBy('),html.indexOf('function sortAsTable(')),ui);
  const rows=[{amount:1000},{amount:null},{amount:0},{amount:20}];
@@ -239,7 +190,7 @@ test('remark editing preserves unsaved input on validation, HTTP and network err
   const elements={asRemarkError:{},asRemarkSave:{},asRemarkCancel:{},asLedgerMessage:{}};
   let calls=0,refreshes=0;
   const input={value:scenario==='validation'?'x'.repeat(501):'수정 내용',setAttribute(){},removeAttribute(){},focus(){}};
-  const c={_asRemarkEditing:{id:'one',saving:scenario==='saving'},document:{getElementById:id=>elements[id]},FormData,SERVER:'',fetch:async()=>{calls++;if(scenario==='network')throw Error('offline');return {ok:scenario!=='http',json:async()=>({error:'저장 실패'})};},loadAsList:async()=>refreshes++};
+  const c={_asFullList:[{id:'one',version:0}],asRecordVersion:item=>item?.version||0,asWrite:async()=>{calls++;if(scenario==='network'||scenario==='http')throw Error('save failed');return {success:true};},_asRemarkEditing:{id:'one',saving:scenario==='saving'},document:{getElementById:id=>elements[id]},FormData,SERVER:'',fetch:async()=>{calls++;if(scenario==='network')throw Error('offline');return {ok:scenario!=='http',json:async()=>({error:'저장 실패'})};},loadAsList:async()=>refreshes++};
   vm.createContext(c);vm.runInContext(source,c);await c.saveRemark(input,'one');
   assert.equal(calls,['validation','saving'].includes(scenario)?0:1);
   assert.equal(refreshes,scenario==='success'?1:0);
@@ -253,7 +204,7 @@ test('bulk deletion reports server failures instead of success, refreshes partia
  const source=html.slice(html.indexOf('async function bulkDeleteAs()'),html.indexOf('function bulkApproveAs()'));
  for(const scenario of ['success','failure','network','cancel']){
   const alerts=[],requests=[];let refreshes=0;
-  const context={asListExampleReadOnly:()=>false,_getSelectedAsItems:()=>[{id:'one'},{id:'two'}],showConfirm:async()=>scenario!=='cancel',SERVER:'',fetch:async url=>{requests.push(url);if(scenario==='network')throw Error('offline');return {ok:scenario!=='failure'||requests.length===1};},showAlert:(message,type)=>alerts.push({message,type}),loadAsList:()=>refreshes++};
+  const context={asChangeReason:async()=> 'test reason',asRecordVersion:()=>0,asWrite:async url=>{requests.push(url);if(scenario==='network'||scenario==='failure'&&requests.length>1)throw Error('save failed');return {success:true};},asListExampleReadOnly:()=>false,_getSelectedAsItems:()=>[{id:'one'},{id:'two'}],showConfirm:async()=>scenario!=='cancel',SERVER:'',fetch:async url=>{requests.push(url);if(scenario==='network')throw Error('offline');return {ok:scenario!=='failure'||requests.length===1};},showAlert:(message,type)=>alerts.push({message,type}),loadAsList:()=>refreshes++};
   vm.createContext(context);vm.runInContext(source,context);await context.bulkDeleteAs();
   if(scenario==='cancel'){assert.equal(requests.length,0);assert.equal(alerts.length,0);assert.equal(refreshes,0);}
   else{assert.equal(refreshes,1);assert.equal(alerts.length,1);assert.equal(alerts[0].type,scenario==='success'?'success':'error');}

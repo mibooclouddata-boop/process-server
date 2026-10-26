@@ -8,7 +8,7 @@ async function startFixture(){
  write('as.json',{list:[],seq:0});write('products.json',[{name:'검증 제품'}]);
  for(const name of ['master.json','map.json','location.json','erp.json','erp_columns.json','column-mappings.json'])write(name,{sentinel:'preserve'});
  fs.mkdirSync(path.join(dir,'uploads'));fs.writeFileSync(path.join(dir,'uploads','existing.txt'),'preserve attachment');
- for(const name of ['cover.html','login.html','dashboard.html','as-workflow-ui.js','as-amount.js','auth-client.js','miboo_logo.png','login-bg.png'])fs.copyFileSync(path.join(root,name),path.join(dir,name));
+ for(const name of ['cover.html','login.html','dashboard.html','as-workflow-ui.js','as-integrity-ui.js','as-amount.js','auth-client.js','miboo_logo.png','login-bg.png'])fs.copyFileSync(path.join(root,name),path.join(dir,name));
  fs.cpSync(path.join(root,'cover-assets'),path.join(dir,'cover-assets'),{recursive:true});
  const requireFromRoot=createRequire(path.join(root,'server.js')),express=requireFromRoot('express'),app=express();
  const wrappedExpress=Object.assign(()=>app,express);
