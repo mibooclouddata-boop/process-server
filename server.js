@@ -87,7 +87,7 @@ app.post('/api/login', async (req,res)=>{
   for(const [key,v] of loginAttempts)if(v.until<=now)loginAttempts.delete(key);
   const key=req.ip;
   const attempts=loginAttempts.get(key)||{count:0,until:now+15*60*1000};
-  if(attempts.count>=20 || pendingLogins>=2 || loginAttempts.size>=10000)return res.status(429).json({error:'잠시 후 다시 시도하세요.'});
+  if(attempts.count>=20 || pendingLogins>=5 || loginAttempts.size>=10000)return res.status(429).json({error:'잠시 후 다시 시도하세요.'});
   attempts.count++;loginAttempts.set(key,attempts);pendingLogins++;
   try {
     const user=loadData().users.find(u=>u.id===id);
