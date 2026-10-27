@@ -1675,7 +1675,8 @@ body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
 <link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=2">
-<link rel="stylesheet" href="/cover-assets/user-management-basic.css?v=1">
+<link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=1">
+<link rel="stylesheet" href="/cover-assets/as-year-select.css?v=1">
 </head>
 <body>
 
@@ -1730,26 +1731,75 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
     <!-- 사용자 관리 탭 -->
     <div id="tabUsers" style="display:none">
-      <div class="page-title-wrap with-action"><div><h1 class="page-title">사용자 관리</h1><p class="page-subtitle">사용자 정보와 AS 권한을 한곳에서 관리합니다.</p></div><button type="button" class="toss-user-new-btn" onclick="openUserModal()">＋ 사용자 추가</button></div>
-      <div class="toss-user-kpi-row">
-      <div class="toss-user-kpi"><span class="toss-user-kpi-label">전체 사용자</span><strong class="toss-user-kpi-value" id="uStatTotal">0</strong></div>
-<div class="toss-user-kpi"><span class="toss-user-kpi-label">시스템 관리자</span><strong class="toss-user-kpi-value" id="uStatSys">0</strong></div>
-<div class="toss-user-kpi"><span class="toss-user-kpi-label">관리자</span><strong class="toss-user-kpi-value" id="uStatAdmin">0</strong></div>
-<div class="toss-user-kpi"><span class="toss-user-kpi-label">작업자</span><strong class="toss-user-kpi-value" id="uStatWorker">0</strong></div>
-      </div>
-      <div class="um-toolbar">
-        <label class="um-search">사용자 검색<input id="umSearch" type="search" placeholder="이름, 아이디, 부서 검색" oninput="renderAdminUsers()"></label>
-        <label>역할<select id="umRole" onchange="renderAdminUsers()"><option value="">전체 역할</option><option value="sysadmin">시스템 관리자</option><option value="admin">관리자</option><option value="worker">작업자</option></select></label>
-        <label>부서<select id="umDepartment" onchange="renderAdminUsers()"><option value="">전체 부서</option></select></label>
-        <button type="button" onclick="resetAdminUserFilters()">필터 초기화</button>
-      </div>
-      <section class="toss-user-card" aria-labelledby="umListTitle">
-        <div class="um-panel-heading"><h2 id="umListTitle">사용자 목록</h2><span>AS 권한을 확인하고 관리하세요.</span></div>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 목록, 가로 스크롤 가능">
-          <table class="user-perm-table"><thead><tr><th scope="col">사용자</th><th scope="col">분류</th><th scope="col">부서 / 직급</th><th scope="col">AS 권한</th><th scope="col">관리</th></tr></thead><tbody id="adminUserRows"></tbody></table>
+      <div class="page-title-wrap with-action">
+        <div>
+          <h1 class="page-title">사용자 관리</h1>
+          <p class="page-subtitle">시스템 사용자와 권한을 관리합니다.</p>
         </div>
-        <div class="um-footer" id="umCount" role="status" aria-live="polite">사용자 목록을 불러오는 중입니다.</div>
-      </section>
+        <button type="button" onclick="openUserModal()" class="toss-user-new-btn" aria-label="새 사용자 추가">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+          <span>사용자 추가</span>
+        </button>
+      </div>
+
+      <!-- KPI 카드 -->
+      <div class="toss-user-kpi-row">
+        <div class="toss-user-kpi">
+          <div class="toss-user-kpi-icon" style="background:#e6eef7;color:#004A93">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="8" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M17 4.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="toss-user-kpi-label">전체</div>
+            <div class="toss-user-kpi-value" id="uStatTotal">0</div>
+          </div>
+        </div>
+        <div class="toss-user-kpi">
+          <div class="toss-user-kpi-icon" style="background:#fef2f2;color:#dc2626">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <div>
+            <div class="toss-user-kpi-label">사용 중</div>
+            <div class="toss-user-kpi-value" id="uStatActive">0</div>
+          </div>
+        </div>
+        <div class="toss-user-kpi">
+          <div class="toss-user-kpi-icon" style="background:#f5f3ff;color:#6d28d9">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          </div>
+          <div>
+            <div class="toss-user-kpi-label">재설정 필요</div>
+            <div class="toss-user-kpi-value" id="uStatInvited">0</div>
+          </div>
+        </div>
+        <div class="toss-user-kpi">
+          <div class="toss-user-kpi-icon" style="background:#ecfdf5;color:#047857">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v2a3 3 0 1 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M6 22v-4a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4"/><circle cx="19" cy="9" r="2"/><circle cx="5" cy="9" r="2"/></svg>
+          </div>
+          <div>
+            <div class="toss-user-kpi-label">관리자 <span class="user-kpi-hint">시스템 포함</span></div>
+            <div class="toss-user-kpi-value" id="uStatAdmin">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 테이블 카드 -->
+      <div class="toss-user-card">
+        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2><p>업무 권한은 상세에서 확인·수정할 수 있습니다.</p></div>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 명부, 좁은 화면에서는 가로로 스크롤">
+          <table class="user-roster-table">
+            <thead><tr>
+              <th scope="col" class="user-select-cell"><label class="user-check-target"><input type="checkbox" id="userSelectPage" aria-label="현재 페이지 사용자 전체 선택"></label></th>
+              <th scope="col">사용자</th>
+              <th scope="col">부서 / 직급</th>
+              <th scope="col">역할</th>
+              <th scope="col">계정 상태</th>
+              <th scope="col">업무 권한</th>
+              <th scope="col">관리</th>
+            </tr></thead>
+            <tbody id="adminUserRows"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- AS 접수 탭 -->
@@ -2086,32 +2136,42 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
       </div>
     </div>
 
-    <!-- 사용자 추가/수정 모달 -->
-    <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeUserModal()">
+    <dialog class="modal-overlay" aria-labelledby="modalTitle" id="userModal">
       <div class="modal-box">
         <div class="modal-header">
-          <h3 id="modalTitle">새 사용자 추가</h3>
-          <button class="modal-close" onclick="closeUserModal()" aria-label="닫기">&times;</button>
+          <div class="user-modal-identity"><h3 id="modalTitle">새 사용자 추가</h3><p id="userModalIdentity"></p></div>
+          <button type="button" class="modal-close" onclick="closeUserModal()" aria-label="사용자 관리 닫기">&times;</button>
         </div>
+        <div class="user-save-strip"><span id="userSaveStatus" role="status" aria-live="polite">사용자 정보를 입력하세요.</span><button type="button" id="userReloadCurrent" hidden onclick="reloadEditingUser()">최신 정보 다시 불러오기</button></div>
+        <nav class="user-modal-tabs" id="userModalTabs" role="tablist" aria-label="사용자 관리 항목">
+          <button type="button" role="tab" id="userTabInfo" data-user-tab="info" aria-controls="userPanelInfo" aria-selected="true" onclick="selectUserModalTab('info')">기본정보</button>
+          <button type="button" role="tab" id="userTabPermissions" data-user-tab="permissions" aria-controls="userPanelPermissions" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('permissions')">업무 권한</button>
+          <button type="button" role="tab" id="userTabAccount" data-user-tab="account" aria-controls="userPanelAccount" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('account')">계정 사용관리</button>
+        </nav>
         <div class="modal-body">
+        <section id="userPanelInfo" role="tabpanel" aria-labelledby="userTabInfo">
+          <h4 class="user-section-title">기본정보</h4>
           <div class="modal-row">
             <div class="modal-field">
-              <label>아이디 *</label>
-              <input id="modalUserId" placeholder="아이디" autocomplete="off"/>
+              <label for="modalUserId">아이디 *</label>
+              <input id="modalUserId" placeholder="아이디" maxlength="64" autocomplete="off"/>
+              <small id="userIdHint">영문·숫자·마침표·밑줄·하이픈</small>
             </div>
-            <div class="modal-field">
-              <label>비밀번호 * <span class="hint" id="modalPwHint" style="display:none">(빈칸이면 유지)</span></label>
-              <input id="modalUserPw" placeholder="비밀번호" type="password" autocomplete="new-password"/>
+            <div class="modal-field" id="userCreatePassword">
+              <label for="modalUserPw">초기 비밀번호 *</label>
+              <input id="modalUserPw" placeholder="비밀번호" type="password" minlength="12" maxlength="128" autocomplete="new-password"/>
+              <small>12~128자</small>
             </div>
           </div>
           <div class="modal-row">
             <div class="modal-field">
-              <label>이름 *</label>
-              <input id="modalUserName" placeholder="이름"/>
+              <label for="modalUserName">이름 *</label>
+              <input id="modalUserName" placeholder="이름" maxlength="80" data-user-field="name"/>
+              <small id="userErrorName" class="user-field-error"></small>
             </div>
             <div class="modal-field">
-              <label>역할</label>
-              <select id="modalUserRole">
+              <label for="modalUserRole">역할</label>
+              <select id="modalUserRole" data-user-field="role">
                 <option value="worker">작업자</option>
                 <option value="admin">관리자</option>
                 <option value="sysadmin">시스템 관리자</option>
@@ -2120,35 +2180,53 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
           </div>
           <div class="modal-row">
             <div class="modal-field">
-              <label>부서</label>
-              <input id="modalUserDept" placeholder="부서"/>
+              <label for="modalUserDept">부서</label>
+              <input id="modalUserDept" placeholder="부서" maxlength="80" data-user-field="department"/>
             </div>
             <div class="modal-field">
-              <label>직급</label>
-              <input id="modalUserPos" placeholder="직급"/>
+              <label for="modalUserPos">직급</label>
+              <input id="modalUserPos" placeholder="직급" maxlength="80" data-user-field="position"/>
             </div>
           </div>
+          <p class="user-modal-help" id="userBasicHelp">이름·부서·직급은 입력을 마치면, 역할은 선택하면 바로 저장됩니다.</p>
+        </section>
+        <section id="userPanelPermissions" role="tabpanel" aria-labelledby="userTabPermissions" hidden>
+          <h4 class="user-section-title">업무 권한 <span id="userPermissionCount"></span></h4>
+          <p class="user-modal-help" id="userRolePermissionHint"></p>
+
           <div class="modal-field" style="margin-top:8px">
             <label>AS 결재 권한</label>
             <div class="modal-steps" id="modalAsPerms">
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#fcd34d" aria-hidden="true"></span><span class="mst-txt">AS 검토</span></div>
-              <div class="modal-step-item" role="switch" aria-checked="false" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#c4b5fd" aria-hidden="true"></span><span class="mst-txt">AS 승인</span></div>
+              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#fcd34d" aria-hidden="true"></span><span class="mst-txt">AS 검토</span></button>
+              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#c4b5fd" aria-hidden="true"></span><span class="mst-txt">AS 승인</span></button>
             </div>
           </div>
+        </section>
+        <section id="userPanelAccount" role="tabpanel" aria-labelledby="userTabAccount" hidden>
+          <h4 class="user-section-title">계정 사용관리</h4>
+          <div class="user-account-options">
+            <section class="user-account-option"><div><h4>개별 업무 권한 해제</h4><p id="userClearPermissionsHint">개별 업무 권한을 모두 해제합니다. 로그인과 계정 정보는 유지됩니다.</p></div><button type="button" id="userClearPermissions" onclick="clearUserPermissions()">업무 권한 모두 해제</button></section>
+            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인할 수 없습니다. 기본정보와 배정된 권한은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
+            <section class="user-account-option user-account-delete"><div><h4>사용자 삭제</h4><p><span id="userDeleteHint">사용자 명부에서 계정을 삭제합니다. 삭제 시 확인창이 열립니다.</span></p></div><button type="button" id="userDeleteAccount" onclick="deleteAdminUser(userAdmin.editing)">사용자 삭제</button></section>
+          </div>
+          <details class="user-account-details"><summary>비밀번호 변경</summary><label for="userReplacementPassword">새 비밀번호</label><input type="password" id="userReplacementPassword" minlength="12" maxlength="128" autocomplete="new-password"/><small>12~128자 · 변경하면 해당 계정의 기존 로그인이 종료됩니다.</small><button type="button" id="userChangePassword" onclick="changeUserPassword()">비밀번호 변경</button></details>
+        </section>
         </div>
-        <div class="modal-msg" id="modalMsg"></div>
+        <div class="modal-msg" id="modalMsg" role="alert" aria-live="assertive"></div>
         <div class="modal-footer">
-          <button class="admin-btn admin-btn-secondary" onclick="closeUserModal()">취소</button>
-          <button class="admin-btn admin-btn-primary" onclick="submitModalUser()">저장</button>
+          <span id="userModalFooterHint">변경은 서버에 바로 저장됩니다.</span>
+          <button type="button" class="admin-btn admin-btn-secondary" onclick="closeUserModal()">닫기</button>
+          <button type="button" id="userCreateSubmit" class="admin-btn admin-btn-primary" onclick="submitModalUser()">사용자 등록</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
   </div>
   </div>
 </div>
 
 <script src="/auth-client.js"></script>
+<script src="/user-admin-ui.js?v=1"></script>
 <script src="/as-amount.js"></script>
 <script>
 
@@ -2270,6 +2348,7 @@ function switchTab(tab, el, sub) {
   }
   document.getElementById('tabAs').style.display=tab==='as'?'block':'none';
   document.getElementById('tabUsers').style.display=tab==='users'?'block':'none';
+  document.body.classList.toggle('user-roster-active',tab==='users');
   if(tab==='as'){
     document.getElementById('asSubList').style.display=_asSubMode==='list'?'':'none';
     document.getElementById('asSubProduct').style.display=_asSubMode==='product'?'':'none';
@@ -2539,164 +2618,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ── 관리자: 모달 ──
-let modalEditingId = null;
-
-
-function toggleStep(el) {
-  el.classList.toggle('on');
-  el.setAttribute('aria-checked', el.classList.contains('on') ? 'true' : 'false');
-}
-
-function showModalMsg(text, type) {
-  const el = document.getElementById('modalMsg');
-  el.textContent = text;
-  el.className = `modal-msg ${type}`;
-  setTimeout(() => { el.className = 'modal-msg'; }, 3000);
-}
-
-function openUserModal(user) {
-  modalEditingId = user ? user.id : null;
-  document.getElementById('modalTitle').textContent = user ? `사용자 수정: ${user.name}` : '새 사용자 추가';
-  document.getElementById('modalUserId').value = user ? (user.loginId || user.id) : '';
-  document.getElementById('modalUserId').disabled = !!user;
-  document.getElementById('modalUserPw').value = '';
-  document.getElementById('modalPwHint').style.display = user ? '' : 'none';
-  document.getElementById('modalUserName').value = user ? user.name : '';
-  document.getElementById('modalUserRole').value = user ? user.role : 'worker';
-  document.getElementById('modalUserDept').value = user ? (user.department || '') : '';
-  document.getElementById('modalUserPos').value = user ? (user.position || '') : '';
-  document.getElementById('modalMsg').className = 'modal-msg';
-  document.querySelectorAll('#modalAsPerms .modal-step-item').forEach(el => {
-    const isOn = user ? (user[el.dataset.perm] === true) : false;
-    el.classList.toggle('on', isOn);
-    el.setAttribute('aria-checked', isOn ? 'true' : 'false');
-  });
-  document.getElementById('userModal').classList.add('open');
-}
-
-function closeUserModal() {
-  document.getElementById('userModal').classList.remove('open');
-  modalEditingId = null;
-}
-
-let adminUsersCache = [];
-let adminUsersLoadVersion = 0;
-function umEscape(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function resetAdminUserFilters() {
-  ['umSearch','umRole','umDepartment'].forEach(id => document.getElementById(id).value = '');
-  renderAdminUsers();
-}
-function renderAdminUsers() {
-  const query = document.getElementById('umSearch').value.trim().toLocaleLowerCase();
-  const role = document.getElementById('umRole').value;
-  const department = document.getElementById('umDepartment').value;
-  const order = {sysadmin:0,admin:1,worker:2};
-  const names = {sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
-  const list = adminUsersCache.filter(u => (!role || u.role === role) && (!department || (u.department || '미지정') === department) && (!query || [u.name,u.loginId,u.id,u.department].join(' ').toLocaleLowerCase().includes(query)))
-    .sort((a,b) => ((order[a.role] ?? 9)-(order[b.role] ?? 9)) || String(a.name || '').localeCompare(String(b.name || ''),'ko'));
-  const tbody = document.getElementById('adminUserRows');
-  tbody.innerHTML = list.length ? list.map(u => {
-    const roleKey = Object.hasOwn(names,u.role) ? u.role : 'worker';
-    const index = adminUsersCache.indexOf(u);
-    const asBadge = (label,on) => '<span class="um-permission'+(on?'':' is-off')+'">'+label+' '+(on?'허용':'없음')+'</span>';
-    return '<tr><td><div class="um-person"><span class="um-avatar" aria-hidden="true">'+umEscape(String(u.name || '?').slice(0,1))+'</span><div><strong>'+umEscape(u.name)+'</strong><small>'+umEscape(u.loginId || u.id)+'</small></div></div></td>'+
-      '<td><span class="ut-cat ut-cat-'+roleKey+'">'+names[roleKey]+'</span>'+(u.passwordResetRequired?'<small>비밀번호 재설정 필요</small>':'')+'</td><td>'+umEscape(u.department || '미지정')+'<small class="um-position">'+umEscape(u.position || '—')+'</small></td>'+
-      '<td>'+asBadge('AS 검토',!!u.asReview)+asBadge('AS 승인',!!u.asApprove)+'</td>'+
-      '<td><div class="um-actions"><button type="button" data-um-edit="'+index+'" aria-label="'+umEscape(u.name)+' 수정">수정</button>'+(u.authProvider==='supabase'?'<button type="button" data-um-active="'+index+'">'+(u.active?'비활성화':'활성화')+'</button>':u.id==='admin'?'':'<button type="button" data-um-delete="'+index+'" aria-label="'+umEscape(u.name)+' 삭제">삭제</button>')+'</div></td></tr>';
-  }).join('') : '<tr><td colspan="5" class="um-empty">'+(adminUsersCache.length?'검색 조건에 맞는 사용자가 없습니다.':'등록된 사용자가 없습니다.')+'</td></tr>';
-  tbody.querySelectorAll('[data-um-active]').forEach(button=>button.addEventListener('click',()=>toggleAdminUserActive(adminUsersCache[Number(button.dataset.umActive)])));
-  tbody.querySelectorAll('[data-um-edit]').forEach(button=>button.addEventListener('click',()=>openUserModal(adminUsersCache[Number(button.dataset.umEdit)])));
-  tbody.querySelectorAll('[data-um-delete]').forEach(button=>button.addEventListener('click',()=>{const u=adminUsersCache[Number(button.dataset.umDelete)];deleteAdminUser(u.id,u.name);}));
-  document.getElementById('umCount').textContent = '조회 '+list.length+'명 / 전체 '+adminUsersCache.length+'명';
-}
-async function toggleAdminUserActive(user) {
-  if(!confirm(user.name+' 계정을 '+(user.active?'비활성화':'활성화')+'하시겠습니까?'))return;
-  try {
-    const r=await fetch(`${SERVER}/api/users/${encodeURIComponent(user.id)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!user.active})});
-    const data=await r.json();if(!r.ok){alert(data.error||'계정 변경 실패');return;}await loadAdminUsers();
-  }catch{alert('서버 연결 오류');}
-}
-async function loadAdminUsers() {
-  const version = ++adminUsersLoadVersion;
-  document.getElementById('umCount').textContent = '사용자 목록을 불러오는 중입니다.';
-  try {
-    const r = await fetch(`${SERVER}/api/users`);
-    if (!r.ok) throw new Error('users request failed');
-    const data = await r.json();
-    if (version !== adminUsersLoadVersion) return;
-    adminUsersCache = Array.isArray(data.users) ? data.users : [];
-    const counts = {sysadmin:0,admin:0,worker:0};
-    adminUsersCache.forEach(u => { if(Object.hasOwn(counts,u.role)) counts[u.role]++; });
-    for(const [id,value] of Object.entries({Total:adminUsersCache.length,Sys:counts.sysadmin,Admin:counts.admin,Worker:counts.worker})) document.getElementById('uStat'+id).textContent=value;
-    const department = document.getElementById('umDepartment');
-    const previous = department.value;
-    const departments = [...new Set(adminUsersCache.map(u=>u.department || '미지정'))].sort((a,b)=>a.localeCompare(b,'ko'));
-    department.innerHTML = '<option value="">전체 부서</option>'+departments.map(d=>'<option value="'+umEscape(d)+'">'+umEscape(d)+'</option>').join('');
-    department.value = departments.includes(previous) ? previous : '';
-    renderAdminUsers();
-  } catch(e) {
-    if (version !== adminUsersLoadVersion) return;
-    adminUsersCache = [];
-    ['Total','Sys','Admin','Worker'].forEach(id=>document.getElementById('uStat'+id).textContent='—');
-    document.getElementById('adminUserRows').innerHTML = '<tr><td colspan="5" class="um-empty">사용자 목록을 불러오지 못했습니다. <button type="button" onclick="loadAdminUsers()">다시 시도</button></td></tr>';
-    document.getElementById('umCount').textContent = '서버 연결 오류';
-  }
-}
-
-// ── 관리자: 모달에서 저장 ──
-async function submitModalUser() {
-  const id = document.getElementById('modalUserId').value.trim();
-  const pw = document.getElementById('modalUserPw').value;
-  const name = document.getElementById('modalUserName').value.trim();
-  const role = document.getElementById('modalUserRole').value;
-  const department = document.getElementById('modalUserDept').value.trim();
-  const position = document.getElementById('modalUserPos').value.trim();
-  const asReview = document.querySelector('#modalAsPerms [data-perm="asReview"]')?.classList.contains('on') || false;
-  const asApprove = document.querySelector('#modalAsPerms [data-perm="asApprove"]')?.classList.contains('on') || false;
-
-  if (!id) { showModalMsg('아이디를 입력하세요.', 'error'); return; }
-  if (!name) { showModalMsg('이름을 입력하세요.', 'error'); return; }
-  if ((!modalEditingId || pw) && (pw.length < 12 || pw.length > 128)) { showModalMsg('비밀번호는 12~128자로 입력하세요.', 'error'); return; }
-
-  try {
-    let r;
-    if (modalEditingId) {
-      const body = { name, role, department, position, asReview, asApprove };
-      if (pw) body.password = pw;
-      r = await fetch(`${SERVER}/api/users/${encodeURIComponent(modalEditingId)}`, {
-        method:'PUT', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(body)
-      });
-    } else {
-      r = await fetch(`${SERVER}/api/users`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ id, password: pw, name, role, department, position, asReview, asApprove })
-      });
-    }
-    const data = await r.json();
-    if (!r.ok) { showModalMsg(data.error || '저장 실패', 'error'); return; }
-    closeUserModal();
-    loadAdminUsers();
-  } catch(e) {
-    showModalMsg('서버 연결 오류', 'error');
-  }
-}
-
-// ── 관리자: 사용자 삭제 ──
-async function deleteAdminUser(id, name) {
-  if (!confirm(`"${name}" (${id}) 사용자를 삭제하시겠습니까?`)) return;
-  try {
-    const r = await fetch(`${SERVER}/api/users/${encodeURIComponent(id)}`, { method: 'DELETE' });
-    const data = await r.json();
-    if (!r.ok) { alert(data.error || '삭제 실패'); return; }
-    loadAdminUsers();
-  } catch(e) {
-    alert('서버 연결 오류');
-  }
-}
+// 사용자 관리는 /user-admin-ui.js에서 처리합니다.
 
 // ── AS 접수 ──
 let asEditingId = null;
@@ -4237,8 +4159,8 @@ function createAsReadableTrend(chart){
  root.dataset.overviewLayout='comparison';
  const context=root.querySelector('.as-overview-section:not(.as-overview-period)');
  context.querySelector('span').textContent='현재 상태 기준 · 전체 기간 · 완료 제외';
- const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><label class="as-chart-sr-only" for="asStatsYear">조회연도</label></div><span class="as-year-basis">접수일 기준</span>';$('asKpiRow').after(basis);
- basis.querySelector('label').after($('asStatsYear'));
+ const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><label class="as-chart-sr-only" for="asStatsYear">조회연도</label><span class="as-year-heading-select"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div>';$('asKpiRow').after(basis);
+ basis.querySelector('.as-year-heading-select').prepend($('asStatsYear'));
  $('asStatsReasonsTitle').textContent='유형별 집계';
  const heading=root.querySelector('.as-trend-stack .as-stats-chart-heading');
  const trendPanel=heading.closest('.as-stats-chart-panel');

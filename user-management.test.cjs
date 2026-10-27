@@ -1,40 +1,60 @@
-const {test}=require('node:test');
-const assert=require('node:assert/strict');
-const vm=require('node:vm');
-const fs=require('node:fs');
-const html=fs.readFileSync('dashboard.html','utf8');
-const source=html.slice(html.indexOf('let adminUsersCache ='),html.indexOf('// ── 관리자: 모달에서 저장'));
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const {startFixture}=require('./test-support/as-fixture.cjs');
+const source=fs.readFileSync(require('node:path').join(__dirname,'user-admin-ui.js'),'utf8');
 function setup(){
- const elements=new Map();
- const get=id=>{if(!elements.has(id))elements.set(id,{value:'',innerHTML:'',textContent:'',querySelectorAll:()=>[]});return elements.get(id)};
- let response={ok:true,json:async()=>({users:[]})};
- const ctx={document:{getElementById:get},SERVER:'',fetch:async()=>response};
- vm.createContext(ctx);vm.runInContext(source,ctx);
- return {ctx,get,respond:r=>response=r,seed:users=>vm.runInContext('adminUsersCache='+JSON.stringify(users),ctx)};
+ const elements=new Map(),get=id=>{if(!elements.has(id))elements.set(id,{value:'',textContent:'',className:'',classList:{toggle(){}},setAttribute(){}});return elements.get(id);};
+ const redirects=[],ctx={document:{getElementById:get},currentUser:{id:'root'},location:{replace:url=>redirects.push(url)},console};vm.createContext(ctx);vm.runInContext(source,ctx);
+ vm.runInContext('paintUserModal=()=>{};renderAdminUsers=()=>{};',ctx);
+ const run=s=>vm.runInContext(s,ctx);return {ctx,get,run,redirects};
 }
-test('user summary escapes untrusted names, keeps actual permissions and protects default admin',()=>{
- const {ctx,get,seed}=setup();
- seed([{id:'admin',name:"<img onerror='x'>",role:'sysadmin',allowedSteps:['incoming','unknown'],asReview:true,asApprove:false}]);
- ctx.renderAdminUsers();const rows=get('adminUserRows').innerHTML;
- assert(!rows.includes('<img'));assert(rows.includes('&lt;img'));assert(!rows.includes('개 허용'));assert(rows.includes('AS 검토 허용'));assert(rows.includes('AS 승인 없음'));assert(!rows.includes('data-um-delete'));
+test('provider identities, status and AS-only permissions preserve the main contract',()=>{
+ const {ctx}=setup();assert.equal(ctx.userLoginId({id:'uuid',loginId:'EMP-1'}),'EMP-1');
+ assert.equal(ctx.normalizeAdminUser({active:false}).status,'suspended');assert.equal(ctx.normalizeAdminUser({passwordResetRequired:true}).status,'invited');
+ assert.equal(ctx.userPermissionCount({role:'sysadmin'}),2);assert.equal(ctx.userPermissionCount({role:'admin',allowedSteps:['incoming'],asReview:true}),1);
 });
-test('combined search, department and role filters, reset and no-results',()=>{
- const {ctx,get,seed}=setup();
- seed([{id:'a',name:'가나다',role:'admin',department:'품질'}, {id:'b',name:'라마바',role:'worker'}]);
- get('umRole').value='admin';get('umSearch').value='품질';ctx.renderAdminUsers();assert.equal(get('umCount').textContent,'조회 1명 / 전체 2명');
- get('umDepartment').value='미지정';ctx.renderAdminUsers();assert(get('adminUserRows').innerHTML.includes('검색 조건'));
- ctx.resetAdminUserFilters();assert.equal(get('umCount').textContent,'조회 2명 / 전체 2명');
- get('umDepartment').value='미지정';ctx.renderAdminUsers();assert.equal(get('umCount').textContent,'조회 1명 / 전체 2명');
+test('autosave serializes rapid edits, sends only supported fields and reloads server values',async()=>{
+ const {ctx,run}=setup();run("userAdmin.editing={id:'worker',name:'Old'}");let release;const calls=[];let saved={id:'worker',name:'Old'};
+ ctx.userApi=async(url,options)=>{if(options){const patch=JSON.parse(options.body);calls.push(patch);if(calls.length===1)await new Promise(r=>release=r);saved={...saved,...patch};return {success:true};}return {users:[saved]};};
+ const pending=ctx.queueUserChange({name:'First'});ctx.queueUserChange({department:'품질'});release();assert.equal(await pending,true);
+ assert.deepEqual(calls,[{name:'First'},{department:'품질'}]);assert.equal(run('userAdmin.editing.department'),'품질');assert.equal(run('userAdmin.saving'),null);
 });
-test('loading empty data resets counts and HTTP failures show retry',async()=>{
- const {ctx,get,respond}=setup();
- respond({ok:true,json:async()=>({users:[{id:'a',name:'가',role:'worker'}]})});await ctx.loadAdminUsers();assert.equal(get('uStatTotal').textContent,1);
- respond({ok:true,json:async()=>({users:[]})});await ctx.loadAdminUsers();assert.equal(get('uStatTotal').textContent,0);assert(get('adminUserRows').innerHTML.includes('등록된 사용자'));
- respond({ok:false});await ctx.loadAdminUsers();assert.equal(get('uStatTotal').textContent,'—');assert(get('adminUserRows').innerHTML.includes('다시 시도'));
+test('failed autosave retains the edit and blocks further writes until reload',async()=>{
+ const {ctx,run,get}=setup();run("userAdmin.editing={id:'worker',name:'Old'}");let calls=0;ctx.userApi=async()=>{calls++;throw Error('fixture unavailable');};
+ assert.equal(await ctx.queueUserChange({name:'New'}),false);assert.equal(run('userAdmin.failed'),true);assert.equal(run('userAdmin.pending.name'),'New');
+ await ctx.queueUserChange({department:'Other'});assert.equal(calls,1);assert.match(get('modalMsg').textContent,/fixture unavailable/);
 });
-test('a stale response does not replace newer user data',async()=>{
- const {ctx,get}=setup();let resolve;ctx.fetch=()=>new Promise(r=>resolve=r);
- const first=ctx.loadAdminUsers();ctx.fetch=async()=>({ok:true,json:async()=>({users:[{id:'new',name:'new',role:'worker'}]})});
- await ctx.loadAdminUsers();resolve({ok:true,json:async()=>({users:[]})});await first;
- assert.equal(get('uStatTotal').textContent,1);assert(get('adminUserRows').innerHTML.includes('new'));
+test('self edits redirect after successful save without a revoked-session follow-up request',async()=>{
+ const {ctx,run,redirects}=setup();run("userAdmin.editing={id:'root',name:'Root'}");const calls=[];ctx.userApi=async(url,options)=>{calls.push({url,options});return {success:true};};
+ await ctx.queueUserChange({name:'Changed'});assert.equal(calls.length,1);assert.deepEqual(redirects,['/login.html']);
+});
+test('stale list responses cannot replace the latest list',async()=>{
+ const {ctx,run}=setup();ctx.setupUserList=()=>{};let release;ctx.userApi=()=>new Promise(r=>release=r);const first=ctx.loadAdminUsers();ctx.userApi=async()=>({users:[{id:'new'}]});await ctx.loadAdminUsers();release({users:[{id:'old'}]});await first;assert.equal(run('userAdmin.users[0].id'),'new');
+});
+test('bulk edits process self last and report partial failure accurately',async()=>{
+ for(const fail of [false,true]){
+  const {ctx,run,redirects}=setup(),calls=[],messages=[];let refreshed=0;
+  ctx.prompt=()=> '품질';ctx.showToast=x=>messages.push(x);ctx.loadAdminUsers=async()=>{refreshed++;};
+  run("userAdmin.users=[{id:'root'},{id:'worker'}];userAdmin.selected=new Set(['root','worker'])");
+  ctx.userApi=async url=>{calls.push(url);if(fail&&url.endsWith('/root'))throw Error('fixture failure');return {success:true};};
+  await ctx.bulkUserDepartment();assert.deepEqual(calls,['/api/users/worker','/api/users/root']);
+  if(fail){assert.equal(refreshed,1);assert.match(messages[0].message,/1명 반영 후 중단/);assert.equal(redirects.length,0);}else{assert.equal(refreshed,0);assert.deepEqual(redirects,['/login.html']);}
+ }
+});
+test('local account activation validates state, protects last admin and revokes sessions without changing AS data',async t=>{
+ const f=await startFixture();t.after(()=>f.close());let cookie='';
+ const req=(url,method='GET',data,auth=cookie)=>fetch(f.url+url,{method,headers:{cookie:auth,'X-Requested-With':'process-server','Content-Type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});
+ const login=async id=>{const r=await req('/api/login','POST',{id,password:'Fixture-passphrase-2026!'},'');assert.equal(r.status,200);return r.headers.get('set-cookie').split(';')[0];};
+ cookie=await login('admin');const before=JSON.stringify(f.read('as.json'));
+ assert.equal((await req('/api/users','POST',{id:'worker',name:'Fixture worker',password:'Fixture-passphrase-2026!',role:'worker'})).status,200);
+ const worker=await login('worker');assert.equal((await req('/api/users/worker','PUT',{active:false},worker)).status,403);
+ assert.equal((await req('/api/users/worker','PUT',{active:'false'})).status,400);
+ assert.equal((await req('/api/users/worker','PUT',{name:'  '})).status,400);
+ assert.equal((await req('/api/users/admin','PUT',{active:false})).status,400);
+ assert.equal((await req('/api/users/worker','PUT',{active:false})).status,200);
+ assert.equal((await req('/api/me','GET',null,worker)).status,401);
+ assert.equal((await req('/api/login','POST',{id:'worker',password:'Fixture-passphrase-2026!'})).status,401);
+ assert.equal((await req('/api/users/worker','PUT',{active:true})).status,200);await login('worker');
+ assert.equal((await req('/user-admin-ui.js')).status,200);assert.equal(JSON.stringify(f.read('as.json')),before);
+ assert.deepEqual(f.read('data.json').users[0].allowedSteps,['incoming']);
 });

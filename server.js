@@ -52,6 +52,7 @@ app.get('/dashboard', (req, res) => sendPage(res, 'dashboard.html'));
 app.get('/as-workflow-ui.js', (req,res)=>res.sendFile('as-workflow-ui.js',{root:__dirname}));
 app.get('/as-integrity-ui.js', (req,res)=>res.sendFile('as-integrity-ui.js',{root:__dirname}));
 app.get('/auth-client.js', (req,res)=>res.sendFile('auth-client.js',{root:__dirname}));
+app.get('/user-admin-ui.js', (req,res)=>res.sendFile('user-admin-ui.js',{root:__dirname}));
 app.get('/as-amount.js', (req,res)=>res.sendFile('as-amount.js',{root:__dirname}));
 app.get('/dashboard.html', (req, res) => sendPage(res, 'dashboard.html'));
 app.get('/miboo_logo.png', (req, res) => res.sendFile('miboo_logo.png',{root:__dirname}));
@@ -121,6 +122,8 @@ app.get('/api/users', (req, res) => {
 // ── 사용자 추가 ──
 function validateUser(req,res,next){
  const b=req.body||{};
+ if(b.active!==undefined&&typeof b.active!=='boolean')return res.status(400).json({error:'계정 상태를 확인하세요.'});
+ if(b.name!==undefined&&(typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'이름을 입력하세요.'});
  if((b.role!==undefined&&!['worker','admin','sysadmin'].includes(b.role)) || ['asReview','asApprove'].some(k=>b[k]!==undefined&&typeof b[k]!=='boolean') || (b.allowedSteps!==undefined&&(!Array.isArray(b.allowedSteps)||b.allowedSteps.some(v=>!['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'].includes(v)))) || ['name','department','position','icon'].some(k=>b[k]!==undefined&&(typeof b[k]!=='string'||b[k].length>100)))return res.status(400).json({error:'사용자 정보를 확인하세요.'});
  if((req.method==='POST'||b.password)&&!passwords.validPassword(b.password))return res.status(400).json({error:'비밀번호는 12~128자로 입력하세요.'});
  if(req.method==='POST'&&(typeof b.id!=='string'||!b.id.trim()||b.id.length>100||typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'아이디와 이름이 필요합니다.'});
@@ -144,11 +147,12 @@ app.put('/api/users/:id', validateUser, (req, res) => {
   const data = loadData();
   const idx = data.users.findIndex(u => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
-  if(data.users[idx].role==='sysadmin' && role && role!=='sysadmin' && data.users.filter(u=>u.role==='sysadmin'&&u.active!==false&&!u.passwordResetRequired).length<=1)return res.status(400).json({error:'마지막 시스템 관리자는 변경할 수 없습니다.'});
+  if(data.users[idx].role==='sysadmin' && ((role && role!=='sysadmin') || req.body.active===false) && data.users.filter(u=>u.role==='sysadmin'&&u.active!==false&&!u.passwordResetRequired).length<=1)return res.status(400).json({error:'마지막 시스템 관리자는 변경할 수 없습니다.'});
   if (password) {data.users[idx].passwordHash=passwords.hashPassword(password);delete data.users[idx].password;delete data.users[idx].passwordResetRequired;}
   asSessions.revokeUser(req.params.id);
   if (name) data.users[idx].name = name;
   if (role) data.users[idx].role = role;
+  if (req.body.active !== undefined) data.users[idx].active = req.body.active;
   if (req.body.icon !== undefined) data.users[idx].icon = req.body.icon;
   if (req.body.department !== undefined) data.users[idx].department = req.body.department;
   if (req.body.position !== undefined) data.users[idx].position = req.body.position;
