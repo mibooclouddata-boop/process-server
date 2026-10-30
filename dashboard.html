@@ -1827,7 +1827,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             onkeydown="if(event.key==='Enter')_applyAsFilters()"/>
           <div class="toss-dd" id="asCategoryFilterDd">
             <button type="button" class="toss-dd-btn" id="asCategoryFilterBtn" onclick="toggleAsDd(event,'asCategoryFilter')" aria-haspopup="listbox" aria-expanded="false">
-              <span class="toss-dd-label" id="asCategoryFilterLabel">전체 구분</span>
+              <span class="toss-dd-label" id="asCategoryFilterLabel">구분</span>
               <svg class="toss-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="toss-dd-panel" id="asCategoryFilterPanel" role="listbox"></div>
@@ -1835,7 +1835,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
           </div>
           <div class="toss-dd" id="asStatusFilterDd">
             <button type="button" class="toss-dd-btn" id="asStatusFilterBtn" onclick="toggleAsDd(event,'asStatusFilter')" aria-haspopup="listbox" aria-expanded="false">
-              <span class="toss-dd-label" id="asStatusFilterLabel">전체 진행현황</span>
+              <span class="toss-dd-label" id="asStatusFilterLabel">진행현황</span>
               <svg class="toss-dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="toss-dd-panel" id="asStatusFilterPanel" role="listbox"></div>
@@ -2385,12 +2385,12 @@ const AS_DD_CONFIG = {
     {value:'asNo',    label:'접수번호'},
   ]},
   asStatusFilter: { apply:true, options:[
-    {value:'', label:'전체 진행현황'},
+    {value:'', label:'진행현황'},
     {value:'pending', label:'전체 대기'},
     ...['접수','제작 요청','도장 요청','납품 요청','완료'].map(value=>({value,label:value})),
   ]},
   asCategoryFilter: { apply:true, options:[
-    {value:'',     label:'전체 구분'},
+    {value:'',     label:'구분'},
     {value:'사내', label:'사내'},
     {value:'사외', label:'사외'},
     {value:'기타', label:'기타'},
@@ -4227,7 +4227,7 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
  search.addEventListener('compositionend',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(applySearch,250);});
 
  const controls=[['검색 기준','asSearchFieldDd','asSearchFieldBtn'],['검색어','asSearch','asSearch'],['구분','asCategoryFilterDd','asCategoryFilterBtn'],['진행현황','asStatusFilterDd','asStatusFilterBtn'],['접수 기간','asDateRange','asDateFromBtn']];
- const icons={asSearchFieldDd:'<path d="M4 5h16M4 12h10M4 19h4"/>',asCategoryFilterDd:'<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/>',asStatusFilterDd:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>'};
+ const icons={asSearchFieldDd:'<path d="M4 5h16M4 12h10M4 19h4"/>'};
  const groups=controls.map(([title,id,target],i)=>{
   const group=document.createElement('div');group.className='as-filter-field'+(i===4?' as-filter-period':'');
   const control=document.getElementById(id),button=document.getElementById(target);
@@ -4235,7 +4235,10 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
    group.classList.add('as-filter-search');group.innerHTML='<svg class="as-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>';
   }else{
    const label=document.createElement('span');label.id=id+'Caption';label.className='as-filter-sr-label';label.textContent=title;group.append(label);control.title=title;
-   if(icons[id]){button.insertAdjacentHTML('afterbegin','<svg class="as-filter-control-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[id]+'</svg>');button.setAttribute('aria-labelledby',label.id+' '+button.querySelector('.toss-dd-label').id);}
+   if(button.querySelector('.toss-dd-label')){
+    if(icons[id])button.insertAdjacentHTML('afterbegin','<svg class="as-filter-control-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[id]+'</svg>');
+    button.setAttribute('aria-labelledby',label.id+' '+button.querySelector('.toss-dd-label').id);
+   }
    else{control.setAttribute('role','group');control.setAttribute('aria-labelledby',label.id);button.setAttribute('aria-label','접수 시작일 선택');document.getElementById('asDateToBtn').setAttribute('aria-label','접수 종료일 선택');}
   }
   group.append(control);return group;
