@@ -1,0 +1,45 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+const {startFixture}=require('./test-support/as-fixture.cjs');
+
+test('central write indicator follows actual responses and preserves forms on failure',async t=>{
+ const fixture=await startFixture();let browser,release;
+ t.after(async()=>{release?.();if(browser)await browser.close();await fixture.close();});
+ browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage(),errors=[];
+ page.on('pageerror',error=>errors.push(error.message));
+ await page.route('**/*',route=>route.request().url().startsWith(fixture.url)?route.continue():route.abort());
+ assert.equal((await context.request.post(fixture.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}})).status(),200);
+ await page.goto(fixture.url+'/dashboard.html#as-list');await page.waitForFunction(()=>currentUser?.id==='admin');
+ let fail=true,writes=0;
+ await page.route('**/api/as',async route=>{
+  if(route.request().method()!=='POST')return route.continue();
+  writes++;await new Promise(resolve=>{release=resolve;});
+  if(fail)return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'지연 응답 테스트'})});
+  return route.continue();
+ });
+ await page.evaluate(()=>openAsModal());
+ await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('B01');
+ await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('로딩 검증');
+ await page.locator('#asDeliveryAgreedDate').fill('2099-12-31');
+ const save=page.locator('#asModal button[onclick="submitAs()"]'),progress=page.locator('#asWriteProgress');
+ await save.click();await progress.waitFor({state:'visible'});
+ assert.equal(await page.locator('#asWriteProgressTitle').textContent(),'저장 중');assert(await save.isDisabled());
+ assert.equal(fixture.read('as.json').list.length,0);
+ await page.keyboard.press('Escape');assert(await progress.isVisible());
+ await page.evaluate(()=>submitAs());assert.equal(writes,1);
+ const fonts=await page.evaluate(()=>[getComputedStyle(document.getElementById('asModal')).fontFamily,getComputedStyle(document.getElementById('asWriteProgress')).fontFamily]);assert.equal(fonts[0],fonts[1]);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ assert.equal(await page.locator('.as-write-ring').evaluate(el=>getComputedStyle(el).animationName),'none');
+ release();await progress.waitFor({state:'hidden'});await page.waitForFunction(()=>!asSaving);
+ assert.equal(await page.locator('#asReason').inputValue(),'로딩 검증');assert(await save.isEnabled());assert.equal(fixture.read('as.json').list.length,0);
+ fail=false;await save.click();await progress.waitFor({state:'visible'});release();await page.locator('#asModal').waitFor({state:'hidden'});
+ await page.locator('#toastContainer').waitFor({state:'hidden'});assert.equal(fixture.read('as.json').list.length,1);
+ await page.route('**/api/as/*/workflow',async route=>{await new Promise(resolve=>{release=resolve;});await route.continue();});
+ await page.evaluate(async()=>{await loadAsList();openAsWorkflow(_asFullList[0]);});
+ await page.locator('#asJobDialog button[type="submit"]').click();await progress.waitFor({state:'visible'});
+ assert.equal(await page.locator('#asWriteProgressTitle').textContent(),'전산 처리 중');assert.equal(fixture.read('as.json').list[0].status,'접수');
+ release();await page.locator('#asJobDialog').waitFor({state:'hidden'});assert.equal(fixture.read('as.json').list[0].status,'제작 요청');
+ assert(await progress.isHidden());assert.deepEqual(errors,[]);
+});
