@@ -623,7 +623,7 @@ form.addEventListener('submit',async e=>{
   succeeded=true;document.getElementById('greetingName').textContent=data.user?.name||idInput.value.trim();document.querySelector('.form-card').classList.add('is-leaving');document.querySelector('.login-group').classList.add('is-leaving');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   setTimeout(()=>{const greeting=document.getElementById('greeting');greeting.setAttribute('aria-hidden','false');greeting.classList.add('is-active');},reduced?0:300);
-  setTimeout(()=>{window.location.href='/dashboard.html';},reduced?250:1500);
+  setTimeout(()=>{window.location.href='/dashboard.html';},reduced?250:2000);
  }catch(error){showError(error.name==='AbortError'?'서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.':'서버에 연결하지 못했습니다. 네트워크를 확인하고 다시 시도해 주세요.');}
  finally{clearTimeout(timeout);if(!succeeded){busy=false;btn.disabled=false;btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');}}
 });</script>
