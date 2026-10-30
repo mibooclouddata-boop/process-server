@@ -36,8 +36,20 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await page.setViewportSize({width:1366,height:900});await page.evaluate(()=>switchTab('as',document.querySelector('[data-sub="stats"]'),'stats'));
  await page.waitForFunction(()=>document.getElementById('asStatsYear').options.length>0);
  await page.evaluate(async()=>{await loadAsStatistics();_asStatsRecords=[{id:'a',createdAt:'2026-03-01',status:'접수',reason:'기타'},{id:'b',createdAt:'2025-03-01',status:'완료',reason:'기타'}];const select=document.getElementById('asStatsYear');if(![...select.options].some(o=>o.value==='2025'))select.add(new Option('2025년','2025'));renderAsStatistics();});
- assert.equal(await page.locator('#asStatsYear').count(),1);await page.locator('#asStatsYear').selectOption('2026');assert.match(await page.locator('#asStatsYearLabel').textContent(),/2026/);await page.locator('#asStatsYear').selectOption('2025');assert.match(await page.locator('#asStatsYearLabel').textContent(),/2025/);
- assert.equal(await page.locator('#asStatsYear').evaluate(el=>getComputedStyle(el).fontSize),'24px');await screenshot('year-select');
+ assert.equal(await page.locator('#asStatsYear').count(),1);
+ const yearButton=page.locator('#asStatsYearPickerBtn'),yearPanel=page.locator('#asStatsYearPickerPanel');
+ await yearButton.click();await yearPanel.getByRole('option',{name:'2026년',exact:true}).click();assert.match(await page.locator('#asStatsYearLabel').textContent(),/2026/);
+ await yearButton.click();assert.equal(await yearButton.getAttribute('aria-expanded'),'true');
+ assert.equal(await yearPanel.evaluate(el=>getComputedStyle(el).transitionDuration.split(',')[0]),'0.15s');
+ await yearPanel.getByRole('option',{name:'2025년',exact:true}).click();assert.match(await page.locator('#asStatsYearLabel').textContent(),/2025/);assert.match(await yearButton.textContent(),/2025/);assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await page.keyboard.press('ArrowDown');await page.keyboard.press('Home');await page.keyboard.press('Enter');assert.equal(await page.locator('#asStatsYear').inputValue(),'2026');
+ await yearButton.click();await page.keyboard.press('Escape');assert(await yearButton.evaluate(el=>el===document.activeElement));assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await yearButton.click();await page.locator('#asSubStats h1').click();assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await yearButton.click();await page.keyboard.press('Tab');await page.keyboard.press('Tab');assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await yearPanel.evaluate(el=>getComputedStyle(el).transitionDuration),'0s');await page.emulateMedia({reducedMotion:'no-preference'});
+ assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'24px');
+ assert.deepEqual(await page.locator('#asStatsYearPickerLabel').evaluate(el=>{const style=getComputedStyle(el);return [style.fontSize,style.fontWeight,style.fontFamily];}),await page.locator('#asStatsYear').evaluate(el=>{const style=getComputedStyle(el);return [style.fontSize,style.fontWeight,style.fontFamily];}));
+ await yearButton.click();assert.equal(await yearPanel.locator('.toss-dd-item span').first().evaluate(el=>getComputedStyle(el).fontSize),'18px');await screenshot('year-select');await page.keyboard.press('Escape');
  // A self edit revokes this session, so additional edits must be disabled until redirect.
  await page.locator('#tabUsersBtn').click();await page.getByRole('button',{name:'검증 관리자 사용자 관리',exact:true}).click();let releaseSelf;await page.route('**/api/users/admin',async route=>{await new Promise(resolve=>releaseSelf=resolve);await route.continue();});
  await page.locator('#modalUserDept').fill('관리');await page.locator('#userTabAccount').click();await page.waitForFunction(()=>userAdmin.busy);assert(await page.locator('#modalUserName').isDisabled());releaseSelf();await page.waitForURL('**/login.html');assert.equal(f.read('data.json').users[0].department,'관리');assert.deepEqual(errors,[]);
