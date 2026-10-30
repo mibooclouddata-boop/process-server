@@ -37,7 +37,7 @@ async function asWrite(url,method,body,scope){
     if(response.ok){asRequestMemory.delete(storage);try{sessionStorage.removeItem(storage);}catch{}}
     if(!response.ok)throw Error(data.error||'저장하지 못했습니다. 같은 내용으로 다시 시도하세요.');
     return data;
-  }finally{finish();}
+  }finally{await finish();}
 }
 function asRecordVersion(item){return item?.version??item?.workflow?.revision??0;}
 function asConfirmWrite(message){
