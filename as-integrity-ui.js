@@ -30,11 +30,14 @@ async function asWrite(url,method,body,scope){
   }
   pending={hash,key:pending?.key||Array.from(crypto.getRandomValues(new Uint8Array(24)),n=>n.toString(16).padStart(2,'0')).join('')};
   asRequestMemory.set(storage,pending);try{sessionStorage.setItem(storage,JSON.stringify(pending));}catch{}
-  const response=await fetch(url,{method,credentials:'same-origin',headers:{'X-Requested-With':'process-server','Idempotency-Key':pending.key,...(body instanceof FormData?{}:{'Content-Type':'application/json'})},body:body instanceof FormData?body:JSON.stringify(body)});
-  const data=await response.json();
-  if(response.ok){asRequestMemory.delete(storage);try{sessionStorage.removeItem(storage);}catch{}}
-  if(!response.ok)throw Error(data.error||'저장하지 못했습니다. 같은 내용으로 다시 시도하세요.');
-  return data;
+  const finish=typeof AsWriteProgress==='undefined'?()=>{}:AsWriteProgress.start(url,method);
+  try{
+    const response=await fetch(url,{method,credentials:'same-origin',headers:{'X-Requested-With':'process-server','Idempotency-Key':pending.key,...(body instanceof FormData?{}:{'Content-Type':'application/json'})},body:body instanceof FormData?body:JSON.stringify(body)});
+    const data=await response.json();
+    if(response.ok){asRequestMemory.delete(storage);try{sessionStorage.removeItem(storage);}catch{}}
+    if(!response.ok)throw Error(data.error||'저장하지 못했습니다. 같은 내용으로 다시 시도하세요.');
+    return data;
+  }finally{finish();}
 }
 function asRecordVersion(item){return item?.version??item?.workflow?.revision??0;}
 function asConfirmWrite(message){

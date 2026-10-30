@@ -8,7 +8,7 @@
     "start": "node server.js",
     "test:xss": "node --test xss-browser.test.cjs",
     "test:supabase": "node --test supabase-auth.test.cjs supabase-rls.test.cjs supabase-admin.test.cjs",
-    "test:as-browser": "node --test as-integrity-browser.test.cjs",
+    "test:as-browser": "node --test as-integrity-browser.test.cjs as-write-progress-browser.test.cjs",
     "test:users-browser": "node --test user-management-browser.test.cjs"
   },
   "keywords": [],
