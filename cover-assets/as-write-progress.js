@@ -1,7 +1,8 @@
 'use strict';
 // The shared write path owns this indicator; it never invents a completion or timeout.
 const AsWriteProgress=(()=>{
- const active=new Set();let dialog,showTimer,slowTimer,returnFocus;
+ const active=new Set();let dialog,slowTimer,returnFocus;
+ const minimumVisibleMs=3000;
  function create(){
   if(dialog)return;
   const style=document.createElement('style');
@@ -22,19 +23,23 @@ const AsWriteProgress=(()=>{
   document.body.append(dialog);
  }
  function start(url,method){
-  create();const token={};active.add(token);
+  create();const token={startedAt:performance.now()};active.add(token);
   if(active.size===1){
    returnFocus=document.activeElement;
    document.getElementById('asWriteProgressTitle').textContent=url.endsWith('/workflow')?'전산 처리 중':method==='DELETE'?'삭제 중':'저장 중';
    const message=document.getElementById('asWriteProgressMessage');message.textContent='처리가 완료될 때까지 잠시 기다려 주세요.';
-   // Avoid flashing a modal for responses that finish immediately.
-   showTimer=setTimeout(()=>{if(active.size){dialog.showModal();document.getElementById('asWriteProgressTitle').focus();}},180);
+   dialog.showModal();document.getElementById('asWriteProgressTitle').focus();
    slowTimer=setTimeout(()=>{if(active.size)message.textContent='응답이 지연되고 있습니다. 결과를 확인하고 있으니 잠시 기다려 주세요.';},8000);
   }
   let ended=false;
-  return ()=>{
-   if(ended)return;ended=true;active.delete(token);if(active.size)return;
-   clearTimeout(showTimer);clearTimeout(slowTimer);
+  return async()=>{
+   if(ended)return;ended=true;
+   // Only the presentation waits: the request starts immediately. A slow server
+   // (including Supabase) must actually respond before this finish is called.
+   const remaining=minimumVisibleMs-(performance.now()-token.startedAt);
+   if(remaining>0)await new Promise(resolve=>setTimeout(resolve,remaining));
+   active.delete(token);if(active.size)return;
+   clearTimeout(slowTimer);
    if(dialog.open)dialog.close();
    const previous=returnFocus;returnFocus=null;
    // Callers re-enable their controls in finally, before the next frame.
