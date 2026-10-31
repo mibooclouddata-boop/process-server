@@ -74,6 +74,7 @@ function openAsWorkflow(item){
  dialog.innerHTML='<header><h2 id="asJobTitle" tabindex="-1" autofocus>'+label+'</h2></header>'
  +(editable?'<form id="asJobForm" onsubmit="event.preventDefault();saveAsJob(&quot;advance&quot;)">'
  +(legacyDeadline?'<label>납품 협의일<input id="asJobLegacyDeadline" type="date" required></label>':missingDeadline?'<p class="as-job-note">접수 내용의 수정 화면에서 납품 협의일을 먼저 지정해주세요.</p>':'')
+ +(!active&&!missingDeadline?'<p class="as-job-request-message">접수 내용대로 제작을 요청합니다.</p>':'')
  +(active?'<label>'+(item.status==='납품 요청'?'실제 납품일':item.status.replace(' 요청','')+' 완료일')+'<input id="asJobCompleted" type="date" required'+(previousDate?' min="'+asJobEsc(previousDate)+'"':'')+' max="'+asJobToday()+'"></label>':'')
  +'<p id="asJobError" role="alert"></p><footer><button type="button" onclick="document.getElementById(&quot;asJobDialog&quot;).close()">취소</button><button type="submit" class="as-job-primary"'+(missingDeadline&&!legacyDeadline?' disabled':'')+'>'+(active?'완료하기':'요청하기')+'</button></footer></form>'
  :'<footer><button type="button" onclick="document.getElementById(&quot;asJobDialog&quot;).close()">닫기</button></footer>');
@@ -118,6 +119,7 @@ const asJobStyle=document.createElement('style');asJobStyle.textContent=`
 .as-job-dialog button:disabled{opacity:.45;cursor:not-allowed}
 .as-job-dialog button:focus-visible,.as-job-dialog input:focus-visible{outline:2px solid var(--brand,#004a93);outline-offset:-3px}
 .as-job-dialog p{margin:16px 24px 0;font-size:13px;line-height:1.6}
+.as-job-dialog .as-job-request-message{display:flex;align-items:center;justify-content:center;min-height:77px;margin:22px 24px 0;font-size:14px;font-weight:600;line-height:1.5;color:var(--text-body,#333d4b)}
 #asJobError{color:var(--danger,#dc2626)}#asJobError:empty{display:none}
 .as-job-dialog .as-job-note{color:var(--text2,#6b7684)}
 @media(max-width:600px){.as-job-dialog input{font-size:16px}}
