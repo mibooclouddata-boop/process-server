@@ -16,6 +16,7 @@ test('bearer sessions reject forged tokens and bind to current credentials and p
  assert.equal(store.userId(req),'worker');assert(store.matches(req,user));
  assert(!store.matches(req,{...user,role:'sysadmin'}));
  assert(!store.matches(req,{...user,passwordHash:'changed'}));
+ assert(store.matches(req,{...user,asReview:true,asApprove:true}),'retired AS flags do not alter current session permissions');
  assert.equal(store.userId({headers:{authorization:'Bearer forged',cookie:'as_session='+key}}),null);
  store.revokeUser(user.id);assert.equal(store.userId(req),null);
 });

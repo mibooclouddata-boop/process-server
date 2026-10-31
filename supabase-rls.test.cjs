@@ -23,7 +23,7 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     grant usage on schema public,storage to anon,authenticated,service_role;
     grant select,insert,update,delete on storage.objects to authenticated;
   `);
-  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql'])
+  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql','202611010004_shared_as_access.sql'])
     await db.exec(fs.readFileSync(path.join(__dirname,'supabase/migrations',file),'utf8'));
   const a=randomUUID(),b=randomUUID(),admin=randomUUID(),review=randomUUID(),inactive=randomUUID();
   const authIds=new Map(),profiles=[a,b,admin,review,inactive];
@@ -66,11 +66,12 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     assert.equal((await db.query('select session_version from staff_profiles where id=$1',[a])).rows[0].session_version,2);
     await assert.rejects(db.query('update staff_profiles set session_version=1 where id=$1',[a]));
   });
-  await t.test('bucket stays private; only AS owner, sysadmin or AS permission can upload/delete',async()=>{
+  await t.test('bucket stays private; all active staff can upload/delete linked attachments only',async()=>{
     assert.equal((await db.query("select public from storage.buckets where id='as-attachments'")).rows[0].public,false);
-    for(const id of [b,inactive])await asUser(id,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
+    await asUser(inactive,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
     await asUser(null,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
-    for(const id of [a,admin,review])await asUser(id,async()=>{
+    for(const id of [a,b,admin,review])await asUser(id,async()=>{
+      assert.equal((await db.query('select private.staff_can_manage_as($1) as allowed',[randomUUID()])).rows[0].allowed,false);
       await db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath]);
       assert.equal((await db.query('delete from storage.objects returning id')).rows.length,1);
     });
@@ -80,9 +81,10 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
       assert.equal((await db.query("update storage.objects set name='tamper' returning id")).rows.length,0);
     });
     // Existing AS visibility is shared among active staff, including attachments.
+    await asUser(inactive,async()=>{assert.equal((await db.query('select * from storage.objects')).rows.length,0);assert.equal((await db.query('delete from storage.objects returning id')).rows.length,0);});
     await asUser(b,async()=>{
       assert.equal((await db.query('select * from storage.objects')).rows.length,1);
-      assert.equal((await db.query('delete from storage.objects returning id')).rows.length,0);
+      assert.equal((await db.query('delete from storage.objects returning id')).rows.length,1);
     });
     await asUser(inactive,async()=>{assert.equal((await db.query('select * from storage.objects')).rows.length,0);});
     await db.query('update staff_profiles set active=false where id=$1',[a]);

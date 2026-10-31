@@ -16,8 +16,8 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await page.locator('#userSearch').fill('no match');assert.match(await page.locator('#adminUserRows').textContent(),/조건에 맞는/);await page.locator('#userReset').click();
  await page.getByRole('button',{name:'가나다 사용자 관리',exact:true}).click();await page.locator('#modalUserName').fill('새 이름');await page.locator('#modalUserDept').click();await page.waitForFunction(()=>userAdmin.editing?.name==='새 이름'&&!userAdmin.saving);
  assert.equal(f.read('data.json').users.find(u=>u.id==='alpha').name,'새 이름');
- await page.locator('#userTabInfo').focus();await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#userTabPermissions').getAttribute('aria-selected'),'true');
- await page.locator('#modalAsPerms [data-perm="asReview"]').click();await page.waitForFunction(()=>userAdmin.editing?.asReview===true&&!userAdmin.saving);
+ await page.locator('#userTabInfo').focus();await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#userTabAccount').getAttribute('aria-selected'),'true');
+ assert.equal(await page.locator('#userModal [role=tab]').count(),2);assert.equal(await page.getByRole('switch',{name:/AS 검토|AS 승인/}).count(),0);
  await page.locator('#userTabAccount').click();await page.locator('#userToggleAccount').click();await page.waitForFunction(()=>userAdmin.editing?.active===false&&!userAdmin.saving);assert.equal(f.read('data.json').users.find(u=>u.id==='alpha').active,false);
  await page.locator('#userToggleAccount').click();await page.waitForFunction(()=>userAdmin.editing?.active===true&&!userAdmin.saving);
  await page.locator('#userTabInfo').click();await page.route('**/api/users/alpha',route=>route.request().method()==='PUT'?route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'검증용 저장 실패'})}):route.continue());

@@ -134,25 +134,25 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     assert.match(w.token,/^[a-f0-9]{64}$/);assert.equal(w.cookie,null);assert.equal(w.user.id,worker.id);assert.equal(w.user.loginId,'staff01');
     const result=await (await request('/api/me',{token:w.token})).json();assert.equal(result.user.id,worker.id);
     for(const value of [JSON.stringify(w),JSON.stringify(result),logs]){
-      for(const forbidden of ['@staff.invalid','auth_user_id','refresh_token',secretKey,worker.auth_user_id])assert(!value.includes(forbidden));
+      for(const forbidden of ['@staff.invalid','auth_user_id','refresh_token','asReview','asApprove',secretKey,worker.auth_user_id])assert(!value.includes(forbidden));
     }
     assert(verifyCalls>0);
     for(const [key,session] of sessions){assert.notEqual(key,w.token);assert(!session.encrypted_access_token.includes('@staff.invalid'));assert(!tokens.has(session.encrypted_access_token));}
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir,'data.json'),'utf8')),legacyFixture);
   });
-  await t.test('roles, process permission, immutable actors and AS privileges are enforced server-side',async()=>{
+  await t.test('user administration stays restricted while AS is shared and actors remain server-derived',async()=>{
     for(const account of [w,o,m,review])assert.equal((await request('/api/users',{token:account.token})).status,403);
     assert.equal((await request('/api/users',{token:r.token})).status,200);
     assert.equal((await request('/api/users',{method:'POST',token:r.token,body:{id:'no-json-fallback'}})).status,400);
     assert.equal((await request('/api/scan',{method:'POST',token:w.token,body:{}})).status,404);
     const response=await request('/api/as',{method:'POST',token:w.token,body:{ship:'TEST',block:'TEST',reason:'테스트',createdById:root.id,createdBy:'위조'}});
     assert.equal(response.status,200);const item=(await response.json()).item;assert.equal(item.createdById,worker.id);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{version:0,remark:'동명이인'}})).status,403);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:m.token,body:{remark:'업무관리자만으로 부족'}})).status,403);
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:review.token,body:{version:0,remark:'검토 권한'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{version:0,remark:'다른 직원'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:m.token,body:{version:1,remark:'공동 작업'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:review.token,body:{version:2,remark:'기존 권한 무관'}})).status,200);
     worker.name='변경된 이름';
-    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:w.token,body:{version:1,remark:'이름 변경 후 동일 작성자'}})).status,200);
-    const flow=await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:w.token,body:{version:2,revision:2,action:'advance',next:'제작 요청',deliveryAgreedDate:'2027-01-01',actorId:root.id}});
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:w.token,body:{version:3,remark:'이름 변경 후 동일 작성자'}})).status,200);
+    const flow=await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:w.token,body:{version:4,revision:4,action:'advance',next:'제작 요청',deliveryAgreedDate:'2027-01-01',actorId:root.id}});
     assert.equal(flow.status,200);
     const updated=(await (await request('/api/as',{token:w.token})).json()).list.find(x=>x.id===item.id);
     assert(updated.workflow.history.every(h=>h.byUserId===worker.id));

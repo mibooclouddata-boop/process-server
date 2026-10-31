@@ -29,11 +29,12 @@ test('month numbering recovers a missing counter, uses Seoul and never reuses de
 });
 test('common version prevents edits, workflow, or deletion from silently overwriting each other',async t=>{
   const {service}=fixture(t);let {item}=await service.create(base,[],owner,randomUUID());
-  const outcomes=await Promise.allSettled(['A','B'].map(remark=>service.update(item.id,{version:0,remark},[],owner,randomUUID())));
+  const outcomes=await Promise.allSettled([owner,other].map(actor=>service.update(item.id,{version:0,remark:actor.id},[],actor,randomUUID())));
   assert.equal(outcomes.filter(r=>r.status==='fulfilled').length,1);assert.equal(outcomes.find(r=>r.status==='rejected').reason.status,409);
   await denied(()=>service.remove(item.id,{version:0,changeReason:'stale'},owner,randomUUID()),409);
   await denied(()=>service.advance(item.id,{version:0,action:'advance',next:'제작 요청'},[],owner,randomUUID()),409);
-  item=(await service.advance(item.id,{version:1,action:'advance',next:'제작 요청'},[],owner,randomUUID())).item;
+  item=(await service.advance(item.id,{version:1,action:'advance',next:'제작 요청'},[],other,randomUUID())).item;
+  assert.equal(item.updatedById,other.id);assert.equal(item.createdById,owner.id);
   assert.equal(item.version,2);assert.equal(item.workflow.revision,2);
   await denied(()=>service.update(item.id,{version:2,deliveryAgreedDate:''},[],owner,randomUUID()),400);
   await denied(()=>service.update(item.id,{remark:'no version'},[],owner,randomUUID()),428);
@@ -60,12 +61,12 @@ test('required fields, category, amount and real dates reject malformed API inpu
   await denied(()=>service.advance(item.id,{version:item.version,action:'advance',next:'제작 요청',changeReason:{}},[],owner,randomUUID()),400);
 });
 
-test('legacy ownership is never inferred from display names; normalized status remains editable by managers',async t=>{
+test('legacy records without creator IDs remain editable by any active staff without inventing ownership',async t=>{
   const {file,service}=fixture(t);
   fs.writeFileSync(file,JSON.stringify({list:[{...base,id:'legacy',asNo:'AS-2610-01',status:'검토 요청',createdBy:owner.name}]}));
-  await denied(()=>service.update('legacy',{version:0,remark:'name collision'},[],owner,randomUUID()),403);
-  const {item}=await service.update('legacy',{version:0,status:'접수',remark:'reviewed'},[],admin,randomUUID());
+  const {item}=await service.update('legacy',{version:0,status:'접수',remark:'reviewed'},[],other,randomUUID());
   assert.equal(item.status,'접수');assert.equal(item.legacyStatus,'검토 요청');assert.equal(item.remark,'reviewed');
+  assert.equal(item.createdById,undefined);assert.equal(item.updatedById,other.id);
 });
 
 test('orphan cleanup is dry by default and preserves deleted, retired and recent files',async t=>{
@@ -80,19 +81,32 @@ test('orphan cleanup is dry by default and preserves deleted, retired and recent
   await collectOrphans(store,root,{apply:true});assert.deepEqual(fs.readdirSync(root).sort(),['current.txt','recent.txt','retired.txt']);
   fs.writeFileSync(file,'corrupt');await denied(()=>collectOrphans(store,root,{apply:true}),503);assert.equal(fs.readdirSync(root).length,3);
 });
-test('history, retired attachments, deletion and restore preserve identity and enforce ownership',async t=>{
+test('all active staff can manage attachments, history, deletion and restore while preserving actor identity',async t=>{
   const {service}=fixture(t),file={name:'fixture.txt',filename:randomUUID()+'.txt',size:3,sha256:'test'};
   let {item}=await service.create(base,[file],owner,randomUUID());
-  await denied(()=>service.update(item.id,{version:0,remark:'forged'},[],other,randomUUID()),403);
-  item=(await service.update(item.id,{version:0,removeFiles:JSON.stringify([file.filename]),amount:'12'},[],owner,randomUUID())).item;
+  item=(await service.update(item.id,{version:0,removeFiles:JSON.stringify([file.filename]),amount:'12'},[],other,randomUUID())).item;
   assert.equal(item.files.length,0);assert.equal(item.retiredFiles[0].filename,file.filename);assert.equal(item.version,1);
-  const key=randomUUID();item=(await service.remove(item.id,{version:1,changeReason:'fixture removed'},owner,key)).item;
-  assert.equal((await service.list()).length,0);assert.equal((await service.trash(owner)).length,1);assert.equal((await service.trash(other)).length,0);
-  assert((await service.remove(item.id,{version:1,changeReason:'fixture removed'},owner,key)).replayed);
-  await denied(()=>service.history(item.id,other),403);
-  item=(await service.restore(item.id,{version:2,changeReason:'restore fixture'},admin,randomUUID())).item;
+  assert.equal(item.createdById,owner.id);assert.equal(item.retiredFiles[0].removedById,other.id);
+  await denied(()=>service.remove(item.id,{version:1,changeReason:''},other,randomUUID()),400);
+  const key=randomUUID();item=(await service.remove(item.id,{version:1,changeReason:'fixture removed'},other,key)).item;
+  assert.equal((await service.list()).length,0);assert.equal((await service.trash(owner)).length,1);assert.equal((await service.trash(other)).length,1);
+  assert((await service.remove(item.id,{version:1,changeReason:'fixture removed'},other,key)).replayed);
+  assert.equal((await service.history(item.id,other)).length,3);
+  await denied(()=>service.restore(item.id,{version:2,changeReason:''},other,randomUUID()),400);
+  item=(await service.restore(item.id,{version:2,changeReason:'restore fixture'},other,randomUUID())).item;
   const history=await service.history(item.id,owner);assert.deepEqual(history.map(e=>e.type),['create','update','delete','restore']);
-  assert.equal(history[1].before.amount,null);assert.equal(history[1].after.amount,12);assert.equal(history.at(-1).actorId,admin.id);assert.equal(item.version,3);
+  assert.equal(history[1].before.amount,null);assert.equal(history[1].after.amount,12);assert.equal(history.at(-1).actorId,other.id);assert.equal(item.version,3);
+});
+
+test('shared AS access still rejects absent, inactive, reset-required and invalid staff actors',async t=>{
+ const {service}=fixture(t);const {item}=await service.create(base,[],owner,randomUUID());
+ for(const actor of [null,{...other,id:''},{...other,active:false},{...other,passwordResetRequired:true},{...other,role:'guest'}]){
+  await denied(()=>service.update(item.id,{version:0,remark:'must not save'},[],actor,randomUUID()),401);
+  await denied(()=>service.create(base,[],actor,randomUUID()),401);
+  await denied(()=>service.history(item.id,actor),401);
+  assert.deepEqual(await service.trash(actor),[]);
+ }
+ assert.equal((await service.list())[0].version,0);
 });
 test('completed records require correction reasons and workflow audit uses stable actor IDs',async t=>{
   const {service}=fixture(t);let {item}=await service.create(base,[],owner,randomUUID());
@@ -119,7 +133,7 @@ test('duplicate legacy IDs/numbers and abandoned locks block writes without sile
 });
 test('separate Node processes serialize monthly numbering and preserve every receipt',async t=>{
   const {file}=fixture(t);
-  const script=`const {createAsService}=require(${JSON.stringify(require.resolve('./as-service'))});const {createAsStore}=require(${JSON.stringify(require.resolve('./as-store'))});const s=createAsService(createAsStore(process.argv[1]));(async()=>{for(let i=0;i<8;i++)await s.create({ship:'TEST',block:'B',reason:'fixture'},[],{id:'worker',name:'Fixture'},require('crypto').randomUUID());})().catch(e=>{console.error(e);process.exitCode=1});`;
+  const script=`const {createAsService}=require(${JSON.stringify(require.resolve('./as-service'))});const {createAsStore}=require(${JSON.stringify(require.resolve('./as-store'))});const s=createAsService(createAsStore(process.argv[1]));(async()=>{for(let i=0;i<8;i++)await s.create({ship:'TEST',block:'B',reason:'fixture'},[],{id:'worker',name:'Fixture',role:'worker'},require('crypto').randomUUID());})().catch(e=>{console.error(e);process.exitCode=1});`;
   await Promise.all(Array.from({length:3},()=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,['-e',script,file],{stdio:['ignore','ignore','pipe']});let stderr='';child.stderr.on('data',chunk=>stderr+=chunk);child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error(stderr)));})));
   const data=JSON.parse(fs.readFileSync(file,'utf8'));assert.equal(data.list.length,24);assert.equal(new Set(data.list.map(r=>r.asNo)).size,24);assert.equal(new Set(data.list.map(r=>r.id)).size,24);assert.equal(data.events.length,24);
 });
@@ -141,11 +155,14 @@ test('real AS HTTP routes enforce auth, idempotency, uploads, versions and priva
   assert.equal((await (await request('/api/as/requests/'+key,{who:'other'})).json()).request,null);
   assert.equal((await fetch(url+'/uploads/'+item.files[0].filename)).status,401);
   const download=await request('/uploads/'+item.files[0].filename);assert.equal(download.status,200);assert.match(download.headers.get('content-disposition'),/attachment/);
-  assert.equal((await request('/api/as/'+item.id,{method:'PUT',who:'other',body:{version:0,remark:'no'}})).status,403);
   assert.equal((await request('/api/as/'+item.id,{method:'PUT',body:{remark:'missing version'}})).status,428);
-  const updateKey=randomUUID(),updated=await request('/api/as/'+item.id,{method:'PUT',key:updateKey,body:{version:0,remark:'updated'}});assert.equal(updated.status,200);item=(await updated.json()).item;
-  assert.equal((await request('/api/as/'+item.id,{method:'DELETE',body:{version:item.version,changeReason:'test'}})).status,200);
+  const updateKey=randomUUID(),updated=await request('/api/as/'+item.id,{method:'PUT',who:'other',key:updateKey,body:{version:0,remark:'updated'}});assert.equal(updated.status,200);item=(await updated.json()).item;
+  assert.equal(item.updatedById,other.id);assert.equal(item.createdById,owner.id);
+  assert.equal((await request('/api/as/'+item.id,{method:'DELETE',who:'other',body:{version:item.version,changeReason:'test'}})).status,200);
   assert.equal((await request('/uploads/'+item.files[0].filename)).status,404);assert.equal(fs.readdirSync(uploadsDir).length,1);
-  const lateRetry=await request('/api/as/'+item.id,{method:'PUT',key:updateKey,body:{version:0,remark:'updated'}});assert.equal(lateRetry.status,200);assert((await lateRetry.json()).replayed);
+  const lateRetry=await request('/api/as/'+item.id,{method:'PUT',who:'other',key:updateKey,body:{version:0,remark:'updated'}});assert.equal(lateRetry.status,200);assert((await lateRetry.json()).replayed);
   assert.equal((await (await request('/api/as')).json()).list.length,0);
+  assert.equal((await (await request('/api/as/trash',{who:'other'})).json()).list.length,1);
+  assert.equal((await request('/api/as/'+item.id+'/restore',{method:'POST',who:'other',body:{version:2,changeReason:'restore test'}})).status,200);
+  assert.equal((await (await request('/api/as/'+item.id+'/history',{who:'other'})).json()).events.at(-1).actorId,other.id);
 });

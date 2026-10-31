@@ -8,10 +8,23 @@ function setup(){
  vm.runInContext('paintUserModal=()=>{};renderAdminUsers=()=>{};',ctx);
  const run=s=>vm.runInContext(s,ctx);return {ctx,get,run,redirects};
 }
-test('provider identities, status and AS-only permissions preserve the main contract',()=>{
+test('provider identities and account status preserve the main contract',()=>{
  const {ctx}=setup();assert.equal(ctx.userLoginId({id:'uuid',loginId:'EMP-1'}),'EMP-1');
  assert.equal(ctx.normalizeAdminUser({active:false}).status,'suspended');assert.equal(ctx.normalizeAdminUser({passwordResetRequired:true}).status,'invited');
- assert.equal(ctx.userPermissionCount({role:'sysadmin'}),2);assert.equal(ctx.userPermissionCount({role:'admin',allowedSteps:['incoming'],asReview:true}),1);
+});
+
+test('retired AS permission fields are not exposed or accepted by the local user API',async t=>{
+ const f=await startFixture();t.after(()=>f.close());const password='Fixture-passphrase-2026!';
+ const request=(url,method='GET',body,cookie='')=>fetch(f.url+url,{method,headers:{cookie,'X-Requested-With':'process-server','Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
+ const login=await request('/api/login','POST',{id:'admin',password});const cookie=login.headers.get('set-cookie').split(';')[0];
+ const profile=(await login.json()).user;const me=(await (await request('/api/me','GET',null,cookie)).json()).user;
+ const users=(await (await request('/api/users','GET',null,cookie)).json()).users;
+ for(const user of [profile,me,...users])for(const key of ['asReview','asApprove'])assert.equal(Object.hasOwn(user,key),false);
+ for(const key of ['asReview','asApprove']){
+  assert.equal((await request('/api/users','POST',{id:'retired',name:'Fixture',password,[key]:true},cookie)).status,400);
+  assert.equal((await request('/api/users/admin','PUT',{[key]:true},cookie)).status,400);
+ }
+ assert.equal(f.read('data.json').users.length,1);
 });
 test('autosave serializes rapid edits, sends only supported fields and reloads server values',async()=>{
  const {ctx,run}=setup();run("userAdmin.editing={id:'worker',name:'Old'}");let release;const calls=[];let saved={id:'worker',name:'Old'};
@@ -53,8 +66,23 @@ test('local account activation validates state, protects last admin and revokes 
  assert.equal((await req('/api/users/admin','PUT',{active:false})).status,400);
  assert.equal((await req('/api/users/worker','PUT',{active:false})).status,200);
  assert.equal((await req('/api/me','GET',null,worker)).status,401);
+ assert.equal((await req('/api/as','GET',null,worker)).status,401);
+ assert.equal((await req('/api/as','POST',{ship:'TEST',block:'B',reason:'must not save'},worker)).status,401);
  assert.equal((await req('/api/login','POST',{id:'worker',password:'Fixture-passphrase-2026!'})).status,401);
  assert.equal((await req('/api/users/worker','PUT',{active:true})).status,200);await login('worker');
  assert.equal((await req('/user-admin-ui.js')).status,200);assert.equal(JSON.stringify(f.read('as.json')),before);
  assert.deepEqual(f.read('data.json').users[0].allowedSteps,['incoming']);
+});
+
+test('new local accounts preserve explicit inactive state and default to active only when omitted',async t=>{
+ const f=await startFixture();t.after(()=>f.close());
+ const request=(url,data,cookie='')=>fetch(f.url+url,{method:'POST',headers:{cookie,'X-Requested-With':'process-server','Content-Type':'application/json'},body:JSON.stringify(data)});
+ const password='Fixture-passphrase-2026!';
+ const root=await request('/api/login',{id:'admin',password});assert.equal(root.status,200);const cookie=root.headers.get('set-cookie').split(';')[0];
+ for(const [id,input,active] of [['inactive',{active:false},false],['active',{active:true},true],['default',{},true]]){
+  assert.equal((await request('/api/users',{id,name:id,password,role:'worker',...input},cookie)).status,200);
+  assert.equal(f.read('data.json').users.find(u=>u.id===id).active,active);
+  const login=await request('/api/login',{id,password});assert.equal(login.status,active?200:401);
+  if(active)assert.equal((await fetch(f.url+'/api/me',{headers:{cookie:login.headers.get('set-cookie').split(';')[0]}})).status,200);
+ }
 });

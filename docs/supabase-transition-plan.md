@@ -18,7 +18,7 @@
 | 기존 원본 | 목표 구조 | 식별·이전 원칙 |
 |---|---|---|
 | data.json users | auth.users + staff_profiles + private.staff_login_identifiers | 프로필 UUID는 불변, Auth UUID는 별도 unique FK. 로그인 ID 변경은 프로필 ID와 무관 |
-| allowedSteps / asReview / asApprove | staff_profiles의 검증된 공정 코드 배열·boolean | 클라이언트 입력이나 Auth user_metadata를 권한 근거로 사용하지 않음 |
+| allowedSteps / 과거 AS 권한 | staff_profiles의 공정 코드 배열·기존 boolean 열 보존 | AS 검토·승인 플래그는 현재 앱에서 사용하지 않음. 활성 직원은 AS 공동 작업 허용 |
 | 로그인 세션 | app_sessions | 무작위 토큰의 SHA-256만 저장, Auth access token은 서버 암호화키로 암호화. refresh token 미보관, 만료 시 재로그인 |
 | data.json records | process_records (후속 이전) | actor_id → staff_profiles.id, barcode/type/qty/time, 이름은 표시용 당시 스냅샷 |
 | as.json list/monthSeq | as_records, as_stages, as_history, as_month_sequences (후속 이전) | 작성자·완료자·이력 행위자 UUID, 납기 date, 시간 timestamptz, 금액 bigint/numeric. 번호 발급은 트랜잭션 |
@@ -42,12 +42,12 @@
 | ERP 전체 삭제 | 허용 | 거부 | 거부 |
 | 자재 구역 배정·위치 등록 | 허용 | 허용 | 허용 (기존 업무 기능 유지) |
 | AS 조회·접수 | 허용 | 허용 | 허용 |
-| AS 수정·삭제·단계 전환 | 허용 | 본인 작성 또는 AS 플래그 | 본인 작성 또는 AS 플래그 |
+| AS 수정·삭제·복원·이력·단계 전환 | 활성 계정 허용 | 활성 계정 허용 | 활성 계정 허용 |
 | AS 첨부 읽기 | 허용 | 활성 계정 허용 | 활성 계정 허용 (기존 AS 전체 조회와 동일) |
-| AS 첨부 쓰기 | 허용 | 본인 작성 또는 AS 플래그 | 본인 작성 또는 AS 플래그 |
+| AS 첨부 쓰기 | 활성 계정 허용 | 활성 계정 허용 | 활성 계정 허용 |
 
 공정: incoming, inspect_wait, inspect_done, paint_wait, paint_done, deliver_wait, deliver_done.
-현재 AS 진행은 접수→제작 요청→도장 요청→납품 요청→완료이며, asReview/asApprove는 각각 독립 결재 단계가 아니라 AS 관리 권한으로 쓰인다. 이 의미를 유지한다. 이름 일치로 소유권을 인정하던 경로는 제거한다. ID 미연결 과거 건은 관리자가 매핑하기 전까지 일반 사용자의 편집 권한을 부여하지 않는다.
+현재 AS 진행은 접수→제작 요청→도장 요청→납품 요청→완료이며, 2026-11-01부터 모든 활성 직원이 AS를 공동 관리한다. asReview/asApprove 설정과 작성자 제한은 제거한다. ID 미연결 과거 건도 편집할 수 있지만 과거 작성자 ID를 추정하지 않는다. 새 변경자는 인증된 계정으로 기록한다. 기존 공정·ERP 기능의 표는 이전 분석 이력이며 현재 해당 API는 제거되어 있다.
 
 Supabase 준비 모드는 인증·프로필·권한 검사와 관리자 계정 발급/변경을 서버 진입점에 연결한다. 업무 데이터는 아직 JSON이므로 전체 전환 완료로 간주하지 않는다. 사용자 관리 요청은 Supabase 전용 모듈로 전달하며 JSON 계정에 쓰지 않는다. 발급 시 Auth 생성 후 프로필/매핑을 원자적으로 저장하고 실패하면 Auth 계정을 정리한다. 정리 실패로 남은 계정도 프로필이 없어 접근할 수 없다.
 

@@ -1783,7 +1783,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
       <!-- 테이블 카드 -->
       <div class="toss-user-card">
-        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2><p>업무 권한은 상세에서 확인·수정할 수 있습니다.</p></div>
+        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2><p>사용 중인 모든 직원은 AS 접수와 진행을 함께 관리합니다.</p></div>
         <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 명부, 좁은 화면에서는 가로로 스크롤">
           <table class="user-roster-table">
             <thead><tr>
@@ -1792,7 +1792,6 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
               <th scope="col">부서 / 직급</th>
               <th scope="col">역할</th>
               <th scope="col">계정 상태</th>
-              <th scope="col">업무 권한</th>
               <th scope="col">관리</th>
             </tr></thead>
             <tbody id="adminUserRows"></tbody>
@@ -2144,7 +2143,6 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <div class="user-save-strip"><span id="userSaveStatus" role="status" aria-live="polite">사용자 정보를 입력하세요.</span><button type="button" id="userReloadCurrent" hidden onclick="reloadEditingUser()">최신 정보 다시 불러오기</button></div>
         <nav class="user-modal-tabs" id="userModalTabs" role="tablist" aria-label="사용자 관리 항목">
           <button type="button" role="tab" id="userTabInfo" data-user-tab="info" aria-controls="userPanelInfo" aria-selected="true" onclick="selectUserModalTab('info')">기본정보</button>
-          <button type="button" role="tab" id="userTabPermissions" data-user-tab="permissions" aria-controls="userPanelPermissions" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('permissions')">업무 권한</button>
           <button type="button" role="tab" id="userTabAccount" data-user-tab="account" aria-controls="userPanelAccount" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('account')">계정 사용관리</button>
         </nav>
         <div class="modal-body">
@@ -2189,23 +2187,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
           </div>
           <p class="user-modal-help" id="userBasicHelp">이름·부서·직급은 입력을 마치면, 역할은 선택하면 바로 저장됩니다.</p>
         </section>
-        <section id="userPanelPermissions" role="tabpanel" aria-labelledby="userTabPermissions" hidden>
-          <h4 class="user-section-title">업무 권한 <span id="userPermissionCount"></span></h4>
-          <p class="user-modal-help" id="userRolePermissionHint"></p>
-
-          <div class="modal-field" style="margin-top:8px">
-            <label>AS 결재 권한</label>
-            <div class="modal-steps" id="modalAsPerms">
-              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#fcd34d" aria-hidden="true"></span><span class="mst-txt">AS 검토</span></button>
-              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#c4b5fd" aria-hidden="true"></span><span class="mst-txt">AS 승인</span></button>
-            </div>
-          </div>
-        </section>
         <section id="userPanelAccount" role="tabpanel" aria-labelledby="userTabAccount" hidden>
           <h4 class="user-section-title">계정 사용관리</h4>
           <div class="user-account-options">
-            <section class="user-account-option"><div><h4>개별 업무 권한 해제</h4><p id="userClearPermissionsHint">개별 업무 권한을 모두 해제합니다. 로그인과 계정 정보는 유지됩니다.</p></div><button type="button" id="userClearPermissions" onclick="clearUserPermissions()">업무 권한 모두 해제</button></section>
-            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인할 수 없습니다. 기본정보와 배정된 권한은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
+            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인과 AS 작업이 차단됩니다. 기존 업무 기록은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
             <section class="user-account-option user-account-delete"><div><h4>사용자 삭제</h4><p><span id="userDeleteHint">사용자 명부에서 계정을 삭제합니다. 삭제 시 확인창이 열립니다.</span></p></div><button type="button" id="userDeleteAccount" onclick="deleteAdminUser(userAdmin.editing)">사용자 삭제</button></section>
           </div>
           <details class="user-account-details"><summary>비밀번호 변경</summary><label for="userReplacementPassword">새 비밀번호</label><input type="password" id="userReplacementPassword" minlength="12" maxlength="128" autocomplete="new-password"/><small>12~128자 · 변경하면 해당 계정의 기존 로그인이 종료됩니다.</small><button type="button" id="userChangePassword" onclick="changeUserPassword()">비밀번호 변경</button></details>
@@ -2301,8 +2286,6 @@ async function doLogin() {
           if (data.user.role === 'sysadmin') {
             document.getElementById('tabUsersBtn').style.display = '';
           }
-          if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
-          if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
           if (currentUser.role === 'sysadmin') { document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none'); document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none'); }
           switchTab('as',document.getElementById('tabAsBtn'),'stats');
         }, 400);
@@ -3952,8 +3935,6 @@ async function printAsPdf(a, printNow = false) {
   document.getElementById('fileViewerDownload').style.display = 'none';
   // 상태에 맞는 버튼만 표시
   _viewerAsItem = a;
-  const _isAdmin = currentUser && currentUser.role === 'sysadmin';
-  const _isCreator = currentUser && !!a.createdById && currentUser.id === a.createdById;
   const workflowButton=document.getElementById('asViewerRequestReview');
   workflowButton.textContent=asJobActionLabel(a);workflowButton.style.display=asJobCanEdit(a)&&asJobNext(a)?'':'none';workflowButton.onclick=()=>openAsWorkflow(a);
   ['asViewerReview','asViewerApprove','asViewerProgress','asViewerComplete'].forEach(id=>document.getElementById(id).style.display='none');
@@ -4033,8 +4014,6 @@ async function initializeDashboard() {
     document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
     document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   }
-  if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
-  if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   switchTab('as',document.getElementById('tabAsBtn'),location.hash==='#as-list'?'list':'stats');
 }
 document.addEventListener('DOMContentLoaded',initializeDashboard);

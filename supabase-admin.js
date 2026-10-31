@@ -4,12 +4,12 @@ const steps=['incoming','inspect_wait','inspect_done','paint_wait','paint_done',
 const error=(status,message)=>Object.assign(new Error(message),{status});
 function validate(input,creating=false){
   if(!input||typeof input!=='object'||Array.isArray(input))throw error(400,'사용자 정보를 확인하세요.');
-  const allowed=['name','role','allowedSteps','asReview','asApprove','department','position','icon','active','password',...(creating?['id']:[])];
+  const allowed=['name','role','allowedSteps','department','position','icon','active','password',...(creating?['id']:[])];
   if(Object.keys(input).some(k=>!allowed.includes(k)))throw error(400,'지원하지 않는 사용자 필드입니다.');
   for(const k of ['id','name','department','position','icon'])if(input[k]!==undefined&&(typeof input[k]!=='string'||input[k].length>100))throw error(400,'사용자 정보를 확인하세요.');
   if((creating&&(!input.id?.trim()||!input.name?.trim()))||(input.name!==undefined&&!input.name.trim()))throw error(400,'아이디와 이름이 필요합니다.');
   if(input.role!==undefined&&!['sysadmin','admin','worker'].includes(input.role))throw error(400,'역할을 확인하세요.');
-  for(const k of ['active','asReview','asApprove'])if(input[k]!==undefined&&typeof input[k]!=='boolean')throw error(400,'권한 값을 확인하세요.');
+  if(input.active!==undefined&&typeof input.active!=='boolean')throw error(400,'계정 상태를 확인하세요.');
   if(input.allowedSteps!==undefined&&(!Array.isArray(input.allowedSteps)||input.allowedSteps.some(x=>!steps.includes(x))))throw error(400,'공정 권한을 확인하세요.');
   if((creating||input.password!==undefined)&&(typeof input.password!=='string'||input.password.length<12||input.password.length>128))throw error(400,'비밀번호는 12~128자로 입력하세요.');
   const out={...input};if(out.id)out.id=out.id.trim();if(out.name)out.name=out.name.trim();return out;
