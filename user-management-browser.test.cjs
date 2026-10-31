@@ -44,7 +44,7 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await yearPanel.getByRole('option',{name:'2025년',exact:true}).click();assert.match(await page.locator('#asStatsYearLabel').textContent(),/2025/);assert.match(await yearButton.textContent(),/2025/);assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await page.keyboard.press('ArrowDown');await page.keyboard.press('Home');await page.keyboard.press('Enter');assert.equal(await page.locator('#asStatsYear').inputValue(),'2026');
  await yearButton.click();await page.keyboard.press('Escape');assert(await yearButton.evaluate(el=>el===document.activeElement));assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
- await yearButton.click();await page.locator('#asSubStats h1').click();assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await yearButton.click();await page.locator('.as-overview-basis').click({position:{x:300,y:30}});assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await yearButton.click();await page.keyboard.press('Tab');await page.keyboard.press('Tab');assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await yearPanel.evaluate(el=>getComputedStyle(el).transitionDuration),'0s');await page.emulateMedia({reducedMotion:'no-preference'});
  assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'24px');
