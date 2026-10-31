@@ -403,14 +403,17 @@
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
-  .btn-primary.is-error {
-    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  .input-stack.is-error {
+    animation: shake 0.36s ease-out;
   }
+  .input-stack.is-error input {border-color:var(--danger);background:#fff4f5;}
+  .form-message.is-visually-hidden {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;}
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
+    25% { transform: translateX(-5px); }
+    55% { transform: translateX(4px); }
+    80% { transform: translateX(-2px); }
   }
 
   .form-footer {
@@ -547,13 +550,25 @@
 
   <script>
 const pw=document.getElementById('password'),toggle=document.getElementById('togglePw'),form=document.getElementById('loginForm'),idInput=document.getElementById('identifier'),btn=document.getElementById('submitBtn'),message=document.getElementById('loginMessage');
-let busy=false;
+let busy=false,credentialsFailed=false;
+const inputStack=document.querySelector('.input-stack');
 toggle.addEventListener('click',()=>{const show=pw.type==='password';pw.type=show?'text':'password';toggle.setAttribute('aria-pressed',String(show));toggle.setAttribute('aria-label',show?'비밀번호 숨기기':'비밀번호 표시');});
 function fieldError(input,text){document.getElementById(input===pw?'passwordError':'identifierError').textContent=text;input.setAttribute('aria-invalid',String(!!text));}
-[idInput,pw].forEach(input=>input.addEventListener('input',()=>{fieldError(input,'');message.textContent='';}));
-function showError(text){message.textContent=text;message.focus();btn.classList.add('is-error');setTimeout(()=>btn.classList.remove('is-error'),500);}
+function clearFailure(){
+ if(credentialsFailed){fieldError(idInput,'');fieldError(pw,'');credentialsFailed=false;}
+ inputStack.classList.remove('is-error');message.classList.remove('is-visually-hidden');message.textContent='';
+ idInput.setAttribute('aria-describedby','identifierError');pw.setAttribute('aria-describedby','passwordError');
+}
+[idInput,pw].forEach(input=>input.addEventListener('input',()=>{clearFailure();fieldError(input,'');}));
+function showError(text,credentials=false){
+ clearFailure();message.textContent=text;
+ if(!credentials){message.focus();return;}
+ credentialsFailed=true;message.classList.add('is-visually-hidden');
+ for(const input of [idInput,pw]){input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby','loginMessage');}
+ void inputStack.offsetWidth;inputStack.classList.add('is-error');pw.focus({preventScroll:true});pw.select();
+}
 form.addEventListener('submit',async e=>{
- e.preventDefault();if(busy)return;
+ e.preventDefault();if(busy)return;clearFailure();
  const missingId=!idInput.value.trim(),badPassword=pw.value.length<4;
  fieldError(idInput,missingId?'아이디를 입력해 주세요.':'');fieldError(pw,badPassword?'비밀번호를 4자 이상 입력해 주세요.':'');
  if(missingId||badPassword){(missingId?idInput:pw).focus();return;}
@@ -563,7 +578,12 @@ form.addEventListener('submit',async e=>{
  try{
   const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'process-server'},body:JSON.stringify({id:idInput.value.trim(),password:pw.value}),signal:controller.signal});
   const data=await res.json().catch(()=>({}));
-  if(!res.ok||!data.success){showError(res.status>=500?'서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.':'로그인에 실패했습니다. 아이디와 비밀번호를 확인해 주세요.');return;}
+  if(!res.ok||!data.success){
+   if(res.status===429)showError('로그인 시도가 많습니다. 잠시 후 다시 시도해 주세요.');
+   else if(res.status>=500)showError('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+   else showError('로그인에 실패했습니다.',true);
+   return;
+  }
   try{sessionStorage.setItem('currentUser',JSON.stringify(data.user));if(document.getElementById('keep').checked)localStorage.setItem('currentUser',JSON.stringify(data.user));else localStorage.removeItem('currentUser');}catch(error){showError('로그인 정보를 저장하지 못했습니다. 브라우저의 저장소 설정을 확인해 주세요.');return;}
   const activityAt=String(Date.now());
   try{localStorage.setItem('lastUserActivityAt',activityAt);}catch{}
