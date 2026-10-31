@@ -1672,7 +1672,7 @@ body #asSubStats .as-reason-heatmap-table :is(th,td){font-family:var(--ui-font);
 body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;font-weight:700}
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
-<link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=2">
+<link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=3">
 <link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 </head>
@@ -1941,7 +1941,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <section id="asSubStats" data-overview-theme="readable" style="display:none" aria-label="A/S 현황">
   <p id="asStatsMessage" role="status" aria-live="polite"></p>
   <div id="asStatsContent" hidden>
-<div class="as-overview-section"><h1>AS 접수 현황</h1><span>현재 기준 · 전체 접수 중 미완료</span></div><div id="asKpiRow" class="as-overview-kpis"><button type="button" onclick="asKpiFilter('pending')"><span>전체 대기</span><strong id="kpiTotal">0</strong></button><button type="button" onclick="asKpiFilter('접수')"><span>접수</span><strong id="kpiOpen">0</strong></button><button type="button" onclick="asKpiFilter('제작 요청')"><span>제작 요청</span><strong id="kpiReviewWait">0</strong></button><button type="button" onclick="asKpiFilter('도장 요청')"><span>도장 요청</span><strong id="kpiApproveWait">0</strong></button><button type="button" onclick="asKpiFilter('납품 요청')"><span>납품 요청</span><strong id="kpiProgress">0</strong></button></div><div class="as-overview-section as-overview-period"><div><h2 id="asStatsPeriodTitle">기간별 접수 분석</h2><p class="as-period-basis">접수일 기준</p></div><select id="asStatsYear" aria-label="집계 연도" onchange="renderAsStatistics()"></select></div>
+<div class="as-overview-section"><h1>AS 접수 현황</h1><span>현재 기준 · 전체 접수</span></div><div id="asKpiRow" class="as-overview-kpis"><button type="button" onclick="asKpiFilter('')"><span>전체</span><strong id="kpiTotal">0</strong></button><button type="button" onclick="asKpiFilter('접수')"><span>접수</span><strong id="kpiOpen">0</strong></button><button type="button" onclick="asKpiFilter('제작 요청')"><span>제작 요청</span><strong id="kpiReviewWait">0</strong></button><button type="button" onclick="asKpiFilter('도장 요청')"><span>도장 요청</span><strong id="kpiApproveWait">0</strong></button><button type="button" onclick="asKpiFilter('납품 요청')"><span>납품 요청</span><strong id="kpiProgress">0</strong></button></div><div class="as-overview-section as-overview-period"><div><h2 id="asStatsPeriodTitle">기간별 접수 분석</h2><p class="as-period-basis">접수일 기준</p></div><select id="asStatsYear" aria-label="집계 연도" onchange="renderAsStatistics()"></select></div>
     <div class="as-stats-summary">
       <div class="as-stats-month-summary"><span id="asStatsMonthLabel"></span><strong id="asStatsMonthly"></strong><p id="asStatsDelta"></p></div>
       <div><span id="asStatsYearLabel">연간 접수</span><strong id="asStatsTotal"></strong><p id="asStatsYearDelta"></p></div>
@@ -2827,9 +2827,10 @@ async function loadAsStatistics() {
   }
 }
 function renderAsOverviewKpis(records) {
- const counts = {pending:0,'접수':0,'제작 요청':0,'도장 요청':0,'납품 요청':0};
- records.forEach(record=>{if(record.status!=='완료')counts.pending++;if(Object.hasOwn(counts,record.status)&&record.status!=='pending')counts[record.status]++;});
- const ids={pending:'kpiTotal','접수':'kpiOpen','제작 요청':'kpiReviewWait','도장 요청':'kpiApproveWait','납품 요청':'kpiProgress'};
+ document.getElementById('kpiTotal').textContent=records.length.toLocaleString();
+ const counts = {'접수':0,'제작 요청':0,'도장 요청':0,'납품 요청':0};
+ records.forEach(record=>{if(Object.hasOwn(counts,record.status))counts[record.status]++;});
+ const ids={'접수':'kpiOpen','제작 요청':'kpiReviewWait','도장 요청':'kpiApproveWait','납품 요청':'kpiProgress'};
  Object.entries(ids).forEach(([key,id])=>{document.getElementById(id).textContent=counts[key].toLocaleString();});
 }
 function renderAsAmounts(year,month,result) {
@@ -4176,7 +4177,7 @@ function createAsReadableTrend(chart){
  const root=document.getElementById('asSubStats'),$=id=>document.getElementById(id),format=value=>value.toLocaleString('ko-KR');
  root.dataset.overviewLayout='comparison';
  const context=root.querySelector('.as-overview-section:not(.as-overview-period)');
- context.querySelector('span').textContent='현재 상태 기준 · 전체 기간 · 완료 제외';
+ context.querySelector('span').textContent='현재 상태 기준 · 전체 기간 · 완료 포함';
  const basis=document.createElement('div');basis.className='as-overview-basis';basis.innerHTML='<div class="as-period-controls"><span id="asStatsYearCaption" class="as-chart-sr-only">조회연도</span><div id="asStatsYearPickerDd" class="as-year-heading-select toss-dd"><button type="button" id="asStatsYearPickerBtn" class="toss-dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="asStatsYearPickerPanel" aria-labelledby="asStatsYearCaption asStatsYearPickerLabel" onclick="toggleAsDd(event,\'asStatsYearPicker\')"><span id="asStatsYearPickerLabel"></span><svg class="toss-dd-chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div id="asStatsYearPickerPanel" class="toss-dd-panel" role="listbox" aria-labelledby="asStatsYearCaption"></div></div></div>';$('asKpiRow').after(basis);
  const yearSelect=$('asStatsYear'),yearPicker=$('asStatsYearPickerDd'),yearButton=$('asStatsYearPickerBtn');
  yearSelect.hidden=true;yearPicker.prepend(yearSelect);

@@ -87,9 +87,9 @@ assert(!html.includes('id="asStatsProductsMore"'));
 assert.equal(c.asAnnualChangeText(80,100),'전년 대비 20.0% 감소');assert.equal(c.asAnnualChangeText(120,100),'전년 대비 20.0% 증가');assert.equal(c.asAnnualChangeText(0,100),'전년 대비 100.0% 감소');assert.equal(c.asAnnualChangeText(0,0),'전년 대비 변동 없음');assert.equal(c.asAnnualChangeText(5,0),'전년 0건 대비 5건 증가');assert.equal(c.summarizeAsStatistics(sample,2026,1).previousYearTotal,1);
 (async()=>{
  await c.loadAsStatistics();
- assert.equal(els.kpiTotal.textContent,'5');assert.equal(els.kpiOpen.textContent,'2');
+ assert.equal(els.kpiTotal.textContent,'7');assert.equal(els.kpiOpen.textContent,'2');
  c.renderAsOverviewKpis([{createdAt:'2020-01-01',status:'제작 요청'},{status:'완료'},{status:'도장 요청'}]);
- assert.equal(els.kpiTotal.textContent,'2');assert.equal(els.kpiReviewWait.textContent,'1');assert.equal(els.kpiApproveWait.textContent,'1');
+ assert.equal(els.kpiTotal.textContent,'3');assert.equal(els.kpiReviewWait.textContent,'1');assert.equal(els.kpiApproveWait.textContent,'1');
  assert(!html.slice(html.indexOf('<div id="asSubList">'),html.indexOf('<!-- /asSubList -->')).includes('id="asKpiRow"'));
  c.renderAsOverviewKpis(sample);
 
