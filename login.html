@@ -4,9 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>HANKUK MIBOO — 로그인</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/cover-assets/login-transition.css?v=1">
 <style>
   :root {
     --toss-blue: #004A93;
@@ -415,55 +413,6 @@
     75% { transform: translateX(6px); }
   }
 
-  /* ===== 카드/히어로 페이드아웃 (성공 시) ===== */
-  .form-card.is-leaving {
-    animation: cardOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  .hero.is-leaving {
-    animation: heroOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  @keyframes cardOut {
-    to { opacity: 0; transform: translateY(-12px); }
-  }
-  @keyframes heroOut {
-    to { opacity: 0; }
-  }
-
-  /* ===== 성공 인사 메시지 ===== */
-  .greeting {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 5;
-    padding: 0 24px;
-  }
-  .greeting.is-active {
-    animation: greetingIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
-  }
-  .greeting-text {
-    color: var(--text-900);
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    text-align: center;
-    text-shadow: 0 4px 24px rgba(255,255,255,0.6);
-  }
-  .greeting-text em {
-    color: var(--toss-blue);
-    font-style: normal;
-  }
-  @keyframes greetingIn {
-    0%   { opacity: 0; transform: translateY(12px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  @media (max-width: 900px) {
-    .greeting-text { font-size: 30px; }
-  }
-
   .form-footer {
     margin-top: 36px;
     text-align: center;
@@ -532,10 +481,11 @@
 @media(max-width:900px){.main{grid-template-columns:minmax(0,1fr);gap:0;padding:32px 24px}.form-card{justify-self:center;max-width:360px;padding:0}}
 </style>
 <style id="refinements">
-:root{--text-400:#626f7d;--danger:#bf2638}.login-group{width:100%;max-width:360px;justify-self:center}.centered-logo{width:208px;height:auto;aspect-ratio:1921 / 414;margin:0 auto 36px;opacity:1;transform:none;filter:none}.form-card{width:100%}.form-card:not(.is-leaving){animation:refinedEnter .5s ease .1s backwards}@keyframes refinedEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{font-size:12px}.input-field input{padding-right:16px}#password{padding-right:60px}.toggle-eye{width:44px;height:44px;right:6px;top:10px;transform:none}.input-field label{top:32px}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{top:10px}.checkbox{min-height:44px}.row{margin-bottom:24px}.input-stack{margin-bottom:16px}.checkbox input{border-color:#83909e}.field-error,.form-message{font-size:13px;line-height:1.6;color:var(--danger);margin-top:8px}.field-error:empty,.form-message:empty{display:none}.form-message{margin-top:14px}.input-field input[aria-invalid=true]{border-color:var(--danger)}button:focus-visible,a:focus-visible,input[type=checkbox]:focus-visible{outline:3px solid var(--toss-blue);outline-offset:4px}.login-group.is-leaving>.centered-logo{visibility:hidden}.btn-primary.is-loading:disabled{background:var(--toss-blue);color:transparent}.btn-primary.is-loading::before{border-top-color:#fff}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.form-card.is-leaving{opacity:0}.greeting.is-active{opacity:1}}
+:root{--text-400:#626f7d;--danger:#bf2638}.login-group{width:100%;max-width:360px;justify-self:center}.centered-logo{width:208px;height:auto;aspect-ratio:1921 / 414;margin:0 auto 36px;opacity:1;transform:none;filter:none}.form-card{width:100%}.form-card:not(.is-leaving){animation:refinedEnter .5s ease .1s backwards}@keyframes refinedEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{font-size:12px}.input-field input{padding-right:16px}#password{padding-right:60px}.toggle-eye{width:44px;height:44px;right:6px;top:10px;transform:none}.input-field label{top:32px}.input-field input:focus+label,.input-field input:not(:placeholder-shown)+label{top:10px}.checkbox{min-height:44px}.row{margin-bottom:24px}.input-stack{margin-bottom:16px}.checkbox input{border-color:#83909e}.field-error,.form-message{font-size:13px;line-height:1.6;color:var(--danger);margin-top:8px}.field-error:empty,.form-message:empty{display:none}.form-message{margin-top:14px}.input-field input[aria-invalid=true]{border-color:var(--danger)}button:focus-visible,a:focus-visible,input[type=checkbox]:focus-visible{outline:3px solid var(--toss-blue);outline-offset:4px}.btn-primary.is-loading:disabled{background:var(--toss-blue);color:transparent}.btn-primary.is-loading::before{border-top-color:#fff}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head>
-<body>
+<body class="login-background">
+<script src="/cover-assets/login-transition.js?v=1" data-page="login"></script>
 
 
 
@@ -595,11 +545,6 @@
     </aside></div>
   </main>
 
-  <!-- 로그인 성공 인사 메시지 -->
-  <div class="greeting" id="greeting" aria-hidden="true" role="status" aria-live="polite">
-    <div class="greeting-text">안녕하세요, <em id="greetingName">OO</em>님</div>
-  </div>
-
   <script>
 const pw=document.getElementById('password'),toggle=document.getElementById('togglePw'),form=document.getElementById('loginForm'),idInput=document.getElementById('identifier'),btn=document.getElementById('submitBtn'),message=document.getElementById('loginMessage');
 let busy=false;
@@ -620,13 +565,16 @@ form.addEventListener('submit',async e=>{
   const data=await res.json().catch(()=>({}));
   if(!res.ok||!data.success){showError(res.status>=500?'서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.':'로그인에 실패했습니다. 아이디와 비밀번호를 확인해 주세요.');return;}
   try{sessionStorage.setItem('currentUser',JSON.stringify(data.user));if(document.getElementById('keep').checked)localStorage.setItem('currentUser',JSON.stringify(data.user));else localStorage.removeItem('currentUser');}catch(error){showError('로그인 정보를 저장하지 못했습니다. 브라우저의 저장소 설정을 확인해 주세요.');return;}
-  succeeded=true;document.getElementById('greetingName').textContent=data.user?.name||idInput.value.trim();document.querySelector('.form-card').classList.add('is-leaving');document.querySelector('.login-group').classList.add('is-leaving');
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(()=>{const greeting=document.getElementById('greeting');greeting.setAttribute('aria-hidden','false');greeting.classList.add('is-active');},reduced?0:300);
-  setTimeout(()=>{window.location.href='/dashboard.html';},reduced?250:4000);
+  succeeded=true;pw.value='';
+  if(window.LoginTransition)window.LoginTransition.start({name:data.user?.name||idInput.value.trim()});
+  else window.location.href='/dashboard.html';
  }catch(error){showError(error.name==='AbortError'?'서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.':'서버에 연결하지 못했습니다. 네트워크를 확인하고 다시 시도해 주세요.');}
  finally{clearTimeout(timeout);if(!succeeded){busy=false;btn.disabled=false;btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');}}
-});</script>
+});
+function resetLoginForm(){busy=false;btn.disabled=false;btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');}
+window.addEventListener('pageshow',event=>{if(event.persisted)resetLoginForm();});
+window.addEventListener('login-transition-reset',resetLoginForm);
+</script>
 
 </body>
 </html>
