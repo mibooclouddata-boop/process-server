@@ -42,10 +42,28 @@ test('central write indicator follows actual responses and preserves forms on fa
  await page.locator('#toastContainer').waitFor({state:'hidden'});assert.equal(fixture.read('as.json').list.length,1);
  await page.route('**/api/as/*/workflow',async route=>{const responseGate=new Promise(resolve=>{release=resolve;});onRequest();await responseGate;await route.continue();});
  await page.evaluate(async()=>{await loadAsList();openAsWorkflow(_asFullList[0]);});
+ const workflow=page.locator('#asJobDialog');
+ const bounds=()=>workflow.evaluate(el=>{const {x,y,width,height}=el.getBoundingClientRect();return {x,y,width,height};});
+ const requestBounds=await bounds();
  const workflowRequest=nextRequest();await page.locator('#asJobDialog button[type="submit"]').click();await workflowRequest;await progress.waitFor({state:'visible'});
+ assert.deepEqual(await bounds(),requestBounds,'saving must not resize or move the request dialog');
  // Simulate an upstream response slower than the minimum display duration.
  await page.waitForTimeout(3200);assert(await progress.isVisible());
  assert.equal(await page.locator('#asWriteProgressTitle').textContent(),'전산 처리 중');assert.equal(fixture.read('as.json').list[0].status,'접수');
  release();await page.locator('#asJobDialog').waitFor({state:'hidden'});assert.equal(fixture.read('as.json').list[0].status,'제작 요청');
+ for(const [width,nextStatus] of [[1440,'도장 요청'],[390,'납품 요청'],[1440,'완료']]){
+  await page.locator('#toastContainer').waitFor({state:'hidden'});
+  await page.setViewportSize({width,height:900});
+  await page.evaluate(async()=>{await loadAsList();openAsWorkflow(_asFullList[0]);});
+  const completed=page.locator('#asJobCompleted'),date=await page.evaluate(()=>asJobToday());
+  await completed.fill(date);
+  const before=await bounds(),request=nextRequest();
+  const complete=workflow.locator('button[type="submit"]');
+  await complete.click();await request;await progress.waitFor({state:'visible'});
+  assert.deepEqual(await bounds(),before,'saving must not resize or move a completion dialog');
+  assert(await complete.isDisabled());assert.equal(await completed.inputValue(),date);
+  release();await workflow.waitFor({state:'hidden'});
+  assert.equal(fixture.read('as.json').list[0].status,nextStatus);
+ }
  assert(await progress.isHidden());assert.deepEqual(errors,[]);
 });
