@@ -90,7 +90,7 @@ async function saveAsJob(action){
  const error=document.getElementById('asJobError');
  if(files.length>10){error.textContent='첨부파일은 최대 10개입니다.';return;}
  for(const f of files)form.append('files',f);
- const dialog=document.getElementById('asJobDialog');asJobState.busy=true;dialog.querySelectorAll('button').forEach(b=>b.disabled=true);error.textContent='저장 중입니다.';
+ const dialog=document.getElementById('asJobDialog');asJobState.busy=true;dialog.querySelectorAll('button').forEach(b=>b.disabled=true);error.textContent='';
  try{
    await asWrite(`${SERVER}/api/as/${encodeURIComponent(item.id)}/workflow`,'PATCH',form,'workflow:'+item.id);
   dialog.close();await loadAsList();
