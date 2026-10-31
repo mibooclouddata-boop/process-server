@@ -8,7 +8,7 @@
 2. `.env.example`을 `.env.local`로 복사해 로컬 편집기로 설정한다. `SUPABASE_URL`, publishable 키(또는 legacy anon 키), 서버 secret 키(또는 legacy service_role 키)를 서버에만 넣는다. 변수 이름은 예시 그대로 사용한다.
 3. `SESSION_ENCRYPTION_KEY`에는 암호학적으로 무작위인 32바이트를 hex 64자로 만든 값을 넣는다. Secret Manager에서 생성·보관한다. 키 변경 시 기존 세션은 모두 사용 불가하므로 재로그인을 안내한다.
 4. `PROCESS_DATA_DIR`는 반드시 새 검증 폴더로 지정한다. 기존 `data.json`/업무 JSON/첨부 폴더를 지정하지 않는다. `AUTH_PROVIDER=supabase`를 명시적으로 설정한다. 잘못된 설정 시 로컬 인증으로 우회하지 않고 시작을 거부한다.
-5. SQL 세 파일을 검토한 뒤 **검증 프로젝트에만** 순서대로 적용한다. 실제 프로젝트에는 실행하지 않았다. `private` 스키마를 Data API exposed schemas에 추가하지 않는다.
+5. SQL 다섯 파일(001~003, `202611010004_shared_as_access.sql`, `202611010005_login_epoch.sql`)을 검토한 뒤 **검증 프로젝트에만** 순서대로 적용한다. 현재 런타임의 로그인은 005의 세션 발급 RPC가 필요하다. 실제 프로젝트에는 실행하지 않았다. `private` 스키마를 Data API exposed schemas에 추가하지 않는다.
 6. 빈 검증 프로젝트의 첫 관리자만 `supabase-bootstrap.cjs`로 만든다. 접근 제한된 `.env.local` 또는 Secret Manager에 `BOOTSTRAP_LOGIN_ID`, `BOOTSTRAP_NAME`, `BOOTSTRAP_PASSWORD`를 설정한 후 `node --env-file=.env.local supabase-bootstrap.cjs --empty-project`를 실행한다. 비밀번호는 명령행에 넣지 않는다. 성공 후 일회성 BOOTSTRAP 설정을 제거한다. 기존 프로필이 있으면 SQL이 거부한다. 내부 주소는 무작위 UUID이며 이메일 발송 없이 확인 처리한다.
 7. 이후 관리자 화면에서 계정 발급·권한 수정·비밀번호 재설정·활성 상태를 관리한다. 비밀번호 변경은 계정 잠금/세션 폐기 → Auth 변경 → 성공한 경우만 활성 복구 순서다. 마지막 활성 sysadmin의 비활성화·강등·비밀번호 재설정은 차단한다. 재설정하려면 두 번째 관리자를 준비한다. 비밀번호는 12~128자이며 별도 안전한 채널로 전달한다.
 8. Node 22 이상에서 `node --env-file=.env.local server.js`로 검증 서버를 실행한다. 일반 `npm start`는 .env 파일을 자동으로 읽지 않는다. 서버 환경변수로 주입한 경우 `npm start`를 사용한다.
@@ -22,6 +22,15 @@
 - `POST /api/logout`: 서버 세션 삭제. 사용자 브라우저의 캐시된 프로필은 인증 근거가 아니다.
 - `/api/users`: sysadmin만 목록 조회(최대 1,000명)·POST 발급, `/api/users/:UUID` PUT 권한/비밀번호/활성 수정. DELETE는 참조 보존을 위한 비활성화다. SQL에서도 현재 관리자 권한을 재검증한다. 감사 기록에는 비밀번호를 저장하지 않는다.
 - `GET /api/as-attachments/:id`: 인증 후 직원 JWT로 메타데이터 RLS와 Storage RLS를 적용해 다운로드. 공개 URL이나 관리자 키를 반환하지 않는다. 운영 첨부를 옮기거나 기존 목록 URL을 자동 변경하지 않는다.
+- AS 접수·진행·수정·삭제·복원·이력은 로그인한 모든 활성 직원에게 허용한다. 사용자 API는 폐기한 `asReview`/`asApprove` 입력을 400으로 거절하고 응답에도 포함하지 않는다.
+
+## 공동 AS 정책 변경 적용과 복구
+
+`202611010004_shared_as_access.sql`은 기존 `private.staff_can_manage_as(uuid)`만 교체한다. 기존 AS에 연결된 첨부의 Storage INSERT/DELETE를 활성 직원에게 허용하며, 익명·비활성 계정·연결 없는 파일·덮어쓰기는 계속 차단한다. 공개 버킷이나 업무 테이블 직접 쓰기 권한을 추가하지 않는다.
+
+기존 세 마이그레이션을 적용한 검증 환경에는 004, 005를 순서대로 추가한다. 005는 직원 행 잠금 안에서 계정 보안 버전을 확인하고 세션을 발급하며, 기존 직접 세션 INSERT 권한을 회수한다. 새 런타임에 005가 없거나 구버전 런타임에 005만 적용하면 로그인이 실패하므로 로그인 중지/유지보수 시간에 SQL과 런타임을 함께 전환한다. 이 저장소 변경 자체가 실제 DB 적용은 아니며, 운영에서는 백업과 실제 역할별 검증 후 별도 승인된 릴리즈에 적용한다. 전체 적용·복구 조건은 [보안 보강 적용·복구 유의사항](security-hardening-rollout.md)을 따른다.
+
+기존 `as_review`/`as_approve` 열과 값은 호환·복구를 위해 보존하지만 현재 앱의 권한 근거로 사용하지 않는다. 구버전으로 복구할 때는 앱 버전만 되돌리지 말고, 002에 기록된 기존 함수 본문도 `CREATE OR REPLACE FUNCTION`으로 함께 복구한다. 002 전체를 재실행하지 않는다. 정책 복구는 공동 작업 중 변경한 AS 데이터나 삭제 이력을 되돌리지 않는다.
 
 세션은 DB에 해시된 토큰과 암호화한 upstream access token을 저장한다. Auth getUser와 최신 프로필을 요청마다 확인한다. refresh token은 보관하지 않으며 Auth token 수명 또는 8시간 중 짧은 시점에 만료한다. 화면의 기존 로그인 상태 유지가 이 만료 시간을 연장하지는 않는다. 모바일 재시작 후에는 다시 로그인한다. 관리자 권한/활성 상태 변경 시 SQL 트리거가 세션 버전을 올린다. 단순 이름 변경은 사용자 ID와 소유권을 바꾸지 않는다.
 

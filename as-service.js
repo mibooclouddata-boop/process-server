@@ -10,10 +10,10 @@ function text(value, name, max, required=false) {
   if (typeof value !== 'string' || value.length > max || (required && !value.trim()) || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value)) fail(name+' 값을 확인하세요.');
   return value.trim();
 }
-function canManage(actor,item) {
-  return !!actor && (actor.role==='sysadmin'||actor.asReview===true||actor.asApprove===true||!!item.createdById&&item.createdById===actor.id);
+function canManage(actor) {
+  return !!actor && typeof actor.id==='string' && !!actor.id && actor.active!==false && !actor.passwordResetRequired && ['sysadmin','admin','worker'].includes(actor.role);
 }
-function authorize(actor,item) {if (!canManage(actor,item)) fail('접수자 또는 AS 관리 권한이 필요합니다.',403);}
+function authorize(actor) {if (!canManage(actor)) fail('다시 로그인하세요.',401);}
 function versionOf(item) {return item.version ?? item.workflow?.revision ?? 0;}
 function expectedVersion(value) {
   if (typeof value==='string' && /^(0|[1-9]\d*)$/.test(value)) value=Number(value);
@@ -25,24 +25,40 @@ function canonical(value) {
   if (value && typeof value==='object') return Object.fromEntries(Object.keys(value).sort().map(k=>[k,canonical(value[k])]));
   return value;
 }
+// Workflow history only appends; snapshots refer to an exact prefix of the retained record.
+function snapshot(item) {
+  if(!item)return null;
+  const saved=structuredClone(item);
+  if(Array.isArray(saved.workflow?.history))saved.workflow.history={reference:'record-history-v1',count:saved.workflow.history.length};
+  return saved;
+}
+function expandSnapshot(data,item) {
+  if(!item)return null;
+  const expanded=structuredClone(item),reference=expanded.workflow?.history;
+  if(reference?.reference==='record-history-v1'){
+    const history=data.list.find(row=>row.id===expanded.id)?.workflow?.history;
+    if(!Array.isArray(history)||!Number.isSafeInteger(reference.count)||reference.count<0||reference.count>history.length)fail('AS 이력 참조를 확인해야 합니다. 원본과 백업을 보존하세요.',503);
+    expanded.workflow.history=structuredClone(history.slice(0,reference.count));
+  }
+  return expanded;
+}
 function createAsService(store, {clock=()=>new Date()} = {}) {
   const visible = row => ({...workflow.normalize(structuredClone(row)),version:versionOf(row)});
   function event(data,type,before,after,actor,reason,at) {
     data.events.push({id:randomUUID(),recordId:after.id,type,version:after.version,at,
-      actorId:actor.id,actorName:actor.name,reason,before:before||null,after:structuredClone(after)});
+      actorId:actor.id,actorName:actor.name,reason,before:snapshot(before),after:snapshot(after)});
   }
   function mutate(operation,id,input,files,actor,key,apply) {
-    if (!actor || typeof actor.id!=='string' || !actor.id) fail('다시 로그인하세요.',401);
+    authorize(actor);
     if (typeof key!=='string'||! /^[A-Za-z0-9_-]{16,128}$/.test(key)) fail('저장 요청 키가 필요합니다. 화면을 새로고침하세요.',428);
     const digest=createHash('sha256').update(JSON.stringify(canonical({operation,id,input,files:files.map(({name,size,sha256})=>({name,size,sha256}))}))).digest('hex');
     return store.transaction(data=>{
       let item=id?data.list.find(row=>row.id===id):null;
       if(id&&!item)fail('AS 건을 찾을 수 없습니다.',404);
-      if(item)authorize(actor,item);
       const prior=data.requests.find(r=>r.actorId===actor.id&&r.key===key);
       if(prior){
         if(prior.hash!==digest)fail('이 요청은 이미 다른 내용으로 처리됐습니다. 목록을 확인한 뒤 새 작업으로 저장하세요.',409);
-        return {...structuredClone(prior.result),replayed:true};
+        return {...structuredClone(prior.result),item:expandSnapshot(data,prior.result.item),replayed:true};
       }
       if(item){
         if(item.deletedAt && operation!=='restore')fail('삭제된 AS 건입니다.',410);
@@ -57,7 +73,7 @@ function createAsService(store, {clock=()=>new Date()} = {}) {
       if(item.workflow)item.workflow.revision=item.version;
       event(data,operation,before,item,actor,input.changeReason||'',item.updatedAt);
       const result={success:true,item:visible(item)};
-      data.requests.push({actorId:actor.id,key,hash:digest,operation,recordId:item.id,at:item.updatedAt,result:structuredClone(result)});
+      data.requests.push({actorId:actor.id,key,hash:digest,operation,recordId:item.id,at:item.updatedAt,result:{...result,item:snapshot(result.item)}});
       return result;
     });
   }
@@ -83,11 +99,19 @@ function createAsService(store, {clock=()=>new Date()} = {}) {
   }
   return {
     list:()=>store.read(data=>data.list.filter(r=>!r.deletedAt).map(visible)),
-    trash:actor=>store.read(data=>data.list.filter(r=>r.deletedAt&&canManage(actor,r)).map(visible)),
+    trash:actor=>store.read(data=>data.list.filter(r=>r.deletedAt&&canManage(actor)).map(visible)),
     requestStatus:(key,actor)=>store.read(data=>{const request=data.requests.find(r=>r.actorId===actor.id&&r.key===key);return request?{recordId:request.recordId,asNo:request.result.item.asNo,operation:request.operation,version:request.result.item.version}:null;}),
-    history:(id,actor)=>store.read(data=>{const item=data.list.find(r=>r.id===id);if(!item)fail('AS 건을 찾을 수 없습니다.',404);authorize(actor,item);return structuredClone(data.events.filter(e=>e.recordId===id));}),
+    history(id,actor,{offset=0,limit=50}={}) {
+      for(const value of [offset,limit])if(typeof value!=='number'&&(typeof value!=='string'||!/^\d+$/.test(value)))fail('이력 조회 범위를 확인하세요.');
+      offset=Number(offset);limit=Number(limit);
+      if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(limit)||limit<1||limit>100)fail('이력 조회 범위를 확인하세요.');
+      return store.read(data=>{
+        authorize(actor);if(!data.list.some(r=>r.id===id))fail('AS 건을 찾을 수 없습니다.',404);
+        return data.events.filter(e=>e.recordId===id).slice(offset,offset+limit).map(e=>({...structuredClone(e),before:expandSnapshot(data,e.before),after:expandSnapshot(data,e.after)}));
+      });
+    },
     attachment:filename=>store.read(data=>data.list.some(r=>!r.deletedAt&&(r.files||[]).some(f=>f.filename===filename))),
-    check:(id,actor)=>store.read(data=>{const item=data.list.find(r=>r.id===id);if(!item)fail('AS 건을 찾을 수 없습니다.',404);authorize(actor,item);}),
+    check:(id,actor)=>store.read(data=>{authorize(actor);const item=data.list.find(r=>r.id===id);if(!item)fail('AS 건을 찾을 수 없습니다.',404);}),
     create(input,files,actor,key) {
       const values=validateInput(input,true);
       return mutate('create',null,values,files,actor,key,(data,unused,now)=>{

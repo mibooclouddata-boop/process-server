@@ -54,6 +54,7 @@ app.get('/as-integrity-ui.js', (req,res)=>res.sendFile('as-integrity-ui.js',{roo
 app.get('/auth-client.js', (req,res)=>res.sendFile('auth-client.js',{root:__dirname}));
 app.get('/user-admin-ui.js', (req,res)=>res.sendFile('user-admin-ui.js',{root:__dirname}));
 app.get('/as-amount.js', (req,res)=>res.sendFile('as-amount.js',{root:__dirname}));
+app.get('/as-pdf-preview.js', (req,res)=>res.sendFile('as-pdf-preview.js',{root:__dirname}));
 app.get('/dashboard.html', (req, res) => sendPage(res, 'dashboard.html'));
 app.get('/miboo_logo.png', (req, res) => res.sendFile('miboo_logo.png',{root:__dirname}));
 app.get('/login-bg.png', (req, res) => res.sendFile('login-bg.png',{root:__dirname}));
@@ -78,7 +79,7 @@ function saveData(data) {
 const loginAttempts=new Map();
 let pendingLogins=0;
 const dummyHash=passwords.hashPassword(require('node:crypto').randomBytes(32).toString('hex'));
-function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],department:u.department||'',position:u.position||'',asReview:u.asReview===true,asApprove:u.asApprove===true};}
+function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],department:u.department||'',position:u.position||''};}
 app.post('/api/login', async (req,res)=>{
   if(supabaseAuth)return supabaseAuth.login(req,res);
   const {id,password}=req.body||{};
@@ -122,9 +123,10 @@ app.get('/api/users', (req, res) => {
 // ── 사용자 추가 ──
 function validateUser(req,res,next){
  const b=req.body||{};
+ if(['asReview','asApprove'].some(k=>Object.hasOwn(b,k)))return res.status(400).json({error:'AS 검토·승인 권한은 더 이상 사용하지 않습니다.'});
  if(b.active!==undefined&&typeof b.active!=='boolean')return res.status(400).json({error:'계정 상태를 확인하세요.'});
  if(b.name!==undefined&&(typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'이름을 입력하세요.'});
- if((b.role!==undefined&&!['worker','admin','sysadmin'].includes(b.role)) || ['asReview','asApprove'].some(k=>b[k]!==undefined&&typeof b[k]!=='boolean') || (b.allowedSteps!==undefined&&(!Array.isArray(b.allowedSteps)||b.allowedSteps.some(v=>!['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'].includes(v)))) || ['name','department','position','icon'].some(k=>b[k]!==undefined&&(typeof b[k]!=='string'||b[k].length>100)))return res.status(400).json({error:'사용자 정보를 확인하세요.'});
+ if((b.role!==undefined&&!['worker','admin','sysadmin'].includes(b.role)) || (b.allowedSteps!==undefined&&(!Array.isArray(b.allowedSteps)||b.allowedSteps.some(v=>!['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'].includes(v)))) || ['name','department','position','icon'].some(k=>b[k]!==undefined&&(typeof b[k]!=='string'||b[k].length>100)))return res.status(400).json({error:'사용자 정보를 확인하세요.'});
  if((req.method==='POST'||b.password)&&!passwords.validPassword(b.password))return res.status(400).json({error:'비밀번호는 12~128자로 입력하세요.'});
  if(req.method==='POST'&&(typeof b.id!=='string'||!b.id.trim()||b.id.length>100||typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'아이디와 이름이 필요합니다.'});
  next();
@@ -136,7 +138,7 @@ app.post('/api/users', validateUser, (req, res) => {
   const icon = req.body.icon || '';
   const department = req.body.department || '';
   const position = req.body.position || '';
-  data.users.push({ id, passwordHash: passwords.hashPassword(password), name, role: role || 'worker', icon, allowedSteps: allowedSteps || [], department, position, asReview: req.body.asReview || false, asApprove: req.body.asApprove || false });
+  data.users.push({ id, passwordHash: passwords.hashPassword(password), name, role: role || 'worker', active: req.body.active ?? true, icon, allowedSteps: allowedSteps || [], department, position });
   saveData(data);
   res.json({ success: true });
 });
@@ -156,8 +158,6 @@ app.put('/api/users/:id', validateUser, (req, res) => {
   if (req.body.icon !== undefined) data.users[idx].icon = req.body.icon;
   if (req.body.department !== undefined) data.users[idx].department = req.body.department;
   if (req.body.position !== undefined) data.users[idx].position = req.body.position;
-  if (req.body.asReview !== undefined) data.users[idx].asReview = req.body.asReview;
-  if (req.body.asApprove !== undefined) data.users[idx].asApprove = req.body.asApprove;
   saveData(data);
   res.json({ success: true });
 });

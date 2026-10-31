@@ -37,3 +37,12 @@ test('password reset locks/revokes before Auth and resumes only on confirmed suc
     assert.equal(f.calls[0][1].input_changes.password,undefined);
   }
 });
+
+test('retired AS permission inputs are rejected before any Auth or database operation',async()=>{
+ const f=fixture();
+ for(const key of ['asReview','asApprove']){
+  await assert.rejects(f.service.create(randomUUID(),{id:'fixture',name:'Fixture',password:'test-password-long',[key]:true}),{status:400});
+  await assert.rejects(f.service.update(randomUUID(),randomUUID(),{[key]:true}),{status:400});
+ }
+ assert.equal(f.calls.length,0);
+});

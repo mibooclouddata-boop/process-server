@@ -95,7 +95,7 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     assert.equal((await request('/api/erp/all',{method:'DELETE',token:admin.token})).status,404);
   });
   let item;
-  await t.test('AS attachments, ownership and workflow remain usable',async()=>{
+  await t.test('AS is shared by active staff while sessions determine creator and change actors',async()=>{
     const fd=new FormData();for(const [key,value] of Object.entries({ship:'TEST',block:'TEST',reason:'테스트',createdBy:'관리자'}))fd.append(key,value);
     fd.append('files',new Blob(['fixture attachment'],{type:'text/plain'}),'fixture.txt');
     const created=await fetch(base+'/api/as',{method:'POST',headers:{'Idempotency-Key':randomUUID(),Authorization:'Bearer '+worker.token,'X-Requested-With':'process-server'},body:fd});
@@ -105,11 +105,16 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     assert.equal((await request(route)).status,401);
     const attachment=await request(route,{token:worker.token});assert.equal(attachment.status,200);assert.equal(await attachment.text(),'fixture attachment');
     assert.equal((await request('/uploads/unreferenced.txt',{token:worker.token})).status,404);
-    for(const method of ['PUT','DELETE'])assert.equal((await request('/api/as/'+item.id,{method,token:other.token,body:method==='PUT'?{remark:'tamper'}:undefined})).status,403);
+    assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:other.token,body:{remark:'missing version'}})).status,428);
     const payload={version:0,revision:0,action:'advance',next:'제작 요청',deliveryAgreedDate:'2026-12-31'};
-    assert.equal((await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:other.token,body:{...payload,actorId:'root'}})).status,403);
-    assert.equal((await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:worker.token,body:payload})).status,200);
+    const flow=await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:other.token,body:{...payload,actorId:'root'}});
+    assert.equal(flow.status,200);const advanced=(await flow.json()).item;
+    assert.equal(advanced.updatedById,'other');assert.equal(advanced.createdById,'worker');assert(advanced.workflow.history.every(h=>h.byUserId==='other'));
+    assert.equal((await request('/api/as/'+item.id+'/workflow',{method:'PATCH',token:worker.token,body:payload})).status,409);
     assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:worker.token,body:{version:1,remark:'updated'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id,{method:'DELETE',token:other.token,body:{version:2,changeReason:'fixture removal'}})).status,200);
+    assert.equal((await request('/api/as/'+item.id+'/restore',{method:'POST',token:other.token,body:{version:3,changeReason:'fixture restore'}})).status,200);
+    const history=await (await request('/api/as/'+item.id+'/history',{token:other.token})).json();assert.equal(history.events.at(-1).actorId,'other');
   });
   await t.test('account creation, password reset, role changes and deletion revoke access',async()=>{
     assert.equal((await request('/api/users',{method:'POST',token:admin.token,body:{id:'new',name:'신규',password:'1234'}})).status,400);

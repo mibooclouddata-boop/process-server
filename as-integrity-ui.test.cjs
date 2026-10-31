@@ -37,7 +37,7 @@ test('file bytes are part of retry identity',async()=>{
 test('saved and new filenames are DOM text and never become inline handlers or download markup',()=>{
   function element(tag){return {tag,children:[],dataset:{},style:{},attributes:{},textContent:'',innerHTML:'',append(...nodes){this.children.push(...nodes)},replaceChildren(...nodes){this.children=nodes;this.innerHTML=''},setAttribute(k,v){this.attributes[k]=v},addEventListener(type,fn){this[type]=fn},classList:{add(){}}};}
   const elements={asExistingFiles:element('div'),asNewFiles:element('div'),asFiles:{files:[]},fileViewerTitle:element('h2'),fileViewerDownload:element('a'),fileViewerContent:element('div'),fileViewer:element('div')};
-  const ctx={SERVER:'',attachmentUrl:name=>'/uploads/'+encodeURIComponent(name),document:{getElementById:id=>elements[id],createElement:element}};vm.createContext(ctx);
+  const ctx={SERVER:'',resetAsPreview(){},attachmentUrl:name=>'/uploads/'+encodeURIComponent(name),document:{getElementById:id=>elements[id],createElement:element}};vm.createContext(ctx);
   const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');vm.runInContext(html.slice(html.indexOf('let asRemoveFiles ='),html.indexOf('function closeFileViewer()')),ctx);
   const name='<img src=x onerror="fixture()">.txt';ctx.renderExistingFiles([{filename:'safe.txt',name}]);assert.equal(elements.asExistingFiles.children[0].children[0].textContent,name);assert.equal(elements.asExistingFiles.innerHTML,'');
   elements.asFiles.files=[{name}];ctx.renderAsFilePreview();assert.equal(elements.asNewFiles.children[0].textContent,name);

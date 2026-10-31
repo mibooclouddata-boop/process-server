@@ -30,7 +30,7 @@ test('login, users, products, AS attachments and workflow operate without retire
   const login=async()=>{const r=await request('/api/login','POST',{id:'admin',password:'Fixture-passphrase-2026!'});assert.equal(r.status,200);cookie=r.headers.get('set-cookie').split(';')[0];};
   assert.equal((await request('/api/login','POST',{id:'admin',password:'wrong'})).status,401);
   await login();
-  assert.equal((await request('/api/users/admin','PUT',{name:'Updated admin',asReview:false,asApprove:true})).status,200);
+  assert.equal((await request('/api/users/admin','PUT',{name:'Updated admin'})).status,200);
   assert.equal((await request('/api/me')).status,401);await login();
   assert.deepEqual(f.read('data.json').users[0].allowedSteps,['incoming']);
   assert.deepEqual(f.read('data.json').records,[{id:'legacy-scan',barcode:'preserve'}]);
@@ -60,5 +60,5 @@ test('the retained UI has no retired API or navigation references',()=>{
  const html=fs.readFileSync(path.join(__dirname,'dashboard.html'),'utf8');
  assert(!/\/api\/(?:scan|records|tracking|master|map|location|erp|column-mappings|events)\b/.test(html));
  assert(!/id="(?:tabHome|tabTracking|tabErp|tabFloorplan|modalStepsGrid|devNotice)"/.test(html));
- assert(html.includes('data-sub="product"'));assert(html.includes('id="modalAsPerms"'));
+ assert(html.includes('data-sub="product"'));
 });

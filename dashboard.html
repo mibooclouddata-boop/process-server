@@ -1783,7 +1783,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
       <!-- 테이블 카드 -->
       <div class="toss-user-card">
-        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2><p>업무 권한은 상세에서 확인·수정할 수 있습니다.</p></div>
+        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2><p>사용 중인 모든 직원은 AS 접수와 진행을 함께 관리합니다.</p></div>
         <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 명부, 좁은 화면에서는 가로로 스크롤">
           <table class="user-roster-table">
             <thead><tr>
@@ -1792,7 +1792,6 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
               <th scope="col">부서 / 직급</th>
               <th scope="col">역할</th>
               <th scope="col">계정 상태</th>
-              <th scope="col">업무 권한</th>
               <th scope="col">관리</th>
             </tr></thead>
             <tbody id="adminUserRows"></tbody>
@@ -2144,7 +2143,6 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <div class="user-save-strip"><span id="userSaveStatus" role="status" aria-live="polite">사용자 정보를 입력하세요.</span><button type="button" id="userReloadCurrent" hidden onclick="reloadEditingUser()">최신 정보 다시 불러오기</button></div>
         <nav class="user-modal-tabs" id="userModalTabs" role="tablist" aria-label="사용자 관리 항목">
           <button type="button" role="tab" id="userTabInfo" data-user-tab="info" aria-controls="userPanelInfo" aria-selected="true" onclick="selectUserModalTab('info')">기본정보</button>
-          <button type="button" role="tab" id="userTabPermissions" data-user-tab="permissions" aria-controls="userPanelPermissions" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('permissions')">업무 권한</button>
           <button type="button" role="tab" id="userTabAccount" data-user-tab="account" aria-controls="userPanelAccount" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('account')">계정 사용관리</button>
         </nav>
         <div class="modal-body">
@@ -2189,23 +2187,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
           </div>
           <p class="user-modal-help" id="userBasicHelp">이름·부서·직급은 입력을 마치면, 역할은 선택하면 바로 저장됩니다.</p>
         </section>
-        <section id="userPanelPermissions" role="tabpanel" aria-labelledby="userTabPermissions" hidden>
-          <h4 class="user-section-title">업무 권한 <span id="userPermissionCount"></span></h4>
-          <p class="user-modal-help" id="userRolePermissionHint"></p>
-
-          <div class="modal-field" style="margin-top:8px">
-            <label>AS 결재 권한</label>
-            <div class="modal-steps" id="modalAsPerms">
-              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#d97706" data-perm="asReview" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#fcd34d" aria-hidden="true"></span><span class="mst-txt">AS 검토</span></button>
-              <button type="button" class="modal-step-item" role="switch" aria-checked="false" style="--tc:#7c3aed" data-perm="asApprove" onclick="toggleStep(this)"><span class="mst-sw" aria-hidden="true"></span><span class="mst-dot" style="background:#c4b5fd" aria-hidden="true"></span><span class="mst-txt">AS 승인</span></button>
-            </div>
-          </div>
-        </section>
         <section id="userPanelAccount" role="tabpanel" aria-labelledby="userTabAccount" hidden>
           <h4 class="user-section-title">계정 사용관리</h4>
           <div class="user-account-options">
-            <section class="user-account-option"><div><h4>개별 업무 권한 해제</h4><p id="userClearPermissionsHint">개별 업무 권한을 모두 해제합니다. 로그인과 계정 정보는 유지됩니다.</p></div><button type="button" id="userClearPermissions" onclick="clearUserPermissions()">업무 권한 모두 해제</button></section>
-            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인할 수 없습니다. 기본정보와 배정된 권한은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
+            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인과 AS 작업이 차단됩니다. 기존 업무 기록은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
             <section class="user-account-option user-account-delete"><div><h4>사용자 삭제</h4><p><span id="userDeleteHint">사용자 명부에서 계정을 삭제합니다. 삭제 시 확인창이 열립니다.</span></p></div><button type="button" id="userDeleteAccount" onclick="deleteAdminUser(userAdmin.editing)">사용자 삭제</button></section>
           </div>
           <details class="user-account-details"><summary>비밀번호 변경</summary><label for="userReplacementPassword">새 비밀번호</label><input type="password" id="userReplacementPassword" minlength="12" maxlength="128" autocomplete="new-password"/><small>12~128자 · 변경하면 해당 계정의 기존 로그인이 종료됩니다.</small><button type="button" id="userChangePassword" onclick="changeUserPassword()">비밀번호 변경</button></details>
@@ -2227,6 +2212,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/auth-client.js"></script>
 <script src="/user-admin-ui.js?v=1"></script>
 <script src="/as-amount.js"></script>
+<script src="/as-pdf-preview.js"></script>
 <script>
 
 // Only fixed application actions are dispatched; values are never evaluated as code.
@@ -2301,8 +2287,6 @@ async function doLogin() {
           if (data.user.role === 'sysadmin') {
             document.getElementById('tabUsersBtn').style.display = '';
           }
-          if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
-          if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
           if (currentUser.role === 'sysadmin') { document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none'); document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none'); }
           switchTab('as',document.getElementById('tabAsBtn'),'stats');
         }, 400);
@@ -3535,6 +3519,7 @@ function openAsAttachments(trigger) {
 }
 
 function openFileViewer(filename, displayName) {
+  resetAsPreview();
   const url = attachmentUrl(filename);
   const ext = filename.split('.').pop().toLowerCase();
   document.getElementById('fileViewerTitle').textContent = displayName;
@@ -3554,6 +3539,7 @@ function openFileViewer(filename, displayName) {
 }
 
 function closeFileViewer() {
+  resetAsPreview();
   document.getElementById('fileViewer').classList.remove('open');
   document.getElementById('fileViewerContent').innerHTML = '';
   document.getElementById('fileViewerDownload').style.display = '';
@@ -3763,14 +3749,16 @@ async function bulkPrintAs() {
   const items = _getSelectedAsItems();
   if (!items) return;
   if (items.length === 1) { await printAsPdf(items[0], true); return; }
+  const pdfBudget = beginAsPreview();
   // 여러 건 합쳐서 한번에 출력
   const pages = [];
   for (const item of items) {
-    pages.push(await buildAsPageHtml(item));
+    pages.push(await buildAsPageHtml(item, pdfBudget));
+    if (_asPreviewBudget !== pdfBudget) return;
   }
   const fullHtml = buildAsWrapperHtml(items, pages);
   const blob = new Blob([fullHtml], {type: 'text/html;charset=utf-8'});
-  const blobUrl = URL.createObjectURL(blob);
+  const blobUrl = _asPreviewBlob = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = `AS 접수서 - ${items.length}건 (${items.map(i=>i.asNo).join(', ')})`;
   document.getElementById('fileViewerDownload').style.display = 'none';
   _viewerAsItem = null;
@@ -3849,7 +3837,7 @@ async function deleteAs(id) {
 }
 
 // ── AS 페이지 HTML 생성 (본문만) ──
-async function buildAsPageHtml(a) {
+async function buildAsPageHtml(a, pdfBudget = AsPdfPreview.createBudget()) {
   const date = (a.createdAt||'').slice(0,10).replace(/-/g,'.');
   const imgExts = ['jpg','jpeg','png','gif','bmp','webp'];
   const asFiles = a.files || [];
@@ -3868,15 +3856,23 @@ async function buildAsPageHtml(a) {
   }
   let pdfImagesHtml = '';
   if (pdfFiles.length && !window._pdfjsLoaded) {
-    await new Promise(res => { const s = document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=res; s.onerror=res; document.head.appendChild(s); });
+    await new Promise(res => {
+      if (pdfBudget.controller.signal.aborted || Date.now() >= pdfBudget.deadline) { res(); return; }
+      const s = document.createElement('script');
+      const done = () => { clearTimeout(timer); s.onload = s.onerror = null; s.remove(); pdfBudget.controller.signal.removeEventListener('abort', done); res(); };
+      const timer = setTimeout(done, Math.min(8000, pdfBudget.deadline - Date.now()));
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=done; s.onerror=done;
+      pdfBudget.controller.signal.addEventListener('abort', done, {once:true}); document.head.appendChild(s);
+    });
     if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; window._pdfjsLoaded=true; }
   }
   for (const f of pdfFiles) {
     pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + escapeHtml(f.name) + '</div></div>';
-    if (window.pdfjsLib) {
-      try { const pdf = await pdfjsLib.getDocument({url:attachmentUrl(f.filename),isEvalSupported:false}).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
-      catch(e) { pdfImagesHtml += '<div style="color:#999;font-size:11px">PDF 렌더링 실패</div>'; }
-    }
+    const preview = window.pdfjsLib
+      ? await AsPdfPreview.render(pdfjsLib, attachmentUrl(f.filename), document, pdfBudget)
+      : {images:[],message:AsPdfPreview.failureMessage};
+    pdfImagesHtml += preview.images.map(src => '<div class="img-wrap"><img src="' + src + '"/></div>').join('');
+    if (preview.message) pdfImagesHtml += '<div class="img-caption">' + escapeHtml(preview.message) + '</div>';
   }
   const otherHtml = otherFiles.map(f => '<span class="attach-file">' + escapeHtml(f.name) + '</span>').join('');
   const _statusColors = {'접수':'#004A93','제작 요청':'#d97706','도장 요청':'#7c3aed','납품 요청':'#4e5968','완료':'#16a34a'};
@@ -3943,17 +3939,32 @@ function buildAsWrapperHtml(items, pages) {
 }
 
 // ── AS PDF 출력 (단건) ──
+let _asPreviewBudget = null, _asPreviewBlob = null;
+
+function resetAsPreview() {
+  if (_asPreviewBudget) _asPreviewBudget.controller.abort();
+  _asPreviewBudget = null;
+  if (_asPreviewBlob) URL.revokeObjectURL(_asPreviewBlob);
+  _asPreviewBlob = null;
+}
+
+function beginAsPreview() {
+  resetAsPreview();
+  document.getElementById('fileViewerContent').innerHTML = '';
+  return _asPreviewBudget = AsPdfPreview.createBudget();
+}
+
 async function printAsPdf(a, printNow = false) {
-  const result = await buildAsPageHtml(a);
+  const pdfBudget = beginAsPreview();
+  const result = await buildAsPageHtml(a, pdfBudget);
+  if (_asPreviewBudget !== pdfBudget) return;
   const htmlStr = buildAsWrapperHtml([a], [result]);
   const blob = new Blob([htmlStr], {type: 'text/html;charset=utf-8'});
-  const blobUrl = URL.createObjectURL(blob);
+  const blobUrl = _asPreviewBlob = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = 'AS 접수서 - ' + a.asNo;
   document.getElementById('fileViewerDownload').style.display = 'none';
   // 상태에 맞는 버튼만 표시
   _viewerAsItem = a;
-  const _isAdmin = currentUser && currentUser.role === 'sysadmin';
-  const _isCreator = currentUser && !!a.createdById && currentUser.id === a.createdById;
   const workflowButton=document.getElementById('asViewerRequestReview');
   workflowButton.textContent=asJobActionLabel(a);workflowButton.style.display=asJobCanEdit(a)&&asJobNext(a)?'':'none';workflowButton.onclick=()=>openAsWorkflow(a);
   ['asViewerReview','asViewerApprove','asViewerProgress','asViewerComplete'].forEach(id=>document.getElementById(id).style.display='none');
@@ -4033,8 +4044,6 @@ async function initializeDashboard() {
     document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
     document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   }
-  if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
-  if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   switchTab('as',document.getElementById('tabAsBtn'),location.hash==='#as-list'?'list':'stats');
 }
 document.addEventListener('DOMContentLoaded',initializeDashboard);

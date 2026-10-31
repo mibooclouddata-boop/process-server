@@ -1,7 +1,7 @@
 'use strict';
 const {randomBytes,createHash}=require('node:crypto');
 const COOKIE='as_session';
-const fingerprint=u=>createHash('sha256').update(JSON.stringify([u.passwordHash,u.role,u.allowedSteps,u.asReview,u.asApprove,u.passwordResetRequired])).digest('hex');
+const fingerprint=u=>createHash('sha256').update(JSON.stringify([u.passwordHash,u.role,u.allowedSteps,u.passwordResetRequired])).digest('hex');
 function createSessionStore(ttl=8*60*60*1000,clock=Date.now){
  const sessions=new Map();
  const token=req=>req.headers?.authorization ? /^Bearer ([a-f0-9]{64})$/.exec(req.headers.authorization)?.[1] : (req.headers?.cookie||'').split(';').map(s=>s.trim()).find(s=>s.startsWith(COOKIE+'='))?.slice(COOKIE.length+1);

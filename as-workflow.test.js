@@ -84,6 +84,16 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
 });
 // API persistence, validation, authorization and conflicts are exercised by as-integrity.test.cjs.
 
+test('AS controls allow other active staff and legacy records but exclude examples and blocked accounts',()=>{
+ const c={currentUser:{id:'other',role:'worker'},document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};
+ vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
+ assert.equal(c.asJobCanEdit(base()),true);assert.equal(c.asJobCanEdit({id:'legacy'}),true);
+ assert.equal(c.asJobCanEdit({id:'list-example-1'}),false);
+ for(const user of [null,{id:'other',role:'worker',active:false},{id:'other',role:'worker',passwordResetRequired:true},{id:'other',role:'guest'}]){
+  c.currentUser=user;assert.equal(!!c.asJobCanEdit(base()),false);
+ }
+});
+
 test('approval slots show the authenticated completer for each stage and preserve old audit names',()=>{
  const c={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
  let item=start(base());
