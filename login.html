@@ -565,6 +565,9 @@ form.addEventListener('submit',async e=>{
   const data=await res.json().catch(()=>({}));
   if(!res.ok||!data.success){showError(res.status>=500?'서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.':'로그인에 실패했습니다. 아이디와 비밀번호를 확인해 주세요.');return;}
   try{sessionStorage.setItem('currentUser',JSON.stringify(data.user));if(document.getElementById('keep').checked)localStorage.setItem('currentUser',JSON.stringify(data.user));else localStorage.removeItem('currentUser');}catch(error){showError('로그인 정보를 저장하지 못했습니다. 브라우저의 저장소 설정을 확인해 주세요.');return;}
+  const activityAt=String(Date.now());
+  try{localStorage.setItem('lastUserActivityAt',activityAt);}catch{}
+  try{sessionStorage.setItem('lastUserActivityAt',activityAt);}catch{}
   succeeded=true;pw.value='';
   if(window.LoginTransition)window.LoginTransition.start({name:data.user?.name||idInput.value.trim()});
   else window.location.href='/dashboard.html';
