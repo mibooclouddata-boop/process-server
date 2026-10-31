@@ -67,6 +67,19 @@ test('stored business data is inert in real Chromium, with CSP disabled as well 
  },item);
  assert.equal(pdfOptions.isEvalSupported,false);
  assert.equal(pdfOptions.url,base+'/uploads/fixture.pdf');
+ // Real canvas encoding stays bounded; a failed later page cannot leave a partial PDF.
+ const previews=await page.evaluate(async({item,attack})=>{
+  let fail=false,cleaned=0,destroyed=0;
+  window.pdfjsLib={getDocument:()=>({promise:Promise.resolve({numPages:2,getPage:async n=>({getViewport:()=>({width:120,height:160}),render:({canvasContext})=>{canvasContext.fillRect(0,0,10,10);return {promise:fail&&n===2?Promise.reject(Error('fixture')):Promise.resolve(),cancel(){}};},cleanup(){cleaned++;}})}),destroy(){destroyed++;}})};
+  const data={...item,files:[{filename:'fixture.pdf',name:attack}]};
+  const complete=await buildAsPageHtml(data);fail=true;const failed=await buildAsPageHtml(data);
+  return {complete:complete.attachHtml,failed:failed.attachHtml,cleaned,destroyed};
+ },{item,attack});
+ assert.equal((previews.complete.match(/<img src="data:image\/png;base64,/g)||[]).length,2);
+ assert.doesNotMatch(previews.failed,/<img /);assert.match(previews.failed,/원본/);
+ assert.equal(previews.cleaned,4);assert.equal(previews.destroyed,2);
+ await printPage.setContent(previews.failed);assert.equal(await printPage.locator('img').count(),0);
+ assert((await printPage.locator('body').textContent()).includes(attack));
  // CSP is defense in depth; the preceding checks deliberately removed it.
  await page.unroute('**/*');
  const response=await page.goto(base+'/dashboard.html');

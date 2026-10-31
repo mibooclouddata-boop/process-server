@@ -66,6 +66,9 @@ function createSupabaseBackend(config, {clientFactory = createClient, clock = Da
       }
       const rows = checked(await admin.rpc('server_resolve_staff_login', {input_login:id}));
       const mapping = Array.isArray(rows) && rows.length === 1 ? rows[0] : null;
+      // Bind password verification to the epoch that existed before contacting Auth.
+      const before = mapping ? checked(await admin.from('staff_profiles')
+        .select('id,auth_user_id,active,role,session_version,admin_operation_id').eq('id', mapping.staff_id).maybeSingle()) : null;
       // Unknown accounts also use the password endpoint; no existence lookup response is exposed.
       const auth = await client().auth.signInWithPassword({email:mapping?.internal_email || randomUUID()+'@staff.invalid', password});
       if (auth.error) {
@@ -73,14 +76,18 @@ function createSupabaseBackend(config, {clientFactory = createClient, clock = Da
         throw denied();
       }
       const {user, session} = auth.data;
-      if (!mapping || !session?.access_token || user?.id !== mapping.auth_user_id) throw denied();
+      if (!mapping || !before?.active || before.admin_operation_id || !ROLES.includes(before.role) ||
+          before.auth_user_id !== mapping.auth_user_id || !session?.access_token || user?.id !== mapping.auth_user_id) throw denied();
       const p = await profile(session.access_token, user.id);
-      if (!p || p.id !== mapping.staff_id) throw denied();
+      if (!p || p.id !== mapping.staff_id || p.admin_operation_id || p.role !== before.role ||
+          p.auth_user_id !== before.auth_user_id || p.session_version !== before.session_version) throw denied();
       const token = randomBytes(32).toString('hex');
       const expires = Math.min(Number(session.expires_at)*1000, clock()+8*60*60*1000);
       if (!Number.isFinite(expires) || expires <= clock()) throw denied();
-      checked(await admin.from('app_sessions').insert({token_hash:hash(token), staff_id:p.id,
-        session_version:p.session_version, encrypted_access_token:seal(session.access_token), expires_at:new Date(expires).toISOString()}));
+      // The DB row lock serializes this final check/insert with account resets.
+      if (!checked(await admin.rpc('server_create_staff_session', {input_staff:p.id, input_auth:before.auth_user_id,
+        input_version:before.session_version, input_role:before.role, input_token_hash:hash(token),
+        input_access_token:seal(session.access_token), input_expires:new Date(expires).toISOString()}))) throw denied();
       // Never return the upstream session or refresh token to a browser/mobile client.
       return {token, expires, user:publicProfile(p)};
     },

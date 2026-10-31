@@ -108,6 +108,48 @@ test('shared AS access still rejects absent, inactive, reset-required and invali
  }
  assert.equal((await service.list())[0].version,0);
 });
+
+test('workflow history storage grows linearly while historical snapshots and exact retries survive reopening',async t=>{
+ const {file,service}=fixture(t);let {item}=await service.create(base,[],owner,randomUUID());
+ item=(await service.advance(item.id,{version:0,action:'advance',next:'제작 요청'},[],owner,randomUUID())).item;
+ const sizes=[],saved=[];
+ for(let n=1;n<=32;n++){
+  const key=randomUUID(),input={version:item.version,action:'save',deliveryAgreedDate:n%2?'2026-11-02':'2026-11-01'};
+  const result=await service.advance(item.id,input,[],other,key);item=result.item;saved.push({key,input,result});
+  if([8,16,32].includes(n))sizes.push(fs.statSync(file).size);
+ }
+ t.diagnostic('8/16/32 bounded fixture updates: '+sizes.join('/')+' bytes');
+ assert(sizes[2]<sizes[1]*2.5,'doubling changes must not duplicate the growing history in every stored snapshot');
+ const reopened=createAsService(createAsStore(file));
+ for(const index of [0,7,15,31]){
+  const {key,input,result}=saved[index];const replay=await reopened.advance(item.id,input,[],other,key);
+  assert.equal(replay.replayed,true);assert.deepEqual(replay.item,result.item);
+ }
+ const history=await reopened.history(item.id,owner);
+ assert.equal(history.length,34);
+ for(let n=0;n<saved.length;n++){
+  assert.deepEqual(history[n+2].after.workflow.history,saved[n].result.item.workflow.history);
+  assert.deepEqual(history[n+2].before.workflow.history,n?saved[n-1].result.item.workflow.history:history[1].after.workflow.history);
+ }
+ // Existing full snapshots can coexist with newly compacted snapshots.
+ const persisted=JSON.parse(fs.readFileSync(file,'utf8'));persisted.events[2]=history[2];
+ persisted.requests.find(r=>r.key===saved[0].key).result=saved[0].result;
+ fs.writeFileSync(file,JSON.stringify(persisted));
+ assert.deepEqual(await reopened.history(item.id,owner),history);
+ assert.deepEqual((await reopened.advance(item.id,saved[0].input,[],other,saved[0].key)).item,saved[0].result.item);
+ persisted.list[0].workflow.history=[];fs.writeFileSync(file,JSON.stringify(persisted));
+ await denied(()=>reopened.history(item.id,owner),503);
+});
+
+test('history reads are bounded and paginated without omitting or changing audit events',async t=>{
+ const {service}=fixture(t);let {item}=await service.create(base,[],owner,randomUUID());
+ for(let n=0;n<55;n++)item=(await service.update(item.id,{version:item.version,remark:String(n)},[],other,randomUUID())).item;
+ const first=await service.history(item.id,other),next=await service.history(item.id,other,{offset:50});
+ assert.equal(first.length,50);assert.equal(next.length,6);
+ assert.deepEqual([...first,...next].map(e=>e.version),Array.from({length:56},(_,i)=>i));
+ assert.equal((await service.history(item.id,owner,{offset:'55',limit:'1'}))[0].after.remark,'54');
+ for(const options of [{offset:-1},{offset:'1.2'},{limit:0},{limit:101},{limit:['1']}])await denied(()=>service.history(item.id,other,options),400);
+});
 test('completed records require correction reasons and workflow audit uses stable actor IDs',async t=>{
   const {service}=fixture(t);let {item}=await service.create(base,[],owner,randomUUID());
   for(const next of ['제작 요청','도장 요청','납품 요청','완료'])item=(await service.advance(item.id,{version:item.version,action:'advance',next,completedDate:'2020-01-01'},[],owner,randomUUID())).item;
@@ -165,4 +207,6 @@ test('real AS HTTP routes enforce auth, idempotency, uploads, versions and priva
   assert.equal((await (await request('/api/as/trash',{who:'other'})).json()).list.length,1);
   assert.equal((await request('/api/as/'+item.id+'/restore',{method:'POST',who:'other',body:{version:2,changeReason:'restore test'}})).status,200);
   assert.equal((await (await request('/api/as/'+item.id+'/history',{who:'other'})).json()).events.at(-1).actorId,other.id);
+  const page=await (await request('/api/as/'+item.id+'/history?offset=1&limit=1',{who:'other'})).json();assert.deepEqual(page.events.map(e=>e.type),['update']);
+  assert.equal((await request('/api/as/'+item.id+'/history?limit=101')).status,400);
 });

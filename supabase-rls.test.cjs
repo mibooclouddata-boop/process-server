@@ -23,7 +23,7 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     grant usage on schema public,storage to anon,authenticated,service_role;
     grant select,insert,update,delete on storage.objects to authenticated;
   `);
-  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql','202611010004_shared_as_access.sql'])
+  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql','202611010004_shared_as_access.sql','202611010005_login_epoch.sql'])
     await db.exec(fs.readFileSync(path.join(__dirname,'supabase/migrations',file),'utf8'));
   const a=randomUUID(),b=randomUUID(),admin=randomUUID(),review=randomUUID(),inactive=randomUUID();
   const authIds=new Map(),profiles=[a,b,admin,review,inactive];
@@ -121,5 +121,34 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     await db.exec('set role service_role');
     try {for(let i=1;i<=21;i++)assert.equal((await db.query("select server_take_login_attempt(repeat('a',64)) as allowed")).rows[0].allowed,i<=20);}
     finally{await db.exec('reset role');}
+  });
+  await t.test('session creation is service-only and binds the active Auth identity and security epoch',async()=>{
+    const staff=randomUUID(),auth=randomUUID();
+    await db.query('insert into auth.users values ($1)',[auth]);
+    await db.query("insert into staff_profiles(id,auth_user_id,login_id,name,role,active) values ($1,$2,'epoch-staff','Epoch fixture','worker',true)",[staff,auth]);
+    const insert=async(version=1,identity=auth,role='worker')=>(await db.query(
+      "select server_create_staff_session($1,$2,$3,$4,$5,'encrypted-fixture',now()+interval '1 hour') as created",
+      [staff,identity,version,role,randomUUID().replaceAll('-','').repeat(2)])).rows[0].created;
+    await asUser(a,()=>assert.rejects(insert()));
+    await asUser(null,()=>assert.rejects(insert()));
+    await db.exec('set role service_role');
+    try {
+      assert.equal(await insert(),true);
+      assert.equal(await insert(2),false);
+      assert.equal(await insert(1,randomUUID()),false);
+      assert.equal(await insert(1,auth,'sysadmin'),false);
+      await assert.rejects(db.query("insert into app_sessions(token_hash,staff_id,session_version,encrypted_access_token,expires_at) values(repeat('b',64),$1,1,'fixture',now()+interval '1 hour')",[staff]));
+      const reset=(await db.query("select server_staff_change($1,$2,'{}',true) as op",[admin,staff])).rows[0].op;
+      assert.equal((await db.query('select * from app_sessions where staff_id=$1',[staff])).rows.length,0);
+      assert.equal(await insert(),false);
+      assert.equal(await insert(2),false);
+      await db.query('select server_staff_finish_reset($1,true)',[reset.operation]);
+      assert.equal(await insert(),false);
+      assert.equal(await insert(3),true);
+      const failed=(await db.query("select server_staff_change($1,$2,'{}',true) as op",[admin,staff])).rows[0].op;
+      await db.query('select server_staff_finish_reset($1,false)',[failed.operation]);
+      assert.equal(await insert(5),false);
+      assert.equal((await db.query('select * from app_sessions where staff_id=$1',[staff])).rows.length,0);
+    }finally{await db.exec('reset role');}
   });
 });

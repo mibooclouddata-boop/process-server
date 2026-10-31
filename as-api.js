@@ -20,7 +20,7 @@ function installAsApi(app,{service,authenticate,uploadsDir}){
   app.get('/api/as',run(async(req,res)=>res.json({list:(await service.list()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))})));
   app.get('/api/as/trash',run(async(req,res)=>res.json({list:await service.trash(actor(req))})));
   app.get('/api/as/requests/:key',run(async(req,res)=>res.json({request:await service.requestStatus(req.params.key,actor(req))})));
-  app.get('/api/as/:id/history',run(async(req,res)=>res.json({events:await service.history(req.params.id,actor(req))})));
+  app.get('/api/as/:id/history',run(async(req,res)=>res.json({events:await service.history(req.params.id,actor(req),{offset:req.query.offset,limit:req.query.limit})})));
   const parseFiles=(req,res,next)=>upload(req,res,error=>{if(error){attachments.cleanup(req.files,uploadsDir);return next(Object.assign(error,{status:400}));}next();});
   const precheck=run(async(req,res,next)=>{await service.check(req.params.id,actor(req));next();});
   const save=operation=>run(async(req,res)=>{

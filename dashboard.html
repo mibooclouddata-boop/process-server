@@ -2212,6 +2212,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/auth-client.js"></script>
 <script src="/user-admin-ui.js?v=1"></script>
 <script src="/as-amount.js"></script>
+<script src="/as-pdf-preview.js"></script>
 <script>
 
 // Only fixed application actions are dispatched; values are never evaluated as code.
@@ -3518,6 +3519,7 @@ function openAsAttachments(trigger) {
 }
 
 function openFileViewer(filename, displayName) {
+  resetAsPreview();
   const url = attachmentUrl(filename);
   const ext = filename.split('.').pop().toLowerCase();
   document.getElementById('fileViewerTitle').textContent = displayName;
@@ -3537,6 +3539,7 @@ function openFileViewer(filename, displayName) {
 }
 
 function closeFileViewer() {
+  resetAsPreview();
   document.getElementById('fileViewer').classList.remove('open');
   document.getElementById('fileViewerContent').innerHTML = '';
   document.getElementById('fileViewerDownload').style.display = '';
@@ -3746,14 +3749,16 @@ async function bulkPrintAs() {
   const items = _getSelectedAsItems();
   if (!items) return;
   if (items.length === 1) { await printAsPdf(items[0], true); return; }
+  const pdfBudget = beginAsPreview();
   // 여러 건 합쳐서 한번에 출력
   const pages = [];
   for (const item of items) {
-    pages.push(await buildAsPageHtml(item));
+    pages.push(await buildAsPageHtml(item, pdfBudget));
+    if (_asPreviewBudget !== pdfBudget) return;
   }
   const fullHtml = buildAsWrapperHtml(items, pages);
   const blob = new Blob([fullHtml], {type: 'text/html;charset=utf-8'});
-  const blobUrl = URL.createObjectURL(blob);
+  const blobUrl = _asPreviewBlob = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = `AS 접수서 - ${items.length}건 (${items.map(i=>i.asNo).join(', ')})`;
   document.getElementById('fileViewerDownload').style.display = 'none';
   _viewerAsItem = null;
@@ -3832,7 +3837,7 @@ async function deleteAs(id) {
 }
 
 // ── AS 페이지 HTML 생성 (본문만) ──
-async function buildAsPageHtml(a) {
+async function buildAsPageHtml(a, pdfBudget = AsPdfPreview.createBudget()) {
   const date = (a.createdAt||'').slice(0,10).replace(/-/g,'.');
   const imgExts = ['jpg','jpeg','png','gif','bmp','webp'];
   const asFiles = a.files || [];
@@ -3851,15 +3856,23 @@ async function buildAsPageHtml(a) {
   }
   let pdfImagesHtml = '';
   if (pdfFiles.length && !window._pdfjsLoaded) {
-    await new Promise(res => { const s = document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=res; s.onerror=res; document.head.appendChild(s); });
+    await new Promise(res => {
+      if (pdfBudget.controller.signal.aborted || Date.now() >= pdfBudget.deadline) { res(); return; }
+      const s = document.createElement('script');
+      const done = () => { clearTimeout(timer); s.onload = s.onerror = null; s.remove(); pdfBudget.controller.signal.removeEventListener('abort', done); res(); };
+      const timer = setTimeout(done, Math.min(8000, pdfBudget.deadline - Date.now()));
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; s.onload=done; s.onerror=done;
+      pdfBudget.controller.signal.addEventListener('abort', done, {once:true}); document.head.appendChild(s);
+    });
     if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; window._pdfjsLoaded=true; }
   }
   for (const f of pdfFiles) {
     pdfImagesHtml += '<div style="margin-top:12px"><div class="img-caption" style="margin-bottom:6px;font-weight:700;font-size:11px">' + escapeHtml(f.name) + '</div></div>';
-    if (window.pdfjsLib) {
-      try { const pdf = await pdfjsLib.getDocument({url:attachmentUrl(f.filename),isEvalSupported:false}).promise; for (let p = 1; p <= pdf.numPages; p++) { const page = await pdf.getPage(p); const vp = page.getViewport({scale: 2}); const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height; await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise; pdfImagesHtml += '<div class="img-wrap"><img src="' + canvas.toDataURL('image/png') + '"/></div>'; } }
-      catch(e) { pdfImagesHtml += '<div style="color:#999;font-size:11px">PDF 렌더링 실패</div>'; }
-    }
+    const preview = window.pdfjsLib
+      ? await AsPdfPreview.render(pdfjsLib, attachmentUrl(f.filename), document, pdfBudget)
+      : {images:[],message:AsPdfPreview.failureMessage};
+    pdfImagesHtml += preview.images.map(src => '<div class="img-wrap"><img src="' + src + '"/></div>').join('');
+    if (preview.message) pdfImagesHtml += '<div class="img-caption">' + escapeHtml(preview.message) + '</div>';
   }
   const otherHtml = otherFiles.map(f => '<span class="attach-file">' + escapeHtml(f.name) + '</span>').join('');
   const _statusColors = {'접수':'#004A93','제작 요청':'#d97706','도장 요청':'#7c3aed','납품 요청':'#4e5968','완료':'#16a34a'};
@@ -3926,11 +3939,28 @@ function buildAsWrapperHtml(items, pages) {
 }
 
 // ── AS PDF 출력 (단건) ──
+let _asPreviewBudget = null, _asPreviewBlob = null;
+
+function resetAsPreview() {
+  if (_asPreviewBudget) _asPreviewBudget.controller.abort();
+  _asPreviewBudget = null;
+  if (_asPreviewBlob) URL.revokeObjectURL(_asPreviewBlob);
+  _asPreviewBlob = null;
+}
+
+function beginAsPreview() {
+  resetAsPreview();
+  document.getElementById('fileViewerContent').innerHTML = '';
+  return _asPreviewBudget = AsPdfPreview.createBudget();
+}
+
 async function printAsPdf(a, printNow = false) {
-  const result = await buildAsPageHtml(a);
+  const pdfBudget = beginAsPreview();
+  const result = await buildAsPageHtml(a, pdfBudget);
+  if (_asPreviewBudget !== pdfBudget) return;
   const htmlStr = buildAsWrapperHtml([a], [result]);
   const blob = new Blob([htmlStr], {type: 'text/html;charset=utf-8'});
-  const blobUrl = URL.createObjectURL(blob);
+  const blobUrl = _asPreviewBlob = URL.createObjectURL(blob);
   document.getElementById('fileViewerTitle').textContent = 'AS 접수서 - ' + a.asNo;
   document.getElementById('fileViewerDownload').style.display = 'none';
   // 상태에 맞는 버튼만 표시

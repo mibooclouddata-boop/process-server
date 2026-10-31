@@ -54,6 +54,7 @@ app.get('/as-integrity-ui.js', (req,res)=>res.sendFile('as-integrity-ui.js',{roo
 app.get('/auth-client.js', (req,res)=>res.sendFile('auth-client.js',{root:__dirname}));
 app.get('/user-admin-ui.js', (req,res)=>res.sendFile('user-admin-ui.js',{root:__dirname}));
 app.get('/as-amount.js', (req,res)=>res.sendFile('as-amount.js',{root:__dirname}));
+app.get('/as-pdf-preview.js', (req,res)=>res.sendFile('as-pdf-preview.js',{root:__dirname}));
 app.get('/dashboard.html', (req, res) => sendPage(res, 'dashboard.html'));
 app.get('/miboo_logo.png', (req, res) => res.sendFile('miboo_logo.png',{root:__dirname}));
 app.get('/login-bg.png', (req, res) => res.sendFile('login-bg.png',{root:__dirname}));

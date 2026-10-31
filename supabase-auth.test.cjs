@@ -24,7 +24,8 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
   // Entirely synthetic identities. No project credentials or production data are loaded.
   const publicKey='test-public-key', secretKey='test-server-secret', password='Test-only-password-2026!';
   const profiles=new Map(), tokens=new Map(), sessions=new Map(), attempts=new Map();
-  let authUnavailable=false, authCalls=0, verifyCalls=0;
+  let authUnavailable=false, authCalls=0, verifyCalls=0, loginBarrier=null, profileUnavailable=false, sessionUnavailable=false;
+  const pauseLogin=async stage=>{if(loginBarrier?.stage===stage){const gate=loginBarrier;loginBarrier=null;gate.arrived();await gate.release;}};
   const add=(login,role,extra={})=>{
     const p={id:randomUUID(),auth_user_id:randomUUID(),login_id:login,name:'동명이인',role,active:true,session_version:1,
       allowed_steps:[],as_review:false,as_approve:false,department:'테스트',position:'',icon:'',...extra};
@@ -48,6 +49,7 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
       const jwt=[{alg:'HS256',typ:'JWT'},{sub:p.auth_user_id,exp:Math.floor(Date.now()/1000)+3600,email:email(p)},'signature']
         .map(x=>Buffer.from(typeof x==='string'?x:JSON.stringify(x)).toString('base64url')).join('.');
       tokens.set(jwt,p.auth_user_id);
+      await pauseLogin('password');
       return send({access_token:jwt,refresh_token:'test-refresh-never-return',token_type:'bearer',expires_in:3600,user:{id:p.auth_user_id,email:email(p)}});
     }
     if(url.pathname==='/auth/v1/user'){
@@ -63,15 +65,30 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
       const count=(attempts.get(input.input_key)||0)+1;attempts.set(input.input_key,count);return send(count<=20);
     }
     if(url.pathname==='/rest/v1/staff_profiles'){
-      if(req.headers.apikey===secretKey)return send([...profiles.values()]);
+      if(profileUnavailable)return send({message:'private profile detail'},503);
+      if(req.headers.apikey===secretKey){
+        const id=url.searchParams.get('id')?.slice(3);
+        return send([...profiles.values()].filter(p=>!id||p.id===id));
+      }
       assert.equal(req.headers.apikey,publicKey);
       const id=tokens.get(bearer),p=[...profiles.values()].find(p=>p.auth_user_id===id&&p.active);
-      return send(p?[p]:[]);
+      const snapshot=p?{...p}:null;
+      await pauseLogin('profile');
+      return send(snapshot?[snapshot]:[]);
+    }
+    if(url.pathname==='/rest/v1/rpc/server_create_staff_session'){
+      assert.equal(req.headers.apikey,secretKey);
+      if(sessionUnavailable)return send({message:'private session detail'},503);
+      const p=[...profiles.values()].find(p=>p.id===input.input_staff);
+      if(!p?.active||p.admin_operation_id||p.auth_user_id!==input.input_auth||p.session_version!==input.input_version||p.role!==input.input_role)return send(false);
+      sessions.set(input.input_token_hash,{token_hash:input.input_token_hash,staff_id:p.id,session_version:input.input_version,
+        encrypted_access_token:input.input_access_token,expires_at:input.input_expires});
+      return send(true);
     }
     if(url.pathname==='/rest/v1/app_sessions'){
       assert.equal(req.headers.apikey,secretKey);
       const key=url.searchParams.get('token_hash')?.slice(3);
-      if(req.method==='POST'){sessions.set(input.token_hash,input);return send(null,201);}
+      if(req.method==='POST')return send({message:'permission denied for table app_sessions',code:'42501'},403);
       if(req.method==='DELETE'){sessions.delete(key);return send(null);}
       return send(sessions.has(key)?[sessions.get(key)]:[]);
     }
@@ -181,5 +198,45 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     attempts.clear();let last;
     for(let i=0;i<21;i++)last=await request('/api/login',{method:'POST',body:{id:'missing',password}});
     assert.equal(last.status,429);assert([...attempts.keys()].every(k=>/^[a-f0-9]{64}$/.test(k)));
+  });
+  await t.test('login cannot bind an old password result to a completed, pending or failed reset epoch',async()=>{
+    const staff=add('race-staff','worker');
+    const startReset=()=>{staff.active=false;staff.admin_operation_id=randomUUID();staff.session_version++;
+      for(const [key,s] of sessions)if(s.staff_id===staff.id)sessions.delete(key);};
+    const finishReset=success=>{staff.active=success;staff.admin_operation_id=null;staff.session_version++;};
+    const attempt=()=>request('/api/login',{method:'POST',body:{id:staff.login_id,password},headers:{'X-Client-Type':'mobile'}});
+    for(const stage of ['password','profile'])for(const outcome of ['complete','pending','failed']){
+      attempts.clear();staff.active=true;staff.admin_operation_id=null;
+      let arrived,release;const reached=new Promise(resolve=>{arrived=resolve;});
+      loginBarrier={stage,arrived,release:new Promise(resolve=>{release=resolve;})};
+      const pending=attempt();await reached;
+      try {startReset();if(outcome!=='pending')finishReset(outcome==='complete');}finally{release();}
+      const response=await pending;
+      assert.equal(response.status,401,stage+'/'+outcome);
+      assert.equal([...sessions.values()].filter(s=>s.staff_id===staff.id).length,0);
+      assert.equal(response.headers.get('set-cookie'),null);
+    }
+    attempts.clear();startReset();
+    let arrived,release;const reached=new Promise(resolve=>{arrived=resolve;});
+    loginBarrier={stage:'password',arrived,release:new Promise(resolve=>{release=resolve;})};
+    const pending=attempt();await reached;
+    try {finishReset(true);}finally{release();}
+    assert.equal((await pending).status,401,'login began while reset was pending');
+    const fresh=await login(staff.login_id);
+    assert.equal((await request('/api/me',{token:fresh.token})).status,200);
+    // The double deliberately keeps old provider JWTs valid across resets.
+    startReset();finishReset(true);
+    assert.equal((await request('/api/me',{token:fresh.token})).status,401);
+  });
+  await t.test('profile and session creation outages never issue an application session',async()=>{
+    attempts.clear();const before=sessions.size;
+    for(const outage of ['profile','session']){
+      profileUnavailable=outage==='profile';sessionUnavailable=outage==='session';
+      try {
+        const response=await request('/api/login',{method:'POST',body:{id:'staff01',password}});
+        assert.equal(response.status,503);assert.equal(response.headers.get('set-cookie'),null);
+        assert(!(await response.text()).includes('private'));assert.equal(sessions.size,before);
+      }finally{profileUnavailable=false;sessionUnavailable=false;}
+    }
   });
 });
