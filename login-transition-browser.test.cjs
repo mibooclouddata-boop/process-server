@@ -1,0 +1,50 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
+test('login crossfade waits for data, recovers, and never replays on refresh or navigation',async t=>{
+ const fixture=await startFixture();let browser;t.after(async()=>{await browser?.close();await fixture.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:900}}),page=await context.newPage(),errors=[];
+ page.on('pageerror',error=>errors.push(error.message));
+ await page.route('**/*',route=>route.request().url().startsWith(fixture.url)?route.continue():route.abort());
+ const shots=process.env.LOGIN_TRANSITION_SCREENSHOTS;
+ const shot=async name=>{if(shots){fs.mkdirSync(shots,{recursive:true});await page.screenshot({path:path.join(shots,name+'.png'),fullPage:true});}};
+ async function login(){await page.goto(fixture.url+'/login.html');await page.locator('#identifier').fill('admin');await page.locator('#password').fill('Fixture-passphrase-2026!');await page.locator('#submitBtn').click();}
+ const app=()=>page.frames().find(frame=>frame.parentFrame()&&frame.url().endsWith('/dashboard.html'))||page;
+ const complete=()=>page.waitForFunction(()=>!document.documentElement.hasAttribute('data-login-transition')&&(document.getElementById('loginTransitionFrame')?.contentDocument||document).getElementById('asStatsContent')?.hidden===false);
+ let release;await page.route('**/api/as',async route=>{await new Promise(resolve=>release=resolve);await route.continue();});
+ await login();await page.frameLocator('#loginTransitionFrame').locator('#dashboard').waitFor({state:'attached'});await page.waitForTimeout(1800);
+ assert.equal(await page.locator('#loginTransition').count(),1,'transition remains over an unready destination');
+ assert.match(await page.locator('#loginTransitionTitle').textContent(),/안녕하세요, 검증 관리자님/);
+ assert.equal(await app().locator('#dashboard').evaluate(el=>el.inert),true);
+ await shot('greeting');release();await page.unroute('**/api/as');await complete();await shot('main');
+ assert.equal(await app().locator('#dashboard').evaluate(el=>el.inert),false);assert.match(page.url(),/dashboard.html$/);
+ // Same-document Back must preserve the dashboard's existing unsaved-edit guard.
+ const created=await context.request.post(fixture.url+'/api/as',{headers:{'X-Requested-With':'process-server','Idempotency-Key':require('node:crypto').randomUUID()},data:{ship:'TEST',block:'B01',reason:'기타',remark:'saved note'}});assert.equal(created.status(),200);
+ await app().evaluate(()=>switchTab('as',document.getElementById('tabAsBtn'),'list'));
+ await app().locator('#asTableBody tr[data-id] td:nth-child(16)').first().click();await app().locator('#asRemarkInput').fill('unsaved note');
+ await page.goBack();assert.equal(await page.locator('#loginTransitionFrame').count(),1,'Back preserves the edited application');
+ await page.waitForURL('**/dashboard.html');assert.equal(await app().locator('#asRemarkInput').inputValue(),'unsaved note');assert.match(await app().locator('#asLedgerMessage').textContent(),/저장하거나 취소/);
+ await app().evaluate(()=>asLedgerCancelRemark());await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransitionFrame').count(),0);
+ await login();await complete();
+ await app().locator('#tabUsersBtn').click();assert.equal(await page.locator('#loginTransition').count(),0);
+ await page.reload();await page.locator('#asStatsContent').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransition').count(),0);
+ await page.route('**/api/as',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+ await login();await page.locator('#loginTransitionRetry').waitFor({state:'visible'});await shot('failure');
+ await page.unroute('**/api/as');await page.locator('#loginTransitionRetry').click();assert.doesNotMatch(await page.locator('#loginTransitionTitle').textContent(),/안녕하세요/);await complete();
+ let stale;await page.route('**/api/as',async route=>{await new Promise(resolve=>stale=resolve);await route.fulfill({contentType:'application/json',body:'{"list":[]}'}).catch(()=>{});});
+ await login();await page.locator('#loginTransitionRetry').waitFor({state:'visible',timeout:11000});assert.match(await page.locator('#loginTransitionStatus').textContent(),/지연/);
+ stale();await page.unroute('**/api/as');await page.waitForTimeout(100);assert(await page.locator('#loginTransitionRetry').isVisible());await page.locator('#loginTransitionRetry').click();await complete();
+ await page.route('**/api/me',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+ await login();await page.locator('#loginTransitionRetry').waitFor({state:'visible'});await page.unroute('**/api/me');await page.locator('#loginTransitionRetry').click();await complete();
+ // Regression: the actual GET document may fail even after a successful preflight.
+ await page.route('**/dashboard.html',route=>route.request().method()==='GET'?route.fulfill({status:503,contentType:'text/html',body:'Service unavailable'}):route.continue());
+ await login();await page.locator('#loginTransitionRetry').waitFor({state:'visible'});assert.match(page.url(),/login.html$/);await page.unroute('**/dashboard.html');await page.locator('#loginTransitionRetry').click();await page.waitForURL('**/dashboard.html');await complete();
+ await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});
+ let reducedRelease;await page.route('**/api/as',async route=>{await new Promise(resolve=>reducedRelease=resolve);await route.continue();});
+ await login();await page.frameLocator('#loginTransitionFrame').locator('#dashboard').waitFor({state:'attached'});assert.equal(await page.locator('#loginTransitionTitle').evaluate(el=>getComputedStyle(el).animationName),'none');await shot('reduced-mobile');
+ assert.equal(await page.locator('#loginTransition').evaluate(el=>el.scrollWidth<=innerWidth),true);reducedRelease();await page.unroute('**/api/as');await complete();
+ await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert(await page.locator('#submitBtn').isEnabled());assert.equal(await page.locator('#loginTransition').count(),0);
+ await login();await complete();await app().locator('.logout-btn').click();await page.waitForURL(fixture.url+'/');
+ assert.deepEqual(errors,[]);
+});

@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DB 관리 시스템</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/cover-assets/login-transition.css?v=1">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1679,6 +1677,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=3">
 </head>
 <body>
+<script src="/cover-assets/login-transition.js?v=1" data-page="dashboard"></script>
 
 <!-- ══ 로그인 페이지 ══ -->
 <div id="loginPage">
@@ -2247,11 +2246,21 @@ const SERVER = window.location.origin; // 같은 서버에서 서빙되므로 �
 let currentUser = null;
 
 // ── 인증 체크: login.html에서 넘어온 세션이 없으면 로그인 페이지로 ──
-const authReady = fetch(SERVER+'/api/me').then(async response=>{
-  if(!response.ok){window.location.replace('/login.html');return;}
-  currentUser=(await response.json()).user;
-  sessionStorage.setItem('currentUser',JSON.stringify(currentUser));
-}).catch(()=>window.location.replace('/login.html'));
+async function checkAuth(){
+  const signal=window.LoginTransition?.signal;
+  try{
+    const response=await fetch(SERVER+'/api/me',{signal});
+    if(!response.ok)throw new Error('Authentication request failed');
+    const data=await response.json();if(signal?.aborted)return;
+    if(!data.user)throw new Error('Missing user');
+    currentUser=data.user;sessionStorage.setItem('currentUser',JSON.stringify(currentUser));
+  }catch(error){
+    if(signal?.aborted)return;
+    if(window.LoginTransition?.active)window.LoginTransition.fail('로그인 상태를 확인하지 못했습니다. 다시 시도하거나 로그인으로 돌아가 주세요.');
+    else window.location.replace('/login.html');
+  }
+}
+const authReady=checkAuth();
 // ── 로그인 ──
 async function doLogin() {
   const id = document.getElementById('loginId').value.trim();
@@ -2780,6 +2789,7 @@ function asAmountSegments(amounts,entries) {
  return segments;
 }
 async function loadAsStatistics() {
+  const transition=window.LoginTransition,signal=transition?.signal;
   const request = ++_asStatsRequest;
   const content = document.getElementById('asStatsContent');
   const message = document.getElementById('asStatsMessage');
@@ -2788,11 +2798,11 @@ async function loadAsStatistics() {
   document.getElementById('asSubStats').setAttribute('aria-busy', 'true');
   yearSelect.disabled = true;
   try {
-    const response = await fetch(`${SERVER}/api/as`);
+    const response = await fetch(`${SERVER}/api/as`,{signal});
     if (!response.ok) throw new Error('Request failed');
     const data = await response.json();
     if (!Array.isArray(data.list)) throw new Error('Invalid data');
-    if (request !== _asStatsRequest) return;
+    if (request !== _asStatsRequest || signal?.aborted) return;
     _asStatsRecords = data.list;
     const now = new Date();
     const previousYear = Number(yearSelect.value);
@@ -2802,10 +2812,12 @@ async function loadAsStatistics() {
     [...years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(`${year}년`, String(year))));
     yearSelect.value = String(years.has(previousYear) ? previousYear : now.getFullYear());
     renderAsStatistics();
+    transition?.ready();
   } catch (error) {
-    if (request !== _asStatsRequest) return;
+    if (request !== _asStatsRequest || signal?.aborted) return;
     content.hidden = true;
     message.textContent = 'A/S 현황을 불러오지 못했습니다. 새로고침을 눌러 다시 시도해 주세요.';
+    transition?.fail('A/S 현황을 불러오지 못했습니다. 연결 상태를 확인한 뒤 다시 시도해 주세요.');
   } finally {
     if (request === _asStatsRequest) {
       yearSelect.disabled = content.hidden;
@@ -4007,11 +4019,12 @@ function showToast(input, legacyType) {
 }
 
 // ── 페이지 로드 시 대시보드 직접 진입 (로그인은 /login.html에서 처리됨) ──
-document.addEventListener('DOMContentLoaded', async function() {
+async function initializeDashboard() {
   await authReady;
   if (!currentUser) return; // initAuth에서 이미 리다이렉트 처리됨
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('dashboard').inert=!!window.LoginTransition?.active;
   document.getElementById('topbarUser').textContent = `${currentUser.name} (${currentUser.loginId || currentUser.id})`;
   if (currentUser.role === 'sysadmin') {
     document.getElementById('tabUsersBtn').style.display = '';
@@ -4021,7 +4034,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (currentUser.asReview) document.getElementById('btnAsReview') && (document.getElementById('btnAsReview').style.display = 'none');
   if (currentUser.asApprove) document.getElementById('btnAsApprove') && (document.getElementById('btnAsApprove').style.display = 'none');
   switchTab('as',document.getElementById('tabAsBtn'),location.hash==='#as-list'?'list':'stats');
-});
+}
+document.addEventListener('DOMContentLoaded',initializeDashboard);
 </script>
 <script src="/cover-assets/as-write-progress.js?v=2"></script>
 <script src="/as-integrity-ui.js?v=3"></script>
