@@ -181,3 +181,17 @@ body #asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{font-
 /* Use the same outer inset for every workspace, including the AS list. */
 body #dashboard .main{padding:28px!important;scrollbar-gutter:auto!important}
 @media(max-width:768px){body #dashboard .main{padding:16px!important}}
+
+/* Keep search borders steady and hide only placeholder text while focused. */
+body #tabAs #asSubList #asSearch,body #tabAs #asSubList #asSearch:focus{border:1.5px solid var(--border-strong)!important;box-shadow:none!important;outline:none;transition:none!important}
+body #tabUsers .user-search-field,body #tabUsers .user-search-field:focus-within{outline:none;box-shadow:none;transition:none}
+body #tabAs #asSubList #asSearch::placeholder,body #tabUsers #userSearch::placeholder{opacity:1;transition:none}
+body #tabAs #asSubList #asSearch:focus::placeholder,body #tabUsers #userSearch:focus::placeholder{opacity:0}
+body #tabAs #asSubList #asSearch:focus,body #tabUsers #userSearch:focus{outline:none!important;box-shadow:none!important}
+
+/* Use a muted search hint and black filter labels. */
+body #tabUsers #userSearch::placeholder{color:#657181!important}
+body #tabUsers :is(#userDepartmentFilter,#userRoleFilter,#userStatusFilter){color:#000}
+
+/* Selected categories stay in the dropdowns without duplicate filter chips. */
+body #tabUsers #userActiveFilters{display:none}
