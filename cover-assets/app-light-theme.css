@@ -77,7 +77,7 @@ body #asSubStats .as-readable-trend .data-label{fill:#111!important;font-family:
 body #asSubStats .as-readable-trend #asStatsChart .month-button>span{color:#60656a!important;font-weight:400}
 body #asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]>span{color:#30343a!important;font-weight:700}
 body #asSubStats[data-overview-theme] :is(#comparison-count,#asAmountSelectedValue,#asAmountAnnual,.as-amount-value,.as-reason-count,.as-reason-percent,.as-product-values strong,#asStatsProductsTotal){color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
-body #asSubStats[data-overview-theme] :is(#comparison-change,.as-amount-selection>span,.as-reason-name,.as-product-name,.as-product-values span,.as-chart-unit,.as-stats-footnote,.as-product-period,.as-product-status,.as-product-page-info,#asStatsProductsLabel,.as-reason-heatmap-legend){color:#60656b!important;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:400}
+body #asSubStats[data-overview-theme] :is(#comparison-change,.as-amount-selection>span,.as-reason-name,.as-product-name,.as-product-values span,.as-chart-unit,.as-stats-footnote,.as-product-period,.as-product-status,.as-product-page-info,#asStatsProductsLabel,#asStatsReasonsHint,.as-reason-heatmap-legend){color:#60656b!important;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:400}
 body #asSubStats .as-amount-column-plot :is(.amount-axis,.amount-future-label){fill:#64696f!important;font-weight:400}
 body #asSubStats .as-amount-column-plot .as-amount-month>span:last-child{color:#60656b!important;font-weight:400}
 body #asSubStats .as-amount-column-plot .as-amount-month[aria-pressed=true]>span:last-child{color:#353a40!important;font-weight:700}
