@@ -9,6 +9,8 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/*',route=>route.request().url().startsWith(f.url)?route.continue():route.abort());
  await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await expect(page.locator('#asSubmenu [data-sub=stats]')).toHaveCSS('opacity','1');
+ await expect(page.locator('#asSubmenu [data-sub=list]')).toHaveCSS('opacity','1');
  const nav=page.locator('#appNavigation'),toggle=page.locator('#appRailToggle'),product=nav.locator('[data-sub=product]');
  assert.equal((await nav.boundingBox()).width,80);
  await expect(toggle.locator('.rail-collapse-icon')).toBeHidden();
