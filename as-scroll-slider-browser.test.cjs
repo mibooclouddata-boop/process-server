@@ -1,0 +1,26 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {chromium,expect}=require('@playwright/test');
+const {startFixture}=require('./test-support/as-fixture.cjs');
+test('mini slider tracks horizontal scrolling and keyboard input without changing table columns',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage();
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
+ await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.locator('#asSubmenu [data-sub=list]').click();
+ const viewport=page.locator('#asSubList .as-ledger-scroll'),slider=page.getByRole('slider',{name:'목록 가로 스크롤 위치'});
+ await expect(slider).toBeVisible();assert.equal(await page.locator('.as-column-header th:visible').count(),17);
+ const width=await page.locator('.as-erp-table').evaluate(e=>e.getBoundingClientRect().width);
+ await slider.fill('200');assert.equal(await viewport.evaluate(e=>e.scrollLeft),200);
+ await slider.focus();await page.keyboard.press('End');
+ await expect.poll(()=>viewport.evaluate(e=>Math.abs(e.scrollLeft-(e.scrollWidth-e.clientWidth)))).toBeLessThan(2);
+ await page.keyboard.press('Home');await expect.poll(()=>viewport.evaluate(e=>e.scrollLeft)).toBe(0);
+ await viewport.evaluate(e=>{e.scrollLeft=120;});await expect(slider).toHaveValue('120');
+ assert.equal(await page.locator('.as-erp-table').evaluate(e=>e.getBoundingClientRect().width),width);
+ await page.setViewportSize({width:375,height:844});await expect(slider).toBeVisible();
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.locator('#asSubmenu [data-sub=stats]').click();await expect(slider).toBeHidden();
+ await page.locator('#asSubmenu [data-sub=list]').click();await expect(slider).toBeVisible();
+});
