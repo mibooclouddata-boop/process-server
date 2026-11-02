@@ -1,0 +1,54 @@
+/* Only the new-account flow uses these steps. Existing-account tabs are retained. */
+#userModal [hidden]{display:none!important}
+dialog#userModal.user-creating{width:min(620px,calc(100vw - 28px));height:min(700px,94dvh);border:0;border-radius:12px;box-shadow:0 24px 70px #14283c26}
+#userModal.user-creating .modal-header{padding:28px 32px 20px;border:0;align-items:flex-start}
+#userModal.user-creating .modal-header h3::before{display:none}
+#userModal.user-creating .modal-header h3{font-size:24px;line-height:1.4;letter-spacing:-.035em}
+#userModal.user-creating #userModalIdentity{white-space:normal;margin-top:6px;font-size:13px;color:#5c6978}
+#userModal.user-creating .user-save-strip{display:none}
+#userModal.user-creating .modal-body{padding:0 32px 28px;flex:1;min-height:0;overflow-y:auto}
+#userModal .user-create-steps{display:flex;list-style:none;padding:0;margin:0 0 26px;gap:12px}
+#userModal .user-create-steps li{display:flex;align-items:center;gap:8px;flex:1;padding:12px 0;border-bottom:2px solid #dfe5ec;font-size:13px;color:#5c6978;white-space:nowrap}
+#userModal .user-create-steps li>span{width:22px;height:22px;border:1px solid #9daaba;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none}
+#userModal .user-create-steps li[aria-current=step]{border-color:#004a93;color:#004a93;font-weight:700}
+#userModal .user-create-steps li[aria-current=step]>span{background:#004a93;color:#fff;border-color:#004a93}
+#userModal.user-creating #userCreateHeading{font-size:20px;line-height:1.5;margin:0 0 6px;padding:0;border:0;letter-spacing:-.025em}
+#userModal .user-create-description{font-size:13px;line-height:1.6;color:#5c6978;margin:0 0 24px}
+#userModal.user-creating .modal-row{gap:18px 20px;margin:0 0 20px}
+#userModal.user-creating .modal-row:has(>[data-create-step="0"]):has(>[data-create-step="2"])>[data-create-step]{grid-column:1/-1}
+#userModal.user-creating .modal-field>label{font-size:13px;font-weight:700;margin-bottom:8px;color:#202c3c}
+#userModal.user-creating .modal-field input:not([type=radio]){min-height:46px;border:1px solid #9daaba;border-radius:6px;font-size:15px;font-weight:400;color:#202c3c;padding:10px 12px}
+#userModal.user-creating .modal-field small{font-size:12px;line-height:1.5;color:#5c6978;margin-top:7px;display:block}
+#userModal.user-creating .modal-field .user-field-error{color:#b3261e}
+#userModal.user-creating input[aria-invalid=true]{border-color:#b3261e!important}
+#userModal .user-create-password{position:relative}
+#userModal .user-create-password #modalUserPw{padding-right:50px}
+#userCreatePasswordToggle{position:absolute;right:1px;top:1px;width:44px;height:44px;padding:0;border:0;border-radius:5px;background:transparent;color:#5c6978;display:grid;place-items:center;cursor:pointer}
+#userCreatePasswordToggle:hover{background:#edf3f9}
+#userCreatePasswordToggle svg{width:20px;height:20px}
+#userModal .user-create-review{display:flex;align-items:center;gap:12px;margin:0 0 18px;min-width:0}
+#userCreateInitial{display:grid;place-items:center;width:36px;height:36px;border:1px solid #c3cdd8;border-radius:50%;color:#004a93;flex:none;font-size:14px}
+#userCreateReview>div{min-width:0}#userCreateName{font-size:14px;overflow-wrap:anywhere}#userCreateDepartment{font-size:12px;color:#5c6978;margin:4px 0 0;overflow-wrap:anywhere}
+#userModal .user-create-roles{display:grid;gap:10px;min-width:0;border:0;padding:0;margin:0}
+#userModal .user-create-roles>label{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid #9daaba;border-radius:6px;min-height:72px;cursor:pointer;margin:0}
+#userModal .user-create-roles>label:has(input:checked){border-color:#004a93;background:#edf3f9}
+#userModal .user-create-roles input{width:18px;min-width:18px;height:18px;min-height:18px;padding:0;margin:0;accent-color:#004a93;flex:none}
+#userModal .user-create-roles strong{font-size:14px;line-height:1.5;color:#202c3c}
+#userModal .user-create-roles small{font-size:12px;font-weight:400;margin-top:3px}
+#userModal.user-creating .modal-footer{padding:18px 32px;background:#fff;border-top:1px solid #dfe5ec;gap:8px}
+#userModal.user-creating .modal-footer button{min-height:44px;border-radius:6px;min-width:70px;font-size:14px}
+#userModal.user-creating .modal-footer .admin-btn-secondary{background:#fff;border:1px solid #9daaba;color:#202c3c}
+#userModal.user-creating .modal-footer .admin-btn-primary{background:#004a93;box-shadow:none}
+#userModal.user-creating .modal-msg{margin:0 32px}
+#userModal.user-creating :is(button,input):focus-visible{outline:3px solid #3175b6;outline-offset:3px}
+#userModal.user-creating #userCreateHeading:focus{outline:none}
+@media(max-width:650px){
+ dialog#userModal.user-creating{width:calc(100vw - 24px);height:min(700px,94dvh);max-height:94dvh}
+ #userModal.user-creating .modal-header{padding:22px 20px 16px}#userModal.user-creating .modal-header h3{font-size:22px}
+ #userModal.user-creating .modal-body{padding:0 20px 22px}#userModal .user-create-steps{gap:8px;margin-bottom:24px}#userModal .user-create-steps li{font-size:12px;gap:5px}
+ #userModal.user-creating .modal-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+ #userModal.user-creating .modal-row:has(>[data-create-step="1"]){grid-template-columns:1fr}
+ #userModal.user-creating .modal-field input:not([type=radio]){font-size:16px}#userModal.user-creating #userCreateHeading{font-size:19px}
+ #userModal.user-creating .modal-footer{padding:14px 20px}#userModal.user-creating .modal-msg{margin:0 20px}
+}
+@media(prefers-reduced-motion:reduce){#userModal.user-creating *{transition:none!important;animation:none!important}}
