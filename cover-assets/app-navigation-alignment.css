@@ -19,7 +19,7 @@
  body #appNavigation[data-expanded=true]{width:208px;padding:var(--rail-content-top,28px) 12px 16px}
  body #appNavigation[data-expanded=true] :is(.tab,.tab-sub){width:100%;min-height:48px}
  body #appNavigation[data-expanded=true] #appRailToggle{display:none}
- body #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:#fff;color:#202123}
+ body #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:#fff;color:#000}
 }
 @media(max-width:768px){
  .app-topbar .rail-header-slot,.app-topbar .rail-brand-region{display:contents}

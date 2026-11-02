@@ -1,4 +1,4 @@
-/* Selected left-anchored logo: brand, rail control, then current page. */
+/* Selected left-anchored logo: brand and rail control. */
 @media(min-width:769px){
  #dashboard>.app-topbar{display:flex;align-items:center;gap:20px;padding:0 24px}
  .app-topbar .topbar-title{flex:0 0 96px;width:96px;margin-right:8px}
@@ -9,8 +9,6 @@
  .app-topbar #appRailToggle[aria-expanded=true] .rail-expand-icon{display:none!important}
  .app-topbar #appRailToggle[aria-expanded=true] .rail-collapse-icon{display:block!important}
  .app-topbar #appRailToggle svg{width:20px;height:20px}
- .app-topbar .app-location{min-width:0;padding-left:20px;border-left:1px solid var(--border-strong)}
- .app-topbar .app-location>span{display:none}
  .app-topbar .app-header-tools{margin-left:auto}
 }
 @media(max-width:768px){.app-topbar #appRailToggle{display:none}.app-topbar .topbar-title img{width:96px!important}}
