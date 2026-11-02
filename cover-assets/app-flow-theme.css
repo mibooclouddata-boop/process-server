@@ -1,0 +1,12 @@
+/* Shared Cool Silver surfaces from landing through the workspace. */
+:root{
+ --flow-shell:#e5eaf0;
+ --flow-workspace:#f2f4f6;
+ --paper:var(--flow-shell);
+ --bg:var(--flow-shell);
+ --app-canvas:var(--flow-workspace);
+}
+html,body,.login-background{background:var(--flow-shell)}
+html[data-login-transition] .login-background,
+.login-crossfade,.login-crossfade-source,.login-crossfade.is-error,
+#loginTransitionFrame{background:var(--flow-shell)}
