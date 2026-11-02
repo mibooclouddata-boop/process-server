@@ -9,12 +9,12 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/*',route=>route.request().url().startsWith(f.url)?route.continue():route.abort());
  await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
- await expect(page.locator('#asSubmenu [data-sub=stats]')).toHaveCSS('opacity','1');
+ await expect(page.locator('#appNavigation #asSubmenu [data-sub=stats]')).toHaveCSS('opacity','1');assert.equal(await page.locator('.main #asSubmenu').count(),0);
  await expect(page.locator('#asSubmenu [data-sub=list]')).toHaveCSS('opacity','1');
  const nav=page.locator('#appNavigation'),toggle=page.locator('#appRailToggle'),product=nav.locator('[data-sub=product]');
  assert.equal((await nav.boundingBox()).width,80);
  await expect(toggle.locator('.rail-collapse-icon')).toBeHidden();
- await expect(page.getByRole('button',{name:'AS',exact:true})).toHaveAttribute('aria-current','page');
+ await expect(page.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
  await page.evaluate(()=>window.scrollTo(0,500));
  assert(await toggle.evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}),'scrolling must not hide the rail toggle beneath the sticky header');
  await toggle.click();await expect(toggle).toHaveAttribute('aria-expanded','true');await toggle.click();await page.evaluate(()=>window.scrollTo(0,0));
@@ -27,7 +27,7 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  await expect(product).toHaveCSS('background-color','rgb(255, 255, 255)');
  await page.keyboard.press('Escape');await expect(toggle).toBeFocused();await expect(toggle).toHaveAttribute('aria-expanded','false');
  await nav.locator('#tabAsBtn').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
- await page.locator('#asSubmenu [data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeVisible();await expect(page.locator('#asSubmenu')).toBeVisible();
+ await page.locator('#tabAsBtn').focus();await page.keyboard.press('ArrowDown');await expect(page.locator('#asSubmenu [data-sub=list]')).toHaveAttribute('aria-current','page');await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();
  await page.waitForFunction(()=>document.getElementById('asTableBody').rows.length===20);
  assert.equal(await page.locator('#asLedgerBack').count(),0);
  await expect(page.locator('#asSubList')).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -38,8 +38,8 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  }
  await page.evaluate(()=>_renderAsPage());
  await page.locator('#asSubmenu [data-sub=stats]').click();await expect(page.locator('#asSubmenu [data-sub=stats]')).toBeFocused();
- for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu')).toBeHidden();}
- await nav.locator('#tabAsBtn').click();await expect(page.locator('#asSubmenu')).toBeVisible();
+ for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();}
+ await nav.locator('#tabAsBtn').click();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();
  await nav.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
  await toggle.click();
  for(const width of [768,390,320]){

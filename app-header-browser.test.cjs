@@ -40,7 +40,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  await page.locator('#appMenuToggle').click();assert(await page.locator('#appNavigation').isVisible());await shot('header-mobile-menu');
  await page.locator('#tabAsBtn').click();assert.equal(await page.locator('#appMenuToggle').getAttribute('aria-expanded'),'false');assert(await page.locator('#appNavigation').isHidden());
  await page.locator('#appMenuToggle').click();await page.locator('[data-sub="list"]').click();assert(await page.locator('.topbar').isVisible());
- await page.locator('#asSubmenu [data-sub=stats]').click();assert(await page.locator('#asSubStats').isVisible());
+ await page.locator('#appMenuToggle').click();await page.locator('#asSubmenu [data-sub=stats]').click();assert(await page.locator('#asSubStats').isVisible());
  await page.locator('#appMenuToggle').click();await page.keyboard.press('Escape');assert(await page.locator('#appNavigation').isHidden());
  await page.locator('#appMenuToggle').click();await page.locator('#tabUsersBtn').click();await shot('header-mobile');
  await page.locator('#appAccountToggle').click();const panel=await page.locator('#appAccountPanel').boundingBox();assert(panel.x>=0&&panel.x+panel.width<=376,JSON.stringify(panel));
