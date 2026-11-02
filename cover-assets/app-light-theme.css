@@ -158,8 +158,8 @@ body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!
 /* Clean table with horizontal rules and top/side outer boundaries. */
 body #tabAs #asSubList{--ledger-row:48px!important;--ledger-font:15px}
 body #tabAs #asSubList .as-table-card .as-erp-table :is(th,td):nth-child(n){border-left:0!important;border-right:0!important}
-body #tabAs #asSubList .as-table-card .as-erp-table thead .as-column-header th{height:48px!important;padding:10px 12px!important;font-size:14px!important;color:#111!important;background:#f3f5f7!important;border-top:0!important;border-bottom:1px solid #dce2e8!important}
-body #tabAs #asSubList .as-table-card .as-erp-table tbody tr td{height:48px!important;padding:10px 12px!important;font-size:15px!important;line-height:1.5!important;font-weight:450!important;color:#222!important;font-variant-numeric:tabular-nums;background:#fff!important;border-bottom:1px solid #e9edf1!important}
+body #tabAs #asSubList .as-table-card .as-erp-table thead .as-column-header th{height:48px!important;padding:10px 12px!important;font-size:15px!important;font-weight:600!important;line-height:1.5!important;color:#111!important;background:#f3f5f7!important;border-top:0!important;border-bottom:1px solid #dce2e8!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr td{height:48px!important;padding:10px 12px!important;font-size:15px!important;line-height:1.5!important;font-weight:400!important;color:#222!important;font-variant-numeric:tabular-nums;background:#fff!important;border-bottom:1px solid #e9edf1!important}
 body #tabAs #asSubList .as-table-card .as-erp-table tbody tr.as-ledger-filler:nth-child(n) td{background:#fff!important}
 body #tabAs #asSubList .as-table-card .as-erp-table tbody tr[data-id]:hover td{background:#eaf0f5!important}
 body #tabAs #asSubList .as-table-card .as-erp-table tbody tr.selected td{background:#e0e8f0!important}
