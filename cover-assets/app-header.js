@@ -2,6 +2,20 @@
 window.AppHeader=(()=>{
  const account=document.getElementById('appAccount'),summary=document.getElementById('appAccountToggle'),menu=document.getElementById('appMenuToggle'),navigation=document.getElementById('appNavigation');
  const railToggle=document.getElementById('appRailToggle');
+ const header=document.querySelector('#dashboard>.app-topbar');
+ const brand=header?.querySelector('.topbar-title'),location=header?.querySelector('.app-location');
+ const main=document.querySelector('#dashboard .main');
+ if(header&&brand&&location&&railToggle&&main){
+  const slot=document.createElement('div'),brandRegion=document.createElement('div');
+  slot.className='rail-header-slot';brandRegion.className='rail-brand-region';
+  header.prepend(slot);slot.after(brandRegion);brandRegion.append(brand,location);slot.append(railToggle);
+  const align=()=>{
+   const style=getComputedStyle(main);
+   header.style.setProperty('--rail-content-inset',`${main.clientLeft+parseFloat(style.paddingLeft||0)}px`);
+   header.style.setProperty('--rail-content-top',`${parseFloat(style.paddingTop||0)}px`);
+  };
+  new ResizeObserver(align).observe(main);new ResizeObserver(align).observe(header);window.addEventListener('resize',align);align();
+ }
  function setRailExpanded(expanded){
   navigation.dataset.expanded=String(expanded);
   railToggle.setAttribute('aria-expanded',String(expanded));
