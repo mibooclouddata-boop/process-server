@@ -6,7 +6,8 @@
  --bg:var(--flow-shell);
  --app-canvas:var(--flow-workspace);
 }
-html,body,.login-background{background:var(--flow-shell)}
+html,body{background:var(--flow-shell)}
+html:has(>.login-background),.login-background,
 html[data-login-transition] .login-background,
-.login-crossfade,.login-crossfade-source,.login-crossfade.is-error,
+.login-crossfade,.login-crossfade-source,.login-crossfade.is-error{background:#fff}
 #loginTransitionFrame{background:var(--flow-shell)}
