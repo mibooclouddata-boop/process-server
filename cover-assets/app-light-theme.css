@@ -177,8 +177,3 @@ body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-hea
 body #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){margin:0;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:14px;line-height:21px;font-weight:500;letter-spacing:normal;color:#60656b!important;white-space:nowrap}
 
 body #asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{font-size:14px;line-height:21px}
-
-/* Keep AS overview and list aligned within the same content bounds. */
-body #dashboard .main:has(#tabAs){max-width:1600px!important;padding:28px 32px!important;margin:0 6px 6px 0}
-body #tabAs :is(#asSubStats,#asSubList){width:100%;max-width:1400px;margin-inline:auto;box-sizing:border-box}
-@media(max-width:768px){body #dashboard .main:has(#tabAs){padding:16px!important;margin:0}}
