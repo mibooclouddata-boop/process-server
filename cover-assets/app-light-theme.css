@@ -137,6 +137,7 @@ body #asSubStats .as-reason-heatmap-scroll:focus-visible{outline-color:#555}
 /* Keep the full-height ledger and mobile account menu inside the framed viewport. */
 body.as-ledger-active #dashboard>.layout{height:calc(100dvh - 2 * var(--app-rim));min-height:0}
 body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
+@media(max-height:650px){body.as-ledger-active #dashboard>.layout{height:auto;min-height:calc(100dvh - 2 * var(--app-rim))}}
 @media(max-width:768px){
   :root{--app-rim:4px;--app-radius:20px}
   #dashboard>.app-topbar{border-radius:16px 16px 0 0}

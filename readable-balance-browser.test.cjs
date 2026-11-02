@@ -26,6 +26,10 @@ test('readable balance keeps real overview interactions with neutral charts and 
  await page.locator('#asStatsChart .month-button').nth(1).click();assert.match(await page.locator('#comparison-count').textContent(),/^3/);
  await page.locator('#asKpiRow button').nth(2).click();await page.locator('#asSubList').waitFor({state:'visible'});
  assert.equal(await page.locator('#asStatusFilter').inputValue(),'제작 요청');
+ await page.setViewportSize({width:844,height:390});
+ const ledgerBounds=await page.evaluate(()=>({main:document.querySelector('#dashboard .main').getBoundingClientRect().bottom,scroll:document.querySelector('.as-ledger-scroll').getBoundingClientRect().bottom}));
+ assert(ledgerBounds.scroll<=ledgerBounds.main+1,'short screens must keep the ledger and its horizontal scrollbar inside the main panel');
+ await page.setViewportSize({width:1440,height:1000});
  await page.locator('#asLedgerBack').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
  assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.effect?.target?.closest?.('#asSubStats')&&a.playState==='running').length),0);
  for(const width of [1440,768,390]){

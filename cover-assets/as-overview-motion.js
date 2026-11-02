@@ -3,12 +3,13 @@
  'use strict';
  const overview=document.getElementById('asSubStats');
  const content=document.getElementById('asStatsContent');
- if(!overview||!content)return;
+ const dashboard=document.getElementById('dashboard');
+ if(!overview||!content||!dashboard)return;
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
  let animations=[];
  const cancel=()=>{if(preference.matches)animations.forEach(animation=>animation.cancel());};
  const enter=()=>{
-  if(overview.getAttribute('aria-busy')!=='false'||content.hidden)return;
+  if(overview.getAttribute('aria-busy')!=='false'||content.hidden||dashboard.inert)return;
   observer.disconnect();
   if(preference.matches)return;
   preference.addEventListener('change',cancel);
@@ -27,5 +28,7 @@
  };
  const observer=new MutationObserver(enter);
  observer.observe(overview,{attributes:true,attributeFilter:['aria-busy']});
+ // The login crossfade removes inert when the loaded application becomes visible.
+ observer.observe(dashboard,{attributes:true,attributeFilter:['inert']});
  enter();
 })();
