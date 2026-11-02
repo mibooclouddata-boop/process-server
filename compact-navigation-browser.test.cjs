@@ -27,8 +27,17 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  await expect(product).toHaveCSS('background-color','rgb(255, 255, 255)');
  await page.keyboard.press('Escape');await expect(toggle).toBeFocused();await expect(toggle).toHaveAttribute('aria-expanded','false');
  await nav.locator('#tabAsBtn').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
- await page.locator('#asSubmenu [data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeHidden();
- await page.locator('#asLedgerBack').click();await expect(nav.locator('#tabAsBtn')).toBeFocused();
+ await page.locator('#asSubmenu [data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeVisible();await expect(page.locator('#asSubmenu')).toBeVisible();
+ await page.waitForFunction(()=>document.getElementById('asTableBody').rows.length===20);
+ assert.equal(await page.locator('#asLedgerBack').count(),0);
+ await expect(page.locator('#asSubList')).toHaveCSS('background-color','rgb(255, 255, 255)');
+ await expect(page.locator('#asSubList .as-column-header th').first()).toHaveCSS('color','rgb(17, 17, 17)');
+ for(const count of [1,3,20]){
+  const result=await page.evaluate(count=>{const table=document.querySelector('#asSubList .as-erp-table'),body=table.tBodies[0];body.replaceChildren();for(let i=0;i<count;i++){const row=body.insertRow();row.dataset.id='fixture-'+i;for(let j=0;j<17;j++)row.insertCell();}asLedgerFillRows(table,table.parentElement,48,17);asLedgerFillRows(table,table.parentElement,48,17);return {total:body.rows.length,blank:body.querySelectorAll('.as-ledger-filler').length};},count);
+  assert.deepEqual(result,{total:20,blank:20-count});
+ }
+ await page.evaluate(()=>_renderAsPage());
+ await page.locator('#asSubmenu [data-sub=stats]').click();await expect(page.locator('#asSubmenu [data-sub=stats]')).toBeFocused();
  for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu')).toBeHidden();}
  await nav.locator('#tabAsBtn').click();await expect(page.locator('#asSubmenu')).toBeVisible();
  await nav.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');

@@ -48,3 +48,7 @@ body .app-as-tabs button[aria-current=page]{color:#202123;font-weight:700}
 body .app-as-tabs button[aria-current=page]:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:3px;background:#41484f;border-radius:3px}
 body .app-as-tabs button:focus-visible{outline:2px solid #5f6872;outline-offset:2px}
 body .app-as-tabs[hidden],body.as-ledger-active .app-as-tabs{display:none}
+
+/* Reception stays in the shared workspace; only the table scrolls. */
+body.as-reception-active #asSubList{display:flex;flex-direction:column;min-width:0}
+body.as-reception-active #asSubList .as-ledger-scroll{flex:initial;max-height:60dvh;min-height:180px;overflow:auto}
