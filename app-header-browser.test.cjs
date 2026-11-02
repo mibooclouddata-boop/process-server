@@ -15,6 +15,9 @@ test('light header reflects the session and supports keyboard, mobile navigation
  assert.equal(await page.locator('#topbarUser').textContent(),'검증 관리자');
  assert.equal(await page.locator('#appHeaderRole').textContent(),'시스템 관리자');
  assert.equal(await page.locator('.app-topbar .logout-btn').count(),0);
+ assert(await page.locator('#appHeaderRole').isHidden());
+ const capsule=await page.locator('#appAccountToggle').evaluate(el=>{const s=getComputedStyle(el);return {background:s.backgroundColor,radius:s.borderRadius};});
+ assert.deepEqual(capsule,{background:'rgb(255, 255, 255)',radius:'30px'});
  await page.locator('#appAccountToggle').focus();await page.keyboard.press('Enter');assert(await page.locator('#appAccountPanel').isVisible());
  assert.match(await page.locator('#appAccountPanel').textContent(),/회원 정보/);assert.equal(await page.locator('#appAccountLogin').textContent(),'admin');assert.equal(await page.locator('#appAccountRole').textContent(),'시스템 관리자');assert.equal(await page.locator('#appAccountAvatar').textContent(),'검');
  assert.equal(await page.locator('#appAccountPanel [data-app-logout]').isVisible(),true);await page.keyboard.press('Escape');assert(await page.locator('#appAccountPanel').isHidden());
@@ -23,6 +26,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  const shot=async name=>{if(process.env.HEADER_SCREENSHOT_DIR){fs.mkdirSync(process.env.HEADER_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.HEADER_SCREENSHOT_DIR,name+'.png'),fullPage:true});}};
  await page.locator('#adminUserRows tr').first().waitFor();await shot('header-desktop');
  await page.setViewportSize({width:375,height:844});assert(await page.locator('#appNavigation').isHidden());
+ assert(await page.locator('#topbarUser').isVisible());
  await page.locator('#appMenuToggle').click();assert(await page.locator('#appNavigation').isVisible());await shot('header-mobile-menu');
  await page.locator('#tabAsBtn').click();assert.equal(await page.locator('#appMenuToggle').getAttribute('aria-expanded'),'false');assert(await page.locator('#appNavigation').isHidden());
  await page.locator('#appMenuToggle').click();await page.locator('[data-sub="list"]').click();assert(await page.locator('.topbar').isHidden());

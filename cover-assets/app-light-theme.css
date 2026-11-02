@@ -34,6 +34,19 @@
 .app-avatar{background:var(--brand-soft);border-color:var(--border);color:var(--text)}
 .app-account-panel{color:var(--text);border-color:var(--border)}
 .app-account-panel>p{color:var(--text2)}
+/* Selected white capsule: keep the role in the account panel. */
+#appAccount>summary{gap:9px;padding:5px 13px 5px 6px;border:1px solid #d8dfe7;border-radius:30px;background:#fff;transition:background .14s,border-color .14s}
+#appAccount>summary:hover,#appAccount[open]>summary{background:#f8fafb;border-color:#a8b4bf}
+#appAccount .app-avatar{width:30px;height:30px;background:#dce7e1;border-color:#cfded4;color:#426252;font-weight:600}
+#appAccount .app-account-copy{display:flex;max-width:150px}
+#appAccount #appHeaderRole{display:none}
+#appAccount .app-chevron{display:block;width:13px;height:13px;color:#707984}
+#appAccount[open] .app-chevron{transform:rotate(180deg)}
+@media(max-width:768px){
+ #appAccount>summary{gap:6px;padding:5px 8px 5px 5px}
+ #appAccount .app-account-copy{max-width:clamp(32px,calc(100vw - 300px),110px)}
+}
+@media(prefers-reduced-motion:reduce){#appAccount>summary{transition:none}}
 #dashboard>.layout{background:transparent;min-height:calc(100dvh - 88px)}
 #appNavigation{background:var(--app-navigation);border-color:var(--border);border-radius:0 0 0 18px}
 #appNavigation .tab.on,#appNavigation .tab-sub.on{background:var(--card);color:var(--text);box-shadow:none}
