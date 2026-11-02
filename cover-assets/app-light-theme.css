@@ -195,3 +195,14 @@ body #tabUsers :is(#userDepartmentFilter,#userRoleFilter,#userStatusFilter){colo
 
 /* Selected categories stay in the dropdowns without duplicate filter chips. */
 body #tabUsers #userActiveFilters{display:none}
+
+/* AS list pagination: circular selection from the approved preview. */
+body #tabAs #asSubList #asPageBtns .as-page-btn{width:36px;min-width:36px;height:36px;padding:0;border:1px solid transparent;border-radius:50%;background:transparent;color:#525b65;font-weight:500;transition:background-color .15s,color .15s}
+body #tabAs #asSubList #asPageBtns .as-page-btn:hover:not(:disabled){background:#f0f2f4;color:#17191c}
+body #tabAs #asSubList #asPageBtns .as-page-btn.active,body #tabAs #asSubList #asPageBtns .as-page-btn.active:hover{background:#292d32;color:#fff;font-weight:700}
+body #tabAs #asSubList #asPageBtns .as-page-btn:focus-visible{outline:2px solid #3d6b91;outline-offset:3px}
+body #tabAs #asSubList #asPageBtns .as-page-gap{display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;height:36px;color:#737c86}
+body #tabAs #asSubList #asPageInfo{font-variant-numeric:tabular-nums}
+@media(pointer:coarse){body #tabAs #asSubList #asPageBtns .as-page-btn,body #tabAs #asSubList #asPageBtns .as-page-gap{width:44px;min-width:44px;height:44px;flex-basis:44px}}
+@media(max-width:768px){body #tabAs #asSubList #asPageBtns{max-width:100%;overflow-x:auto;padding:4px}body #tabAs #asSubList #asPageBtns .as-page-btn{flex-shrink:0}}
+@media(prefers-reduced-motion:reduce){body #tabAs #asSubList #asPageBtns .as-page-btn{transition:none}}

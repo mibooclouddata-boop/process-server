@@ -1689,7 +1689,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
-<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=18">
+<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=19">
 <link rel="stylesheet" href="/cover-assets/app-navigation-rail.css?v=12">
 <link rel="stylesheet" href="/cover-assets/app-navigation-alignment.css?v=2">
 <link rel="stylesheet" href="/cover-assets/app-flow-theme.css?v=1">
@@ -3298,19 +3298,14 @@ function _renderAsPagination(total, totalPages) {
   // page buttons: prev, page numbers, next
   let html = `<button class="as-page-btn" onclick="asGoPage(${_asPage-1})" ${_asPage===1?'disabled':''}>&lsaquo;</button>`;
 
-  let pStart = Math.max(1, _asPage - 2);
-  let pEnd   = Math.min(totalPages, pStart + 4);
-  if (pEnd - pStart < 4) pStart = Math.max(1, pEnd - 4);
-
-  if (pStart > 1) html += `<button class="as-page-btn" onclick="asGoPage(1)">1</button>` + (pStart > 2 ? '<span style="padding:0 4px;color:#cbd5e1;font-size:12px">…</span>' : '');
-
-  for (let p = pStart; p <= pEnd; p++) {
-    html += `<button class="as-page-btn${p===_asPage?' active':''}" onclick="asGoPage(${p})">${p}</button>`;
-  }
-
-  if (pEnd < totalPages) {
-    html += (pEnd < totalPages - 1 ? '<span style="padding:0 4px;color:#cbd5e1;font-size:12px">…</span>' : '') +
-            `<button class="as-page-btn" onclick="asGoPage(${totalPages})">${totalPages}</button>`;
+  const range = (first, last) => Array.from({length:last-first+1}, (_, i) => first+i);
+  const pages = totalPages <= 7 ? range(1,totalPages)
+    : _asPage <= 4 ? [...range(1,5),null,totalPages]
+    : _asPage >= totalPages-3 ? [1,null,...range(totalPages-4,totalPages)]
+    : [1,null,_asPage-1,_asPage,_asPage+1,null,totalPages];
+  for (const p of pages) {
+    html += p === null ? '<span class="as-page-gap" aria-hidden="true">…</span>'
+      : `<button class="as-page-btn${p===_asPage?' active':''}" onclick="asGoPage(${p})">${p}</button>`;
   }
 
   html += `<button class="as-page-btn" onclick="asGoPage(${_asPage+1})" ${_asPage===totalPages?'disabled':''}>&rsaquo;</button>`;
