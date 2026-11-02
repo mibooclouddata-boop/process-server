@@ -4043,6 +4043,8 @@ document.addEventListener('DOMContentLoaded',initializeDashboard);
 <script src="/cover-assets/as-write-progress.js?v=2"></script>
 <script src="/as-integrity-ui.js?v=3"></script>
 <script src="/as-workflow-ui.js?v=integrity-1"></script>
+<link rel="stylesheet" href="/cover-assets/as-amount-motion.css?v=1">
+<script src="/cover-assets/as-amount-motion.js?v=1"></script>
 <script id="as-readable-trend-script">
 // The amount chart keeps all labels visible, independently of hover/focus tooltips.
 function createAsColumnAmounts(chart){
@@ -4083,7 +4085,7 @@ function createAsColumnAmounts(chart){
   });
   const current=sum.amounts[month-1],hasCurrent=sum.amountEntries[month-1]>0;
   document.getElementById('asAmountSelectedPeriod').textContent=month+'월 접수 금액';
-  document.getElementById('asAmountSelectedValue').innerHTML=future(month-1)?'미도래':hasCurrent?format(current)+'<small>원</small>':'금액 미입력';
+  AsAmountMotion.render(document.getElementById('asAmountSelectedValue'),future(month-1)?'미도래':hasCurrent?format(current):'금액 미입력',format(sum.amounts.reduce((max,value)=>value>max?value:max,0n)));
  }
  chart.addEventListener('keydown',event=>{const button=event.target.closest('.as-amount-month');if(!button)return;const index=[...chart.children].indexOf(button);let next;if(event.key==='ArrowRight')next=(index+1)%12;if(event.key==='ArrowLeft')next=(index+11)%12;if(event.key==='Home')next=0;if(event.key==='End')next=11;if(next!==undefined){event.preventDefault();chart.children[next]?.focus({preventScroll:true});}});
  new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(draw);}).observe(plot);
