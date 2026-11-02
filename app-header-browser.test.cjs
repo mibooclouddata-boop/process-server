@@ -14,8 +14,10 @@ test('light header reflects the session and supports keyboard, mobile navigation
  assert.equal(await page.locator('#appHeaderPage').textContent(),'AS 접수 현황');
  assert.equal(await page.locator('#topbarUser').textContent(),'검증 관리자');
  assert.equal(await page.locator('#appHeaderRole').textContent(),'시스템 관리자');
+ assert.equal(await page.locator('.app-topbar .logout-btn').count(),0);
  await page.locator('#appAccountToggle').focus();await page.keyboard.press('Enter');assert(await page.locator('#appAccountPanel').isVisible());
- assert.match(await page.locator('#appAccountPanel').textContent(),/admin/);await page.keyboard.press('Escape');assert(await page.locator('#appAccountPanel').isHidden());
+ assert.match(await page.locator('#appAccountPanel').textContent(),/회원 정보/);assert.equal(await page.locator('#appAccountLogin').textContent(),'admin');assert.equal(await page.locator('#appAccountRole').textContent(),'시스템 관리자');assert.equal(await page.locator('#appAccountAvatar').textContent(),'검');
+ assert.equal(await page.locator('#appAccountPanel [data-app-logout]').isVisible(),true);await page.keyboard.press('Escape');assert(await page.locator('#appAccountPanel').isHidden());
  assert(await page.locator('#appAccountToggle').evaluate(el=>el===document.activeElement));
  await page.locator('#tabUsersBtn').click();assert.equal(await page.locator('#appHeaderPage').textContent(),'사용자 관리');
  const shot=async name=>{if(process.env.HEADER_SCREENSHOT_DIR){fs.mkdirSync(process.env.HEADER_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.HEADER_SCREENSHOT_DIR,name+'.png'),fullPage:true});}};
