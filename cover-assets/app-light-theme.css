@@ -27,7 +27,7 @@
   border-radius:18px 18px 0 0;
 }
 .app-topbar .topbar-title img{filter:brightness(0)!important}
-.app-topbar .app-location strong,.app-topbar #topbarUser,.app-topbar .app-menu-toggle{color:var(--text)}
+.app-topbar #topbarUser,.app-topbar .app-menu-toggle{color:var(--text)}
 .app-topbar :is(button,summary):focus-visible{outline-color:var(--brand)}
 .app-topbar .logout-btn{border-color:var(--border-strong)}
 .app-topbar .logout-btn:hover{color:var(--text)}

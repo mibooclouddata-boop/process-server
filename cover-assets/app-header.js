@@ -3,12 +3,12 @@ window.AppHeader=(()=>{
  const account=document.getElementById('appAccount'),summary=document.getElementById('appAccountToggle'),menu=document.getElementById('appMenuToggle'),navigation=document.getElementById('appNavigation');
  const railToggle=document.getElementById('appRailToggle');
  const header=document.querySelector('#dashboard>.app-topbar');
- const brand=header?.querySelector('.topbar-title'),location=header?.querySelector('.app-location');
+ const brand=header?.querySelector('.topbar-title');
  const main=document.querySelector('#dashboard .main');
- if(header&&brand&&location&&railToggle&&main){
+ if(header&&brand&&railToggle&&main){
   const slot=document.createElement('div'),brandRegion=document.createElement('div');
   slot.className='rail-header-slot';brandRegion.className='rail-brand-region';
-  header.prepend(slot);slot.after(brandRegion);brandRegion.append(brand,location);slot.append(railToggle);
+  header.prepend(slot);slot.after(brandRegion);brandRegion.append(brand);slot.append(railToggle);
   const align=()=>{
    const style=getComputedStyle(main);
    header.style.setProperty('--rail-content-inset',`${main.clientLeft+parseFloat(style.paddingLeft||0)}px`);
@@ -56,7 +56,6 @@ window.AppHeader=(()=>{
    summary.setAttribute('aria-label',name+' 계정 메뉴');
   },
   setPage(tab,sub){
-   text('appHeaderPage',tab==='process'?'공정':tab==='dispatch'?'배차':tab==='users'?'사용자 관리':sub==='product'?'제품 목록':sub==='list'?'AS 접수':'AS 접수 현황');
    const wasFocused=navigation.contains(document.activeElement)&&document.body.classList.contains('app-nav-open');
    closeNavigation(wasFocused);account.open=false;
    document.querySelectorAll('#appNavigation [aria-current],#asSubmenu [aria-current]').forEach(el=>el.removeAttribute('aria-current'));
