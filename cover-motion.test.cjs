@@ -12,7 +12,7 @@ function setup(options = {}) {
   if (options.legacyMedia) reduced.addListener = fn => { mediaChange = fn; };
   else reduced.addEventListener = (_, fn) => { mediaChange = fn; };
   const ctx = {
-    setTransform(){}, fillRect(){}, beginPath(){}, moveTo(){}, fill(){},
+    setTransform(){}, clearRect(){}, fillRect(){}, beginPath(){}, moveTo(){}, fill(){},
     arc(x,y){samples.push([x,y]);}
   };
   const gl = new Proxy({
