@@ -41,11 +41,11 @@ body #appNavigation .rail-tip::before{content:'';position:absolute;right:100%;to
 
 
 /* Context navigation for the AS workspace. */
-body .app-as-tabs{display:flex;align-items:center;gap:26px;margin:0 0 24px;padding:0;border-bottom:1px solid #d9dde1;min-height:48px}
-body .app-as-tabs strong{font-size:19px;color:#222;margin-right:8px}
-body .app-as-tabs button{opacity:1;transform:none;width:auto;font:inherit;min-height:44px;padding:10px 4px;background:none;border:0;border-radius:0;color:#747b83;cursor:pointer;position:relative}
+body .app-as-tabs{position:relative;display:flex;align-items:center;gap:26px;margin:0 0 24px;padding:0;border-bottom:1px solid #d9dde1;min-height:48px}
+body .app-as-tabs button{opacity:1;transform:none;width:auto;font:700 18px/26px Pretendard,"Malgun Gothic",sans-serif;letter-spacing:-.04em;min-width:54px;min-height:48px;padding:10px 4px;background:none;border:0;border-radius:0;color:#747b83;cursor:pointer;position:relative}
 body .app-as-tabs button[aria-current=page]{color:#202123;font-weight:700}
-body .app-as-tabs button[aria-current=page]:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:3px;background:#41484f;border-radius:3px}
+body .app-as-tabs .as-tabs-indicator{position:absolute;left:0;bottom:-1px;width:54px;height:3px;background:#202123;border-radius:3px;pointer-events:none;transform:translateX(var(--as-tab-x,0px));transition:transform .32s cubic-bezier(.22,.8,.25,1)}
+@media(prefers-reduced-motion:reduce){body .app-as-tabs .as-tabs-indicator{transition:none!important}}
 body .app-as-tabs button:focus-visible{outline:2px solid #5f6872;outline-offset:2px}
 body .app-as-tabs[hidden],body.as-ledger-active .app-as-tabs{display:none}
 
