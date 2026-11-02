@@ -11,7 +11,7 @@
   const value=/^\d[\d,]*$/.test(text)?Number(text.replaceAll(',','')):null;
   const old=previous;previous=value;
   if(value!==null&&value!==old&&!preference.matches){
-   const token=generation,from=String(old??0).padStart(String(value).length,'0');
+   const token=generation,from=String(old??0).padStart(String(value).length,'0').slice(-String(value).length);
    const visual=document.createElement('span');visual.setAttribute('aria-hidden','true');
    visual.style.cssText='display:inline-flex;vertical-align:bottom;font:inherit;color:inherit;font-variant-numeric:tabular-nums;line-height:1.3';
    const spoken=document.createElement('span');spoken.textContent=text;spoken.style.cssText='position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
