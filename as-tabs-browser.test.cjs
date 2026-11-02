@@ -9,6 +9,9 @@ test('AS frost index tabs preserve keyboard navigation and stable centered label
  await p.goto(f.url+'/dashboard.html');await p.locator('#asStatsContent').waitFor();
  const nav=p.locator('.app-as-tabs'),buttons=nav.locator('button');
  assert.equal(await nav.locator('.as-tabs-indicator').count(),0);
+ const yearStyle=await p.locator('#asStatsYearPickerLabel').evaluate(e=>[getComputedStyle(e).fontWeight,getComputedStyle(e).color]);
+ assert.deepEqual(yearStyle,['700','rgb(0, 0, 0)']);
+ for(const button of await buttons.all())assert.deepEqual(await button.evaluate(e=>[getComputedStyle(e).fontWeight,getComputedStyle(e).color]),yearStyle);
  assert.equal(await buttons.first().evaluate(e=>getComputedStyle(e).transitionDuration),'0s');
  assert.deepEqual(await buttons.first().evaluate(e=>{const s=getComputedStyle(e);return [s.borderTopLeftRadius,s.borderBottomLeftRadius,s.backdropFilter]}),['10px','0px','blur(14px)']);
  assert.equal(await nav.evaluate(e=>getComputedStyle(e).borderBottomWidth),'0px');

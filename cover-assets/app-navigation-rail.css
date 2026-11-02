@@ -43,9 +43,9 @@ body #appNavigation .rail-tip::before{content:'';position:absolute;right:100%;to
 
 /* Frosted index tabs for the AS workspace. */
 body #asSubmenu.app-as-tabs{position:relative;display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;min-height:52px;margin:0 0 22px;padding:0;border:0;overflow:visible}
-body #asSubmenu.app-as-tabs button{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:0 0 90px;width:90px;min-width:90px;min-height:48px;padding:10px 14px;margin:0;background:#dae2ea52;border:1px solid #d1dae266;border-bottom:0;border-radius:10px 10px 0 0;box-shadow:none;transform:none;opacity:1;font:700 18px/26px Pretendard,"Malgun Gothic",sans-serif;letter-spacing:-.04em;color:#586674;text-align:center;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-body #asSubmenu.app-as-tabs button[aria-current=page]{background:#ffffffad;border-color:#fff;color:#24303c;font-weight:700;box-shadow:inset 0 2px 0 #ffffffeb,0 -2px 8px #4d61790a}
-body #asSubmenu.app-as-tabs button:not([aria-current=page]):hover{color:#24303c}
+body #asSubmenu.app-as-tabs button{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:0 0 90px;width:90px;min-width:90px;min-height:48px;padding:10px 14px;margin:0;background:#dae2ea52;border:1px solid #d1dae266;border-bottom:0;border-radius:10px 10px 0 0;box-shadow:none;transform:none;opacity:1;font:700 18px/26px Pretendard,"Malgun Gothic",sans-serif;letter-spacing:-.04em;color:#000;text-align:center;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body #asSubmenu.app-as-tabs button[aria-current=page]{background:#ffffffad;border-color:#fff;color:#000;font-weight:700;box-shadow:inset 0 2px 0 #ffffffeb,0 -2px 8px #4d61790a}
+body #asSubmenu.app-as-tabs button:not([aria-current=page]):hover{color:#000}
 body #asSubmenu.app-as-tabs button:focus-visible{outline:2px solid #5f6872;outline-offset:3px}
 body #asSubmenu.app-as-tabs[hidden],body.as-ledger-active #asSubmenu.app-as-tabs{display:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){body #asSubmenu.app-as-tabs button{background:#e8edf2}body #asSubmenu.app-as-tabs button[aria-current=page]{background:#fff}}
