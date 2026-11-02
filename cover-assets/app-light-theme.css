@@ -162,3 +162,8 @@ body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
 }
 
 @media(prefers-reduced-motion:reduce){#asSubStats *,#asSubStats *::before,#asSubStats *::after{animation:none!important;transition:none!important}}
+
+/* Keep AS overview and list aligned within the same content bounds. */
+body #dashboard .main:has(#tabAs){max-width:none!important;padding:28px 32px!important;margin:0 6px 6px 0}
+body #tabAs :is(#asSubStats,#asSubList){width:100%;max-width:1400px;margin-inline:auto;box-sizing:border-box}
+@media(max-width:768px){body #dashboard .main:has(#tabAs){padding:16px!important;margin:0}}
