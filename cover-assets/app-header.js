@@ -4,9 +4,9 @@ window.AppHeader=(()=>{
  const railToggle=document.getElementById('appRailToggle');
  const asTabs=document.getElementById('asSubmenu');
  asTabs.addEventListener('keydown',event=>{
-  if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  if(!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
   const buttons=[...asTabs.querySelectorAll('button')],index=buttons.indexOf(event.target);if(index<0)return;
-  event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+  event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;
   buttons[next].focus();buttons[next].click();
  });
  const header=document.querySelector('#dashboard>.app-topbar');
@@ -68,11 +68,8 @@ window.AppHeader=(()=>{
    const wasFocused=navigation.contains(document.activeElement)&&document.body.classList.contains('app-nav-open');
    closeNavigation(wasFocused);account.open=false;
    document.querySelectorAll('#appNavigation [aria-current],#asSubmenu [aria-current]').forEach(el=>el.removeAttribute('aria-current'));
-   const current=['process','dispatch'].includes(tab)?document.getElementById('tab'+tab+'Btn'):tab==='users'?document.getElementById('tabUsersBtn'):sub==='product'?navigation.querySelector(`[data-sub="${sub}"]`):document.getElementById('tabAsBtn');
+   const current=['process','dispatch'].includes(tab)?document.getElementById('tab'+tab+'Btn'):tab==='users'?document.getElementById('tabUsersBtn'):navigation.querySelector(`[data-sub="${sub||'stats'}"]`);
    current?.setAttribute('aria-current','page');
-   const context=document.getElementById('asSubmenu');
-   context.hidden=tab!=='as'||sub==='product';
-   context.querySelector('[data-sub="'+sub+'"]')?.setAttribute('aria-current','page');
   }
  };
 })();
