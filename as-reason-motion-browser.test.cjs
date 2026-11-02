@@ -1,0 +1,26 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const {chromium,expect}=require('@playwright/test'),{startFixture}=require('./test-support/as-fixture.cjs');
+test('reason slide preserves final values and proportions, replays on month changes and respects reduced motion',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close();});
+ const list=Array.from({length:59},(_,i)=>({id:'reason-motion-'+i,asNo:'TEST-'+i,createdAt:'2026-01-10',reason:i<56?'제작 오작':i<58?'용접 불량':'도장 불량',status:'접수',version:0}));
+ fs.writeFileSync(path.join(f.dir,'as.json'),JSON.stringify({list,seq:59}));
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
+ await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.evaluate(()=>showAsStatisticsMonth(2026,1));
+ await expect.poll(()=>page.evaluate(()=>document.getAnimations().filter(a=>a.id==='as-reason-number-slide').length)).toBeGreaterThan(0);
+ const first=page.locator('#asStatsReasons>li').first();
+ await expect(first.locator('.as-reason-number')).toHaveText('56');await expect(first.locator('.as-reason-percent')).toHaveText('94.9%');
+ assert.equal(await first.locator('.as-reason-track i').evaluate(e=>e.style.width),'94.9%');
+ await expect.poll(()=>page.evaluate(()=>document.getAnimations().filter(a=>a.id.startsWith('as-reason-')).length)).toBe(0);
+ await page.evaluate(()=>{showAsStatisticsMonth(2026,2);showAsStatisticsMonth(2026,1);});
+ await expect.poll(()=>page.evaluate(()=>document.getAnimations().filter(a=>a.id==='as-reason-bar-fill').length)).toBeGreaterThan(0);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await expect.poll(()=>page.evaluate(()=>document.getAnimations().filter(a=>a.id.startsWith('as-reason-')).length)).toBe(0);
+ await page.evaluate(()=>showAsStatisticsMonth(2026,1));await expect(first.locator('.as-reason-count')).toHaveText('56건');
+ assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.id.startsWith('as-reason-')).length),0);
+ assert.deepEqual(errors,[]);
+});
