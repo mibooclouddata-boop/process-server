@@ -6,10 +6,10 @@
  const dashboard=document.getElementById('dashboard');
  if(!overview||!content||!dashboard)return;
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
- let animations=[];
+ let animations=[],revealing=false;
  const cancel=()=>{if(preference.matches)animations.forEach(animation=>animation.cancel());};
  const enter=()=>{
-  if(overview.getAttribute('aria-busy')!=='false'||content.hidden||dashboard.inert)return;
+  if(overview.getAttribute('aria-busy')!=='false'||content.hidden||(dashboard.inert&&!revealing))return;
   observer.disconnect();
   if(preference.matches)return;
   preference.addEventListener('change',cancel);
@@ -30,5 +30,6 @@
  observer.observe(overview,{attributes:true,attributeFilter:['aria-busy']});
  // The login crossfade removes inert when the loaded application becomes visible.
  observer.observe(dashboard,{attributes:true,attributeFilter:['inert']});
+ window.addEventListener('login-transition-reveal',()=>{revealing=true;enter();},{once:true});
  enter();
 })();

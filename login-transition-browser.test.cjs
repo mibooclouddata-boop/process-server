@@ -17,12 +17,16 @@ test('login crossfade waits for data, recovers, and never replays on refresh or 
  assert.equal(await page.locator('#loginTransition').count(),1,'transition remains over an unready destination');
  assert.match(await page.locator('#loginTransitionTitle').textContent(),/안녕하세요, 검증 관리자님/);
  assert.equal(await app().locator('#dashboard').evaluate(el=>el.inert),true);
- await shot('greeting');release();await page.unroute('**/api/as');await complete();await shot('main');
+ await shot('greeting');release();await page.unroute('**/api/as');
+ await page.waitForFunction(()=>document.documentElement.dataset.loginTransition==='leaving');
+ assert.equal(await app().locator('#dashboard').evaluate(el=>el.inert),true,'reveal motion must not enable interaction before the overlay exits');
+ assert(await app().evaluate(()=>document.getAnimations().some(animation=>animation.id==='as-overview-enter'&&animation.playState==='running')),'overview must animate during the crossfade, not after it');
+ await complete();await shot('main');
  assert.equal(await app().locator('#dashboard').evaluate(el=>el.inert),false);assert.match(page.url(),/dashboard.html$/);
  // Same-document Back must preserve the dashboard's existing unsaved-edit guard.
  const created=await context.request.post(fixture.url+'/api/as',{headers:{'X-Requested-With':'process-server','Idempotency-Key':require('node:crypto').randomUUID()},data:{ship:'TEST',block:'B01',reason:'기타',remark:'saved note'}});assert.equal(created.status(),200);
  await app().evaluate(()=>switchTab('as',document.getElementById('tabAsBtn'),'list'));
- await app().locator('#asTableBody tr[data-id] td:nth-child(16)').first().click();await app().locator('#asRemarkInput').fill('unsaved note');
+ await app().locator('#asTableBody tr[data-id] .as-remark-cell').first().click();await app().locator('#asRemarkInput').fill('unsaved note');
  await page.goBack();assert.equal(await page.locator('#loginTransitionFrame').count(),1,'Back preserves the edited application');
  await page.waitForURL('**/dashboard.html');assert.equal(await app().locator('#asRemarkInput').inputValue(),'unsaved note');assert.match(await app().locator('#asLedgerMessage').textContent(),/저장하거나 취소/);
  await app().evaluate(()=>asLedgerCancelRemark());await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransitionFrame').count(),0);
