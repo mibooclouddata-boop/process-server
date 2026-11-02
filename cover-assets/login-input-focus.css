@@ -1,0 +1,10 @@
+/* Fixed field labels with focus-dismissed placeholder hints. */
+body .input-stack{gap:32px;padding-top:24px}
+body .input-field label,body .input-field input:focus+label,body .input-field input:not(:placeholder-shown)+label{top:-24px;left:0;transform:none;font-size:13px;font-weight:600;color:#394655}
+body .input-field input{padding:18px 16px;font-size:16px}
+body .input-field #password{padding-right:60px}
+body .input-field input::placeholder{color:#697786;opacity:1;transition:opacity .12s ease}
+body .input-field input:focus::placeholder{opacity:0}
+body .input-field input:focus{border-color:#4d6074;box-shadow:0 0 0 3px #4d607418}
+body .input-field input[aria-invalid=true]{border-color:var(--danger)}
+@media(prefers-reduced-motion:reduce){body .input-field input::placeholder{transition:none}}
