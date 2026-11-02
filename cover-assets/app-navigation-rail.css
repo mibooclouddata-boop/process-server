@@ -2,6 +2,8 @@
 .rail-short,.rail-full,.rail-tip,#appRailToggle{display:none}
 body #appNavigation{position:relative;z-index:30}
 body #appNavigation :is(.tab,.tab-sub){position:relative;display:flex;align-items:center;gap:12px;min-height:48px;margin:0;border:0;border-radius:10px;background:transparent;font-family:inherit;transform:none;opacity:1;transition:background .15s,color .15s;color:#60656b;box-shadow:none}
+/* The legacy AS group remains on; only aria-current marks the rail destination. */
+body #appNavigation :is(.tab,.tab-sub).on{background:transparent;color:#60656b;font-weight:500}
 body #appNavigation :is(.tab,.tab-sub):hover{background:#e4e8ec;color:#202123}
 body #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:#dfe4e9;color:#111;font-weight:700}
 body #appNavigation :is(.tab,.tab-sub):focus-visible{outline:2px solid #555;outline-offset:2px}
@@ -12,7 +14,7 @@ body #appNavigation #tabUsersBtn{margin-top:16px}
 body #appNavigation .tab::after{display:none}
 @media(min-width:769px){
  body #appNavigation{width:72px;padding:16px 8px}
- body #appNavigation>.tabs{position:sticky;top:16px;width:100%;padding:0;gap:8px;overflow:visible}
+ body #appNavigation>.tabs{position:sticky;top:88px;width:100%;padding:0;gap:8px;overflow:visible}
  body #appNavigation :is(.tab,.tab-sub){width:56px;min-height:60px;flex-direction:column;justify-content:center;gap:6px;padding:9px 0;text-align:center}
  body #appNavigation .rail-full{display:none}
  body #appNavigation .rail-short{display:block;font-size:11px;font-weight:500;line-height:1.2;color:inherit;white-space:nowrap}
@@ -27,6 +29,8 @@ body #appNavigation .tab::after{display:none}
  body #appNavigation:not([data-expanded=true]) :is(.tab,.tab-sub):is(:hover,:focus-visible) .rail-tip{display:block;position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);padding:9px 12px;border:1px solid #d9dde1;border-radius:7px;background:#fff;box-shadow:0 4px 14px #20212314;color:#202123;font-size:13px;font-weight:500;line-height:1.4;white-space:nowrap;pointer-events:auto;z-index:60}
 }
 @media(max-width:768px){body #appNavigation :is(.tab,.tab-sub){width:100%;padding:12px;flex-direction:row}body #appNavigation .rail-short{display:none}body #appNavigation #tabUsersBtn{margin-top:8px}}
+/* Short windows scroll the full menu instead of pinning items below the viewport. */
+@media(min-width:769px) and (max-height:500px){body #appNavigation>.tabs{position:static}}
 
 body #appNavigation #appRailToggle .rail-collapse-icon{display:none}
 body #appNavigation[data-expanded=true] #appRailToggle .rail-expand-icon{display:none}
