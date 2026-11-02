@@ -1687,8 +1687,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
-<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=7">
-<link rel="stylesheet" href="/cover-assets/app-navigation-rail.css?v=3">
+<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=12">
+<link rel="stylesheet" href="/cover-assets/app-navigation-rail.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-navigation-alignment.css?v=1">
 <link rel="stylesheet" href="/cover-assets/app-flow-theme.css?v=1">
 <link rel="stylesheet" href="/cover-assets/app-header-placement.css?v=1">
@@ -1749,7 +1749,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
     </div>
   </aside>
   <div class="main">
-<nav id="asSubmenu" class="app-as-tabs" aria-label="AS 하위 메뉴"><strong>AS</strong><button type="button" class="tab-sub" data-sub="stats" onclick="switchTab('as',this,'stats')">현황</button><button type="button" class="tab-sub" data-sub="list" onclick="switchTab('as',this,'list')">접수</button></nav>
+<nav id="asSubmenu" class="app-as-tabs" aria-label="AS 하위 메뉴"><strong>AS</strong><button type="button" class="tab-sub" data-sub="stats" onclick="switchTab('as',this,'stats')">현황</button><button type="button" class="tab-sub" data-sub="list" onclick="switchTab('as',this,'list')">목록</button></nav>
 
     <!-- 사용자 관리 탭 -->
 <section id="tabprocess" style="display:none" aria-labelledby="processPageTitle"><h1 id="processPageTitle" class="page-title">공정</h1></section>
@@ -1782,10 +1782,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
     <!-- AS 접수 탭 -->
     <div id="tabAs" style="display:none">
     <div id="asSubList">
-      <header class="as-ledger-heading">
-        <h1 class="as-ledger-title">AS 접수목록</h1>
-        <button type="button" class="as-ledger-back" id="asLedgerBack" onclick="asLedgerGoBack()" aria-label="이전 화면으로 돌아가기"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 5-7 7 7 7M5 12h14"/></svg>뒤로</button>
-      </header>
+
 
       <!-- 툴바 -->
       <div class="as-toolbar">
@@ -2202,7 +2199,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   </div>
 </div>
 
-<script src="/cover-assets/app-header.js?v=5"></script>
+<script src="/cover-assets/app-header.js?v=6"></script>
 <script src="/auth-client.js"></script>
 <script src="/user-admin-ui.js?v=2"></script>
 <script src="/as-amount.js"></script>
@@ -2319,10 +2316,11 @@ function asLedgerGoBack() {
 function switchTab(tab, el, sub) {
   if (!asLedgerCanLeave() || !['as','users','process','dispatch'].includes(tab)) return;
   const showLedger=tab==='as'&&sub==='list';
-  if(showLedger&&!document.body.classList.contains('as-ledger-active'))_asLedgerReturn={..._asNavigation,scroll:window.scrollY};
+  if(showLedger&&!document.body.classList.contains('as-reception-active'))_asLedgerReturn={..._asNavigation,scroll:window.scrollY};
   _asNavigation={tab,el,sub};
-  document.body.classList.toggle('as-ledger-active',showLedger);
-  if(showLedger)window.scrollTo(0,0);
+  document.body.classList.remove('as-ledger-active');
+  document.body.classList.toggle('as-reception-active',showLedger);
+
   document.querySelectorAll('.tab,.tab-sub').forEach(t=>t.classList.remove('on'));
   const asMenu=document.getElementById('asSubmenu');
   if(tab==='as'){
@@ -2348,7 +2346,7 @@ function switchTab(tab, el, sub) {
   }
   if(tab==='users')loadAdminUsers();
   AppHeader.setPage(tab,_asSubMode);
-  if(showLedger)document.getElementById('asLedgerBack').focus({preventScroll:true});
+  if(showLedger)document.querySelector('#asSubmenu [data-sub="list"]').focus({preventScroll:true});
 }
 
 // ── 텍스트영역 자동 크기 ──
@@ -4271,9 +4269,8 @@ function asLedgerFillRows(table,viewport,rowHeight,columnCount){
  const rows=[...body.rows];
  // Loading and error rows must remain distinct from an empty result.
  if(!rows.length||rows.some(row=>!row.hasAttribute('data-id')&&!row.classList.contains('as-ledger-no-results')))return;
- const available=Math.max(0,viewport.clientHeight-table.tHead.getBoundingClientRect().height);
- const occupied=rows.reduce((height,row)=>height+row.getBoundingClientRect().height,0);
- const count=Math.max(0,Math.ceil((available-occupied)/rowHeight));
+ // Keep a full page of row slots, including the empty-state row when no results exist.
+ const count=Math.max(0,_asPageSize-rows.length);
  const fragment=document.createDocumentFragment();
  for(let i=0;i<count;i++){
   const row=document.createElement('tr');
