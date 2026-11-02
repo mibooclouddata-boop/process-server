@@ -2598,7 +2598,7 @@ document.addEventListener('click', (e) => {
   if (pop && pop.classList.contains('is-open') && range && !range.contains(e.target)) {
     closeAsCal();
   }
-});
+}, true);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     const pop = document.getElementById('asCalPop');
