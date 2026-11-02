@@ -56,11 +56,16 @@ window.AppHeader=(()=>{
    summary.setAttribute('aria-label',name+' 계정 메뉴');
   },
   setPage(tab,sub){
+   const heading=document.getElementById('appHeaderPage');
+   if(heading)heading.textContent=tab==='process'?'공정':tab==='dispatch'?'배차':tab==='users'?'사용자 관리':sub==='product'?'제품 목록':sub==='list'?'AS 접수':'AS 접수 현황';
    const wasFocused=navigation.contains(document.activeElement)&&document.body.classList.contains('app-nav-open');
    closeNavigation(wasFocused);account.open=false;
-   navigation.querySelectorAll('[aria-current]').forEach(el=>el.removeAttribute('aria-current'));
-   const current=tab==='users'?document.getElementById('tabUsersBtn'):sub==='product'||sub==='list'?navigation.querySelector(`[data-sub="${sub}"]`):document.getElementById('tabAsBtn');
+   document.querySelectorAll('#appNavigation [aria-current],#asSubmenu [aria-current]').forEach(el=>el.removeAttribute('aria-current'));
+   const current=['process','dispatch'].includes(tab)?document.getElementById('tab'+tab+'Btn'):tab==='users'?document.getElementById('tabUsersBtn'):sub==='product'?navigation.querySelector(`[data-sub="${sub}"]`):document.getElementById('tabAsBtn');
    current?.setAttribute('aria-current','page');
+   const context=document.getElementById('asSubmenu');
+   context.hidden=tab!=='as'||sub==='product';
+   context.querySelector('[data-sub="'+sub+'"]')?.setAttribute('aria-current','page');
   }
  };
 })();

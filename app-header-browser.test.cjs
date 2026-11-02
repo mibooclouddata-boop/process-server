@@ -11,7 +11,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
  await page.goto(f.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
  assert.equal(await page.locator('.topbar').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(229, 234, 240)');
- assert.equal(await page.locator('.app-location,#appHeaderPage').count(),0);
+ assert.equal(await page.locator('#appHeaderPage').textContent(),'AS 접수 현황');
  assert.equal(await page.locator('#topbarUser').textContent(),'검증 관리자');
  assert.equal(await page.locator('#appHeaderRole').textContent(),'시스템 관리자');
  assert.equal(await page.locator('.app-topbar .logout-btn').count(),0);
