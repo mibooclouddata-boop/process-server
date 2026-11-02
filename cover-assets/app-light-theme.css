@@ -1,15 +1,15 @@
-/* Readable Balance: white panels, neutral charts and strong numeric contrast. */
+/* Stone Gray: neutral outer shell, light workspace and white controls/panels. */
 :root{
   --brand:#202123;--brand-hover:#08090a;--brand-pressed:#000;
   --brand-soft:#eceeef;--brand-softer:#f8fafc;--brand-ring:rgba(32,33,35,.14);
   --teal:var(--brand);--teal-light:var(--brand-soft);
-  --bg:#eef1f4;--card:#fff;--surface-muted:#f8fafc;--surface-subtle:#eceeef;
+  --bg:#e2e4e7;--card:#fff;--surface-muted:#f8fafc;--surface-subtle:#eceeef;
   --border:#dde2e7;--border-strong:#d4d8dd;--border-stronger:#b8bdc4;
   --text:#34383c;--text-strong:#202123;--text-body:#41464c;
   --text2:#60656b;--text-muted:#60656b;--text-faint:#687078;
   --app-rim:8px;--app-radius:26px;
-  --app-glass:#eef1f4;--app-glass-edge:rgba(255,255,255,.66);
-  --app-canvas:#fff;--app-navigation:#eef1f4;
+  --app-glass:var(--bg);--app-glass-edge:var(--bg);
+  --app-canvas:#f1f2f4;--app-navigation:var(--bg);
   --app-panel-shadow:0 2px 7px #28394a0c;
 }
 #dashboard{
@@ -17,13 +17,13 @@
   min-height:100dvh;border:var(--app-rim) solid var(--app-glass-edge);
   border-radius:var(--app-radius);background:var(--app-glass);
   background-clip:padding-box;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.85),0 0 0 1px rgba(170,182,196,.18);
+  box-shadow:0 0 0 1px rgba(170,182,196,.18);
 }
 /* Blur only the decorative layer so fixed dialogs remain relative to the viewport. */
 #dashboard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 #dashboard>.app-topbar{
   --header-navy:var(--bg);--header-muted:var(--text2);--header-hover:var(--brand-soft);
-  background:rgba(255,255,255,.25);color:var(--text);
+  background:var(--app-glass);color:var(--text);
   border-radius:18px 18px 0 0;
 }
 .app-topbar .topbar-title img{filter:brightness(0)!important}
@@ -36,11 +36,11 @@
 .app-account-panel>p{color:var(--text2)}
 #dashboard>.layout{background:transparent;min-height:calc(100dvh - 88px)}
 #appNavigation{background:var(--app-navigation);border-color:var(--border);border-radius:0 0 0 18px}
-#appNavigation .tab.on,#appNavigation .tab-sub.on{background:var(--brand-soft);color:var(--text);box-shadow:none}
+#appNavigation .tab.on,#appNavigation .tab-sub.on{background:var(--card);color:var(--text);box-shadow:none}
 #dashboard .main:has(#tabAs){
-  background:var(--app-canvas);border:1px solid rgba(255,255,255,.9);
+  background:var(--app-canvas);border:0;
   border-radius:20px;margin:0 6px 6px 0;min-width:0;
-  box-shadow:inset 0 1px 0 #fff,0 2px 8px rgba(32,40,50,.035);
+  box-shadow:0 2px 8px rgba(32,40,50,.035);
 }
 .admin-section-title::before{background:var(--brand)}
 .admin-btn-primary:hover{box-shadow:0 4px 12px var(--brand-ring)}
@@ -57,7 +57,7 @@ body #asSubStats[data-overview-theme] #asKpiRow button strong::after{font-family
 body #asSubStats[data-overview-theme] #asKpiRow button:hover{background:#e8ebee}
 body #asSubStats[data-overview-theme] .as-stats-chart-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-panel);box-shadow:var(--app-panel-shadow)}
 body #asSubStats[data-overview-theme] :is(.as-stats-chart-panel h2,.as-stats-chart-panel h3,.as-reason-heatmap-heading h2){color:#41464c;font-weight:700}
-body #asSubStats[data-overview-theme] :is(#asStatsYearPickerBtn,#asStatsYear){color:#454b52;background:#e9edf0;border-color:#d4d9de}
+body #asSubStats[data-overview-theme] :is(#asStatsYearPickerBtn,#asStatsYear){color:#454b52;background:var(--card);border-color:#d4d9de}
 body #asSubStats .as-readable-trend .trend-line{stroke:#777!important}
 body #asSubStats .as-readable-trend .point{fill:#fff!important;stroke:#888!important}
 body #asSubStats .as-readable-trend .point.selected{fill:#666!important;stroke:#666!important}
@@ -91,7 +91,8 @@ body #asSubStats :is(button,select):focus-visible{outline-color:#555!important}
 body #asSubStats .as-readable-trend .as-trend-narrow #asStatsChart .month-button[aria-pressed=true]{border-color:#888}
 body #asSubStats .as-amount-column-plot .amount-selection{fill:#f2f2f2}
 body #asSubStats .as-amount-column-plot .amount-grid{stroke:#e5e5e5}
-body #asSubStats .as-reason-heatmap-controls button{background:#eceeef;border-color:var(--border);color:var(--text2)}
+body #asSubStats .as-reason-heatmap-controls button{background:var(--card);border-color:var(--border);color:var(--text2)}
+body #asSubStats .as-reason-heatmap-controls button::before{box-shadow:inset 0 0 0 1px var(--border-stronger),0 1px 3px #172b4914}
 body #asSubStats .as-reason-heat-cell[aria-pressed=true]{outline-color:#555}
 body #asSubStats .as-reason-heatmap-scroll:focus-visible{outline-color:#555}
 
