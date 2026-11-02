@@ -1,0 +1,149 @@
+/* Readable Balance: white panels, neutral charts and strong numeric contrast. */
+:root{
+  --brand:#202123;--brand-hover:#08090a;--brand-pressed:#000;
+  --brand-soft:#eceeef;--brand-softer:#f8fafc;--brand-ring:rgba(32,33,35,.14);
+  --teal:var(--brand);--teal-light:var(--brand-soft);
+  --bg:#eef1f4;--card:#fff;--surface-muted:#f8fafc;--surface-subtle:#eceeef;
+  --border:#dde2e7;--border-strong:#d4d8dd;--border-stronger:#b8bdc4;
+  --text:#34383c;--text-strong:#202123;--text-body:#41464c;
+  --text2:#60656b;--text-muted:#60656b;--text-faint:#687078;
+  --app-rim:8px;--app-radius:26px;
+  --app-glass:#eef1f4;--app-glass-edge:rgba(255,255,255,.66);
+  --app-canvas:#fff;--app-navigation:#eef1f4;
+  --app-panel-shadow:0 2px 7px #28394a0c;
+}
+#dashboard{
+  position:relative;isolation:isolate;
+  min-height:100dvh;border:var(--app-rim) solid var(--app-glass-edge);
+  border-radius:var(--app-radius);background:var(--app-glass);
+  background-clip:padding-box;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.85),0 0 0 1px rgba(170,182,196,.18);
+}
+/* Blur only the decorative layer so fixed dialogs remain relative to the viewport. */
+#dashboard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#dashboard>.app-topbar{
+  --header-navy:var(--bg);--header-muted:var(--text2);--header-hover:var(--brand-soft);
+  background:rgba(255,255,255,.25);color:var(--text);
+  border-radius:18px 18px 0 0;
+}
+.app-topbar .topbar-title img{filter:brightness(0)!important}
+.app-topbar .app-location strong,.app-topbar #topbarUser,.app-topbar .app-menu-toggle{color:var(--text)}
+.app-topbar :is(button,summary):focus-visible{outline-color:var(--brand)}
+.app-topbar .logout-btn{border-color:var(--border-strong)}
+.app-topbar .logout-btn:hover{color:var(--text)}
+.app-avatar{background:var(--brand-soft);border-color:var(--border);color:var(--text)}
+.app-account-panel{color:var(--text);border-color:var(--border)}
+.app-account-panel>p{color:var(--text2)}
+#dashboard>.layout{background:transparent;min-height:calc(100dvh - 88px)}
+#appNavigation{background:var(--app-navigation);border-color:var(--border);border-radius:0 0 0 18px}
+#appNavigation .tab.on,#appNavigation .tab-sub.on{background:var(--brand-soft);color:var(--text);box-shadow:none}
+#dashboard .main:has(#tabAs){
+  background:var(--app-canvas);border:1px solid rgba(255,255,255,.9);
+  border-radius:20px;margin:0 6px 6px 0;min-width:0;
+  box-shadow:inset 0 1px 0 #fff,0 2px 8px rgba(32,40,50,.035);
+}
+.admin-section-title::before{background:var(--brand)}
+.admin-btn-primary:hover{box-shadow:0 4px 12px var(--brand-ring)}
+#tabAs #asSubList{--ledger-accent:var(--brand);--ledger-tint:var(--brand-soft);--ledger-hover:var(--surface-muted);--ledger-line:var(--border-strong)}
+#tabAs #asSubList .as-erp-table thead .as-column-header th{background:var(--surface-muted)!important;color:var(--text)!important;border-right-color:var(--border-strong)!important}
+
+/* Preserve the actual overview layout while applying the selected neutral skin. */
+body #asSubStats[data-overview-theme]{--ui-font:'Pretendard Variable';--numeric-font:'Pretendard Variable';--ink:#111;--muted:var(--text2);--as-edge:var(--border);--blue:#666;--blue-soft:#e9e9e9;--bar:#aaa;--as-blue:#666;--radius-panel:15px;--panel-shadow:var(--app-panel-shadow);font-family:var(--ui-font),'Malgun Gothic',sans-serif}
+body #asSubStats[data-overview-theme] :is(button,select,h1,h2,h3,svg){font-family:var(--ui-font),'Malgun Gothic',sans-serif}
+body #asSubStats[data-overview-theme] #asKpiRow button{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-panel);box-shadow:var(--app-panel-shadow);color:#454a4f;font-family:var(--ui-font),'Malgun Gothic',sans-serif}
+body #asSubStats[data-overview-theme] #asKpiRow button>span{font-family:var(--ui-font),'Malgun Gothic',sans-serif;color:#555b61;font-weight:400}
+body #asSubStats[data-overview-theme] #asKpiRow button strong{font-family:var(--numeric-font),'Malgun Gothic',sans-serif;color:#111;font-weight:700}
+body #asSubStats[data-overview-theme] #asKpiRow button strong::after{font-family:var(--ui-font),'Malgun Gothic',sans-serif;color:#63686e;font-weight:400}
+body #asSubStats[data-overview-theme] #asKpiRow button:hover{background:#e8ebee}
+body #asSubStats[data-overview-theme] .as-stats-chart-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-panel);box-shadow:var(--app-panel-shadow)}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-panel h2,.as-stats-chart-panel h3,.as-reason-heatmap-heading h2){color:#41464c;font-weight:700}
+body #asSubStats[data-overview-theme] :is(#asStatsYearPickerBtn,#asStatsYear){color:#454b52;background:#e9edf0;border-color:#d4d9de}
+body #asSubStats .as-readable-trend .trend-line{stroke:#777!important}
+body #asSubStats .as-readable-trend .point{fill:#fff!important;stroke:#888!important}
+body #asSubStats .as-readable-trend .point.selected{fill:#666!important;stroke:#666!important}
+body #asSubStats .as-readable-trend :is(.gridline,.baseline){stroke:#dadde0!important}
+body #asSubStats .as-readable-trend :is(.axis-tick,.missing-label,.average-unavailable){fill:#64696f!important;font-weight:400}
+body #asSubStats .as-readable-trend .data-label{fill:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]{background:#8585850d!important}
+body #asSubStats .as-readable-trend #asStatsChart .month-button>span{color:#60656a!important;font-weight:400}
+body #asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]>span{color:#30343a!important;font-weight:700}
+body #asSubStats[data-overview-theme] :is(#comparison-count,#comparison-change-value,#asAmountSelectedValue,#asAmountAnnual,.as-amount-value,.as-reason-count,.as-reason-percent,.as-product-values strong,#asStatsProductsTotal){color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats[data-overview-theme] :is(#comparison-change,.as-amount-selection>span,.as-reason-name,.as-product-name,.as-product-values span,.as-chart-unit,.as-stats-footnote,.as-product-period,.as-product-status,.as-product-page-info,#asStatsProductsLabel,.as-reason-heatmap-legend){color:#60656b!important;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:400}
+body #asSubStats .as-amount-column-plot .as-amount-bar{background:#a5a5a5!important}
+body #asSubStats .as-amount-column-plot .as-amount-month[aria-pressed=true] .as-amount-bar{background:#727272!important}
+body #asSubStats .as-amount-column-plot :is(.amount-axis,.amount-future-label){fill:#64696f!important;font-weight:400}
+body #asSubStats .as-amount-column-plot .as-amount-month>span:last-child{color:#60656b!important;font-weight:400}
+body #asSubStats .as-amount-column-plot .as-amount-month[aria-pressed=true]>span:last-child{color:#353a40!important;font-weight:700}
+body #asSubStats .as-reason-track{background:#eceeef!important}
+body #asSubStats .as-reason-track i{background:#a2a2a2!important}
+body #asSubStats .as-product-ring :is(circle,path){stroke:#bdbdbd!important}
+body #asSubStats #asStatsProductsArc{stroke:#747474!important}
+body #asSubStats :is(.as-product-item-dot,.as-product-dot){background:#929292!important}
+body #asSubStats .as-product-legend button[aria-pressed=true]{background:#eceff1!important;border-color:#b4bac0!important;color:#454b51!important}
+body #asSubStats :is(.as-product-actions button,.as-product-pages button){color:#4e555d;border-color:#c1c8ce}
+body #asSubStats :is(.as-product-actions button,.as-product-pages button):hover{background:#e9edf0}
+body #asSubStats .as-reason-heat-cell{background:var(--heat-bg,#f8f8f8)!important;color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats .as-reason-heat-cell[data-future=true]{color:#676d73!important;background:#f6f7f8!important;font-weight:400}
+body #asSubStats .as-reason-heatmap-table :is(th,td){color:#4e555c;font-weight:400}
+body #asSubStats .as-reason-heatmap-table :is(tfoot td,tbody td:last-child){color:#111;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats .as-reason-heatmap-scale i:nth-child(1){background:#f8f8f8}body #asSubStats .as-reason-heatmap-scale i:nth-child(2){background:#eaeaea}body #asSubStats .as-reason-heatmap-scale i:nth-child(3){background:#dcdcdc}body #asSubStats .as-reason-heatmap-scale i:nth-child(4){background:#cecece}body #asSubStats .as-reason-heatmap-scale i:nth-child(5){background:#c0c0c0}body #asSubStats .as-reason-heatmap-scale i:nth-child(6){background:#b2b2b2}
+body #asSubStats :is(button,select):focus-visible{outline-color:#555!important}
+body #asSubStats .as-readable-trend .as-trend-narrow #asStatsChart .month-button[aria-pressed=true]{border-color:#888}
+body #asSubStats .as-amount-column-plot .amount-selection{fill:#f2f2f2}
+body #asSubStats .as-amount-column-plot .amount-grid{stroke:#e5e5e5}
+body #asSubStats .as-reason-heatmap-controls button{background:#eceeef;border-color:var(--border);color:var(--text2)}
+body #asSubStats .as-reason-heat-cell[aria-pressed=true]{outline-color:#555}
+body #asSubStats .as-reason-heatmap-scroll:focus-visible{outline-color:#555}
+
+/* User roster and its unified search retain their approved spacing and sizing. */
+#tabUsers{--user-ink:var(--text);--user-muted:var(--text2);--user-line:var(--border)}
+#tabUsers .toss-user-card{border-color:rgba(255,255,255,.95);border-radius:16px;box-shadow:var(--app-panel-shadow)}
+#tabUsers .user-search-unified{border-color:var(--border-stronger)}
+#tabUsers .user-search-field .user-toolbar-icon,#tabUsers .user-search-unified select,
+#tabUsers #userReset,#tabUsers #userRefresh{color:var(--text2)}
+#tabUsers .user-search-unified input::placeholder{color:var(--text2)}
+#tabUsers .user-search-field:focus-within{outline-color:var(--brand)}
+#tabUsers .user-search-unified select,#tabUsers #userReset{border-left-color:var(--border)}
+#tabUsers .user-search-unified select.user-filter-applied,
+#tabUsers #userReset:hover,#tabUsers #userRefresh:hover{background:var(--brand-soft);color:var(--text)}
+#tabUsers .toss-user-new-btn{background:var(--brand)}
+#tabUsers .toss-user-new-btn:hover{background:var(--brand-hover)}
+#tabUsers .user-list-actions,#tabUsers #userActiveFilters button{background:var(--brand-soft);border-color:var(--border-strong);color:var(--text)}
+#tabUsers :is(.user-list-actions,.user-pager) button{border-color:var(--border-stronger);color:var(--text-body)}
+#tabUsers :is(.user-list-actions,.user-pager) button:hover:not(:disabled){background:var(--surface-muted)}
+#tabUsers .user-roster-table .user-row-selected td{background:var(--brand-soft)}
+#tabUsers .user-check-target input{accent-color:var(--brand)}
+#tabUsers .user-detail-btn{color:var(--text)}
+#tabUsers .user-row-actions button:hover:not(:disabled){background:var(--brand-soft)}
+#userModal :is(button,input,select):focus-visible,#tabUsers :is(button,input,select):focus-visible{outline-color:var(--brand)}
+
+/* Account dialogs, including the three-step creation flow. */
+#userModal .user-create-steps li[aria-current=step]{border-color:var(--brand);color:var(--text)}
+#userModal .user-create-steps li[aria-current=step]>span{background:var(--brand);border-color:var(--brand)}
+#userModal .user-create-roles>label:has(input:checked){background:var(--brand-soft);border-color:var(--brand)}
+#userModal .user-create-roles input{accent-color:var(--brand)}
+#userModal.user-creating .modal-footer .admin-btn-primary{background:var(--brand)}
+#userModal.user-creating .modal-footer .admin-btn-primary:hover{background:var(--brand-hover)}
+#userModal.user-creating :is(button,input):focus-visible{outline-color:var(--brand)}
+#userCreateInitial{color:var(--text);border-color:var(--border-stronger)}
+#userCreatePasswordToggle:hover{background:var(--brand-soft)}
+#userModal .modal-close,#userReloadCurrent{color:var(--text)}
+#userModal .user-save-strip,#userModal .modal-footer{background:var(--surface-muted);border-color:var(--border)}
+#userModal .user-modal-tabs button[aria-selected=true]{color:var(--text);border-color:var(--brand)}
+#userModal .modal-step-item.on{background:var(--brand-soft);color:var(--text);border-color:var(--border-stronger)}
+#userModal .modal-step-item.on .mst-sw{background:var(--border)}
+#userModal .modal-step-item.on .mst-sw::after{color:var(--text)}
+
+/* Keep the full-height ledger and mobile account menu inside the framed viewport. */
+body.as-ledger-active #dashboard>.layout{height:calc(100dvh - 2 * var(--app-rim));min-height:0}
+body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
+@media(max-width:768px){
+  :root{--app-rim:4px;--app-radius:20px}
+  #dashboard>.app-topbar{border-radius:16px 16px 0 0}
+  #dashboard>.layout{min-height:calc(100dvh - 72px)}
+  #dashboard .main:has(#tabAs){margin:0;border-radius:16px}
+  #appNavigation{border-radius:14px;margin-bottom:6px}
+  .app-account-panel{right:-48px;max-width:calc(100vw - 40px)}
+}
+
+@media(prefers-reduced-motion:reduce){#asSubStats *,#asSubStats *::before,#asSubStats *::after{animation:none!important;transition:none!important}}
