@@ -1686,9 +1686,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=3">
 <link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
-<link rel="stylesheet" href="/cover-assets/app-header.css?v=1">
+<link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
 <link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=7">
 <link rel="stylesheet" href="/cover-assets/app-navigation-rail.css?v=1">
+<link rel="stylesheet" href="/cover-assets/app-navigation-alignment.css?v=1">
 <link rel="stylesheet" href="/cover-assets/app-flow-theme.css?v=1">
 </head>
 <body>
@@ -1728,7 +1729,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
     <div class="app-header-tools">
       <details id="appAccount" class="app-account">
         <summary id="appAccountToggle" aria-label="계정 메뉴"><span id="appHeaderAvatar" class="app-avatar" aria-hidden="true"></span><span class="app-account-copy"><span id="topbarUser"></span><small id="appHeaderRole"></small></span><svg class="app-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-        <div id="appAccountPanel" class="app-account-panel"><strong id="appAccountName"></strong><p id="appAccountLogin"></p><p id="appAccountRole"></p><button type="button" data-app-logout onclick="doLogout()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v16h5M13 8l4 4-4 4M8 12h13"/></svg>로그아웃</button></div>
+        <div id="appAccountPanel" class="app-account-panel"><div class="app-account-panel-heading">회원 정보</div><div class="app-account-profile"><span id="appAccountAvatar" class="app-account-profile-avatar" aria-hidden="true"></span><div><strong id="appAccountName"></strong><small id="appAccountRole"></small></div></div><dl class="app-account-details"><div><dt>아이디</dt><dd id="appAccountLogin"></dd></div><div><dt>부서</dt><dd id="appAccountDepartment"></dd></div><div><dt>직급</dt><dd id="appAccountPosition"></dd></div></dl><button type="button" data-app-logout onclick="doLogout()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v16h5M13 8l4 4-4 4M8 12h13"/></svg>로그아웃</button></div>
       </details>
       <button type="button" id="appMenuToggle" class="app-menu-toggle" aria-label="업무 메뉴" aria-controls="appNavigation" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     </div>
@@ -2197,7 +2198,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   </div>
 </div>
 
-<script src="/cover-assets/app-header.js?v=3"></script>
+<script src="/cover-assets/app-header.js?v=5"></script>
 <script src="/auth-client.js"></script>
 <script src="/user-admin-ui.js?v=2"></script>
 <script src="/as-amount.js"></script>
