@@ -11,6 +11,8 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await page.route('**/*',route=>route.request().url().startsWith(f.url)?route.continue():route.abort());
  await page.goto(f.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
  await page.locator('#tabUsersBtn').click();await page.waitForFunction(()=>document.getElementById('userRosterCount').textContent==='4');
+ const searchBounds=await page.locator('.user-search-unified').boundingBox(),addBounds=await page.getByRole('button',{name:'새 사용자 추가',exact:true}).boundingBox(),rosterBounds=await page.locator('.user-roster-heading').boundingBox();
+ assert(Math.abs(searchBounds.y-addBounds.y)<3,'search and add share a row');assert(addBounds.x>=searchBounds.x+searchBounds.width,'add follows search');assert(rosterBounds.y>searchBounds.y+searchBounds.height,'roster follows toolbar');
  assert.equal(await page.locator('#adminUserRows img').count(),0);assert.equal(await page.evaluate(()=>window.__userXss),undefined);
  await page.locator('#userSearch').fill('품질');await page.locator('#userRoleFilter').selectOption('worker');assert.equal(await page.locator('#adminUserRows tr').count(),1);
  await page.locator('#userSearch').fill('no match');assert.match(await page.locator('#adminUserRows').textContent(),/조건에 맞는/);await page.locator('#userReset').click();
@@ -24,7 +26,7 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await page.locator('#modalUserDept').fill('실패 입력');await page.locator('#userTabAccount').click();await page.waitForFunction(()=>userAdmin.failed);assert.equal(f.read('data.json').users.find(u=>u.id==='alpha').department,'품질');assert.match(await page.locator('#modalMsg').textContent(),/검증용 저장 실패/);
  await page.unroute('**/api/users/alpha');page.once('dialog',d=>d.accept());await page.locator('#userReloadCurrent').click();await page.waitForFunction(()=>!userAdmin.failed&&!userAdmin.busy);assert.equal(await page.locator('#modalUserDept').inputValue(),'품질');
  await page.keyboard.press('Escape');await page.locator('#userModal').waitFor({state:'hidden'});
- await page.route('**/api/users',route=>route.fulfill({status:503,contentType:'application/json',body:'{"error":"목록 실패"}'}));await page.evaluate(()=>loadAdminUsers());assert.equal(await page.locator('#uStatTotal').textContent(),'—');assert.match(await page.locator('#adminUserRows').textContent(),/다시 시도/);await page.locator('#toastContainer button').click();await page.unroute('**/api/users');await page.evaluate(()=>loadAdminUsers());
+ await page.route('**/api/users',route=>route.fulfill({status:503,contentType:'application/json',body:'{"error":"목록 실패"}'}));await page.evaluate(()=>loadAdminUsers());assert.equal(await page.locator('#userRosterCount').textContent(),'—');assert.match(await page.locator('#adminUserRows').textContent(),/다시 시도/);await page.locator('#toastContainer button').click();await page.unroute('**/api/users');await page.evaluate(()=>loadAdminUsers());
  const uuid='11111111-1111-4111-8111-111111111111';let staff={id:uuid,loginId:'EMP-001',name:'직원',role:'worker',active:true,authProvider:'supabase'},patches=[];
  await page.route('**/api/users',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({users:[staff]})}));
  await page.route('**/api/users/'+uuid,route=>{const patch=route.request().postDataJSON();patches.push(patch);staff={...staff,...patch};return route.fulfill({contentType:'application/json',body:'{"success":true}'});});
