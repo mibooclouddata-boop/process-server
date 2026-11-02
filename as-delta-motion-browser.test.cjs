@@ -1,0 +1,23 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
+const {chromium,expect}=require('@playwright/test'),{startFixture}=require('./test-support/as-fixture.cjs');
+test('monthly delta rolls actual signed values without changing units and supports interruption and reduced motion',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close();});
+ const list=[10,13,11].flatMap((n,m)=>Array.from({length:n},(_,i)=>({id:`delta-${m}-${i}`,asNo:`TEST-${m}-${i}`,createdAt:`2026-0${m+1}-10`,reason:'기타',status:'접수',version:0})));
+ fs.writeFileSync(path.join(f.dir,'as.json'),JSON.stringify({list,seq:list.length}));
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});const context=await browser.newContext(),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.evaluate(()=>showAsStatisticsMonth(2026,2));
+ await expect(page.locator('.as-delta-roll')).toHaveCount(1);await expect(page.locator('#comparison-change-value')).toHaveText('+3');
+ await expect(page.locator('.as-delta-roll')).toHaveCount(0);
+ await page.locator('#asStatsChart .month-button[data-month="3"]').click();
+ await expect(page.locator('.as-delta-roll')).toHaveCount(1);await expect(page.locator('#comparison-change-value')).toHaveText('−2');
+ assert.equal(await page.locator('#comparison-change-value').evaluate(e=>getComputedStyle(e).color),'rgb(194, 56, 56)');
+ await expect(page.locator('#comparison-change-unit')).toHaveText('건');assert.equal(await page.locator('.as-delta-roll').getAttribute('aria-hidden'),'true');
+ await expect(page.locator('.as-delta-roll')).toHaveCount(0);assert.equal(await page.locator('#comparison-change-value').evaluate(e=>getComputedStyle(e).opacity),'1');
+ await page.evaluate(()=>{showAsStatisticsMonth(2026,2);showAsStatisticsMonth(2026,3);showAsStatisticsMonth(2026,5);});await expect(page.locator('#comparison-change-value')).toHaveText('변동 없음');await expect(page.locator('.as-delta-roll')).toHaveCount(0);
+ await page.evaluate(()=>showAsStatisticsMonth(2026,2));await expect(page.locator('.as-delta-roll')).toHaveCount(1);assert.equal(await page.locator('.as-delta-roll').textContent(),'0+3');await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('.as-delta-roll')).toHaveCount(0);
+ await page.evaluate(()=>showAsStatisticsMonth(2026,3));await expect(page.locator('#comparison-change-value')).toHaveText('−2');assert.equal(await page.locator('#comparison-change-value').evaluate(e=>getComputedStyle(e).opacity),'1');
+ assert.deepEqual(errors,[]);
+});
