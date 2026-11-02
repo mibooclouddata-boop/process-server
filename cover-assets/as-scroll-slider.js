@@ -14,7 +14,22 @@
   range.setAttribute('aria-valuetext',max?Math.round(Number(range.value)/max*100)+'%':'전체 표시');
  }
  range.addEventListener('input',()=>{viewport.scrollLeft=Number(range.value);sync();});
- viewport.addEventListener('scroll',sync,{passive:true});
+ let lastLeft=viewport.scrollLeft,lastTop=viewport.scrollTop,idleTimer,verticalIdleTimer;
+ viewport.addEventListener('scroll',()=>{
+  if(viewport.scrollLeft!==lastLeft){
+   lastLeft=viewport.scrollLeft;
+   viewport.classList.add('is-scrolling-horizontal');
+   clearTimeout(idleTimer);
+   idleTimer=setTimeout(()=>viewport.classList.remove('is-scrolling-horizontal'),650);
+  }
+  if(viewport.scrollTop!==lastTop){
+   lastTop=viewport.scrollTop;
+   control.classList.add('is-scrolling-vertical');
+   clearTimeout(verticalIdleTimer);
+   verticalIdleTimer=setTimeout(()=>control.classList.remove('is-scrolling-vertical'),650);
+  }
+  sync();
+ },{passive:true});
  const observer=new ResizeObserver(sync);observer.observe(viewport);observer.observe(table);
  sync();
 })();
