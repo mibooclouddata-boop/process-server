@@ -14,6 +14,17 @@ test('mini slider tracks horizontal scrolling and keyboard input without changin
  await expect(slider).toBeVisible();assert.equal(await page.locator('.as-column-header th:visible').count(),17);
  const width=await page.locator('.as-erp-table').evaluate(e=>e.getBoundingClientRect().width);
  await slider.fill('200');assert.equal(await viewport.evaluate(e=>e.scrollLeft),200);
+ await expect(viewport).toHaveClass(/is-scrolling-horizontal/);
+ const activeScrollbar=await viewport.evaluate(e=>({width:getComputedStyle(e,'::-webkit-scrollbar').width,inset:getComputedStyle(e,'::-webkit-scrollbar-thumb').borderLeftWidth}));
+ assert.deepEqual(activeScrollbar,{width:'8px',inset:'2px'});
+ await expect(viewport).not.toHaveClass(/is-scrolling-horizontal/);
+ assert.equal(await viewport.evaluate(e=>getComputedStyle(e,'::-webkit-scrollbar-thumb').borderLeftWidth),'0px');
+ const sliderBox=await slider.boundingBox();
+ await viewport.evaluate(e=>{e.scrollTop=100;});
+ await expect(page.locator('.as-scroll-control')).toHaveClass(/is-scrolling-vertical/);
+ assert.deepEqual(await slider.boundingBox(),sliderBox,'vertical scroll must preserve slider hit area and layout');
+ await expect(viewport).not.toHaveClass(/is-scrolling-horizontal/);
+ await expect(page.locator('.as-scroll-control')).not.toHaveClass(/is-scrolling-vertical/);
  await slider.focus();await page.keyboard.press('End');
  await expect.poll(()=>viewport.evaluate(e=>Math.abs(e.scrollLeft-(e.scrollWidth-e.clientWidth)))).toBeLessThan(2);
  await page.keyboard.press('Home');await expect.poll(()=>viewport.evaluate(e=>e.scrollLeft)).toBe(0);
