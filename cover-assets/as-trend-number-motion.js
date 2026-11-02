@@ -13,16 +13,16 @@
   if(value!==null&&value!==old&&!preference.matches){
    const token=generation,from=String(old??0).padStart(String(value).length,'0').slice(-String(value).length);
    const visual=document.createElement('span');visual.setAttribute('aria-hidden','true');
-   visual.style.cssText='display:inline-flex;vertical-align:bottom;font:inherit;color:inherit;font-variant-numeric:tabular-nums;line-height:1.3';
+   visual.style.cssText='display:inline-flex;vertical-align:top;font:inherit;letter-spacing:inherit;color:inherit;line-height:1.3';
    const spoken=document.createElement('span');spoken.textContent=text;spoken.style.cssText='position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
    target.firstChild.replaceWith(spoken,visual);
    let digitIndex=0;
    for(const character of text){
-    const box=document.createElement('span');box.style.cssText='display:inline-block;height:1.3em;overflow:hidden';visual.append(box);
+    const box=document.createElement('span');box.style.cssText='font:inherit;letter-spacing:inherit;display:inline-block;height:1.3em;overflow:hidden';visual.append(box);
     if(character===','){box.textContent=character;continue;}
     const start=Number(from[digitIndex]||0),end=Number(character),steps=(end-start+10)%10;
-    const reel=document.createElement('span');reel.style.display='block';box.append(reel);
-    for(let n=0;n<=steps;n++){const digit=document.createElement('span');digit.textContent=(start+n)%10;digit.style.cssText='display:block;height:1.3em;line-height:1.3;text-align:center';reel.append(digit);}
+    const reel=document.createElement('span');reel.style.cssText='font:inherit;letter-spacing:inherit;display:block';box.append(reel);
+    for(let n=0;n<=steps;n++){const digit=document.createElement('span');digit.textContent=(start+n)%10;digit.style.cssText='font:inherit;letter-spacing:inherit;display:block;height:1.3em;line-height:1.3;text-align:center';reel.append(digit);}
     if(steps)animations.push(reel.animate([{transform:'translateY(0)'},{transform:`translateY(-${steps*1.3}em)`}],{duration:650+digitIndex*50,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}));
     digitIndex++;
    }
