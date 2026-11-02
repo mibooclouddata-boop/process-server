@@ -166,10 +166,10 @@ body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
 /* The complete AS list is one white workspace card. */
 body #tabAs #asSubList{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
 body #tabAs #asSubList .as-toolbar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin-bottom:20px!important}
-body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
+body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!important;border-left:1px solid #e7ebef!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
 @media(max-width:768px){body #tabAs #asSubList{padding:14px}}
 
-/* Selected clean table: readable rows with horizontal rules only. */
+/* Clean table with horizontal rules and a left boundary only. */
 body #tabAs #asSubList{--ledger-row:48px!important;--ledger-font:15px}
 body #tabAs #asSubList .as-table-card .as-erp-table :is(th,td):nth-child(n){border-left:0!important;border-right:0!important}
 body #tabAs #asSubList .as-table-card .as-erp-table thead .as-column-header th{height:48px!important;padding:10px 12px!important;font-size:14px!important;color:#111!important;background:#f3f5f7!important;border-top:0!important;border-bottom:1px solid #dce2e8!important}
