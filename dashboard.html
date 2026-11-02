@@ -1689,7 +1689,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
-<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=14">
+<link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=16">
 <link rel="stylesheet" href="/cover-assets/app-navigation-rail.css?v=6">
 <link rel="stylesheet" href="/cover-assets/app-navigation-alignment.css?v=1">
 <link rel="stylesheet" href="/cover-assets/app-flow-theme.css?v=1">
@@ -2846,12 +2846,12 @@ function renderAsReasonHeatmap(records,year) {
   const shares=model.values.map(row=>row.map((count,i)=>model.totals[i]?count/model.totals[i]*100:0));
   const displayed=_asReasonHeatMode==='share'?shares:model.values;
   const maximum=Math.max(0,...displayed.flat());
-  const palette=['#f8f8f8','#eaeaea','#dcdcdc','#cecece','#c0c0c0','#b2b2b2'];
+  const palette=['#f3f5f8','#e3edfc','#bad1f2','#85ace2','#4176bb','#204b87'];
   document.getElementById('asReasonHeatScale').textContent='0–'+(_asReasonHeatMode==='share'?maximum.toFixed(1)+'%':format(maximum)+'건');
   body.innerHTML=model.names.map((name,r)=>'<tr><th scope="row">'+name+'</th>'+model.values[r].map((count,i)=>{
     const future=model.future[i],value=displayed[r][i],level=value?Math.min(5,Math.ceil(value/maximum*5)):0;
     const label=year+'년 '+(i+1)+'월 · '+name+' · '+(future?'미도래':format(count)+'건 · 해당 월 비중 '+shares[r][i].toFixed(1)+'%');
-    return '<td><button type="button" class="as-reason-heat-cell" data-row="'+r+'" data-month="'+i+'" data-future="'+future+'" aria-pressed="false" aria-label="'+label+'" style="--heat-bg:'+palette[level]+';--heat-ink:#111;--heat-delay:'+((r+i)*27)+'ms">'+(future?'—':_asReasonHeatMode==='share'?value.toFixed(1)+'%':format(count))+'</button></td>';
+    return '<td><button type="button" class="as-reason-heat-cell" data-row="'+r+'" data-month="'+i+'" data-future="'+future+'" aria-pressed="false" aria-label="'+label+'" style="--heat-bg:'+palette[level]+';--heat-ink:'+(level>=4?'#fff':'#111')+';--heat-delay:'+((r+i)*27)+'ms">'+(future?'—':_asReasonHeatMode==='share'?value.toFixed(1)+'%':format(count))+'</button></td>';
   }).join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.values[r].reduce((a,b)=>a+b,0)))+'</td></tr>').join('');
   document.getElementById('asReasonHeatFoot').innerHTML='<tr><th scope="row">합계 · 건</th>'+model.totals.map((count,i)=>'<td>'+(model.future[i]?'—':format(count))+'</td>').join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.total))+'</td></tr>';
   body.onclick=event=>{
@@ -4201,7 +4201,7 @@ function createAsReadableTrend(chart){
  });
  monthlyPanelObserver.observe(trendPanel);
  heading.insertAdjacentHTML('beforeend','<span id="comparison-basis" class="as-chart-sr-only"></span>');
- heading.insertAdjacentHTML('afterend','<div class="month-comparison" role="status" aria-live="polite"><div class="comparison-main"><div><strong id="comparison-count"></strong><span id="comparison-change">전월 대비 <span id="comparison-change-value"></span></span></div></div></div>');
+ heading.insertAdjacentHTML('afterend','<div class="month-comparison" role="status" aria-live="polite"><div class="comparison-main"><div><strong id="comparison-count"></strong><span id="comparison-change">전월 대비 <span id="comparison-change-value"></span><span id="comparison-change-unit"></span></span></div></div></div>');
  root.querySelector('.as-stats-footnote').textContent='직접 입력하거나 사유가 없으면 ‘기타’로 집계합니다.';
  function update(){
   const year=Number($('asStatsYear').value),month=_asStatsSelectedMonth;if(!year||month<1||month>12)return;
@@ -4212,7 +4212,8 @@ function createAsReadableTrend(chart){
   $('comparison-count').innerHTML=future(month)&&!sum.current?'미도래':format(sum.current)+'<small>건</small>';
   const delta=sum.current-sum.previous;
   $('comparison-change').hidden=future(month);
-  $('comparison-change-value').textContent=delta===0?'변동 없음':(delta>0?'+':'−')+format(Math.abs(delta))+'건';
+  $('comparison-change-value').textContent=delta===0?'변동 없음':(delta>0?'+':'−')+format(Math.abs(delta));
+  $('comparison-change-unit').textContent=delta===0?'':'건';
   $('comparison-change-value').dataset.direction=delta>0?'increase':delta<0?'decrease':'unchanged';
   $('comparison-basis').textContent=future(month)?'미래 월은 실제 0건과 구분':sum.previousYear+'년 '+sum.previousMonth+'월 조회 '+format(sum.previous)+'건과 비교'+(ongoing?' · 이번 달 일부 기간 ↔ 전월 전체':'');
   $('asStatsChartHint').textContent='월을 선택하면 유형별 집계, 제품별 AS 현황과 금액이 함께 바뀝니다. 단위: 건 · 0건과 미도래를 구분합니다.';
