@@ -1,0 +1,40 @@
+/* Compact navigation retains the existing application surfaces and content. */
+.rail-short,.rail-full,.rail-tip,#appRailToggle{display:none}
+body #appNavigation{position:relative;z-index:30}
+body #appNavigation :is(.tab,.tab-sub){position:relative;display:flex;align-items:center;gap:12px;min-height:48px;margin:0;border:0;border-radius:10px;background:transparent;font-family:inherit;transform:none;opacity:1;transition:background .15s,color .15s;color:#60656b;box-shadow:none}
+/* The legacy AS group remains on; only aria-current marks the rail destination. */
+body #appNavigation :is(.tab,.tab-sub).on{background:transparent;color:#60656b;font-weight:500}
+body #appNavigation :is(.tab,.tab-sub):hover{background:#e4e8ec;color:#202123}
+body #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:#dfe4e9;color:#111;font-weight:700}
+body #appNavigation :is(.tab,.tab-sub):focus-visible{outline:2px solid #555;outline-offset:2px}
+body #appNavigation .rail-icon{display:block;width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+body #appNavigation .rail-full{display:block;white-space:nowrap;font-size:14px;font-weight:500}
+body #appNavigation #asSubmenu{display:contents;opacity:1;max-height:none;padding:0;overflow:visible}
+body #appNavigation #tabUsersBtn{margin-top:16px}
+body #appNavigation .tab::after{display:none}
+@media(min-width:769px){
+ body #appNavigation{width:72px;padding:16px 8px}
+ body #appNavigation>.tabs{position:sticky;top:88px;width:100%;padding:0;gap:8px;overflow:visible}
+ body #appNavigation :is(.tab,.tab-sub){width:56px;min-height:60px;flex-direction:column;justify-content:center;gap:6px;padding:9px 0;text-align:center}
+ body #appNavigation .rail-full{display:none}
+ body #appNavigation .rail-short{display:block;font-size:11px;font-weight:500;line-height:1.2;color:inherit;white-space:nowrap}
+ body #appRailToggle{display:flex;align-items:center;justify-content:center;gap:12px;width:56px;min-height:44px;margin:0 0 12px;padding:0;border:0;border-radius:8px;background:transparent;color:#60656b;cursor:pointer;font-family:inherit}
+ body #appRailToggle:hover{background:#e4e8ec;color:#111}
+ body #appRailToggle:focus-visible{outline:2px solid #555;outline-offset:2px}
+ body #appNavigation[data-expanded=true]{width:196px;padding:16px 12px}
+ body #appNavigation[data-expanded=true] :is(.tab,.tab-sub){width:100%;min-height:48px;flex-direction:row;justify-content:flex-start;padding:12px;gap:12px;text-align:left}
+ body #appNavigation[data-expanded=true] .rail-full{display:block}
+ body #appNavigation[data-expanded=true] .rail-short{display:none}
+ body #appNavigation[data-expanded=true] #appRailToggle{width:100%;justify-content:flex-start;padding:0 12px}
+ body #appNavigation:not([data-expanded=true]) :is(.tab,.tab-sub):is(:hover,:focus-visible) .rail-tip{display:block;position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);padding:9px 12px;border:1px solid #d9dde1;border-radius:7px;background:#fff;box-shadow:0 4px 14px #20212314;color:#202123;font-size:13px;font-weight:500;line-height:1.4;white-space:nowrap;pointer-events:auto;z-index:60}
+}
+@media(max-width:768px){body #appNavigation :is(.tab,.tab-sub){width:100%;padding:12px;flex-direction:row}body #appNavigation .rail-short{display:none}body #appNavigation #tabUsersBtn{margin-top:8px}}
+/* Short windows scroll the full menu instead of pinning items below the viewport. */
+@media(min-width:769px) and (max-height:500px){body #appNavigation>.tabs{position:static}}
+
+body #appNavigation #appRailToggle .rail-collapse-icon{display:none}
+body #appNavigation[data-expanded=true] #appRailToggle .rail-expand-icon{display:none}
+body #appNavigation[data-expanded=true] #appRailToggle .rail-collapse-icon{display:block}
+body #appNavigation[data-tip-dismissed=true] .rail-tip{display:none!important}
+body #appNavigation .rail-tip::before{content:'';position:absolute;right:100%;top:0;width:12px;height:100%}
+@media(prefers-reduced-motion:reduce){body #appNavigation *{transition:none!important;animation:none!important}}

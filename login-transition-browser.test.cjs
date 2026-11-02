@@ -27,6 +27,7 @@ test('login crossfade waits for data, recovers, and never replays on refresh or 
  await page.waitForURL('**/dashboard.html');assert.equal(await app().locator('#asRemarkInput').inputValue(),'unsaved note');assert.match(await app().locator('#asLedgerMessage').textContent(),/저장하거나 취소/);
  await app().evaluate(()=>asLedgerCancelRemark());await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransitionFrame').count(),0);
  await login();await complete();
+ await app().waitForFunction(()=>document.getAnimations().some(animation=>animation.id==='as-overview-enter'&&animation.playState==='running'),null,{timeout:2000});
  await app().locator('#tabUsersBtn').click();assert.equal(await page.locator('#loginTransition').count(),0);
  await page.reload();await page.locator('#asStatsContent').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransition').count(),0);
  await page.route('**/api/as',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
@@ -45,6 +46,6 @@ test('login crossfade waits for data, recovers, and never replays on refresh or 
  await login();await page.frameLocator('#loginTransitionFrame').locator('#dashboard').waitFor({state:'attached'});assert.equal(await page.locator('#loginTransitionTitle').evaluate(el=>getComputedStyle(el).animationName),'none');await shot('reduced-mobile');
  assert.equal(await page.locator('#loginTransition').evaluate(el=>el.scrollWidth<=innerWidth),true);reducedRelease();await page.unroute('**/api/as');await complete();
  await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert(await page.locator('#submitBtn').isEnabled());assert.equal(await page.locator('#loginTransition').count(),0);
- await login();await complete();await app().locator('.logout-btn').click();await page.waitForURL(fixture.url+'/');
+ await login();await complete();await app().locator('#appAccountToggle').click();await app().locator('#appAccountPanel [data-app-logout]').click();await page.waitForURL(fixture.url+'/');
  assert.deepEqual(errors,[]);
 });

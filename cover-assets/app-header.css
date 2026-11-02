@@ -1,0 +1,44 @@
+/* Common header, selected navy concept. */
+#dashboard>.app-topbar{--header-navy:#102c49;--header-muted:#c8d7e7;--header-hover:#25405e;display:flex;align-items:center;gap:24px;height:72px;min-height:72px;padding:0 32px;background:var(--header-navy);color:#fff;border:0;box-shadow:none;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif}
+.app-topbar .topbar-title{flex:0 0 172px;margin:0;padding:0;min-height:44px;background:none;border:0;cursor:pointer;justify-content:flex-start;border-radius:4px}
+.app-topbar .topbar-title img{height:auto!important;width:112px!important;filter:brightness(0) invert(1)!important}
+.app-topbar .app-header-tools{display:flex;align-items:center;gap:16px;margin-left:auto;min-width:0;flex:none}
+.app-topbar button,.app-topbar summary{font-family:inherit;min-height:44px;cursor:pointer}
+.app-topbar :is(button,summary):focus-visible{outline:3px solid #8bc4ff;outline-offset:3px}
+.app-topbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app-account{position:relative;min-width:0}
+.app-account>summary{display:flex;align-items:center;gap:10px;list-style:none;padding:6px 8px;border-radius:6px;transition:background .14s}
+.app-account>summary::-webkit-details-marker{display:none}
+.app-account>summary:hover,.app-account[open]>summary{background:var(--header-hover)}
+.app-avatar{display:grid;place-items:center;width:32px;height:32px;flex:none;background:#2a4563;border:1px solid #61768d;color:#fff;border-radius:50%;font-size:12px}
+.app-account-copy{display:flex;flex-direction:column;gap:2px;min-width:0;max-width:190px}
+.app-topbar #topbarUser{font-size:13px;font-weight:600;color:#fff;background:none;border:0;border-radius:0;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.app-account-copy small{font-size:11px;color:var(--header-muted);line-height:1.4}
+.app-account .app-chevron{width:14px;height:14px}
+.app-account-panel{position:absolute;right:0;top:calc(100% + 10px);width:260px;max-width:calc(100vw - 32px);padding:16px;color:#202c3c;background:#fff;border:1px solid #e2e7ee;border-radius:8px;box-shadow:0 10px 32px #162b4320}
+.app-account-panel>strong{display:block;font-size:15px;overflow-wrap:anywhere}
+.app-account-panel>p{margin:6px 0;color:#58697c;font-size:12px;overflow-wrap:anywhere}
+.app-account-panel button{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:10px 0 0;border:0;border-top:1px solid #e2e7ee;background:none;color:#964048;text-align:left;font-size:13px}
+.app-account-panel button:hover{color:#682a31}
+.app-topbar .logout-btn{padding:8px 16px 8px 22px;border:0;border-left:1px solid #3c526b;border-radius:0;background:none;color:var(--header-muted);font-size:12px;font-weight:400;box-shadow:none}
+.app-topbar .logout-btn:hover{background:var(--header-hover);color:#fff}
+.app-topbar .app-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;min-width:44px;padding:10px;border:0;border-radius:6px;background:none;color:#fff}
+.app-topbar .app-menu-toggle:hover{background:var(--header-hover)}
+#dashboard>.layout{min-height:calc(100vh - 72px)}
+#appNavigation .tab.on,#appNavigation .tab-sub.on{color:#202c3c;background:#edf1f5}
+#appNavigation .tab,#appNavigation .tab-sub{min-height:44px}
+@media(max-width:1050px){#dashboard>.app-topbar{padding-inline:24px;gap:18px}.app-topbar .topbar-title{flex-basis:154px}.app-account-copy{max-width:130px}.app-topbar .app-header-tools{gap:8px}}
+@media(max-width:768px){
+ #dashboard>.app-topbar{height:64px;min-height:64px;flex-wrap:nowrap;gap:12px;padding:0 16px}
+ .app-topbar .topbar-title{flex:0 0 auto}.app-topbar .topbar-title img{width:100px!important}
+ .app-topbar .app-account-copy,.app-topbar .logout-btn,.app-topbar .app-chevron{display:none}
+ .app-topbar .app-header-tools{gap:8px}.app-topbar .app-menu-toggle{display:flex}
+ .app-account>summary{padding:6px;min-width:44px}.app-account-panel{right:-52px}
+ #appNavigation{display:none;width:100%;padding:12px 16px;background:#fff;border-right:0;border-bottom:1px solid #e2e7ee}
+ body.app-nav-open #appNavigation{display:flex}
+ #appNavigation>.tabs{display:flex;flex-direction:column;width:100%;gap:4px;padding:0}
+ #appNavigation .tab,#appNavigation .tab-sub{width:100%;font-size:14px;white-space:normal}
+ #appNavigation .as-submenu.open{display:flex;flex-direction:column;max-height:none;padding-left:16px}
+ #dashboard>.layout{min-height:calc(100vh - 64px)}
+}
+@media(prefers-reduced-motion:reduce){.app-account>summary{transition:none}}
