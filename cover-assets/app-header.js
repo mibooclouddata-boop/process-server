@@ -2,15 +2,7 @@
 window.AppHeader=(()=>{
  const account=document.getElementById('appAccount'),summary=document.getElementById('appAccountToggle'),menu=document.getElementById('appMenuToggle'),navigation=document.getElementById('appNavigation');
  const railToggle=document.getElementById('appRailToggle');
- const asTabs=document.getElementById('asSubmenu'),indicator=document.createElement('span');
- indicator.className='as-tabs-indicator';indicator.setAttribute('aria-hidden','true');asTabs.append(indicator);
- function alignAsTab(){
-  const active=asTabs.querySelector('[aria-current=page]');
-  if(!active||!asTabs.getClientRects().length)return;
-  indicator.style.setProperty('--as-tab-x',active.offsetLeft+'px');indicator.style.width=active.offsetWidth+'px';
- }
- new ResizeObserver(alignAsTab).observe(asTabs);
- document.fonts?.ready.then(alignAsTab);
+ const asTabs=document.getElementById('asSubmenu');
  asTabs.addEventListener('keydown',event=>{
   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
   const buttons=[...asTabs.querySelectorAll('button')],index=buttons.indexOf(event.target);if(index<0)return;
@@ -81,7 +73,6 @@ window.AppHeader=(()=>{
    const context=document.getElementById('asSubmenu');
    context.hidden=tab!=='as'||sub==='product';
    context.querySelector('[data-sub="'+sub+'"]')?.setAttribute('aria-current','page');
-   alignAsTab();
   }
  };
 })();
