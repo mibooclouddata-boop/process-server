@@ -55,7 +55,6 @@ dialog#userModal[open]{display:block}dialog#userModal::backdrop{background:#0007
 @media(max-width:1200px){#tabUsers .toss-user-card{padding:24px 22px 0}#tabUsers .user-search-unified select{flex-basis:122px;width:122px;font-size:13px;padding-inline:7px}}
 @media(max-width:1050px){#tabUsers .user-toolbar{flex-wrap:wrap;gap:12px}#tabUsers .user-search-unified{flex-basis:100%}#tabUsers .toss-user-new-btn{margin-left:auto}}
 @media(max-width:650px){
- body.user-roster-active .topbar{height:auto;min-height:64px;flex-wrap:wrap;gap:8px;padding:12px 16px}body.user-roster-active .topbar-title{flex-basis:100%}body.user-roster-active .topbar-user{flex:1;min-width:0;overflow-wrap:anywhere}body.user-roster-active .topbar-sep{display:none}
  #tabUsers .toss-user-card{padding:18px 14px 0;border-radius:9px}#tabUsers .user-toolbar{padding-bottom:20px}#tabUsers .toss-user-new-btn{width:100%;margin-left:0}
  #tabUsers .user-search-unified{flex-wrap:wrap;padding:0 6px 6px}#tabUsers .user-search-unified .user-search-field{flex-basis:100%;padding-left:6px;border-bottom:1px solid #d4dde6;border-radius:0;margin-bottom:6px}#tabUsers .user-search-unified input{font-size:16px}#tabUsers .user-search-unified select{flex:1 1 0;width:0;min-width:0;min-height:44px;height:44px;border:0;font-size:12px;padding:7px 2px}#tabUsers #userReset{margin-left:0}
  #tabUsers .user-roster-table :is(th,td):nth-child(3),#tabUsers .user-roster-table :is(th,td):nth-child(4){display:none}#tabUsers .user-roster-table th:nth-child(5){width:30%}#tabUsers .user-roster-table th:nth-child(6){width:44px}
