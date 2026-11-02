@@ -1898,8 +1898,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
                 <th data-col="action" onclick="sortAsTable('action')">후속조치</th>
                 <th class="col-file no-sort">첨부</th>
                 <th data-col="createdBy" onclick="sortAsTable('createdBy')">접수자</th>
-                <th data-col="remark" onclick="sortAsTable('remark')">비고</th>
                 <th data-col="amount" onclick="sortAsTable('amount')">금액 (원)</th>
+                <th data-col="remark" onclick="sortAsTable('remark')">비고</th>
               </tr>
             </thead>
             <tbody id="asTableBody"></tbody>
@@ -3274,8 +3274,8 @@ function _renderAsPage() {
       <td><span class="as-truncate" title="${escapeHtml(a.action||'')}" style="font-size:12px;color:#64748b">${escapeHtml(actionShort)}</span></td>
       <td class="as-files-cell" style="text-align:center">${fileCell}</td>
       <td style="font-size:11px;color:#64748b">${escapeHtml(a.createdBy||'—')}</td>
-      <td class="as-remark-cell" data-id="${escapeHtml(a.id)}" onclick="startRemarkEdit(event,this)" title="${escapeHtml(a.remark||'')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
       <td class="as-amount-cell" title="${AsAmount.format(a.amount)}">${AsAmount.format(a.amount)}</td>
+      <td class="as-remark-cell" data-id="${escapeHtml(a.id)}" onclick="startRemarkEdit(event,this)" title="${escapeHtml(a.remark||'')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
     </tr>`;
   }).join('');
 
@@ -3421,16 +3421,16 @@ function _updateAsSelectedCount() {
 function exportAsExcel() {
   const list = _asFiltered;
   if (!list.length) { alert('내보낼 데이터가 없습니다.'); return; }
-  const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','비고','금액 (원)'];
+  const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','금액 (원)','비고'];
   const rows = list.map(a => [
     a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.ship||'', a.block||'', a.element||'', a.product||'',
-    normalizeAsReason(a.reason), a.action||'', a.status||'', a.createdBy||'', a.remark||'', AsAmount.read(a.amount)??''
+    normalizeAsReason(a.reason), a.action||'', a.status||'', a.createdBy||'', AsAmount.read(a.amount)??'', a.remark||''
   ]);
   // Excel's HTML importer needs explicit column widths; browser auto-layout is not retained.
   // Estimate display width in pixels at 11pt, counting Korean/full-width glyphs twice.
   const linesOf = value => String(value).replace(/\r\n?/g, '\n').split('\n');
   const textWidth = text => Array.from(text).reduce((width, ch) => width + (ch === '\t' ? 28 : ch.codePointAt(0) > 255 ? 14 : 7), 0);
-  const maxWidths = [210,110,100,150,150,190,280,420,420,140,150,420,160];
+  const maxWidths = [210,110,100,150,150,190,280,420,420,140,150,160,420];
   const widths = cols.map((title, column) => Math.min(maxWidths[column], Math.max(90, textWidth(title) + 24)));
   rows.forEach(row => row.forEach((value, column) => {
     linesOf(value).forEach(line => { widths[column] = Math.min(maxWidths[column], Math.max(widths[column], textWidth(line) + 24)); });
@@ -4286,11 +4286,11 @@ function asLedgerLayoutColumns(){
  const viewport=table?.parentElement;
  if(!table||!viewport.clientWidth)return;
  const heads=[...table.querySelectorAll('.as-column-header th')],cols=[...table.querySelectorAll('colgroup col')];
- const minimum=[36,60,104,136,122,122,110,76,88,108,180,120,150,58,96,120,128];
- if(_asRemarkEditing)minimum[15]=260;
+ const minimum=[36,60,104,136,122,122,110,76,88,108,180,120,150,58,96,128,120];
+ if(_asRemarkEditing)minimum[16]=260;
  const desired=[...minimum],measure=document.createElement('canvas').getContext('2d');
  measure.font='600 15px '+getComputedStyle(document.getElementById('asSubList')).fontFamily;
- const fields=['','','status','asNo','createdAt','deliveryAgreedDate','','ship','block','element','product','reason','action','','createdBy','remark','amount'];
+ const fields=['','','status','asNo','createdAt','deliveryAgreedDate','','ship','block','element','product','reason','action','','createdBy','amount','remark'];
  for(const item of _asFullList.slice(0,200))fields.forEach((field,i)=>{
   if(!field)return;
   let value=field==='amount'?AsAmount.format(item.amount):String(item[field]||'');if(field==='createdAt')value=value.slice(0,10);
@@ -4298,7 +4298,7 @@ function asLedgerLayoutColumns(){
  });
  const totalMinimum=minimum.reduce((a,b)=>a+b,0),totalDesired=desired.reduce((a,b)=>a+b,0);
  const available=Math.max(totalMinimum,viewport.clientWidth);
- const flexible=[10,11,12,15];
+ const flexible=[10,11,12,16];
  const widths=desired.map((width,i)=>totalDesired>available
   ?minimum[i]+(width-minimum[i])*(available-totalMinimum)/Math.max(1,totalDesired-totalMinimum)
   :width+(flexible.includes(i)?(available-totalDesired)/flexible.length:0));
