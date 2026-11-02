@@ -38,7 +38,7 @@ window.AppHeader=(()=>{
   setUser(user){
    const name=String(user?.name||''),role={sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'}[user?.role]||'사용자';
    text('topbarUser',name);text('appHeaderRole',role);text('appHeaderAvatar',[...name][0]||'');
-   text('appAccountName',name);text('appAccountLogin',user?.loginId||user?.id);text('appAccountRole',role);
+   text('appAccountName',name);text('appAccountLogin',user?.loginId||user?.id);text('appAccountDepartment',user?.department);text('appAccountPosition',user?.position);text('appAccountRole',role);text('appAccountAvatar',[...name][0]||'');
    summary.setAttribute('aria-label',name+' 계정 메뉴');
   },
   setPage(tab,sub){
