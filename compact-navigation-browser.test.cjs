@@ -12,7 +12,7 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  const nav=page.locator('#appNavigation'),toggle=page.locator('#appRailToggle'),product=nav.locator('[data-sub=product]');
  assert.equal((await nav.boundingBox()).width,80);
  await expect(toggle.locator('.rail-collapse-icon')).toBeHidden();
- await expect(page.getByRole('button',{name:'AS 접수 현황',exact:true})).toHaveAttribute('aria-current','page');
+ await expect(page.getByRole('button',{name:'AS',exact:true})).toHaveAttribute('aria-current','page');
  await page.evaluate(()=>window.scrollTo(0,500));
  assert(await toggle.evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}),'scrolling must not hide the rail toggle beneath the sticky header');
  await toggle.click();await expect(toggle).toHaveAttribute('aria-expanded','true');await toggle.click();await page.evaluate(()=>window.scrollTo(0,0));
@@ -25,8 +25,10 @@ test('compact navigation keeps destinations accessible across collapse, keyboard
  await expect(product).toHaveCSS('background-color','rgb(255, 255, 255)');
  await page.keyboard.press('Escape');await expect(toggle).toBeFocused();await expect(toggle).toHaveAttribute('aria-expanded','false');
  await nav.locator('#tabAsBtn').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
- await nav.locator('[data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeHidden();
+ await page.locator('#asSubmenu [data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeHidden();
  await page.locator('#asLedgerBack').click();await expect(nav.locator('#tabAsBtn')).toBeFocused();
+ for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu')).toBeHidden();}
+ await nav.locator('#tabAsBtn').click();await expect(page.locator('#asSubmenu')).toBeVisible();
  await nav.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
  await toggle.click();
  for(const width of [768,390,320]){
