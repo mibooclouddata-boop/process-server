@@ -44,3 +44,13 @@ body #appNavigation .rail-tip::before{content:'';position:absolute;right:100%;to
 /* Reception stays in the shared workspace; only the table scrolls. */
 body.as-reception-active #asSubList{display:flex;flex-direction:column;min-width:0}
 body.as-reception-active #asSubList .as-ledger-scroll{flex:initial;max-height:60dvh;min-height:180px;overflow:auto}
+
+/* Fill the desktop workspace while keeping short and mobile windows scrollable. */
+@media(min-width:769px) and (min-height:651px){
+ body.as-reception-active #dashboard .main{height:calc(100dvh - 94px);min-height:0;overflow:hidden;display:flex;flex-direction:column}
+ body.as-reception-active #tabAs{flex:1;min-height:0;height:100%}
+ body.as-reception-active #tabAs #asSubList{height:100%;min-height:0}
+ body.as-reception-active #tabAs #asSubList .as-table-card{flex:1;min-height:0}
+ body.as-reception-active #asSubList .as-ledger-scroll{flex:1;min-height:0;max-height:none}
+ body.as-reception-active #asSubList .as-scroll-control{min-height:44px;padding:0}
+}
