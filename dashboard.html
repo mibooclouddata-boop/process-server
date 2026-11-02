@@ -1944,11 +1944,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
       <div class="as-product-heading"><h2 id="asStatsProductsTitle">제품별 AS 현황</h2><p id="asStatsProductsHint" role="status" aria-live="polite" aria-atomic="true"></p></div>
       <div class="as-product-body">
         <div class="as-product-ring" aria-hidden="true"><div id="asStatsProductsChart"></div><div class="as-product-center"><strong id="asStatsProductsTotal">0건</strong><span id="asStatsProductsLabel">총 접수</span></div></div>
-        <div id="asStatsProductsList" class="as-product-list"><ul id="asStatsProductsLegend" class="as-product-legend" aria-label="선택 월 제품별 AS 건수 및 비율"></ul><nav id="asStatsProductsPager" class="as-product-pagination" aria-label="제품별 AS 현황 페이지" hidden><span id="asStatsProductsPageInfo" class="as-product-page-info"></span><div id="asStatsProductsPages" class="as-product-pages"></div></nav></div>
+        <div id="asStatsProductsList" class="as-product-list"><ul id="asStatsProductsLegend" class="as-product-legend" aria-label="선택 월 제품별 AS 건수 및 비율"></ul><nav id="asStatsProductsPager" class="as-product-pagination" aria-label="제품별 AS 현황 페이지" hidden><div id="asStatsProductsPages" class="as-product-pages"></div></nav></div>
       </div>
       <p id="asStatsProductsEmpty" hidden>선택 월에 접수된 AS가 없습니다.</p>
       <p id="asStatsProductsStatus" class="as-product-status" role="status" aria-live="polite" aria-atomic="true"></p>
-      <div class="as-product-footer"><p id="asStatsProductsPeriod" class="as-product-period"></p><div class="as-product-actions"><button id="asStatsProductsReset" type="button">전체 보기</button><button id="asStatsProductsReplay" type="button">모션 다시 보기</button></div></div>
     </section>
     </div>
   </div>
@@ -2673,11 +2672,10 @@ function renderAsProducts(records,year,month) {
  const today=asJobToday(),future=year>Number(today.slice(0,4))||(year===Number(today.slice(0,4))&&month>Number(today.slice(5,7)));
  const colors=['#316bc6','#32958c','#b67e36','#8975b9','#6f91ad','#9ca9bb'];
  document.getElementById('asStatsProductsHint').textContent=future&&!result.total?'미도래':format(result.total)+'건 기준';
- document.getElementById('asStatsProductsPeriod').textContent=year+'년 '+month+'월 · 접수일 기준';
  const empty=document.getElementById('asStatsProductsEmpty');empty.hidden=result.total!==0;empty.textContent=future?'미도래 기간입니다.':'선택 월에 조회된 접수 자료가 없습니다.';
  document.getElementById('asStatsProductsChart').innerHTML='<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><circle cx="120" cy="120" r="90" fill="none" stroke="#e9eef5" stroke-width="34"/><circle id="asStatsProductsArc" class="as-product-arc" cx="120" cy="120" r="90" pathLength="100" fill="none" stroke="#316bc6" stroke-width="34" stroke-dasharray="0 100" transform="rotate(-90 120 120)"/></svg>';
  const arc=document.getElementById('asStatsProductsArc'),value=document.getElementById('asStatsProductsTotal'),label=document.getElementById('asStatsProductsLabel');
- const reset=document.getElementById('asStatsProductsReset'),replay=document.getElementById('asStatsProductsReplay'),buttons=[];
+ const buttons=[];
  const pageSize=4,pageCount=Math.ceil(result.entries.length/pageSize);
  let page=0,selected=result.entries.length?0:-1,shownShare=0,shownNumber=0,shownUnit='%',targetShare=0,targetNumber=0,targetUnit='%';
  function animate(duration,restart=false){
@@ -2697,7 +2695,6 @@ function renderAsProducts(records,year,month) {
   const item=result.entries[index];targetShare=item?item.count/result.total*100:result.total?100:0;targetNumber=item?targetShare:result.total;targetUnit=item?'%':'건';
   label.textContent=item?item.name:'총 접수';arc.setAttribute('stroke',item?colors[index%colors.length]:colors[0]);
   buttons.forEach(button=>button.setAttribute('aria-pressed',String(button._productIndex===index)));
-  reset.disabled=index<0;replay.disabled=!result.total;
   document.getElementById('asStatsProductsStatus').textContent=item?item.name+' · '+format(item.count)+'건 · '+targetShare.toFixed(1)+'%':'총 접수 '+format(result.total)+'건';
   animate(initial?900:420,initial);
  }
@@ -2716,7 +2713,6 @@ function renderAsProducts(records,year,month) {
    button.append(...Array.from(content.children));button.onclick=()=>choose(selected===index?-1:index);buttons.push(button);li.append(button);legend.appendChild(li);
   });
   pager.hidden=pageCount<=1;pages.replaceChildren();
-  document.getElementById('asStatsProductsPageInfo').textContent=result.entries.length?(start+1)+'–'+Math.min(start+pageSize,result.entries.length)+' / '+result.entries.length+'종':'';
   if(pager.hidden)return;
   let active;
   function pageButton(text,index,disabled,aria){
@@ -2731,7 +2727,7 @@ function renderAsProducts(records,year,month) {
   if(focus)active?.focus?.({preventScroll:true});
  }
  renderPage();
- reset.onclick=()=>choose(-1);replay.onclick=()=>animate(900,true);choose(selected,true);
+ choose(selected,true);
 }
 function asAnnualChangeText(total, previous) {
   const change = total-previous;
