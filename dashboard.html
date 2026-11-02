@@ -1077,9 +1077,9 @@ tbody tr:hover td{background:var(--surface-muted)}
 
 .main:has(:is(#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){display:flex;flex-direction:column}
 #tabprocess,#tabdispatch{flex:1}
-.main:has(:is(#tabAs,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){max-width:none;min-width:0;padding-inline:32px;scrollbar-gutter:stable both-edges}
+.main:has(:is(#tabAs,#tabUsers,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){max-width:none;min-width:0;padding-inline:32px;scrollbar-gutter:stable both-edges}
 #tabAs #asSubStats{max-width:none;width:100%;margin-inline:0}
-@media(max-width:600px){.main:has(:is(#tabAs,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){padding-inline:16px}}
+@media(max-width:600px){.main:has(:is(#tabAs,#tabUsers,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){padding-inline:16px}}
 #tabAs{width:100%;min-width:0}#asSubList{width:100%;margin-inline:auto}
 #tabAs #asSubList .as-filter-buttons .as-tb-btn-new{width:40px!important;min-width:40px;flex:0 0 40px;padding:0!important;margin:0}
 #tabAs #asSubList .as-toolbar{container:as-list-toolbar / inline-size;padding:14px;margin:0 0 16px;border-radius:8px}
