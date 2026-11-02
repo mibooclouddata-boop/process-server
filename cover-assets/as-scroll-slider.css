@@ -1,0 +1,19 @@
+/* Keep vertical scrolling native; use a short control for horizontal movement. */
+#asSubList .as-ledger-scroll.has-scroll-slider{scrollbar-gutter:auto}
+#asSubList .as-ledger-scroll.has-scroll-slider::-webkit-scrollbar{height:0;width:8px}
+#asSubList .as-ledger-scroll.has-scroll-slider::-webkit-scrollbar-thumb{background:#b8c1ca;border-radius:8px}
+/* Narrow only the painted thumb; keep the scrollbar gutter and table geometry stable. */
+#asSubList .as-ledger-scroll.has-scroll-slider.is-scrolling-horizontal::-webkit-scrollbar-thumb{border-inline:2px solid transparent;background-clip:padding-box}
+#asSubList .as-scroll-control{display:flex;justify-content:center;align-items:center;min-height:48px;padding:4px 0;background:#fff;flex-shrink:0}
+#asSubList .as-scroll-control[hidden]{display:none}
+#asSubList .as-scroll-control input{appearance:none;-webkit-appearance:none;width:240px;max-width:calc(100% - 32px);height:44px;margin:0;background:transparent;cursor:pointer;accent-color:#7f91a2}
+#asSubList .as-scroll-control input::-webkit-slider-runnable-track{height:4px;background:#e7ebef;border-radius:10px}
+#asSubList .as-scroll-control input::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:44px;height:8px;border:0;border-radius:8px;background:#899bab;margin-top:-2px}
+#asSubList .as-scroll-control input::-moz-range-track{height:4px;background:#e7ebef;border-radius:10px}
+#asSubList .as-scroll-control input::-moz-range-thumb{width:44px;height:8px;border:0;border-radius:8px;background:#899bab}
+#asSubList .as-scroll-control.is-scrolling-vertical input::-webkit-slider-runnable-track{height:2px}
+#asSubList .as-scroll-control.is-scrolling-vertical input::-webkit-slider-thumb{height:4px;margin-top:-1px}
+#asSubList .as-scroll-control.is-scrolling-vertical input::-moz-range-track{height:2px}
+#asSubList .as-scroll-control.is-scrolling-vertical input::-moz-range-thumb{height:4px}
+#asSubList .as-scroll-control input:focus-visible{outline:2px solid #526479;outline-offset:1px;border-radius:6px}
+@supports not selector(::-webkit-scrollbar){#asSubList .as-ledger-scroll.has-scroll-slider{scrollbar-width:thin;scrollbar-color:#9aa9b7 #f0f2f4}}

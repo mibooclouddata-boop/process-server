@@ -1,6 +1,6 @@
 'use strict';
 (() => {
- const ENTER=360,READ=1250,EXIT=440,LIMIT=8000;
+ const ENTER=360,READ=850,EXIT=440,LIMIT=8000;
  const page=document.currentScript.dataset.page,root=document.documentElement;
  const hostFrame=window.frameElement;
  if(page==='dashboard'&&hostFrame?.id==='loginTransitionFrame'){
@@ -94,6 +94,7 @@
   finishTimer=setTimeout(()=>{
    requestAnimationFrame(()=>requestAnimationFrame(()=>{
     if(state!=='ready')return;
+    frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('login-transition-reveal'));
     root.setAttribute('data-login-transition','leaving');overlay.classList.add('is-leaving');
     finishTimer=setTimeout(()=>{
      if(state!=='ready')return;

@@ -21,7 +21,7 @@ test('overview total includes completed receipts and clicking it clears filters 
  await page.waitForFunction(()=>document.querySelectorAll('#asTableBody tr[data-id]').length===5);
  assert.equal(await page.locator('#asStatusFilter').inputValue(),'');assert.equal(await page.locator('#asSearch').inputValue(),'');assert.equal(await page.locator('#asDateFrom').inputValue(),'');
  assert.match(await page.locator('#asTableBody').textContent(),/완료/);
- await page.locator('#asLedgerBack').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.locator('#asSubmenu [data-sub=stats]').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
  await page.locator('#asKpiRow button').nth(1).click();await page.waitForFunction(()=>document.querySelectorAll('#asTableBody tr[data-id]').length===1);
  assert.equal(await page.locator('#asStatusFilter').inputValue(),'접수');assert.match(await page.locator('#asTableBody').textContent(),/TEST-0/);
  assert.deepEqual(errors,[]);

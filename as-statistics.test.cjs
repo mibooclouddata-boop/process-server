@@ -51,7 +51,7 @@ els.asReasonHeatToggle.onclick();assert.equal(els.asReasonHeatToggle['aria-check
 els.asReasonHeatToggle.onclick();assert.equal(els.asReasonHeatToggle['aria-checked'],'false');assert(!els.asReasonHeatBody.innerHTML.includes('>100.0%</button>'));
 c.renderAsReasonHeatmap([],2027);assert.equal((els.asReasonHeatBody.innerHTML.match(/data-future="true"/g)||[]).length,96);
 c.renderAsReasonHeatmap([],2025);assert.equal((els.asReasonHeatBody.innerHTML.match(/data-future="true"/g)||[]).length,0);assert(!els.asReasonHeatBody.innerHTML.includes('NaN'));
-assert(html.indexOf('aria-labelledby="asReasonHeatTitle"')>html.indexOf('id="asStatsProductsPeriod"'));
+assert(html.indexOf('aria-labelledby="asReasonHeatTitle"')>html.indexOf('id="asStatsProductsTitle"'));
 assert(!html.slice(html.indexOf('aria-labelledby="asReasonHeatTitle"'),html.indexOf('<!-- 제품명 관리 -->')).includes('<select'));
 const productRecords=[
  {createdAt:'2026-01-02',product:' LADDER  A '},{createdAt:'2026-01-03',product:'LADDER A'},
@@ -68,18 +68,18 @@ assert.equal(manyProducts.entries.length,9);assert.equal(manyProducts.entries.re
 c.renderAsProducts(productRecords,2026,1);assert.equal(els.asStatsProductsTotal.textContent,'33.3%');assert.equal(els.asStatsProductsLegend.children.length,4);assert.equal(els.asStatsProductsPager.hidden,true);assert(!els.asStatsProductsChart.innerHTML.includes('<img'));assert(els.asStatsProductsLegend.children.some(row=>row.children[0].children.some(child=>child.textContent==='<img src=x onerror=alert(1)>')));
 const productButtons=els.asStatsProductsLegend.children.map(row=>row.children[0]);assert.equal(productButtons[0]['aria-pressed'],'true');
 productButtons[2].onclick();assert.equal(productButtons[2]['aria-pressed'],'true');assert.equal(productButtons[0]['aria-pressed'],'false');assert.equal(els.asStatsProductsTotal.textContent,'16.7%');assert(els.asStatsProductsStatus.textContent.includes('1건'));
-productButtons[2].onclick();assert.equal(els.asStatsProductsTotal.textContent,'6건');assert.equal(els.asStatsProductsLabel.textContent,'총 접수');assert.equal(els.asStatsProductsReset.disabled,true);assert.equal(els.asStatsProductsArc['stroke-dasharray'],'100 0');
-productButtons[0].onclick();els.asStatsProductsReplay.onclick();assert.equal(els.asStatsProductsTotal.textContent,'33.3%');els.asStatsProductsReset.onclick();assert.equal(els.asStatsProductsTotal.textContent,'6건');
+productButtons[2].onclick();assert.equal(els.asStatsProductsTotal.textContent,'6건');assert.equal(els.asStatsProductsLabel.textContent,'총 접수');assert.equal(els.asStatsProductsArc['stroke-dasharray'],'100 0');
+productButtons[0].onclick();assert.equal(els.asStatsProductsTotal.textContent,'33.3%');productButtons[0].onclick();assert.equal(els.asStatsProductsTotal.textContent,'6건');
 c.renderAsProducts([],2026,12);assert.equal(els.asStatsProductsEmpty.hidden,false);assert.equal(els.asStatsProductsHint.textContent,'미도래');assert.equal(els.asStatsProductsLegend.children.length,0);assert(!els.asStatsProductsChart.innerHTML.includes('NaN'));
-assert.equal(els.asStatsProductsTotal.textContent,'0건');assert.equal(els.asStatsProductsArc['stroke-dasharray'],'0 100');assert.equal(els.asStatsProductsReplay.disabled,true);
+assert.equal(els.asStatsProductsTotal.textContent,'0건');assert.equal(els.asStatsProductsArc['stroke-dasharray'],'0 100');
 const elevenProducts=Array.from({length:11},(_,i)=>({createdAt:'2026-10-01',product:'PRODUCT '+String(i+1).padStart(2,'0')}));
-c.renderAsProducts(elevenProducts,2026,10);assert.equal(els.asStatsProductsLegend.children.length,4);assert.equal(els.asStatsProductsPager.hidden,false);assert.equal(els.asStatsProductsPageInfo.textContent,'1–4 / 11종');
+c.renderAsProducts(elevenProducts,2026,10);assert.equal(els.asStatsProductsLegend.children.length,4);assert.equal(els.asStatsProductsPager.hidden,false);
 const productNames=()=>els.asStatsProductsLegend.children.map(li=>li.children[0].title);
 assert.deepEqual(productNames(),['PRODUCT 01','PRODUCT 02','PRODUCT 03','PRODUCT 04']);
-els.asStatsProductsPages.children.find(b=>b.textContent==='2').onclick();assert.equal(els.asStatsProductsPageInfo.textContent,'5–8 / 11종');assert.deepEqual(productNames(),['PRODUCT 05','PRODUCT 06','PRODUCT 07','PRODUCT 08']);assert.equal(els.asStatsProductsLabel.textContent,'PRODUCT 05');assert.equal(els.asStatsProductsTotal.textContent,'9.1%');
+els.asStatsProductsPages.children.find(b=>b.textContent==='2').onclick();assert.deepEqual(productNames(),['PRODUCT 05','PRODUCT 06','PRODUCT 07','PRODUCT 08']);assert.equal(els.asStatsProductsLabel.textContent,'PRODUCT 05');assert.equal(els.asStatsProductsTotal.textContent,'9.1%');
 els.asStatsProductsPages.children.find(b=>b.textContent==='›').onclick();assert.deepEqual(productNames(),['PRODUCT 09','PRODUCT 10','PRODUCT 11']);assert.equal(els.asStatsProductsPages.children.at(-1).disabled,true);
 els.asStatsProductsLegend.children[2].children[0].onclick();assert.equal(els.asStatsProductsLabel.textContent,'PRODUCT 11');assert.equal(els.asStatsProductsLegend.children[2].children[0]['aria-pressed'],'true');
-els.asStatsProductsReset.onclick();assert.equal(els.asStatsProductsTotal.textContent,'11건');
+els.asStatsProductsLegend.children[2].children[0].onclick();assert.equal(els.asStatsProductsTotal.textContent,'11건');
 els.asStatsProductsPages.children.find(b=>b.textContent==='1').onclick();assert.equal(els.asStatsProductsPages.children[0].disabled,true);assert.deepEqual(productNames(),['PRODUCT 01','PRODUCT 02','PRODUCT 03','PRODUCT 04']);
 c.renderAsProducts(elevenProducts,2026,9);assert.equal(els.asStatsProductsPager.hidden,true);assert.equal(els.asStatsProductsLegend.children.length,0);assert.equal(els.asStatsProductsPages.children.length,0);
 c.renderAsProducts(Array.from({length:100},(_,i)=>({createdAt:'2026-10-01',product:'ITEM '+i})),2026,10);assert.equal(els.asStatsProductsPages.children.length,7);assert.equal(els.asStatsProductsLegend.children.length,4);
@@ -96,7 +96,7 @@ assert.equal(c.asAnnualChangeText(80,100),'전년 대비 20.0% 감소');assert.e
  els.asStatsYear.value='2025';c.renderAsStatistics();assert.equal(els.asStatsYearLabel.textContent,'2025년 접수');assert.equal(els.asStatsPendingLabel.textContent,'2025년 접수 중 미완료');assert.equal(els.asStatsTotal.textContent,'1건');assert.equal(els.asStatsPending.textContent,'0건');
  els.asStatsYear.value='2026';c.renderAsStatistics();assert.equal(els.asStatsYearLabel.textContent,'2026년 접수');assert.equal(els.asStatsPendingLabel.textContent,'2026년 접수 중 미완료');assert.equal(els.asStatsTotal.textContent,'4건');assert(els.asStatsYearDelta.textContent.includes('300.0% 증가'));assert.equal(els.asStatsPending.textContent,'3건');
  c.showAsStatisticsMonth(2026,1);
- assert.equal(els.asStatsProductsTotal.textContent,'100.0%');assert.equal(els.asStatsProductsHint.textContent,'2건 기준');assert.equal(els.asStatsProductsPeriod.textContent,'2026년 1월 · 접수일 기준');
+ assert.equal(els.asStatsProductsTotal.textContent,'100.0%');assert.equal(els.asStatsProductsHint.textContent,'2건 기준');
  assert.equal(els.asAmountChart.children.length,12);assert(els.asAmountChart.children[0]['aria-label'].includes('0원'));assert.equal(els.asStatsMonthly.textContent,'2건');assert.equal(switched,null);
  assert(els.asStatsReasonsHint.textContent.includes('2건 기준'));
  assert.equal(els.asStatsChart.children[0]['aria-pressed'],'true');
@@ -135,3 +135,5 @@ assert.equal(c.asAnnualChangeText(80,100),'전년 대비 20.0% 감소');assert.e
  assert(!html.includes('id="monthly-chart-legend"'));
  console.log('PASS: 8 ranked types preserve counts and shares; trend lines skip future gaps; month/year selection, amounts and script syntax.');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+for(const id of ["asStatsProductsPeriod","asStatsProductsReset","asStatsProductsReplay","asStatsProductsPageInfo"])assert(!html.includes(`id="${id}"`));

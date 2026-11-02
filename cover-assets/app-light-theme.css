@@ -61,7 +61,7 @@
 #tabAs #asSubList .as-erp-table thead .as-column-header th{background:var(--surface-muted)!important;color:var(--text)!important;border-right-color:var(--border-strong)!important}
 
 /* Preserve the actual overview layout while applying the selected neutral skin. */
-body #asSubStats[data-overview-theme]{--ui-font:'Pretendard Variable';--numeric-font:'Pretendard Variable';--ink:#111;--muted:var(--text2);--as-edge:var(--border);--blue:#666;--blue-soft:#e9e9e9;--bar:#aaa;--as-blue:#666;--radius-panel:15px;--panel-shadow:var(--app-panel-shadow);font-family:var(--ui-font),'Malgun Gothic',sans-serif}
+body #asSubStats[data-overview-theme]{--ui-font:'Pretendard Variable';--numeric-font:'Pretendard Variable';--ink:#111;--muted:var(--text2);--as-edge:var(--border);--blue:#215ee8;--blue-soft:#edf3ff;--bar:#b4c7e8;--as-blue:#215ee8;--radius-panel:15px;--panel-shadow:var(--app-panel-shadow);font-family:var(--ui-font),'Malgun Gothic',sans-serif}
 body #asSubStats[data-overview-theme] :is(button,select,h1,h2,h3,svg){font-family:var(--ui-font),'Malgun Gothic',sans-serif}
 body #asSubStats[data-overview-theme] #asKpiRow button{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-panel);box-shadow:var(--app-panel-shadow);color:#454a4f;font-family:var(--ui-font),'Malgun Gothic',sans-serif}
 body #asSubStats[data-overview-theme] #asKpiRow button>span{font-family:var(--ui-font),'Malgun Gothic',sans-serif;color:#555b61;font-weight:400}
@@ -69,40 +69,26 @@ body #asSubStats[data-overview-theme] #asKpiRow button strong{font-family:var(--
 body #asSubStats[data-overview-theme] #asKpiRow button strong::after{font-family:var(--ui-font),'Malgun Gothic',sans-serif;color:#63686e;font-weight:400}
 body #asSubStats[data-overview-theme] #asKpiRow button:hover{background:#e8ebee}
 body #asSubStats[data-overview-theme] .as-stats-chart-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-panel);box-shadow:var(--app-panel-shadow)}
-body #asSubStats[data-overview-theme] :is(.as-stats-chart-panel h2,.as-stats-chart-panel h3,.as-reason-heatmap-heading h2){color:#41464c;font-weight:700}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-panel h2,.as-stats-chart-panel h3,.as-reason-heatmap-heading h2){color:#000;font-weight:700}
 body #asSubStats[data-overview-theme] :is(#asStatsYearPickerBtn,#asStatsYear){color:#454b52;background:var(--card);border-color:#d4d9de}
-body #asSubStats .as-readable-trend .trend-line{stroke:#777!important}
-body #asSubStats .as-readable-trend .point{fill:#fff!important;stroke:#888!important}
-body #asSubStats .as-readable-trend .point.selected{fill:#666!important;stroke:#666!important}
 body #asSubStats .as-readable-trend :is(.gridline,.baseline){stroke:#dadde0!important}
 body #asSubStats .as-readable-trend :is(.axis-tick,.missing-label,.average-unavailable){fill:#64696f!important;font-weight:400}
 body #asSubStats .as-readable-trend .data-label{fill:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
-body #asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]{background:#8585850d!important}
 body #asSubStats .as-readable-trend #asStatsChart .month-button>span{color:#60656a!important;font-weight:400}
 body #asSubStats .as-readable-trend #asStatsChart .month-button[aria-pressed=true]>span{color:#30343a!important;font-weight:700}
-body #asSubStats[data-overview-theme] :is(#comparison-count,#comparison-change-value,#asAmountSelectedValue,#asAmountAnnual,.as-amount-value,.as-reason-count,.as-reason-percent,.as-product-values strong,#asStatsProductsTotal){color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
-body #asSubStats[data-overview-theme] :is(#comparison-change,.as-amount-selection>span,.as-reason-name,.as-product-name,.as-product-values span,.as-chart-unit,.as-stats-footnote,.as-product-period,.as-product-status,.as-product-page-info,#asStatsProductsLabel,.as-reason-heatmap-legend){color:#60656b!important;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:400}
-body #asSubStats .as-amount-column-plot .as-amount-bar{background:#a5a5a5!important}
-body #asSubStats .as-amount-column-plot .as-amount-month[aria-pressed=true] .as-amount-bar{background:#727272!important}
+body #asSubStats[data-overview-theme] :is(#comparison-count,#asAmountSelectedValue,#asAmountAnnual,.as-amount-value,.as-reason-count,.as-reason-percent,.as-product-values strong,#asStatsProductsTotal){color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats[data-overview-theme] :is(#comparison-change,.as-amount-selection>span,.as-reason-name,.as-product-name,.as-product-values span,.as-chart-unit,.as-stats-footnote,.as-product-period,.as-product-status,.as-product-page-info,#asStatsProductsLabel,#asStatsReasonsHint,.as-reason-heatmap-legend){color:#60656b!important;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-weight:400}
 body #asSubStats .as-amount-column-plot :is(.amount-axis,.amount-future-label){fill:#64696f!important;font-weight:400}
 body #asSubStats .as-amount-column-plot .as-amount-month>span:last-child{color:#60656b!important;font-weight:400}
 body #asSubStats .as-amount-column-plot .as-amount-month[aria-pressed=true]>span:last-child{color:#353a40!important;font-weight:700}
-body #asSubStats .as-reason-track{background:#eceeef!important}
-body #asSubStats .as-reason-track i{background:#a2a2a2!important}
-body #asSubStats .as-product-ring :is(circle,path){stroke:#bdbdbd!important}
-body #asSubStats #asStatsProductsArc{stroke:#747474!important}
-body #asSubStats :is(.as-product-item-dot,.as-product-dot){background:#929292!important}
-body #asSubStats .as-product-legend button[aria-pressed=true]{background:#eceff1!important;border-color:#b4bac0!important;color:#454b51!important}
 body #asSubStats :is(.as-product-actions button,.as-product-pages button){color:#4e555d;border-color:#c1c8ce}
 body #asSubStats :is(.as-product-actions button,.as-product-pages button):hover{background:#e9edf0}
-body #asSubStats .as-reason-heat-cell{background:var(--heat-bg,#f8f8f8)!important;color:#111!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
+body #asSubStats .as-reason-heat-cell{background:var(--heat-bg,#f3f5f8)!important;color:var(--heat-ink,#111)!important;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
 body #asSubStats .as-reason-heat-cell[data-future=true]{color:#676d73!important;background:#f6f7f8!important;font-weight:400}
 body #asSubStats .as-reason-heatmap-table :is(th,td){color:#4e555c;font-weight:400}
 body #asSubStats .as-reason-heatmap-table :is(tfoot td,tbody td:last-child){color:#111;font-family:var(--numeric-font),'Malgun Gothic',sans-serif;font-weight:700}
-body #asSubStats .as-reason-heatmap-scale i:nth-child(1){background:#f8f8f8}body #asSubStats .as-reason-heatmap-scale i:nth-child(2){background:#eaeaea}body #asSubStats .as-reason-heatmap-scale i:nth-child(3){background:#dcdcdc}body #asSubStats .as-reason-heatmap-scale i:nth-child(4){background:#cecece}body #asSubStats .as-reason-heatmap-scale i:nth-child(5){background:#c0c0c0}body #asSubStats .as-reason-heatmap-scale i:nth-child(6){background:#b2b2b2}
 body #asSubStats :is(button,select):focus-visible{outline-color:#555!important}
 body #asSubStats .as-readable-trend .as-trend-narrow #asStatsChart .month-button[aria-pressed=true]{border-color:#888}
-body #asSubStats .as-amount-column-plot .amount-selection{fill:#f2f2f2}
 body #asSubStats .as-amount-column-plot .amount-grid{stroke:#e5e5e5}
 body #asSubStats .as-reason-heatmap-controls button{background:var(--card);border-color:var(--border);color:var(--text2)}
 body #asSubStats .as-reason-heatmap-controls button::before{box-shadow:inset 0 0 0 1px var(--border-stronger),0 1px 3px #172b4914}
@@ -163,7 +149,36 @@ body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
 
 @media(prefers-reduced-motion:reduce){#asSubStats *,#asSubStats *::before,#asSubStats *::after{animation:none!important;transition:none!important}}
 
+/* The complete AS list is one white workspace card. */
+body #tabAs #asSubList{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
+body #tabAs #asSubList .as-toolbar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin-bottom:20px!important}
+body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!important;border-left:1px solid #e7ebef!important;border-right:1px solid #e7ebef!important;border-top:1px solid #e7ebef!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
+@media(max-width:768px){body #tabAs #asSubList{padding:14px}}
+
+/* Clean table with horizontal rules and top/side outer boundaries. */
+body #tabAs #asSubList{--ledger-row:48px!important;--ledger-font:15px}
+body #tabAs #asSubList .as-table-card .as-erp-table :is(th,td):nth-child(n){border-left:0!important;border-right:0!important}
+body #tabAs #asSubList .as-table-card .as-erp-table thead .as-column-header th{height:48px!important;padding:10px 12px!important;font-size:15px!important;font-weight:600!important;line-height:1.5!important;color:#111!important;background:#f3f5f7!important;border-top:0!important;border-bottom:1px solid #dce2e8!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr td{height:48px!important;padding:10px 12px!important;font-size:15px!important;line-height:1.5!important;font-weight:400!important;color:#222!important;font-variant-numeric:tabular-nums;background:#fff!important;border-bottom:1px solid #e9edf1!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr.as-ledger-filler:nth-child(n) td{background:#fff!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr[data-id]:hover td{background:#eaf0f5!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr.selected td{background:#e0e8f0!important}
+body #tabAs #asSubList .as-table-card .as-erp-table tbody tr.selected td:first-child{box-shadow:inset 3px 0 #495a6e!important}
+
+body #asSubStats[data-overview-theme] :is(#asStatsYear,#asStatsYearPickerBtn,#asStatsYearPickerLabel,#asStatsYearPickerPanel .toss-dd-item){color:#000}
+
+body #tabAs #asSubList .as-table-card .as-erp-table .as-deadline-cell .as-job-due,
+body #tabAs #asSubList .as-table-card .as-erp-table .as-deadline-cell .as-job-due b{color:inherit}
+
+/* Align chart heading metadata across the overview cards. */
+body #asSubStats[data-overview-theme] .as-stats-chart-panel:has(> :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading)){padding-top:24px}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading){align-items:center;min-height:32px}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading)>:is(h2,h3){margin:0;line-height:32px}
+body #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){margin:0;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:14px;line-height:21px;font-weight:500;letter-spacing:normal;color:#60656b!important;white-space:nowrap}
+
+body #asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{font-size:14px;line-height:21px}
+
 /* Keep AS overview and list aligned within the same content bounds. */
-body #dashboard .main:has(#tabAs){max-width:none!important;padding:28px 32px!important;margin:0 6px 6px 0}
+body #dashboard .main:has(#tabAs){max-width:1600px!important;padding:28px 32px!important;margin:0 6px 6px 0}
 body #tabAs :is(#asSubStats,#asSubList){width:100%;max-width:1400px;margin-inline:auto;box-sizing:border-box}
 @media(max-width:768px){body #dashboard .main:has(#tabAs){padding:16px!important;margin:0}}
