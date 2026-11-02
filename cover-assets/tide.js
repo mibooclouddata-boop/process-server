@@ -8,7 +8,7 @@
  let w=600,h=600,scale=180,dpr=1,time=2.8,visible=true,frame=0,last=0,frames=0,renderer;
  function webgl(){
   let gl;
-  try{gl=canvas.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false,powerPreference:'low-power'});}catch{return null;}
+  try{gl=canvas.getContext('webgl',{alpha:true,antialias:false,depth:false,stencil:false,preserveDrawingBuffer:false,powerPreference:'low-power'});}catch{return null;}
   if(!gl)return null;
   const vertex=`attribute vec4 aParticle;uniform vec2 uSize;uniform float uScale,uDpr,uTime,uCenter;varying vec4 vColor;
   void main(){
@@ -32,18 +32,18 @@
    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,particles,gl.STATIC_DRAW);
    const attr=gl.getAttribLocation(program,'aParticle');gl.enableVertexAttribArray(attr);gl.vertexAttribPointer(attr,4,gl.FLOAT,false,16,0);
    const uniforms=Object.fromEntries(['uSize','uScale','uDpr','uTime','uCenter'].map(name=>[name,gl.getUniformLocation(program,name)]));
-   gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.clearColor(247/255,248/255,246/255,1);
+   gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);gl.clearColor(0,0,0,0);
    return {name:'webgl',draw(){gl.viewport(0,0,canvas.width,canvas.height);gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform2f(uniforms.uSize,w,h);gl.uniform1f(uniforms.uScale,scale);gl.uniform1f(uniforms.uDpr,dpr);gl.uniform1f(uniforms.uTime,time);gl.uniform1f(uniforms.uCenter,w<450?.5:.46);gl.drawArrays(gl.POINTS,0,COUNT);},dispose(){gl.deleteBuffer(buffer);for(const shader of shaders)gl.deleteShader(shader);gl.deleteProgram(program);}};
   }catch{gl.deleteBuffer(buffer);for(const shader of shaders)gl.deleteShader(shader);gl.deleteProgram(program);return null;}
  }
  function fallback(){
   const replacement=canvas.cloneNode(false);canvas.replaceWith(replacement);canvas=replacement;
-  let ctx;try{ctx=canvas.getContext('2d',{alpha:false});}catch{return null;}if(!ctx)return null;
+  let ctx;try{ctx=canvas.getContext('2d',{alpha:true});}catch{return null;}if(!ctx)return null;
   const count=3600,xs=new Float32Array(count),ys=new Float32Array(count),next=new Int32Array(count),heads=new Int32Array(24);
   const colors=Array.from({length:12},(_,i)=>{const d=(i+.5)/12;return `rgba(${Math.round(9+(1-d)*61)},${Math.round(72+(1-d)*55)},${Math.round(127+(1-d)*46)},${.21+d*.57})`});
   const cx=Math.cos(.88),sx=Math.sin(.88),cy=Math.cos(.15),sy=Math.sin(.15),cz=Math.cos(-.4),sz=Math.sin(-.4);
   return {name:'canvas-fallback',draw(){
-   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#f7f8f6';ctx.fillRect(0,0,w,h);heads.fill(-1);
+   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);heads.fill(-1);
    for(let i=0;i<count;i++){
     const k=i*4,u=particles[k]+(time-2.8)*.035,v=particles[k+1],r=1+.34*v;
     const x=r*Math.cos(u)*1.22,y=r*Math.sin(u),z=.38*Math.sin(u*2+time*.16)+v*.4*Math.sin(u*.65+time*.045)+particles[k+2]*.035;
