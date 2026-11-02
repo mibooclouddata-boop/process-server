@@ -169,3 +169,11 @@ body #asSubStats[data-overview-theme] :is(#asStatsYear,#asStatsYearPickerBtn,#as
 
 body #tabAs #asSubList .as-table-card .as-erp-table .as-deadline-cell .as-job-due,
 body #tabAs #asSubList .as-table-card .as-erp-table .as-deadline-cell .as-job-due b{color:inherit}
+
+/* Align chart heading metadata across the overview cards. */
+body #asSubStats[data-overview-theme] .as-stats-chart-panel:has(> :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading)){padding-top:24px}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading){align-items:center;min-height:32px}
+body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading)>:is(h2,h3){margin:0;line-height:32px}
+body #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){margin:0;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:14px;line-height:21px;font-weight:500;letter-spacing:normal;color:#60656b!important;white-space:nowrap}
+
+body #asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{font-size:14px;line-height:21px}
