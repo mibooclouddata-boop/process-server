@@ -16,10 +16,10 @@ body #appNavigation .tab::after{display:none}
 @media(min-width:769px){
  body #appNavigation{width:72px;padding:16px 8px}
  body #appNavigation>.tabs{position:sticky;top:88px;width:100%;padding:0;gap:8px;overflow:visible}
- body #appNavigation :is(.tab,.tab-sub){width:56px;min-height:60px;flex-direction:column;justify-content:center;gap:6px;padding:9px 0;text-align:center}
+ body #appNavigation :is(.tab,.tab-sub){width:100%;min-height:60px;flex-direction:column;justify-content:center;gap:6px;padding:9px 0;text-align:center}
  body #appNavigation .rail-full{display:none}
  body #appNavigation .rail-short{display:block;font-size:12px;font-weight:650;line-height:1.2;color:inherit;white-space:nowrap}
- body #appRailToggle{display:flex;align-items:center;justify-content:center;gap:12px;width:56px;min-height:44px;margin:0 0 12px;padding:0;border:0;border-radius:8px;background:transparent;color:#000;cursor:pointer;font-family:inherit}
+ body #appRailToggle{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:44px;margin:0 0 12px;padding:0;border:0;border-radius:8px;background:transparent;color:#000;cursor:pointer;font-family:inherit}
  body #appRailToggle:hover{background:#e4e8ec;color:#000}
  body #appRailToggle:focus-visible{outline:2px solid #555;outline-offset:2px}
  body #appNavigation[data-expanded=true]{width:196px;padding:16px 12px}

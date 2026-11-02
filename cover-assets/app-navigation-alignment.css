@@ -13,7 +13,7 @@
  .app-topbar .app-location{overflow:hidden;text-overflow:ellipsis}
  body #appNavigation{width:80px;padding:var(--rail-content-top,28px) 12px 16px}
  body #appNavigation>.tabs{position:static;width:100%;padding:0;gap:8px;overflow:visible}
- body #appNavigation :is(.tab,.tab-sub){width:56px;min-height:60px}
+ body #appNavigation :is(.tab,.tab-sub){width:100%;min-height:60px}
  body #appNavigation #tabUsersBtn{margin-top:16px}
  body #appNavigation #appRailToggle{display:none}
  body #appNavigation[data-expanded=true]{width:208px;padding:var(--rail-content-top,28px) 12px 16px}

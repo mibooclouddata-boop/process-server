@@ -177,3 +177,7 @@ body #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-hea
 body #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){margin:0;font-family:var(--ui-font),'Malgun Gothic',sans-serif;font-size:14px;line-height:21px;font-weight:500;letter-spacing:normal;color:#60656b!important;white-space:nowrap}
 
 body #asSubStats[data-overview-theme] .as-reason-tools #asStatsReasonsHint{font-size:14px;line-height:21px}
+
+/* Use the same outer inset for every workspace, including the AS list. */
+body #dashboard .main{padding:28px!important;scrollbar-gutter:auto!important}
+@media(max-width:768px){body #dashboard .main{padding:16px!important}}
