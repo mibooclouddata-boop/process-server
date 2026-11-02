@@ -14,11 +14,12 @@ test('AS list fills desktop height and preserves scrolling in smaller windows',a
   await page.setViewportSize({width,height});
   const layout=await page.evaluate(()=>{
    const card=document.querySelector('#asSubList'),scroll=card.querySelector('.as-ledger-scroll');
-   return {bottom:card.getBoundingClientRect().bottom,overflow:document.documentElement.scrollWidth>innerWidth,scrollHeight:scroll.clientHeight,scrollStyle:getComputedStyle(scroll).overflowY};
+   const main=card.closest('.main').getBoundingClientRect(),rect=card.getBoundingClientRect();
+   return {bottom:rect.bottom,insets:[rect.top-main.top,main.right-rect.right,main.bottom-rect.bottom,rect.left-main.left],overflow:document.documentElement.scrollWidth>innerWidth,scrollHeight:scroll.clientHeight,scrollStyle:getComputedStyle(scroll).overflowY};
   });
   console.log(width,height,layout);
   assert.equal(layout.overflow,false);assert(layout.scrollHeight>100);assert.equal(layout.scrollStyle,'auto');
-  if(width>768&&height>650){assert(layout.bottom<=height);assert(height-layout.bottom<=24,'list should reach the bottom of the desktop workspace');}
+  if(width>768&&height>650){assert(layout.bottom<=height);assert.deepEqual(layout.insets,[28,28,28,28],'workspace card must have equal outer spacing on all four sides');}
  }
  await page.setViewportSize({width:1440,height:1000});
  await page.locator('#asSubmenu [data-sub=stats]').click();
