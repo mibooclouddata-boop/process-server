@@ -222,7 +222,7 @@ test('bulk deletion reports server failures instead of success, refreshes partia
 });
 
 
-test('intake filler rows fill the viewport without becoming selectable records',()=>{
+test('intake filler rows fill a page without becoming selectable records',()=>{
  const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  const source=html.slice(html.indexOf('function asLedgerFillRows('),html.indexOf('function asLedgerLayoutColumns('));
  function element(tag){
@@ -239,23 +239,23 @@ test('intake filler rows fill the viewport without becoming selectable records',
   return e;
  }
  const body=element('tbody'),table={tBodies:[body],tHead:{getBoundingClientRect:()=>({height:44})}},viewport={clientHeight:444};
- const c={document:{createElement:element,createDocumentFragment:()=>element('fragment')}};
+ const c={_asPageSize:20,document:{createElement:element,createDocumentFragment:()=>element('fragment')}};
  vm.createContext(c);vm.runInContext(source,c);
  const fill=()=>c.asLedgerFillRows(table,viewport,40,17);
  const record=element('tr');record.attrs['data-id']='real';body.appendChild(record);
- fill();assert.equal(body.rows.length,10);assert.equal(body.rows[0],record);
+ fill();assert.equal(body.rows.length,20);assert.equal(body.rows[0],record);
  for(const row of body.rows.slice(1)){
   assert.equal(row.attrs['aria-hidden'],'true');assert(!row.hasAttribute('data-id'));assert(!row.hasAttribute('tabindex'));
   assert.equal(row.children.length,17);assert(row.children.every(cell=>cell.tag==='td'&&!cell.children.length&&!cell.hasAttribute('tabindex')));
  }
- fill();assert.equal(body.rows.length,10,'resize must not accumulate filler rows');
- viewport.clientHeight=244;fill();assert.equal(body.rows.length,5);
+ fill();assert.equal(body.rows.length,20,'resize must not accumulate filler rows');
+ viewport.clientHeight=244;fill();assert.equal(body.rows.length,20);
  viewport.clientHeight=846;record.height=42;c.asLedgerFillRows(table,viewport,42,17);
- assert.equal(body.rows.length,20,'partial last row still fills the viewport');
+ assert.equal(body.rows.length,20,'viewport changes preserve the page row count');
  body.children=[];for(let i=0;i<20;i++){const row=element('tr');row.attrs['data-id']=String(i);body.appendChild(row);}
  viewport.clientHeight=444;fill();assert.equal(body.rows.length,20);assert.equal(body.querySelectorAll().length,0);
  body.children=[];const empty=element('tr');empty.className='as-ledger-no-results';empty.height=120;body.appendChild(empty);
- fill();assert.equal(body.rows[0],empty);assert.equal(body.querySelectorAll().length,7);
+ fill();assert.equal(body.rows[0],empty);assert.equal(body.querySelectorAll().length,19);
  body.children=[];body.appendChild(element('tr'));fill();assert.equal(body.rows.length,1,'loading/error rows must not receive fillers');
  assert(html.includes("tbody tr.as-ledger-filler td:nth-child("),'filler cells share frozen column positioning');
  assert(html.includes("row.classList.contains('as-ledger-filler'))){"),'filler rows do not suppress record count updates');

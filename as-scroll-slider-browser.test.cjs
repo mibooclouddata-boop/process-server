@@ -32,6 +32,7 @@ test('mini slider tracks horizontal scrolling and keyboard input without changin
  assert.equal(await page.locator('.as-erp-table').evaluate(e=>e.getBoundingClientRect().width),width);
  await page.setViewportSize({width:375,height:844});await expect(slider).toBeVisible();
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.setViewportSize({width:1440,height:1000});
  await page.locator('#asSubmenu [data-sub=stats]').click();await expect(slider).toBeHidden();
  await page.locator('#asSubmenu [data-sub=list]').click();await expect(slider).toBeVisible();
 });

@@ -1,0 +1,26 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {chromium}=require('@playwright/test');
+const {startFixture}=require('./test-support/as-fixture.cjs');
+test('AS list fills desktop height and preserves scrolling in smaller windows',async t=>{
+ const f=await startFixture();let browser;
+ t.after(async()=>{await browser?.close();await f.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage();
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
+ await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.locator('#asSubmenu [data-sub=list]').click();
+ for(const [width,height] of [[1440,1000],[1920,1080],[1024,768],[1440,600],[390,844]]){
+  await page.setViewportSize({width,height});
+  const layout=await page.evaluate(()=>{
+   const card=document.querySelector('#asSubList'),scroll=card.querySelector('.as-ledger-scroll');
+   return {bottom:card.getBoundingClientRect().bottom,overflow:document.documentElement.scrollWidth>innerWidth,scrollHeight:scroll.clientHeight,scrollStyle:getComputedStyle(scroll).overflowY};
+  });
+  console.log(width,height,layout);
+  assert.equal(layout.overflow,false);assert(layout.scrollHeight>100);assert.equal(layout.scrollStyle,'auto');
+  if(width>768&&height>650){assert(layout.bottom<=height);assert(height-layout.bottom<=24,'list should reach the bottom of the desktop workspace');}
+ }
+ await page.setViewportSize({width:1440,height:1000});
+ await page.locator('#asSubmenu [data-sub=stats]').click();
+ assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('as-reception-active')),false);
+});
