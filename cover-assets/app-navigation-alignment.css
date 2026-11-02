@@ -1,0 +1,26 @@
+/* Header-aligned compact rail: the rail and first content column share anchors. */
+@media(min-width:769px){
+ #dashboard>.app-topbar{display:grid;grid-template-columns:80px minmax(0,1fr) auto;gap:0;padding:0 24px 0 0}
+ .app-topbar .rail-header-slot{display:flex;align-items:center;justify-content:center;height:100%;min-width:0}
+ .app-topbar #appRailToggle{display:flex;align-items:center;justify-content:center;width:56px;min-height:44px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--header-muted);cursor:pointer}
+ .app-topbar #appRailToggle:hover{background:#25405e;color:#fff}
+ .app-topbar #appRailToggle:focus-visible{outline:2px solid #8bc4ff;outline-offset:2px}
+ #appRailToggle .rail-collapse-icon{display:none!important}
+ #appRailToggle[aria-expanded=true] .rail-expand-icon{display:none!important}
+ #appRailToggle[aria-expanded=true] .rail-collapse-icon{display:block!important}
+ .app-topbar .rail-brand-region{display:flex;align-items:center;gap:12px;min-width:0;padding-left:var(--rail-content-inset,0px)}
+ .app-topbar .topbar-title{flex:0 0 112px;width:112px;min-width:0}
+ .app-topbar .app-location{overflow:hidden;text-overflow:ellipsis}
+ body #appNavigation{width:80px;padding:var(--rail-content-top,28px) 12px 16px}
+ body #appNavigation>.tabs{position:static;width:100%;padding:0;gap:8px;overflow:visible}
+ body #appNavigation :is(.tab,.tab-sub){width:56px;min-height:60px}
+ body #appNavigation #tabUsersBtn{margin-top:16px}
+ body #appNavigation #appRailToggle{display:none}
+ body #appNavigation[data-expanded=true]{width:208px;padding:var(--rail-content-top,28px) 12px 16px}
+ body #appNavigation[data-expanded=true] :is(.tab,.tab-sub){width:100%;min-height:48px}
+ body #appNavigation[data-expanded=true] #appRailToggle{display:none}
+ body #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:#fff;color:#202123}
+}
+@media(max-width:768px){
+ .app-topbar .rail-header-slot,.app-topbar .rail-brand-region{display:contents}
+}
