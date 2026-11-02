@@ -1075,9 +1075,11 @@ tbody tr:hover td{background:var(--surface-muted)}
 <style id="as-list-drawer-style">
 #asSubList .as-toolbar{padding:16px;border:1px solid var(--border);box-shadow:none;background:var(--card)}#asSubList .as-toolbar-row{gap:10px;flex-wrap:wrap}#asSubList .as-toolbar-divider{display:none}#asSubList .as-list-actions{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--card)}#asSubList .as-list-actions .as-toolbar-label{display:none}#asSubList .as-erp-table{min-width:1600px}#asSubList .as-erp-table tbody td{height:48px;font-size:13px!important}#asSubList .as-erp-table tbody td:nth-child(11),#asSubList .as-erp-table tbody td:nth-child(12),#asSubList .as-erp-table tbody td:nth-child(13){text-align:left}#asSubList .as-new-label{width:auto!important;padding:0 16px!important;gap:8px}#asSubList .as-query-btn{border-color:var(--brand);color:var(--brand);background:white}#asModal{justify-content:center;align-items:center;padding:24px}#asModal>.modal-box{width:min(640px,100%);max-width:640px;height:auto;max-height:calc(100dvh - 48px);border-radius:16px;margin:auto;display:flex;flex-direction:column}#asModal .modal-body{flex:1;overflow:auto;padding:22px 24px}#asModal .modal-header,#asModal .modal-footer{flex-shrink:0;padding:18px 24px}#asModal input:not([type=checkbox]):not([type=file]),#asModal select{min-height:42px}#asModal textarea{min-height:88px}#asModal .modal-footer{border-top:1px solid var(--border);background:var(--surface-subtle)}@media(max-width:600px){#asSubList .as-list-actions{flex-wrap:wrap}.as-detail-head,.as-detail-body,.as-detail-footer{padding:18px}.as-detail-footer{flex-wrap:wrap}#asModal input,#asModal select,#asModal textarea{font-size:16px}}
 
-.main:has(#tabAs:not([style*="display:none"]):not([style*="display: none"])){max-width:none;min-width:0;padding-inline:32px;scrollbar-gutter:stable both-edges}
+.main:has(:is(#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){display:flex;flex-direction:column}
+#tabprocess,#tabdispatch{flex:1}
+.main:has(:is(#tabAs,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){max-width:none;min-width:0;padding-inline:32px;scrollbar-gutter:stable both-edges}
 #tabAs #asSubStats{max-width:none;width:100%;margin-inline:0}
-@media(max-width:600px){.main:has(#tabAs:not([style*="display:none"]):not([style*="display: none"])){padding-inline:16px}}
+@media(max-width:600px){.main:has(:is(#tabAs,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){padding-inline:16px}}
 #tabAs{width:100%;min-width:0}#asSubList{width:100%;margin-inline:auto}
 #tabAs #asSubList .as-filter-buttons .as-tb-btn-new{width:40px!important;min-width:40px;flex:0 0 40px;padding:0!important;margin:0}
 #tabAs #asSubList .as-toolbar{container:as-list-toolbar / inline-size;padding:14px;margin:0 0 16px;border-radius:8px}
@@ -1754,8 +1756,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <nav id="asSubmenu" class="app-as-tabs" aria-label="AS 하위 메뉴"><button type="button" class="tab-sub" data-sub="stats" onclick="switchTab('as',this,'stats')">현황</button><button type="button" class="tab-sub" data-sub="list" onclick="switchTab('as',this,'list')">목록</button></nav>
 
     <!-- 사용자 관리 탭 -->
-<section id="tabprocess" style="display:none" aria-labelledby="processPageTitle"><h1 id="processPageTitle" class="page-title">공정</h1></section>
-<section id="tabdispatch" style="display:none" aria-labelledby="dispatchPageTitle"><h1 id="dispatchPageTitle" class="page-title">배차</h1></section>
+<section id="tabprocess" style="display:none" aria-label="공정"></section>
+<section id="tabdispatch" style="display:none" aria-label="배차"></section>
     <div id="tabUsers" style="display:none">
       <div class="toss-user-card">
         <div class="user-toolbar">
