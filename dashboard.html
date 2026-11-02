@@ -3291,9 +3291,7 @@ function _renderAsPagination(total, totalPages) {
   if (totalPages <= 1 && total === 0) { pg.style.display = 'none'; return; }
   pg.style.display = 'flex';
 
-  const start = (_asPage - 1) * _asPageSize + 1;
-  const end = Math.min(_asPage * _asPageSize, total);
-  info.textContent = `${start}–${end} / 전체 ${total}건 · 페이지당 ${_asPageSize}건`;
+  info.textContent = `${_asPage} / ${totalPages} 페이지`;
 
   // page buttons: prev, page numbers, next
   let html = `<button class="as-page-btn" onclick="asGoPage(${_asPage-1})" ${_asPage===1?'disabled':''}>&lsaquo;</button>`;
