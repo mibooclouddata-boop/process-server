@@ -5,9 +5,13 @@
 .as-overview-menu button:hover,.as-overview-menu button[aria-checked=true]{background:#eef1f4;color:#202123}
 .as-overview-menu button:focus-visible{outline:2px solid #557caf;outline-offset:-2px}
 body #dashboard #appNavigation .as-overview-caret{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;flex:none}
-/* Keep the year control in the DOM for existing statistics calculations. */
+/* Move the year control into the visible chart heading on either overview page. */
 body #asSubStats[data-overview-theme] .as-overview-basis{display:none!important}
 body #asSubStats[data-overview-theme] .as-product-panel{display:none!important}
+body #asSubStats[data-overview-theme] :is(.as-readable-trend .as-stats-chart-heading,.as-reason-heatmap-heading){flex-wrap:wrap}
+body #asSubStats[data-overview-theme] .as-period-controls{position:relative;z-index:25;flex:none;gap:0}
+body #asSubStats[data-overview-theme] #asStatsYearPickerBtn{min-width:100px;height:28px;font-size:16px;line-height:24px;padding:0 4px;gap:6px}
+body #asSubStats[data-overview-theme] #asStatsYearPickerPanel{left:auto;right:0}
 body #asSubStats[data-overview-theme] .as-readable-trend .comparison-main>div{flex-direction:row;align-items:baseline;gap:16px;flex-wrap:wrap}
 body #asSubStats[data-overview-theme] #comparison-change{align-self:baseline}
 body #asSubStats[data-overview-page="1"] .as-reason-heatmap-panel{display:none!important}
@@ -29,7 +33,7 @@ body #asSubStats .as-recent-status{font-size:13px;font-weight:500;line-height:20
 body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:grid;place-items:center;color:#6b7b88;font-size:13px;text-align:center}
 @media(max-width:768px){body #asSubStats .as-recent-list{min-height:240px}body #asSubStats .as-recent-item{min-height:44px}}
 @media(min-width:1101px) and (min-height:760px){
- body.as-balanced-active #dashboard .main{padding:10px!important}
+ body:is(.as-balanced-active,.as-reception-active) #dashboard .main{padding:10px!important}
  body.as-balanced-active #asSubStats[data-overview-theme]{height:calc(100dvh - 108px);min-height:0}
  body.as-balanced-active #asStatsContent:not([hidden]){display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:100px repeat(2,minmax(0,1fr));gap:12px;height:100%;min-height:0}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-overview-charts,body.as-balanced-active #asSubStats[data-overview-theme] .as-trend-stack{display:contents!important}
