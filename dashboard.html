@@ -1696,6 +1696,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/cover-assets/app-header-placement.js?v=2" defer></script>
 <link rel="stylesheet" href="/cover-assets/app-top-navigation.css?v=2">
 <script src="/cover-assets/app-top-navigation.js?v=1" defer></script>
+<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=5">
+<script src="/cover-assets/as-overview-balanced.js?v=6" defer></script>
 <link rel="stylesheet" href="/cover-assets/as-scroll-slider.css?v=3">
 <script src="/cover-assets/as-scroll-slider.js?v=3" defer></script>
 </head>
@@ -1930,7 +1932,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
     <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div>
     <section class="as-daily-section as-stats-chart-panel" aria-labelledby="asAmountTitle">
       <div class="as-stats-chart-heading"><h3 id="asAmountTitle">월별 금액 집계</h3><span class="as-chart-unit">단위: 만 원</span></div>
-      <div class="as-amount-selection" role="status" aria-live="polite" aria-atomic="true"><strong id="asAmountSelectedValue">—</strong><span id="asAmountSelectedPeriod">선택 월 접수 금액</span></div>
+      <div class="as-amount-selection" role="status" aria-live="polite" aria-atomic="true"><strong id="asAmountSelectedValue">—</strong></div>
       <p class="as-chart-sr-only" id="asAmountBasis">접수일 기준 · 금액 미입력 건 제외</p>
       <div class="as-daily-scroll" tabindex="0" role="region" aria-label="월별 금액 집계, 좌우로 스크롤"><div id="asAmountChart" class="as-amount-chart" role="group" aria-label="월별 접수 금액"></div></div>
       <div class="as-amount-annual-footer" role="status" aria-live="polite" aria-atomic="true"><span>연간 누계</span><strong id="asAmountAnnual">0원</strong></div>
@@ -2865,6 +2867,7 @@ function renderAsReasonHeatmap(records,year) {
 }
 function renderAsStatistics() {
   renderAsOverviewKpis(_asStatsRecords);
+  window.AsOverviewBalanced?.refreshRecent(_asStatsRecords);
   const year = Number(document.getElementById('asStatsYear').value);
   const month = _asStatsSelectedMonth;
   if (!year || month<1 || month>12) return;
@@ -4052,7 +4055,8 @@ function createAsColumnAmounts(chart){
   const ticks=Array.from({length:5},(_,i)=>i*step),L=Math.max(45,scaled(max).length*7+12),R=8;
   const labels=sum.amounts.map((amount,i)=>future(i)?'':sum.amountEntries[i]?scaled(Number(amount)/10000):'미입력');
   plot.style.minWidth=(L+R+12*Math.max(44,...labels.map(label=>label.length*7+8)))+'px';
-  const W=plot.clientWidth,H=plot.clientHeight,T=34,B=H-40,dx=(W-L-R)/12,y=value=>B-value/max*(B-T);
+  const compact=document.body.classList.contains('as-balanced-active');
+  const W=plot.clientWidth,H=plot.clientHeight,T=compact?24:34,B=H-(compact?28:40),dx=(W-L-R)/12,y=value=>B-value/max*(B-T);
   if(!W||H<80)return;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.replaceChildren();
   // Group consecutive future months so the label is always visible, even before selection.
@@ -4072,7 +4076,6 @@ function createAsColumnAmounts(chart){
    button.title=year+'년 '+(index+1)+'월 '+(missing?'미도래':hasAmount?format(amount)+'원':'금액 입력 자료 없음');button.setAttribute('aria-label',button.title);
   });
   const current=sum.amounts[month-1],hasCurrent=sum.amountEntries[month-1]>0;
-  document.getElementById('asAmountSelectedPeriod').textContent=month+'월 접수 금액';
   AsAmountMotion.render(document.getElementById('asAmountSelectedValue'),future(month-1)?'미도래':hasCurrent?format(current):'금액 미입력',format(sum.amounts.reduce((max,value)=>value>max?value:max,0n)));
  }
  chart.addEventListener('keydown',event=>{const button=event.target.closest('.as-amount-month');if(!button)return;const index=[...chart.children].indexOf(button);let next;if(event.key==='ArrowRight')next=(index+1)%12;if(event.key==='ArrowLeft')next=(index+11)%12;if(event.key==='Home')next=0;if(event.key==='End')next=11;if(next!==undefined){event.preventDefault();chart.children[next]?.focus({preventScroll:true});}});
@@ -4091,20 +4094,26 @@ function createAsReadableTrend(chart){
  const description=i=>base.year+'년 '+(i+1)+'월 · '+(state.values[i]===null?(i>=base.month?'미도래':'자료 없음'):format(state.values[i])+'건');
   function append(svg,tag,attrs,text){const node=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(([key,value])=>node.setAttribute(key,String(value)));if(text!==undefined)node.textContent=text;svg.append(node);return node;}
   function boxOverlap(a,b,pad=4){return a.x<b.x+b.w+pad&&a.x+a.w+pad>b.x&&a.y<b.y+b.h+pad&&a.y+a.h+pad>b.y;}
-  function niceStep(max){const rough=Math.max(1,max/4),magnitude=10**Math.floor(Math.log10(rough));return [1,2,5,10].map(x=>x*magnitude).find(x=>x>=rough)||magnitude*10;}
+  function niceStep(max,intervals=4){const rough=Math.max(1,max/intervals),magnitude=10**Math.floor(Math.log10(rough));return [1,2,5,10].map(x=>x*magnitude).find(x=>x>=rough)||magnitude*10;}
 
   function draw(card){
     const {values}=dataset(),plot=card.querySelector('.plot'),svg=plot.querySelector('svg');
-    const mobile=plot.clientWidth<520;plot.classList.toggle('as-trend-narrow',mobile);
+    const mobile=plot.clientWidth<520&&!document.body.classList.contains('as-balanced-active');plot.classList.toggle('as-trend-narrow',mobile);
     const W=plot.clientWidth,H=plot.clientHeight-(mobile?96:0);
     if(!W||H<80)return;
     svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.style.height=H+'px';svg.replaceChildren();
-    const L=values.some(v=>v>=100)?34:25,R=12,T=42,B=mobile?27:45;
-    const bottom=H-B,available=bottom-T,peak=Math.max(0,...values.filter(v=>v!==null)),step=niceStep(peak);
-    // Physical label space is reserved above the actual peak, not an arbitrary tall axis.
-    const scaleMax=peak||1,dx=(W-L-R)/12;
+    const compact=document.body.classList.contains('as-balanced-active');
+    const R=12,T=compact?44:42,B=mobile?27:compact?36:45;
+    const bottom=H-B,available=bottom-T,peak=Math.max(0,...values.filter(v=>v!==null));
+    const step=niceStep(peak,Math.max(1,Math.min(4,Math.floor(available/28))));
+    const scaleMax=peak?Math.ceil(peak/step)*step:1;
+    const ticks=peak?Array.from({length:Math.round(scaleMax/step)+1},(_,i)=>i*step):[0,1];
+    const axisMeasure=append(svg,'text',{class:'axis-tick',visibility:'hidden'},'');
+    let axisWidth=0;
+    ticks.forEach(n=>{axisMeasure.textContent=format(n);axisWidth=Math.max(axisWidth,axisMeasure.getComputedTextLength());});
+    const L=Math.max(25,Math.ceil(axisWidth)+12);axisMeasure.remove();
+    const dx=(W-L-R)/12;
     const x=i=>L+dx*(i+.5),y=n=>bottom-n/scaleMax*available;
-    const ticks=peak?[...Array(Math.floor(peak/step)+1)].map((_,i)=>i*step):[0,1];
     ticks.forEach(n=>{const yy=y(n);append(svg,'line',{x1:L,y1:yy,x2:W-R,y2:yy,class:'gridline'+(n===0?' baseline':'')});append(svg,'text',{x:L-7,y:yy+4,'text-anchor':'end',class:'axis-tick'},format(n));});
     const points=values.map((n,i)=>n===null?null:{x:x(i),y:y(n),value:n,index:i});
     const reserved=[];
@@ -4121,7 +4130,9 @@ function createAsReadableTrend(chart){
     for(const i of order){
       const p=points[i];if(!p)continue;
       if(mobile&&i!==selected&&i%3!==0)continue;
-      const text=format(p.value),w=text.length*(mobile?8:8.4)+10,h=20;
+      const text=format(p.value),labelClass='data-label'+(i===selected?' selected':'');
+      const labelMeasure=append(svg,'text',{class:labelClass,visibility:'hidden'},text),measured=labelMeasure.getBBox();labelMeasure.remove();
+      const w=Math.ceil(measured.width)+10,h=Math.max(20,Math.ceil(measured.height)+6),baseline=3-measured.y;
       let chosen=null;
       for(const offset of [17,33,49,65]){
         const b={x:p.x-w/2,y:p.y-offset-h+5,w,h};
@@ -4137,7 +4148,7 @@ function createAsReadableTrend(chart){
       if(!chosen)continue;
       reserved.push(chosen);labelBounds.push({...chosen,index:i});
       append(svg,'rect',{x:chosen.x,y:chosen.y,width:chosen.w,height:chosen.h,rx:3,fill:'#fff'});
-      append(svg,'text',{x:p.x,y:chosen.y+15,'text-anchor':'middle',class:'data-label'+(i===selected?' selected':''),'data-month':i+1},text);
+      append(svg,'text',{x:p.x,y:chosen.y+baseline,'text-anchor':'middle',class:labelClass,'data-month':i+1},text);
     }
     if(mobile){values.forEach((n,i)=>{if(i===selected||([0,2,4,6,8,11].includes(i)&&Math.abs(i-selected)>=2))append(svg,'text',{x:x(i),y:H-7,'text-anchor':'middle',class:'axis-tick month-tick',style:i===selected?'font-weight:750;fill:#124bbb':''},(i+1)+'월');});}
     const buttons=[...plot.querySelectorAll('.month-button')];
