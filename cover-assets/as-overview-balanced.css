@@ -44,6 +44,7 @@ body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:
  body.as-balanced-active #asSubStats[data-overview-theme] .as-stats-chart-panel{grid-area:auto;min-height:0;margin:0;padding:16px 18px;display:flex;flex-direction:column;gap:0;min-width:0}
  body.as-balanced-active #asSubStats[data-overview-theme] :is(#asStatsEmpty,#asStatsReasonsEmpty,#asStatsProductsEmpty)[hidden],body.as-balanced-active #asSubStats[data-overview-theme] .as-product-pagination[hidden]{display:none!important}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend{grid-area:2 / 1 / 3 / 9!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-panel{grid-area:2 / 6 / 3 / 9!important}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-panel{grid-area:1 / 9 / 3 / 13!important}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-column-amount{grid-area:3 / 1 / 4 / 9!important}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-recent-panel{grid-area:3 / 9 / 4 / 13!important}
@@ -79,6 +80,20 @@ body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-row{min-height:0}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-label :is(.as-reason-name,.as-reason-count,.as-reason-percent){line-height:20px}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-track{height:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-body{display:flex;flex-direction:column;justify-content:center;padding:0;gap:12px;min-height:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-ring{flex:none;max-width:128px;width:128px;height:128px;margin:0 auto}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list{flex:none;width:100%}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center strong{font-size:26px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center span{font-size:12px;margin-top:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-legend{grid-template-rows:none;grid-auto-rows:36px;gap:4px;margin:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-choice{height:36px;min-height:36px;padding:5px 8px;grid-template-rows:auto}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,36px);grid-auto-rows:36px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-values span{display:none}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-pagination{margin-top:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-name{font-size:13px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-values{font-size:13px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-values span{font-size:11px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-heading{min-height:26px;margin:0 0 3px}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-controls button{min-height:28px;padding:2px}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-controls button span{font-size:11px;padding:2px 8px}
@@ -93,4 +108,10 @@ body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:
 @media(min-width:1101px) and (min-height:760px) and (max-height:820px){
  body.as-balanced-active #asSubStats[data-overview-theme] .as-recent-panel{padding:12px 18px}
  body.as-balanced-active #asSubStats .as-recent-heading{margin-bottom:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-ring{max-width:96px;width:96px;height:96px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center strong{font-size:21px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-body{gap:8px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-legend{grid-auto-rows:30px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-rows:repeat(2,30px)}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-choice{height:30px;min-height:30px;padding-block:3px}
 }
