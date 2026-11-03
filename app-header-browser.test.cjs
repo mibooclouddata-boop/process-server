@@ -13,13 +13,13 @@ test('light header reflects the session and supports keyboard, mobile navigation
  assert.equal(await page.locator('.topbar').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(242, 244, 246)');
  assert.equal(await page.locator('#appHeaderPage,.app-topbar .app-location').count(),0);
  const processMenu=page.locator('#tabprocessBtn');
- assert.equal(await processMenu.evaluate(el=>getComputedStyle(el).color),'rgb(69, 77, 87)');
+ assert.equal(await processMenu.evaluate(el=>getComputedStyle(el).color),'rgb(32, 33, 35)');
  await processMenu.hover();await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
  await page.mouse.move(1000,800);await page.keyboard.press("Tab");await processMenu.focus();
  await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
  await processMenu.click();assert.equal(await processMenu.getAttribute('aria-current'),'page');
  await page.mouse.move(1000,800);await page.locator('#appAccountToggle').focus();
- await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(32, 33, 35)');
+ await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
  assert.equal(await page.locator('#appHeaderPage,.app-topbar .app-location').count(),0);
  await page.locator('#tabAsBtn').click();
  assert.equal(await page.locator('#topbarUser').textContent(),'검증 관리자');
