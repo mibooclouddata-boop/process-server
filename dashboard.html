@@ -1696,8 +1696,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/cover-assets/app-header-placement.js?v=2" defer></script>
 <link rel="stylesheet" href="/cover-assets/app-top-navigation.css?v=2">
 <script src="/cover-assets/app-top-navigation.js?v=1" defer></script>
-<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=5">
-<script src="/cover-assets/as-overview-balanced.js?v=6" defer></script>
+<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=6">
+<script src="/cover-assets/as-overview-balanced.js?v=7" defer></script>
 <link rel="stylesheet" href="/cover-assets/as-scroll-slider.css?v=3">
 <script src="/cover-assets/as-scroll-slider.js?v=3" defer></script>
 </head>
@@ -4208,6 +4208,8 @@ function createAsReadableTrend(chart){
   const year=Number($('asStatsYear').value),month=_asStatsSelectedMonth;if(!year||month<1||month>12)return;
   const today=asJobToday(),currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
   const future=m=>year>currentYear||(year===currentYear&&m>currentMonth),ongoing=year===currentYear&&month===currentMonth;
+  const chartUnit=heading.querySelector('.as-chart-unit');
+  if(chartUnit){chartUnit.textContent=ongoing?'이번 달 진행 중 · 단위: 건':'단위: 건';chartUnit.title=ongoing?'이번 달 현재까지의 접수와 지난달 전체 접수를 비교합니다.':'';}
   const sum=summarizeAsStatistics(_asStatsRecords,year,month);
   root.querySelectorAll('#asKpiRow button').forEach(button=>button.setAttribute('aria-label',button.querySelector('span').textContent+' '+button.querySelector('strong').textContent+'건, 해당 조건의 접수 목록 보기'));
   $('comparison-count').innerHTML=future(month)&&!sum.current?'미도래':format(sum.current)+'<small>건</small>';
