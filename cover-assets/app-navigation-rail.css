@@ -47,7 +47,7 @@ body.as-reception-active #asSubList .as-ledger-scroll{flex:initial;max-height:60
 
 /* Fill the desktop workspace while keeping short and mobile windows scrollable. */
 @media(min-width:769px) and (min-height:651px){
- body.as-reception-active #dashboard .main{height:calc(100dvh - 94px);min-height:0;overflow:hidden;display:flex;flex-direction:column}
+ body.as-reception-active #dashboard .main{height:calc(100dvh - 72px - 2 * var(--app-rim));min-height:0;overflow:hidden;display:flex;flex-direction:column}
  body.as-reception-active #tabAs{flex:1;min-height:0;height:100%}
  body.as-reception-active #tabAs #asSubList{height:100%;min-height:0}
  body.as-reception-active #tabAs #asSubList .as-table-card{flex:1;min-height:0}
