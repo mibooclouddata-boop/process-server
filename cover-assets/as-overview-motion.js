@@ -17,7 +17,7 @@
    const animation=element.animate([
     {opacity:0,transform:'translateY(12px)'},
     {opacity:1,transform:'translateY(0)'}
-   ],{duration:480,delay:Math.min(index*45,360),easing:'cubic-bezier(.22,.7,.3,1)',fill:'backwards'});
+   ],{duration:280,delay:Math.min(index*15,60),easing:'cubic-bezier(.22,.7,.3,1)',fill:'backwards'});
    animation.id='as-overview-enter';
    return animation;
   });

@@ -19,8 +19,8 @@
   background-clip:padding-box;
   box-shadow:0 0 0 1px rgba(170,182,196,.18);
 }
-/* Blur only the decorative layer so fixed dialogs remain relative to the viewport. */
-#dashboard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+/* The opaque shell needs no full-window backdrop blur layer. */
+#dashboard::before{content:none}
 #dashboard>.app-topbar{
   --header-navy:var(--bg);--header-muted:var(--text2);--header-hover:var(--brand-soft);
   background:var(--app-glass);color:var(--text);
