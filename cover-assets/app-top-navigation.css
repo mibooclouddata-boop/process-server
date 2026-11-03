@@ -15,7 +15,7 @@ body #dashboard #appNavigation>.tabs::-webkit-scrollbar{display:none}
 body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 auto;flex-direction:row;justify-content:center;gap:10px;width:auto;min-height:44px;padding:0 18px;margin:0;text-align:center;letter-spacing:.2px;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
 body #dashboard #appNavigation .rail-full{display:block;font-size:14px}
 body #dashboard #appNavigation :is(.rail-short,.rail-tip){display:none!important}
-body #dashboard #appNavigation :is(.tab,.tab-sub):hover{background:#f2f4f680}
+body #dashboard #appNavigation :is(.tab,.tab-sub):is(:hover,:focus-visible){background:#f2f4f680;color:#000}
 body #dashboard #appNavigation [aria-current=page]{background:transparent;color:#000}
 body #dashboard #appNavigation .top-nav-selection{position:absolute;z-index:0;left:0;top:4px;height:44px;box-sizing:border-box;background:#fff;border:1px solid #cfd5db;border-radius:22px;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.22,.75,.2,1),opacity .15s ease;will-change:transform}
 body #dashboard #appNavigation[data-motion-ready=true] .top-nav-selection{opacity:1}
