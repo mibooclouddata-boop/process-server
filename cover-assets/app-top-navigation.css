@@ -4,18 +4,20 @@ body #dashboard{outline:5px solid #fff;outline-offset:-5px}
 body #dashboard .main:has(#tabAs){background:var(--flow-workspace);margin:0;border-radius:0}
 body #dashboard>.app-topbar{gap:24px}
 body #dashboard>.app-topbar .topbar-title{display:flex;align-items:center;align-self:center;margin:0;line-height:0}
-body #dashboard>.app-topbar .topbar-title img{display:block}
+body #dashboard>.app-topbar .topbar-title{flex:0 0 112px;width:112px}
+body #dashboard>.app-topbar .topbar-title img{display:block;width:112px!important;height:auto!important}
 @media(min-width:769px){body #dashboard>.app-topbar{padding-inline:28px}}
+@media(min-width:1101px){body #dashboard>.app-topbar{padding-left:10px;padding-right:28px}}
 body #dashboard #appRailToggle,body #dashboard #appMenuToggle{display:none!important}
 body #dashboard>.app-topbar #appNavigation{display:flex!important;flex:1;flex-direction:row;align-items:center;min-width:0;width:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;align-self:stretch;justify-content:flex-start}
 body #dashboard #appNavigation>.tabs{display:flex;flex-direction:row;align-items:center;position:relative;top:auto;isolation:isolate;width:max-content;max-width:100%;gap:8px;padding:4px;background:#fff;border:1px solid var(--border);border-radius:28px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
 body #dashboard #appNavigation>.tabs::-webkit-scrollbar{display:none}
-body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 auto;flex-direction:row;justify-content:center;gap:10px;width:auto;min-height:44px;padding:0 18px;margin:0;text-align:center;letter-spacing:.2px;border-radius:22px;transition:color .2s ease,background .2s ease}
+body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 auto;flex-direction:row;justify-content:center;gap:10px;width:auto;min-height:44px;padding:0 18px;margin:0;text-align:center;letter-spacing:.2px;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
 body #dashboard #appNavigation .rail-full{display:block;font-size:14px}
 body #dashboard #appNavigation :is(.rail-short,.rail-tip){display:none!important}
 body #dashboard #appNavigation :is(.tab,.tab-sub):hover{background:#f2f4f680}
-body #dashboard #appNavigation [aria-current=page]{background:transparent;color:#202123}
-body #dashboard #appNavigation .top-nav-selection{position:absolute;z-index:0;left:0;top:4px;height:44px;background:#e9edf1;border-radius:22px;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.22,.75,.2,1),opacity .15s ease;will-change:transform}
+body #dashboard #appNavigation [aria-current=page]{background:transparent;color:#000}
+body #dashboard #appNavigation .top-nav-selection{position:absolute;z-index:0;left:0;top:4px;height:44px;box-sizing:border-box;background:#fff;border:1px solid #cfd5db;border-radius:22px;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.22,.75,.2,1),opacity .15s ease;will-change:transform}
 body #dashboard #appNavigation[data-motion-ready=true] .top-nav-selection{opacity:1}
 @media(prefers-reduced-motion:reduce){body #dashboard #appNavigation :is(.top-nav-selection,.tab,.tab-sub){transition:none!important}}
 body #dashboard #appNavigation .rail-icon{width:18px;height:18px}
@@ -32,6 +34,8 @@ body #dashboard #appAccount>summary .top-account-icon{display:block;width:26px;h
 @media(max-width:1100px) and (min-width:769px){body #dashboard>.app-topbar{gap:12px}body #dashboard #appNavigation :is(.tab,.tab-sub){padding:0 9px;gap:6px}body #dashboard #appNavigation .rail-full{font-size:13px}}
 @media(max-width:768px){
  body #dashboard>.app-topbar{height:auto;min-height:112px;flex-wrap:wrap;gap:4px 12px;padding:8px 16px}
+ body #dashboard>.app-topbar .topbar-title{flex:0 0 112px;width:112px}
+ body #dashboard>.app-topbar .topbar-title img{width:112px!important}
  body #dashboard>.app-topbar #appNavigation{order:3;flex-basis:100%;height:56px}
  body #dashboard #appNavigation :is(.tab,.tab-sub){padding:0 12px}
  body #dashboard #appNavigation .rail-full{font-size:13px}

@@ -1,5 +1,5 @@
 /* Preserve the existing controls and data; only arrange the desktop overview. */
-.as-overview-menu{position:fixed;inset:auto;margin:0;min-width:200px;padding:6px;background:#fff;border:1px solid #dce2e8;border-radius:12px;box-shadow:0 8px 24px #26384b1a;color:#34383c}
+.as-overview-menu{position:fixed;inset:auto;margin:0;width:180px;min-width:0;max-width:calc(100vw - 16px);box-sizing:border-box;padding:6px;background:#fff;border:1px solid #dce2e8;border-radius:12px;box-shadow:0 8px 24px #26384b1a;color:#34383c}
 .as-overview-menu::backdrop{background:transparent}
 .as-overview-menu button{display:flex;align-items:center;min-height:44px;width:100%;padding:10px 14px;border:0;border-radius:8px;background:transparent;color:inherit;font:500 14px 'Malgun Gothic',sans-serif;text-align:left;cursor:pointer}
 .as-overview-menu button:hover,.as-overview-menu button[aria-checked=true]{background:#eef1f4;color:#202123}
