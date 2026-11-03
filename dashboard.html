@@ -1696,7 +1696,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/cover-assets/app-header-placement.js?v=2" defer></script>
 <link rel="stylesheet" href="/cover-assets/app-top-navigation.css?v=2">
 <script src="/cover-assets/app-top-navigation.js?v=1" defer></script>
-<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=8">
+<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=11">
 <script src="/cover-assets/as-overview-balanced.js?v=8" defer></script>
 <link rel="stylesheet" href="/cover-assets/as-scroll-slider.css?v=3">
 <script src="/cover-assets/as-scroll-slider.js?v=3" defer></script>
@@ -2843,12 +2843,12 @@ function renderAsReasonHeatmap(records,year) {
   const shares=model.values.map(row=>row.map((count,i)=>model.totals[i]?count/model.totals[i]*100:0));
   const displayed=_asReasonHeatMode==='share'?shares:model.values;
   const maximum=Math.max(0,...displayed.flat());
-  const palette=['#f3f5f8','#e3edfc','#bad1f2','#85ace2','#4176bb','#204b87'];
+  const palette=['#f7f9fb','#edf3fa','#dce8f5','#b8cfe9','#4775a4','#244b73'];
   document.getElementById('asReasonHeatScale').textContent='0–'+(_asReasonHeatMode==='share'?maximum.toFixed(1)+'%':format(maximum)+'건');
   body.innerHTML=model.names.map((name,r)=>'<tr><th scope="row">'+name+'</th>'+model.values[r].map((count,i)=>{
     const future=model.future[i],value=displayed[r][i],level=value?Math.min(5,Math.ceil(value/maximum*5)):0;
     const label=year+'년 '+(i+1)+'월 · '+name+' · '+(future?'미도래':format(count)+'건 · 해당 월 비중 '+shares[r][i].toFixed(1)+'%');
-    return '<td><button type="button" class="as-reason-heat-cell" data-row="'+r+'" data-month="'+i+'" data-future="'+future+'" aria-pressed="false" aria-label="'+label+'" style="--heat-bg:'+palette[level]+';--heat-ink:'+(level>=4?'#fff':'#111')+';--heat-delay:'+((r+i)*27)+'ms">'+(future?'—':_asReasonHeatMode==='share'?value.toFixed(1)+'%':format(count))+'</button></td>';
+    return '<td><button type="button" class="as-reason-heat-cell" data-row="'+r+'" data-month="'+i+'" data-future="'+future+'" aria-pressed="false" aria-label="'+label+'" style="--heat-bg:'+palette[level]+';--heat-ink:'+(level>=4?'#fff':level===0?'#5f6368':'#202123')+';--heat-delay:'+((r+i)*27)+'ms">'+(future?'—':_asReasonHeatMode==='share'?value.toFixed(1)+'%':format(count))+'</button></td>';
   }).join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.values[r].reduce((a,b)=>a+b,0)))+'</td></tr>').join('');
   document.getElementById('asReasonHeatFoot').innerHTML='<tr><th scope="row">합계 · 건</th>'+model.totals.map((count,i)=>'<td>'+(model.future[i]?'—':format(count))+'</td>').join('')+'<td>'+(model.future.every(Boolean)?'—':format(model.total))+'</td></tr>';
   body.onclick=event=>{
