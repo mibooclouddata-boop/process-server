@@ -1,0 +1,107 @@
+/* Preserve the existing controls and data; only arrange the desktop overview. */
+/* Keep the year control in the DOM for existing statistics calculations. */
+body #asSubStats[data-overview-theme] .as-overview-basis{display:none!important}
+body #asSubStats[data-overview-theme] .as-product-panel{display:none!important}
+body #asSubStats[data-overview-theme] .as-readable-trend .comparison-main>div{flex-direction:row;align-items:baseline;gap:16px;flex-wrap:wrap}
+body #asSubStats[data-overview-theme] #comparison-change{align-self:baseline}
+body #asSubStats[data-overview-page="1"] .as-reason-heatmap-panel{display:none!important}
+body #asSubStats[data-overview-page="2"] :is(#asKpiRow,.as-readable-trend,.as-column-amount,.as-reason-ranking-panel,.as-recent-panel){display:none!important}
+body #asSubStats .as-recent-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+body #asSubStats .as-recent-panel{container:as-recent / inline-size}
+body #asSubStats .as-recent-heading h2{margin:0}
+body #asSubStats .as-recent-scroll{flex:1;min-height:0;overflow:auto}
+body #asSubStats .as-recent-list{display:grid;grid-auto-rows:minmax(34px,1fr);height:100%;list-style:none;margin:0;padding:0}
+body #asSubStats .as-recent-list[hidden]{display:none}
+body #asSubStats .as-recent-item{display:flex;align-items:center;gap:12px;min-width:0;padding:3px 0;border-bottom:1px solid #edf0f3}
+body #asSubStats .as-recent-item:last-child{border-bottom:0}
+body #asSubStats .as-recent-index{font-size:12px;font-weight:400;min-width:22px;color:#8b98a3;font-variant-numeric:tabular-nums}
+body #asSubStats .as-recent-main{flex:1;min-width:0}
+body #asSubStats .as-recent-product{display:block;font-size:14px;font-weight:600;line-height:20px;letter-spacing:-.015em;color:#202b35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body #asSubStats .as-recent-meta{display:block;margin-top:2px;font-size:12px;font-weight:400;line-height:18px;color:#657480;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body #asSubStats .as-recent-end{display:flex;align-items:center;justify-content:flex-end;min-width:58px;flex-shrink:0}
+body #asSubStats .as-recent-status{font-size:13px;font-weight:500;line-height:20px;color:#455362;white-space:nowrap}
+body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:grid;place-items:center;color:#6b7b88;font-size:13px;text-align:center}
+@media(max-width:768px){body #asSubStats .as-recent-list{min-height:240px}body #asSubStats .as-recent-item{min-height:44px}}
+@media(min-width:1101px) and (min-height:760px){
+ body.as-balanced-active #dashboard .main{padding:10px!important}
+ body.as-balanced-active #asSubStats[data-overview-theme]{height:calc(100dvh - 108px);min-height:0}
+ body.as-balanced-active #asStatsContent:not([hidden]){display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:100px repeat(2,minmax(0,1fr));gap:12px;height:100%;min-height:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-overview-charts,body.as-balanced-active #asSubStats[data-overview-theme] .as-trend-stack{display:contents!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] #asKpiRow{grid-column:1/9;grid-row:1;margin:0;padding:0;gap:10px}
+ body.as-balanced-active #asSubStats[data-overview-theme] #asKpiRow button{min-height:0;padding:14px 18px;gap:6px}
+ body.as-balanced-active #asSubStats[data-overview-theme] #asKpiRow button>span{font-size:14px}
+ body.as-balanced-active #asSubStats[data-overview-theme] #asKpiRow button strong{font-size:30px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-stats-chart-panel{grid-area:auto;min-height:0;margin:0;padding:16px 18px;display:flex;flex-direction:column;gap:0;min-width:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] :is(#asStatsEmpty,#asStatsReasonsEmpty,#asStatsProductsEmpty)[hidden],body.as-balanced-active #asSubStats[data-overview-theme] .as-product-pagination[hidden]{display:none!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend{grid-area:2 / 1 / 3 / 9!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-panel{grid-area:2 / 6 / 3 / 9!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-panel{grid-area:1 / 9 / 3 / 13!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-column-amount{grid-area:3 / 1 / 4 / 9!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-recent-panel{grid-area:3 / 9 / 4 / 13!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-panel{grid-area:1 / 1 / 4 / 13!important}
+ body.as-balanced-active #asSubStats[data-overview-theme][data-overview-page="2"] .as-reason-heatmap-table :is(th,td){font-size:14px;line-height:20px;height:auto}
+ body.as-balanced-active #asSubStats[data-overview-theme][data-overview-page="2"] .as-reason-heat-cell{font-size:14px;min-height:44px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-stats-chart-panel :is(h2,h3){font-size:16px;line-height:24px}
+ body.as-balanced-active #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading){min-height:24px;margin:0 0 8px;gap:8px}
+ body.as-balanced-active #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){font-size:12px!important;line-height:18px!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] .month-comparison{margin:0 0 8px;padding:0;min-height:36px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .comparison-main>div{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:baseline;justify-content:flex-start;gap:16px;width:100%}
+ body.as-balanced-active #asSubStats[data-overview-theme] #comparison-count{font-size:28px;line-height:36px}
+ body.as-balanced-active #asSubStats[data-overview-theme] #comparison-change{font-size:13px;line-height:20px;margin:0;padding:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .month-comparison .current-count{font-size:28px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend .plot{min-height:0;flex:1}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend .axis-tick{font-size:13px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend .data-label{font-size:14px;fill:#303b48}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend #asStatsChart .month-button>span{font-size:14px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-readable-trend #asStatsChart .month-button{min-width:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-column-amount .as-daily-scroll{min-height:0;flex:1;margin-top:4px;overflow:visible}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-column-plot{min-height:0;min-width:0!important;flex:1}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-selection{display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;flex-wrap:nowrap;margin:0;min-height:36px;gap:12px}
+ body.as-balanced-active #asSubStats[data-overview-theme] #asAmountSelectedValue{font-size:26px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-annual-footer{min-height:22px;padding-top:4px;margin-top:4px;font-size:12px;line-height:18px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-column-plot :is(.amount-axis,.amount-label){font-size:11px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-value{font-size:12px;font-weight:600}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-amount-column-plot .as-amount-month>span:last-child{font-size:12px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;gap:6px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-label{margin-bottom:5px;gap:10px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-label .as-reason-name{font-size:14px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-count{font-size:18px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-percent{font-size:12px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-row{min-height:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-ranking-label :is(.as-reason-name,.as-reason-count,.as-reason-percent){line-height:20px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-track{height:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-body{display:flex;flex-direction:column;justify-content:center;padding:0;gap:12px;min-height:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-ring{flex:none;max-width:128px;width:128px;height:128px;margin:0 auto}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list{flex:none;width:100%}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center strong{font-size:26px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center span{font-size:12px;margin-top:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-legend{grid-template-rows:none;grid-auto-rows:36px;gap:4px;margin:0}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-choice{height:36px;min-height:36px;padding:5px 8px;grid-template-rows:auto}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,36px);grid-auto-rows:36px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-values span{display:none}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-pagination{margin-top:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-name{font-size:13px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-values{font-size:13px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-values span{font-size:11px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-heading{min-height:26px;margin:0 0 3px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-controls button{min-height:28px;padding:2px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-controls button span{font-size:11px;padding:2px 8px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-legend{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-scroll{flex:1;min-height:0;overflow:auto}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-table{min-width:0;width:100%;height:100%;border-spacing:3px 2px;table-layout:fixed}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-table :is(th,td){height:19px;font-size:11px;font-weight:500;padding:0;line-height:15px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-table th:first-child{width:65px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heat-cell{min-width:0;min-height:18px;height:100%;padding:0;font-size:11px;border-radius:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-reason-heatmap-table tfoot :is(th,td){padding-top:2px;font-size:11px}
+}
+@media(min-width:1101px) and (min-height:760px) and (max-height:820px){
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-recent-panel{padding:12px 18px}
+ body.as-balanced-active #asSubStats .as-recent-heading{margin-bottom:4px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-ring{max-width:96px;width:96px;height:96px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-center strong{font-size:21px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-body{gap:8px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-legend{grid-auto-rows:30px}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list.is-paged .as-product-legend{grid-template-rows:repeat(2,30px)}
+ body.as-balanced-active #asSubStats[data-overview-theme] .as-product-list .as-product-choice{height:30px;min-height:30px;padding-block:3px}
+}
