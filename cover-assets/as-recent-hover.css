@@ -1,5 +1,5 @@
 body #asSubStats .as-recent-list{padding-right:3px}
 body #asSubStats .as-recent-status{color:#202123;font-weight:650}
-body #asSubStats .as-recent-item{padding-right:6px;transition:transform 160ms cubic-bezier(.2,.7,.2,1),background-color 160ms ease-out}
-body #asSubStats .as-recent-item:hover{transform:translateX(3px);background-color:#f7f8f9}
+body #asSubStats .as-recent-item{padding-right:6px;transition:transform 80ms cubic-bezier(.4,0,1,1),background-color 80ms ease-in}
+body #asSubStats .as-recent-item:hover{transform:translateX(3px);background-color:#f7f8f9;transition:transform 140ms cubic-bezier(.2,.7,.2,1),background-color 140ms ease-out}
 @media(prefers-reduced-motion:reduce){body #asSubStats .as-recent-item{transition:none!important;transform:none!important}}

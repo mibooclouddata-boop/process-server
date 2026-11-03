@@ -32,6 +32,9 @@ test('recent receipts use five numbered rows, fill the card and escape record te
   }
  }
  await page.setViewportSize({width:390,height:844});await seed(9);
+ const rows=page.locator('.as-recent-item');await rows.nth(0).hover();await rows.nth(1).hover();
+ const durations=await page.evaluate(()=>({exit:getComputedStyle(document.querySelector('.as-recent-item')).transitionDuration,enter:getComputedStyle(document.querySelector('.as-recent-item:hover')).transitionDuration}));
+ assert.ok(parseFloat(durations.exit)<parseFloat(durations.enter),'the previous row exits faster than the next row enters');
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  assert.equal(await page.locator('.as-recent-item').count(),5);assert.deepEqual(errors,[]);
 });
