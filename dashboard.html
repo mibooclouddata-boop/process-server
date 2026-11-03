@@ -3277,7 +3277,7 @@ function _renderAsPage() {
       <td class="as-files-cell" style="text-align:center">${fileCell}</td>
       <td style="font-size:11px;color:#64748b">${escapeHtml(a.createdBy||'—')}</td>
       <td class="as-amount-cell" title="${AsAmount.format(a.amount)}">${AsAmount.format(a.amount)}</td>
-      <td class="as-remark-cell" data-id="${escapeHtml(a.id)}" onclick="startRemarkEdit(event,this)" title="${escapeHtml(a.remark||'')}" style="font-size:11px;color:#94a3b8;cursor:text;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
+      <td class="as-remark-cell" data-id="${escapeHtml(a.id)}"  title="${escapeHtml(a.remark||'')}" style="font-size:11px;color:#94a3b8;cursor:default;width:120px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml((a.remark||'').length > 20 ? (a.remark||'').slice(0,20)+'…' : (a.remark||''))}</td>
     </tr>`;
   }).join('');
 
@@ -4333,7 +4333,7 @@ function asLedgerLayoutColumns(){
  }
 }
 
-function asLedgerCellKey(e){const cell=e.target.closest('td[tabindex]');if(!cell||e.target.matches('input,button,a'))return;const tr=cell.parentElement;if(e.key==='Enter'){e.preventDefault();e.stopPropagation();if(cell.cellIndex===15)startRemarkEdit(e,cell);else{const item=_asFullList.find(r=>String(r.id)===tr.dataset.id);if(item)openAsDetail(item);}return;}const move={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key];if(!move)return;e.preventDefault();e.stopPropagation();const rows=[...tr.parentElement.querySelectorAll('tr[data-id]')],visible=[...tr.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none'),ri=rows.indexOf(tr),ci=visible.indexOf(cell);const targetRow=rows[Math.max(0,Math.min(rows.length-1,ri+move[0]))],targets=[...targetRow.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none');targets[Math.max(0,Math.min(targets.length-1,ci+move[1]))]?.focus();}
+function asLedgerCellKey(e){const cell=e.target.closest('td[tabindex]');if(!cell||e.target.matches('input,button,a'))return;const tr=cell.parentElement;if(e.key==='Enter'){e.preventDefault();e.stopPropagation();const item=_asFullList.find(r=>String(r.id)===tr.dataset.id);if(item)openAsDetail(item);return;}const move={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key];if(!move)return;e.preventDefault();e.stopPropagation();const rows=[...tr.parentElement.querySelectorAll('tr[data-id]')],visible=[...tr.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none'),ri=rows.indexOf(tr),ci=visible.indexOf(cell);const targetRow=rows[Math.max(0,Math.min(rows.length-1,ri+move[0]))],targets=[...targetRow.cells].filter(td=>td.tabIndex===0&&td.style.display!=='none');targets[Math.max(0,Math.min(targets.length-1,ci+move[1]))]?.focus();}
 function asLedgerCancelRemark(){if(_asRemarkEditing?.saving)return;_asRemarkEditing=null;_renderAsPage();document.getElementById('asLedgerMessage').textContent='비고 변경을 취소했습니다.';}
 (function setupAsLedger(){
  const list=document.getElementById('asSubList');document.getElementById('asTableBody').addEventListener('keydown',asLedgerCellKey);
