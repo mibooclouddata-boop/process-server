@@ -5,7 +5,7 @@ const {startFixture}=require('./test-support/as-fixture.cjs');
 test('recent receipts use five numbered rows, fill the card and escape record text',async t=>{
  const f=await startFixture();let browser;t.after(async()=>{if(browser)await browser.close();await f.close();});
  browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
- const c=await browser.newContext({viewport:{width:1440,height:900}});
+ const c=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'no-preference'});
  await c.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  const page=await c.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  let apiRecords=[{id:'api-recent',asNo:'API-RECENT-1',createdAt:'2026-11-03',product:'API material',ship:'API ship',block:'B01',element:'E01',status:'접수',reason:'기타'}];
@@ -16,7 +16,7 @@ test('recent receipts use five numbered rows, fill the card and escape record te
  await page.evaluate(()=>loadAsStatistics());
  assert.equal(await page.locator('.as-recent-product').first().textContent(),'Updated API material','reload updates recent list');
  assert.equal(await page.locator('.as-overview-pagination,.as-recent-heading button,.as-recent-count,#asAmountSelectedPeriod').count(),0);
- const seed=async count=>page.evaluate(count=>AsOverviewBalanced.refreshRecent(Array.from({length:count},(_,i)=>({id:'recent-'+i,asNo:'TEST-'+i,createdAt:'2026-11-'+String(i+1).padStart(2,'0'),product:i===count-1?'<img src=x onerror=alert(1)>':'Example product',ship:'Example ship',block:'B12',element:'E03',reason:'Example reason',status:'접수'}))),count);
+ const seed=async count=>page.evaluate(count=>AsOverviewBalanced.refreshRecent(Array.from({length:count},(_,i)=>({id:'recent-'+i,asNo:'TEST-'+i,createdAt:'2026-11-'+String(i+1).padStart(2,'0'),product:i===count-1?'<img src=x onerror=alert(1)>':'Example product',ship:'Example ship',block:'B12',element:'E03',reason:'Example reason',status:i===1?'도장 요청':'접수'}))),count);
  for(const height of [900,768]){
   await page.setViewportSize({width:1440,height});
   for(const count of [9,3,0]){
@@ -32,7 +32,14 @@ test('recent receipts use five numbered rows, fill the card and escape record te
   }
  }
  await page.setViewportSize({width:390,height:844});await seed(9);
- const rows=page.locator('.as-recent-item');await rows.nth(0).hover();await rows.nth(1).hover();
+ assert.equal(await page.locator('.as-recent-status').nth(1).evaluate(e=>getComputedStyle(e).color),'rgb(32, 33, 35)','every recent status, including 도장 요청, is black');
+ const rows=page.locator('.as-recent-item');
+ await page.evaluate(()=>{const el=document.querySelector('.as-recent-item');window.__hoverEnter=new Promise(resolve=>{const done=e=>{if(e.propertyName==='transform'){el.removeEventListener('transitionend',done);resolve()}};el.addEventListener('transitionend',done)})});
+ await rows.nth(0).hover();await page.evaluate(()=>window.__hoverEnter);
+ assert.equal(await rows.nth(0).evaluate(e=>getComputedStyle(e).transform),'matrix(1, 0, 0, 1, 3, 0)','the first row finishes entering its hover state');
+ await page.evaluate(()=>{const el=document.querySelector('.as-recent-item');window.__hoverExit=new Promise(resolve=>{const done=e=>{if(e.propertyName==='transform'){el.removeEventListener('transitionend',done);resolve()}};el.addEventListener('transitionend',done)})});
+ await rows.nth(1).hover();await page.evaluate(()=>window.__hoverExit);
+ assert.equal(await rows.nth(0).evaluate(e=>getComputedStyle(e).transform),'none','the first row returns to rest after moving to the second');
  const durations=await page.evaluate(()=>({exit:getComputedStyle(document.querySelector('.as-recent-item')).transitionDuration,enter:getComputedStyle(document.querySelector('.as-recent-item:hover')).transitionDuration}));
  assert.ok(parseFloat(durations.exit)<parseFloat(durations.enter),'the previous row exits faster than the next row enters');
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
