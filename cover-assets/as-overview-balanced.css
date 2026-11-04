@@ -37,7 +37,7 @@ body #asSubStats .as-recent-status{font-size:13px;font-weight:500;line-height:20
 body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:grid;place-items:center;color:#6b7b88;font-size:13px;text-align:center}
 @media(max-width:768px){body #asSubStats .as-recent-list{min-height:240px}body #asSubStats .as-recent-item{min-height:44px}}
 @media(min-width:1101px) and (min-height:760px){
- body:is(.as-balanced-active,.as-reception-active) #dashboard .main{padding:10px!important}
+ body:is(.as-balanced-active,.as-reception-active) #dashboard .main,body #dashboard .main:has(:is(#tabprocess,#tabdispatch)[style*="display: block"]){padding:10px!important}
  body.as-balanced-active #asSubStats[data-overview-theme]{height:calc(100dvh - 108px);min-height:0}
  body.as-balanced-active #asStatsContent:not([hidden]){display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:100px repeat(2,minmax(0,1fr));gap:12px;height:100%;min-height:0}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-overview-charts,body.as-balanced-active #asSubStats[data-overview-theme] .as-trend-stack{display:contents!important}
