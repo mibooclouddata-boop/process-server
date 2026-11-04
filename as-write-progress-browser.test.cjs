@@ -3,6 +3,32 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const {startFixture}=require('./test-support/as-fixture.cjs');
 
+test('process and dispatch notices match write dialog sizing and typography',async t=>{
+ const fixture=await startFixture();let browser;
+ t.after(async()=>{await browser?.close();await fixture.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage();
+ await page.route('**/*',route=>route.request().url().startsWith(fixture.url)?route.continue():route.abort());
+ assert.equal((await context.request.post(fixture.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}})).status(),200);
+ await page.goto(fixture.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
+ const metrics=locator=>locator.evaluate(el=>{const style=getComputedStyle(el),title=getComputedStyle(el.querySelector('h2')),copy=getComputedStyle(el.querySelector('p'));return {width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,padding:style.padding,radius:style.borderRadius,font:style.fontFamily,title:title.fontSize,weight:title.fontWeight,copy:copy.fontSize,copyWeight:copy.fontWeight};});
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});
+  await page.evaluate(()=>{window.finishNoticeReference=AsWriteProgress.start('/api/as','POST');});
+  const reference=await metrics(page.locator('#asWriteProgress'));
+  await page.evaluate(()=>window.finishNoticeReference());
+  for(const [tab,label] of [['process','공정 관리'],['dispatch','배차 관리']]){
+   await page.locator('#tab'+tab+'Btn').click();
+   const notice=page.locator('#featureDevelopment');assert(await notice.isVisible());
+   assert.equal(await notice.locator('h2').textContent(),'개발 중');assert.match(await notice.locator('p').textContent(),new RegExp(label));
+   assert.deepEqual(await metrics(notice),reference);
+   if(tab==='process')await page.keyboard.press('Escape');else await notice.getByRole('button').click();
+   assert.equal(await notice.isVisible(),false);
+   assert.equal(await page.locator('#tab'+tab+'Btn').evaluate(el=>el===document.activeElement),true);
+  }
+ }
+});
+
 test('central write indicator follows actual responses and preserves forms on failure',async t=>{
  const fixture=await startFixture();let browser,release;
  t.after(async()=>{release?.();if(browser)await browser.close();await fixture.close();});
