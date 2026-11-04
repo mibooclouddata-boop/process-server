@@ -1,9 +1,13 @@
 /* Preserve the existing controls and data; only arrange the desktop overview. */
-.as-overview-menu{position:fixed;inset:auto;margin:0;width:180px;min-width:0;max-width:calc(100vw - 16px);box-sizing:border-box;padding:6px;background:#fff;border:1px solid #dce2e8;border-radius:12px;box-shadow:0 8px 24px #26384b1a;color:#34383c}
+.as-overview-menu{position:fixed;inset:auto;margin:0;width:216px;min-width:0;max-width:calc(100vw - 16px);box-sizing:border-box;padding:6px;background:#fff;border:1px solid #dce1e5;border-radius:12px;box-shadow:0 6px 18px #18202a14;font-family:inherit;color:#202123}
 .as-overview-menu::backdrop{background:transparent}
-.as-overview-menu button{display:flex;align-items:center;min-height:44px;width:100%;padding:10px 14px;border:0;border-radius:8px;background:transparent;color:inherit;font:500 14px 'Malgun Gothic',sans-serif;text-align:left;cursor:pointer}
-.as-overview-menu button:hover,.as-overview-menu button[aria-checked=true]{background:#eef1f4;color:#202123}
+.as-overview-menu button{display:flex;align-items:center;gap:12px;min-height:44px;width:100%;padding:10px 12px;border:0;border-radius:7px;background:transparent;color:inherit;font-family:inherit;font-size:14px;font-weight:500;line-height:1.4;text-align:left;cursor:pointer;transition:background .15s ease}
+.as-overview-menu button[aria-checked=true]{font-weight:700}
+.as-overview-menu button:hover{background:#f1f3f5}
+.as-overview-menu button::after{content:'';margin-left:auto;width:7px;height:12px;flex:none;border-right:2px solid transparent;border-bottom:2px solid transparent;transform:rotate(45deg);align-self:center;margin-right:4px;margin-top:-4px}
+.as-overview-menu button[aria-checked=true]::after{border-color:currentColor}
 .as-overview-menu button:focus-visible{outline:2px solid #557caf;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){.as-overview-menu button{transition:none}}
 body #dashboard #appNavigation .as-overview-caret{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;flex:none}
 /* Move the year control into the visible chart heading on either overview page. */
 body #asSubStats[data-overview-theme] .as-overview-basis{display:none!important}

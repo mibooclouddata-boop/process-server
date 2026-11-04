@@ -43,7 +43,7 @@
    const button=document.createElement('button');button.type='button';button.setAttribute('role','menuitemradio');button.setAttribute('aria-checked',String(value==='1'));button.textContent=label;
    button.onclick=()=>{root.dataset.overviewPage=value;placeYearControls();choices.forEach((choice,index)=>choice.setAttribute('aria-checked',String(index+1)===value?'true':'false'));menu.hidePopover();overviewButton.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};menu.append(button);return button;
   });document.body.append(menu);
-  function placeMenu(){const rect=overviewButton.getBoundingClientRect();menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-Math.min(180,innerWidth-16)-8))+'px';menu.style.top=(rect.bottom+8)+'px';}
+  function placeMenu(){const rect=overviewButton.getBoundingClientRect(),width=parseFloat(getComputedStyle(menu).width);menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-width-8))+'px';menu.style.top=(rect.bottom+8)+'px';}
   overviewButton.addEventListener('click',()=>{placeMenu();menu.togglePopover();if(menu.matches(':popover-open'))choices[Number(root.dataset.overviewPage)-1].focus();});
   menu.addEventListener('beforetoggle',event=>overviewButton.setAttribute('aria-expanded',String(event.newState==='open')));
   menu.addEventListener('keydown',event=>{const index=choices.indexOf(document.activeElement);if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?1:(index+(event.key==='ArrowDown'?1:-1)+choices.length)%choices.length;choices[next].focus();}else if(event.key==='Escape'){menu.hidePopover();overviewButton.focus();}});
