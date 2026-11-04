@@ -27,7 +27,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  assert.equal(await page.locator('.app-topbar .logout-btn').count(),0);
  assert(await page.locator('#appHeaderRole').isHidden());
  const capsule=await page.locator('#appAccountToggle').evaluate(el=>{const s=getComputedStyle(el);return {background:s.backgroundColor,radius:s.borderRadius,border:s.borderTopWidth,borderColor:s.borderTopColor};});
- assert.deepEqual(capsule,{background:'rgb(255, 255, 255)',radius:'16px',border:'1px',borderColor:'rgb(221, 226, 231)'});
+ assert.deepEqual(capsule,{background:'rgb(255, 255, 255)',radius:'14px',border:'1px',borderColor:'rgb(221, 226, 231)'});
  await page.locator('#appAccountToggle').focus();await page.keyboard.press('Enter');assert(await page.locator('#appAccountPanel').isVisible());
  assert.match(await page.locator('#appAccountPanel').textContent(),/회원 정보/);assert.equal(await page.locator('#appAccountLogin').textContent(),'admin');assert.equal(await page.locator('#appAccountRole').textContent(),'시스템 관리자');assert.equal(await page.locator('#appAccountAvatar').textContent(),'검');
  assert.equal(await page.locator('#appAccountPanel [data-app-logout]').isVisible(),true);await page.keyboard.press('Escape');assert(await page.locator('#appAccountPanel').isHidden());
