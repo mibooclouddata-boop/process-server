@@ -31,8 +31,8 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
   write('data.json',{records:[],users:[
     {id:'root',name:'관리자',role:'sysadmin',password},
     {id:'disabled-admin',name:'Inactive fixture',role:'sysadmin',active:false,password},
-    {id:'worker',name:'직원',role:'worker',password,allowedSteps:['incoming']},
-    {id:'other',name:'다른 직원',role:'worker',password,allowedSteps:[]},
+    {id:'worker',name:'직원',role:'worker',asPermissions:['create','production','painting','delivery'],password,allowedSteps:['incoming']},
+    {id:'other',name:'다른 직원',role:'worker',asPermissions:['create','production','painting','delivery'],password,allowedSteps:[]},
     {id:'manager',name:'업무 관리자',role:'admin',password},
     {id:'default',name:'전환 대상',role:'worker',password:'1234'},
   ]});
@@ -115,6 +115,31 @@ test('real HTTP authorization, web/mobile login, migration and business workflow
     assert.equal((await request('/api/as/'+item.id,{method:'DELETE',token:other.token,body:{version:2,changeReason:'fixture removal'}})).status,200);
     assert.equal((await request('/api/as/'+item.id+'/restore',{method:'POST',token:other.token,body:{version:3,changeReason:'fixture restore'}})).status,200);
     const history=await (await request('/api/as/'+item.id+'/history',{token:other.token})).json();assert.equal(history.events.at(-1).actorId,'other');
+  });
+  await t.test('AS permission grants validate, persist and revoke existing sessions',async()=>{
+    const route='/api/users/permission-fixture';
+    assert.equal((await request('/api/users',{method:'POST',token:admin.token,body:{id:'permission-fixture',name:'Permission fixture',password,asPermissions:[]}})).status,200);
+    let account=await login('permission-fixture');assert.deepEqual(account.user.asPermissions,[]);
+    const create=token=>request('/api/as',{method:'POST',token,body:{ship:'Permission fixture',block:'B',reason:'test',role:'sysadmin',asPermissions:['create']}});
+    assert.equal((await create(account.token)).status,403);
+    for(const asPermissions of [null,'create',{},['unknown'],['create','create'],[1]]){
+      assert.equal((await request(route,{method:'PUT',token:admin.token,body:{asPermissions}})).status,400);
+      assert.equal((await request('/api/users',{method:'POST',token:admin.token,body:{id:'invalid-permission',name:'Invalid',password,asPermissions}})).status,400);
+    }
+    assert.equal((await request(route,{method:'PUT',token:manager.token,body:{asPermissions:['create']}})).status,403);
+    assert.equal((await request(route,{method:'PUT',token:admin.token,body:{asPermissions:['create']}})).status,200);
+    assert.equal((await create(account.token)).status,401);
+    account=await login('permission-fixture');assert.deepEqual(account.user.asPermissions,['create']);
+    assert.equal((await create(account.token)).status,200);
+    const users=await (await request('/api/users',{token:admin.token})).json();
+    assert.deepEqual(users.users.find(u=>u.id==='permission-fixture').asPermissions,['create']);
+    assert.deepEqual(users.users.find(u=>u.id==='root').asPermissions,[]);
+    assert.equal((await request(route,{method:'PUT',token:admin.token,body:{asPermissions:[]}})).status,200);
+    assert.equal((await create(account.token)).status,401);
+    account=await login('permission-fixture');assert.equal((await create(account.token)).status,403);
+    assert.equal((await request('/api/as',{token:account.token})).status,200);
+    const disk=JSON.parse(fs.readFileSync(path.join(dir,'data.json'),'utf8'));
+    assert.deepEqual(disk.users.find(u=>u.id==='permission-fixture').asPermissions,[]);
   });
   await t.test('account creation, password reset, role changes and deletion revoke access',async()=>{
     assert.equal((await request('/api/users',{method:'POST',token:admin.token,body:{id:'new',name:'신규',password:'1234'}})).status,400);

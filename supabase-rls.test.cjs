@@ -23,7 +23,7 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     grant usage on schema public,storage to anon,authenticated,service_role;
     grant select,insert,update,delete on storage.objects to authenticated;
   `);
-  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql','202611010004_shared_as_access.sql','202611010005_login_epoch.sql'])
+  for(const file of ['202610260001_auth_foundation.sql','202610260002_private_attachments.sql','202610260003_staff_administration.sql','202611010004_shared_as_access.sql','202611010005_login_epoch.sql','202611040006_as_action_permissions.sql'])
     await db.exec(fs.readFileSync(path.join(__dirname,'supabase/migrations',file),'utf8'));
   const a=randomUUID(),b=randomUUID(),admin=randomUUID(),review=randomUUID(),inactive=randomUUID();
   const authIds=new Map(),profiles=[a,b,admin,review,inactive];
@@ -66,29 +66,42 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     assert.equal((await db.query('select session_version from staff_profiles where id=$1',[a])).rows[0].session_version,2);
     await assert.rejects(db.query('update staff_profiles set session_version=1 where id=$1',[a]));
   });
-  await t.test('bucket stays private; all active staff can upload/delete linked attachments only',async()=>{
+  await t.test('AS direct writes are denied even with other permissive Storage policies; active reads remain',async()=>{
     assert.equal((await db.query("select public from storage.buckets where id='as-attachments'")).rows[0].public,false);
-    await asUser(inactive,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
-    await asUser(null,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
-    for(const id of [a,b,admin,review])await asUser(id,async()=>{
-      assert.equal((await db.query('select private.staff_can_manage_as($1) as allowed',[randomUUID()])).rows[0].allowed,false);
-      await db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath]);
-      assert.equal((await db.query('delete from storage.objects returning id')).rows.length,1);
-    });
-    await asUser(a,async()=>{
-      await assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[parent+'/'+randomUUID()]));
-      await db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath]);
+    await db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath]);
+    await db.exec('create policy unrelated_storage_all on storage.objects for all to authenticated using (true) with check (true)');
+    for(const id of [a,b,admin,review,inactive])await asUser(id,async()=>{
+      await assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath]));
       assert.equal((await db.query("update storage.objects set name='tamper' returning id")).rows.length,0);
+      assert.equal((await db.query('delete from storage.objects returning id')).rows.length,0);
+      await assert.rejects(db.query('insert into as_records(created_by_id) values ($1)',[id]));
+      await assert.rejects(db.exec('delete from as_attachments'));
     });
-    // Existing AS visibility is shared among active staff, including attachments.
-    await asUser(inactive,async()=>{assert.equal((await db.query('select * from storage.objects')).rows.length,0);assert.equal((await db.query('delete from storage.objects returning id')).rows.length,0);});
-    await asUser(b,async()=>{
+    await db.exec('drop policy unrelated_storage_all on storage.objects');
+    for(const id of [a,b,admin,review])await asUser(id,async()=>{
       assert.equal((await db.query('select * from storage.objects')).rows.length,1);
-      assert.equal((await db.query('delete from storage.objects returning id')).rows.length,1);
+      assert.equal((await db.query('select * from as_records')).rows.length,1);
     });
     await asUser(inactive,async()=>{assert.equal((await db.query('select * from storage.objects')).rows.length,0);});
-    await db.query('update staff_profiles set active=false where id=$1',[a]);
-    await asUser(a,async()=>{assert.equal((await db.query('select * from storage.objects')).rows.length,0);});
+    await asUser(null,()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values ('as-attachments',$1)",[storagePath])));
+  });
+  await t.test('AS permissions default closed, validate values and revoke sessions through audited RPC',async()=>{
+    assert.deepEqual((await db.query('select as_permissions from staff_profiles where id=$1',[a])).rows[0].as_permissions,[]);
+    for(const sql of ["array['unknown']","array['create',null]","null"])
+      await assert.rejects(db.query('update staff_profiles set as_permissions='+sql+' where id=$1',[a]));
+    const before=(await db.query('select session_version from staff_profiles where id=$1',[a])).rows[0].session_version;
+    await db.query("insert into app_sessions(token_hash,staff_id,session_version,encrypted_access_token,expires_at) values(repeat('c',64),$1,$2,'fixture',now()+interval '1 hour')",[a,before]);
+    const change=changes=>db.query('select server_staff_change($1,$2,$3,false)',[admin,a,JSON.stringify(changes)]);
+    for(const value of [null,'create',[null],['unknown'],[1]])await assert.rejects(change({asPermissions:value}));
+    await change({asPermissions:['create','painting']});
+    const updated=(await db.query('select as_permissions,session_version from staff_profiles where id=$1',[a])).rows[0];
+    assert.deepEqual(updated.as_permissions,['create','painting']);assert.equal(updated.session_version,before+1);
+    assert.equal((await db.query('select * from app_sessions where staff_id=$1',[a])).rows.length,0);
+    assert.equal((await db.query("select * from private.staff_admin_audit where staff_id=$1 and action='update' and outcome='complete'",[a])).rows.length,1);
+    await change({name:'Permission unchanged'});
+    assert.deepEqual((await db.query('select as_permissions from staff_profiles where id=$1',[a])).rows[0].as_permissions,['create','painting']);
+    await db.query("update staff_profiles set as_permissions='{}' where id=$1",[a]);
+    assert.equal((await db.query('select session_version from staff_profiles where id=$1',[a])).rows[0].session_version,before+3);
   });
   await t.test('administrator RPCs protect last admin and atomically map, revoke and lock accounts',async()=>{
     const change=(actor,id,changes,reset=false)=>db.query('select server_staff_change($1,$2,$3,$4) as op',[actor,id,JSON.stringify(changes),reset]);
@@ -109,13 +122,14 @@ test('PostgreSQL schema, profile RLS, private mappings, session revocation and S
     await db.exec('set role service_role');
     let created;
     try {
-      created=(await db.query('select server_staff_create($1,$2,$3,$4) as id',[admin,newAuth,randomUUID()+'@staff.invalid',JSON.stringify({id:'new-staff',name:'New',role:'worker'})])).rows[0].id;
+      created=(await db.query('select server_staff_create($1,$2,$3,$4) as id',[admin,newAuth,randomUUID()+'@staff.invalid',JSON.stringify({id:'new-staff',name:'New',role:'worker',asPermissions:['production','delivery']})])).rows[0].id;
       assert.equal((await db.query("select * from server_resolve_staff_login('new-staff')")).rows[0].staff_id,created);
       const op=(await change(admin,created,{},true)).rows[0].op;
       await db.query('select server_staff_finish_reset($1,true)',[op.operation]);
       await assert.rejects(db.query('select server_staff_finish_reset($1,true)',[op.operation]));
     }finally{await db.exec('reset role');}
     assert.equal((await db.query('select active from staff_profiles where id=$1',[created])).rows[0].active,true);
+    assert.deepEqual((await db.query('select as_permissions from staff_profiles where id=$1',[created])).rows[0].as_permissions,['production','delivery']);
   });
   await t.test('database rate limit is bounded and rejects the twenty-first attempt',async()=>{
     await db.exec('set role service_role');

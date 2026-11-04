@@ -22,11 +22,26 @@ test('new user wizard validates steps, retains input, saves once and leaves edit
  await page.locator('#modalUserName').press('Enter');assert.equal(await page.locator('#modalUserId').isVisible(),true);
  await page.locator('#modalUserId').fill('invalid id');await page.locator('#modalUserPw').fill('short');await next.click();assert.equal(await page.locator('#modalUserId').getAttribute('aria-invalid'),'true');
  await page.locator('#modalUserId').fill('wizard-user');await next.click();assert.equal(await page.locator('#modalUserPw').getAttribute('aria-invalid'),'true');
+ // Repeated invalid submissions restart the same motion used by login.
+ for(let attempt=0;attempt<2;attempt++){
+  const motion=await page.evaluate(()=>{
+   submitModalUser();
+   const field=document.querySelector('.user-create-password'),animation=field.getAnimations()[0];
+   return {duration:animation?.effect.getTiming().duration,easing:getComputedStyle(field).animationTimingFunction,time:animation?.currentTime,value:document.getElementById('modalUserPw').value};
+  });
+  assert.equal(motion.duration,360);assert.equal(motion.easing,'ease-out');assert.equal(motion.time,0);assert.equal(motion.value,'short');
+ }
+ assert.equal(posts,0);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ assert.equal(await page.locator('.user-create-password').evaluate(el=>getComputedStyle(el).animationName),'none');
+ await page.emulateMedia({reducedMotion:'no-preference'});
  await page.locator('#modalUserPw').fill('Fixture-passphrase-2026!');
+ assert.equal(await page.locator('#modalUserPw').getAttribute('aria-invalid'),null);
+ assert.equal(await page.locator('.user-create-password').evaluate(el=>el.getAnimations().length),0);
  await page.getByRole('button',{name:'비밀번호 보기',exact:true}).click();assert.equal(await page.locator('#modalUserPw').getAttribute('type'),'text');
  await page.getByRole('button',{name:'비밀번호 숨기기',exact:true}).click();
  await previous.click();assert.equal(await page.locator('#modalUserName').inputValue(),'단계 검증 직원');await next.click();assert.equal(await page.locator('#modalUserId').inputValue(),'wizard-user');await next.click();
- assert.equal(posts,0);assert.match(await page.locator('#userCreateReview').textContent(),/단계 검증 직원/);
+ assert.equal(posts,0);assert.equal(await page.locator('#userCreateReview').count(),0);
  await page.getByRole('radio',{name:/시스템 관리자/}).check();assert.equal(await page.locator('#modalUserRole').inputValue(),'sysadmin');
  await page.route('**/api/users',route=>route.request().method()==='POST'?route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'검증용 등록 실패'})}):route.continue());
  await next.click();await page.waitForFunction(()=>!userAdmin.busy);assert.match(await page.locator('#modalMsg').textContent(),/검증용 등록 실패/);assert.equal(fixture.read('data.json').users.length,1);

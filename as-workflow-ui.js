@@ -50,7 +50,7 @@ function asWorkflowDelayHtml(item,showDate=true){
  return '<small class="as-job-due">'+(showDate?'납품 '+asJobEsc(due)+' · ':'')+(days>0?'<b>'+label+'</b>':label)+'</small>';
 }
 function openSelectedAsWorkflow(){const items=_getSelectedAsItems();if(!items)return;if(items.length!==1){showAlert('처리할 AS 건을 하나만 선택하세요.','warn');return;}openAsWorkflow(items[0]);}
-function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&!!currentUser&&!!currentUser.id&&currentUser.active!==false&&!currentUser.passwordResetRequired&&['sysadmin','admin','worker'].includes(currentUser.role);}
+function asJobCanEdit(item){return !String(item.id).startsWith('list-example-')&&AsPermissions.can(currentUser,AsPermissions.forStatus(item.status));}
 function asJobHistoryText(h){
  if(h.type==='deadline')return '납품 협의일: '+(h.previousDate?h.previousDate+' → ':'')+h.date;
  if(h.type==='schedule')return h.stage+' 일정: '+(h.previousDueDate? h.previousDueDate+' → ':'')+h.dueDate+' / 담당 '+h.owner;
@@ -77,11 +77,12 @@ function openAsWorkflow(item){
  +(!active&&!missingDeadline?'<p class="as-job-request-message">접수 내용대로 제작을 요청합니다.</p>':'')
  +(active?'<label>'+(item.status==='납품 요청'?'실제 납품일':item.status.replace(' 요청','')+' 완료일')+'<input id="asJobCompleted" type="date" required'+(previousDate?' min="'+asJobEsc(previousDate)+'"':'')+' max="'+asJobToday()+'"></label>':'')
  +'<p id="asJobError" role="alert"></p><footer><button type="button" onclick="document.getElementById(&quot;asJobDialog&quot;).close()">취소</button><button type="submit" class="as-job-primary"'+(missingDeadline&&!legacyDeadline?' disabled':'')+'>'+(active?'완료하기':'요청하기')+'</button></footer></form>'
- :'<footer><button type="button" onclick="document.getElementById(&quot;asJobDialog&quot;).close()">닫기</button></footer>');
+ :'<p class="as-job-note">'+(asJobNext(item)?'이 작업을 처리할 권한이 없습니다. 시스템 관리자에게 권한을 요청하세요.':'완료된 접수입니다.')+'</p><footer><button type="button" onclick="document.getElementById(&quot;asJobDialog&quot;).close()">닫기</button></footer>');
  if(!dialog.open)dialog.showModal();
 }
 async function saveAsJob(action){
  if(asJobState.busy)return;
+ if(!asJobState.item||!asJobCanEdit(asJobState.item)){showAlert('이 작업을 처리할 권한이 없습니다.','warn');return;}
  const item=asJobState.item,get=id=>document.getElementById(id)?.value||'';
   const payload={action,version:asRecordVersion(item),revision:item.workflow?.revision||0,next:asJobNext(item),completedDate:get('asJobCompleted'),completionNote:get('asJobCompletionNote')};
  if(!item.deliveryAgreedDate&&item.legacyStatus)payload.deliveryAgreedDate=get('asJobLegacyDeadline');

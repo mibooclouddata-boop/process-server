@@ -46,3 +46,14 @@ test('retired AS permission inputs are rejected before any Auth or database oper
  }
  assert.equal(f.calls.length,0);
 });
+
+test('AS permission input validates before privileged calls and persists independently',async()=>{
+ const f=fixture();
+ for(const asPermissions of [null,'create',{},[null],[1],['unknown'],['create','create']]){
+  await assert.rejects(f.service.update(randomUUID(),randomUUID(),{asPermissions}),{status:400});
+  await assert.rejects(f.service.create(randomUUID(),{id:'fixture',name:'Fixture',password:'test-password-long',asPermissions}),{status:400});
+ }
+ assert.equal(f.calls.length,0);
+ await f.service.update(randomUUID(),randomUUID(),{asPermissions:['create','production','painting','delivery']});
+ assert.deepEqual(f.calls[0][1].input_changes,{asPermissions:['create','production','painting','delivery']});
+});

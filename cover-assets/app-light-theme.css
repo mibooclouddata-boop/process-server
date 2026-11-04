@@ -149,11 +149,11 @@ body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
 
 @media(prefers-reduced-motion:reduce){#asSubStats *,#asSubStats *::before,#asSubStats *::after{animation:none!important;transition:none!important}}
 
-/* AS list, process and dispatch share the white workspace card. */
-body #tabAs #asSubList,body #tabprocess,body #tabdispatch{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
+/* AS list, process, dispatch and users share the white workspace card. */
+body #tabAs #asSubList,body #tabprocess,body #tabdispatch,body #tabUsers .toss-user-card{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
 body #tabAs #asSubList .as-toolbar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin-bottom:20px!important}
 body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!important;border-left:1px solid #e7ebef!important;border-right:1px solid #e7ebef!important;border-top:1px solid #e7ebef!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
-@media(max-width:768px){body #tabAs #asSubList,body #tabprocess,body #tabdispatch{padding:14px}}
+@media(max-width:768px){body #tabAs #asSubList,body #tabprocess,body #tabdispatch,body #tabUsers .toss-user-card{padding:14px}}
 
 /* Clean table with horizontal rules and top/side outer boundaries. */
 body #tabAs #asSubList{--ledger-row:48px!important;--ledger-font:15px}
@@ -188,6 +188,12 @@ body #tabUsers .user-search-field,body #tabUsers .user-search-field:focus-within
 body #tabAs #asSubList #asSearch::placeholder,body #tabUsers #userSearch::placeholder{opacity:1;transition:none}
 body #tabAs #asSubList #asSearch:focus::placeholder,body #tabUsers #userSearch:focus::placeholder{opacity:0}
 body #tabAs #asSubList #asSearch:focus,body #tabUsers #userSearch:focus{outline:none!important;box-shadow:none!important}
+body #asModal .modal-field :is(input[placeholder],textarea[placeholder]):not([aria-invalid="true"]){border:1.5px solid var(--border-strong)!important;box-shadow:none!important;outline:none;transition:none!important}
+body #asModal .modal-field :is(input,textarea)::placeholder{opacity:1;transition:none}
+body #asModal .modal-field :is(input,textarea):focus::placeholder{opacity:0}
+body #userModal .modal-field input[placeholder]:not([aria-invalid="true"]){border:1.5px solid var(--border-strong)!important;box-shadow:none!important;outline:none;transition:none!important}
+body #userModal input::placeholder{opacity:1;transition:none}
+body #userModal input:focus::placeholder{opacity:0}
 
 /* Use a muted search hint and black filter labels. */
 body #tabUsers #userSearch::placeholder{color:#657181!important}
@@ -206,3 +212,8 @@ body #tabAs #asSubList #asPageInfo{font-variant-numeric:tabular-nums}
 @media(pointer:coarse){body #tabAs #asSubList #asPageBtns .as-page-btn,body #tabAs #asSubList #asPageBtns .as-page-gap{width:44px;min-width:44px;height:44px;flex-basis:44px}}
 @media(max-width:768px){body #tabAs #asSubList #asPageBtns{max-width:100%;overflow-x:auto;padding:4px}body #tabAs #asSubList #asPageBtns .as-page-btn{flex-shrink:0}}
 @media(prefers-reduced-motion:reduce){body #tabAs #asSubList #asPageBtns .as-page-btn{transition:none}}
+
+body #tabUsers{flex:1;min-height:0}
+body #tabUsers:not([style*="display:none"]):not([style*="display: none"]){display:flex!important;flex-direction:column}
+body #tabUsers .toss-user-card{flex:1;display:flex;flex-direction:column;min-height:0}
+body #tabUsers .table-wrap{flex:1}

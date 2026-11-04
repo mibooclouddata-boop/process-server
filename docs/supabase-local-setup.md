@@ -61,3 +61,14 @@ npm test
 - [Auth 사용자 검증](https://supabase.com/docs/reference/javascript/auth-getuser)
 - [서버 키와 공개 키](https://supabase.com/docs/guides/getting-started/api-keys)
 - [비공개 Storage 접근 정책](https://supabase.com/docs/guides/storage/security/access-control)
+
+
+## AS action permissions migration (202611040006)
+
+Review-only migration; it has not been applied to a hosted database. Back up the database before an approved deployment and deploy with the matching server permission checks. Existing and new profiles default to no individual AS assignments. Active system administrators receive their bypass in the shared application permission helper. Assign create, production, painting and delivery explicitly through the system administrator user API; legacy allowed_steps/as_review/as_approve do not grant these actions.
+
+The migration extends server_staff_create/change and the security-version trigger. Permission updates through the RPC revoke existing app sessions, increment the epoch and retain audit records. Last-admin protection and the two-phase password reset lock/finish routines remain intact. Apply all migrations in order in a disposable database first; npm run test:supabase executes the schema/RPC/RLS coverage using PGlite and the SDK integration against a synthetic HTTP service, not hosted Supabase.
+
+Supported AS writes go through the application's authenticated /api/as endpoints and local AS store transaction checks. Supabase as_records/as_attachments are future identity/attachment metadata without workflow stages. Direct authenticated table writes remain unavailable; direct Storage insert/update/delete for the as-attachments bucket are now denied even to system administrator JWTs. Active employees can still read linked attachments. Service-role credentials remain privileged and server-only; this migration does not implement a new Storage upload endpoint or import local AS data. External clients relying on direct Storage writes must migrate before rollout.
+
+Rollback must not restore the old shared-write server or Storage policies while permission restrictions are expected. Prefer rolling forward; retaining the added column and restrictive policies is safe for data preservation, but old application code can still bypass the intended server authorization. Restoring a prior database backup can lose subsequent assignments/audit/session state and does not restore local AS files; plan both stores separately. Do not remove audit rows or replay revoked sessions during rollback.

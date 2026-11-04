@@ -157,11 +157,18 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
     for(const [key,session] of sessions){assert.notEqual(key,w.token);assert(!session.encrypted_access_token.includes('@staff.invalid'));assert(!tokens.has(session.encrypted_access_token));}
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir,'data.json'),'utf8')),legacyFixture);
   });
-  await t.test('user administration stays restricted while AS is shared and actors remain server-derived',async()=>{
+  await t.test('user administration and AS action permissions stay restricted and actors remain server-derived',async()=>{
     for(const account of [w,o,m,review])assert.equal((await request('/api/users',{token:account.token})).status,403);
     assert.equal((await request('/api/users',{token:r.token})).status,200);
     assert.equal((await request('/api/users',{method:'POST',token:r.token,body:{id:'no-json-fallback'}})).status,400);
     assert.equal((await request('/api/scan',{method:'POST',token:w.token,body:{}})).status,404);
+    for(const account of [w,o,m,review]){
+      assert.equal((await request('/api/as',{token:account.token})).status,200);
+      assert.equal((await request('/api/as',{method:'POST',token:account.token,body:{ship:'TEST',block:'TEST',reason:'fixture',asPermissions:['create'],role:'sysadmin'}})).status,403);
+    }
+    for(const profile of [worker,other,manager,reviewer]){profile.as_permissions=['create'];profile.session_version++;}
+    assert.equal((await request('/api/as',{method:'POST',token:w.token,body:{}})).status,401);
+    w=await login('staff01');o=await login('staff02');m=await login('manager');review=await login('reviewer');
     const response=await request('/api/as',{method:'POST',token:w.token,body:{ship:'TEST',block:'TEST',reason:'테스트',createdById:root.id,createdBy:'위조'}});
     assert.equal(response.status,200);const item=(await response.json()).item;assert.equal(item.createdById,worker.id);
     assert.equal((await request('/api/as/'+item.id,{method:'PUT',token:o.token,body:{version:0,remark:'다른 직원'}})).status,200);
@@ -239,4 +246,11 @@ test('official SDK → local Supabase HTTP double → real Express server', asyn
       }finally{profileUnavailable=false;sessionUnavailable=false;}
     }
   });
+});
+
+test('public AS permissions map from database and default to no assignments',()=>{
+ const {publicProfile}=require('./supabase-auth');
+ assert.deepEqual(publicProfile({}).asPermissions,[]);
+ assert.deepEqual(publicProfile({as_permissions:['painting']}).asPermissions,['painting']);
+ assert.deepEqual(publicProfile({role:'sysadmin'}).asPermissions,[]);
 });

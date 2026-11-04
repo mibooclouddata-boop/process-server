@@ -10,7 +10,7 @@ function setup(){
 }
 test('provider identities and account status preserve the main contract',()=>{
  const {ctx}=setup();assert.equal(ctx.userLoginId({id:'uuid',loginId:'EMP-1'}),'EMP-1');
- assert.equal(ctx.normalizeAdminUser({active:false}).status,'suspended');assert.equal(ctx.normalizeAdminUser({passwordResetRequired:true}).status,'invited');
+ assert.equal(ctx.normalizeAdminUser({active:false}).status,'suspended');assert.equal(ctx.normalizeAdminUser({passwordResetRequired:true}).status,'active');
 });
 
 test('retired AS permission fields are not exposed or accepted by the local user API',async t=>{

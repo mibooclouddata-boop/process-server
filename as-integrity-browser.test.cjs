@@ -32,7 +32,7 @@ test('browser retries a committed receipt once, preserves stale edits, and recor
   let stored=fixture.read('as.json');assert.equal(stored.list.length,1);assert.equal(stored.events.length,1);
   assert.equal(fs.readdirSync(path.join(fixture.dir,'uploads')).filter(name=>name!=='existing.txt').length,1);
   await page.locator('#toastContainer').waitFor({state:'hidden'});
-  assert.equal((await context.request.post(fixture.url+'/api/users',{headers:headers(),data:{id:'colleague',name:'공동 작업 직원',role:'worker',password:'Fixture-passphrase-2026!'}})).status(),200);
+  assert.equal((await context.request.post(fixture.url+'/api/users',{headers:headers(),data:{id:'colleague',name:'공동 작업 직원',role:'worker',asPermissions:['create','production','painting','delivery'],password:'Fixture-passphrase-2026!'}})).status(),200);
   assert.equal((await context.request.post(fixture.url+'/api/login',{headers:headers(),data:{id:'colleague',password:'Fixture-passphrase-2026!'}})).status(),200);
   await page.reload();await page.waitForFunction(()=>currentUser?.id==='colleague');
   await page.evaluate(async()=>{await loadAsList();await printAsPdf(_asFullList[0]);});

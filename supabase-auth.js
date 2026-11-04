@@ -26,7 +26,7 @@ function configuration(env = process.env) {
 function publicProfile(p) {
   // Explicit allowlist: no internal email, Auth metadata, password or service credentials.
   return {authProvider:'supabase', id:p.id, loginId:p.login_id, name:p.name, role:p.role, active:p.active,
-    allowedSteps:p.allowed_steps || [],
+    allowedSteps:p.allowed_steps || [], asPermissions:p.as_permissions || [],
     department:p.department || '', position:p.position || '', icon:p.icon || ''};
 }
 
@@ -108,7 +108,7 @@ function createSupabaseBackend(config, {clientFactory = createClient, clock = Da
       if (/^[a-f0-9]{64}$/.test(token || '')) checked(await admin.from('app_sessions').delete().eq('token_hash', hash(token)));
     },
     async listUsers() {
-      const rows = checked(await admin.from('staff_profiles').select('id,login_id,name,role,active,allowed_steps,department,position,icon').order('name').limit(1000));
+      const rows = checked(await admin.from('staff_profiles').select('id,login_id,name,role,active,allowed_steps,as_permissions,department,position,icon').order('name').limit(1000));
       return rows.map(publicProfile);
     },
     async downloadAttachment(token, id) {
