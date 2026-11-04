@@ -149,11 +149,11 @@ body.as-ledger-active #dashboard .main:has(#tabAs){margin:0;border-radius:18px}
 
 @media(prefers-reduced-motion:reduce){#asSubStats *,#asSubStats *::before,#asSubStats *::after{animation:none!important;transition:none!important}}
 
-/* The complete AS list is one white workspace card. */
-body #tabAs #asSubList{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
+/* AS list, process and dispatch share the white workspace card. */
+body #tabAs #asSubList,body #tabprocess,body #tabdispatch{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--app-panel-shadow);padding:24px;min-width:0}
 body #tabAs #asSubList .as-toolbar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin-bottom:20px!important}
 body #tabAs #asSubList .as-table-card{background:transparent!important;border:0!important;border-left:1px solid #e7ebef!important;border-right:1px solid #e7ebef!important;border-top:1px solid #e7ebef!important;border-radius:0!important;box-shadow:none!important;overflow:hidden}
-@media(max-width:768px){body #tabAs #asSubList{padding:14px}}
+@media(max-width:768px){body #tabAs #asSubList,body #tabprocess,body #tabdispatch{padding:14px}}
 
 /* Clean table with horizontal rules and top/side outer boundaries. */
 body #tabAs #asSubList{--ledger-row:48px!important;--ledger-font:15px}
