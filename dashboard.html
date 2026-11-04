@@ -1265,6 +1265,8 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
 #tabAs #asSubList .as-erp-table thead .as-column-header th:first-child,#tabAs #asSubList .as-erp-table tbody td:first-child{padding-inline:5px!important;text-overflow:clip}
 #tabAs #asSubList .as-erp-table .as-truncate{width:100%;max-width:none;text-align:center!important}
 #tabAs #asSubList .toss-dd-btn,#tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item,#tabAs #asSubList .as-search-input,#tabAs #asSubList .toss-date-btn{font-family:inherit!important;font-size:var(--ledger-font)!important;font-weight:var(--ledger-body-weight)!important;line-height:1.4;letter-spacing:0!important;color:var(--ledger-text)}
+#tabAs #asSubList :is(#asSearchFieldBtn,#asCategoryFilterBtn,#asStatusFilterBtn),#tabAs #asSubList :is(#asSearchFieldLabel,#asCategoryFilterLabel,#asStatusFilterLabel){color:#111}
+#tabAs #asSubList :is(#asSearchFieldLabel,#asCategoryFilterLabel,#asStatusFilterLabel),#tabAs #asSubList .as-filter-buttons .as-export-actions .as-tb-btn{font-size:15px!important;font-weight:550!important}
 #tabAs #asSubList .as-search-input,#tabAs #asSubList .toss-date-btn,#tabAs #asSubList .as-search-input::placeholder{font-family:inherit!important;font-size:15px!important;font-weight:500!important;line-height:1.4;letter-spacing:0!important}
 #tabAs #asSubList #asSearch{font-size:15px!important;font-weight:500!important}
 #tabAs #asSubList .toss-dd-label,#tabAs #asSubList .toss-dd-item.is-selected{font-weight:var(--ledger-emphasis-weight)!important}
@@ -1272,6 +1274,7 @@ body.as-ledger-active .main{padding:12px 16px!important;scrollbar-gutter:auto!im
 #tabAs #asSubList{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto;text-rendering:auto}
 #tabAs #asSubList .toss-dd-item:hover{background:var(--ledger-hover);color:var(--ledger-text)}
 #tabAs #asSubList .toss-dd-item.is-selected{color:var(--ledger-accent);background:var(--ledger-tint)}
+#tabAs #asSubList :is(#asSearchFieldDd,#asCategoryFilterDd,#asStatusFilterDd) .toss-dd-item{font-size:15px!important;font-weight:550!important;color:#111}
 #tabAs #asSubList .toss-dd-panel{border-radius:4px;border-color:var(--ledger-line)}
 #tabAs #asSubList .toss-dd-item{border-radius:3px;min-height:36px;padding:7px 10px}
 #tabAs #asSubList .toss-dd-item-check{stroke:var(--ledger-accent)}
@@ -1687,7 +1690,7 @@ body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
 <link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=4">
-<link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=3">
+<link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=4">
 <link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
@@ -2208,7 +2211,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
 <script src="/cover-assets/app-header.js?v=9"></script>
 <script src="/auth-client.js"></script>
-<script src="/user-admin-ui.js?v=2"></script>
+<script src="/user-admin-ui.js?v=3"></script>
 <script src="/as-amount.js"></script>
 <script src="/as-pdf-preview.js"></script>
 <script>
