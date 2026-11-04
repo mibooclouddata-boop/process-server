@@ -82,11 +82,40 @@ function flushUserChanges(){
 async function reloadEditingUser(){if(!userAdmin.editing||userAdmin.busy)return;if(userAdmin.failed&&!confirm('반영하지 못한 입력을 버리고 서버의 최신 정보를 불러오시겠습니까?'))return;const id=userAdmin.editing.id;userAdmin.busy=true;try{const data=await userApi('/api/users');const users=data.users.map(normalizeAdminUser);const user=users.find(u=>u.id===id);++userAdmin.loadSequence;userAdmin.users=users;renderAdminUsers();userAdmin.busy=false;if(!user){await closeUserModal(true);showToast('해당 사용자가 삭제되었습니다.');return;}openUserModal(user);}catch(error){showModalMsg(error.message);}finally{userAdmin.busy=false;}}
 function toggleUserAccount(){const user=desiredAdminUser();if(!user||userSelf(user))return;queueUserChange({active:user.active===false});}
 async function changeUserPassword(){if(!userAdmin.editing||userAdmin.failed||userAdmin.busy)return;const password=userEl('userReplacementPassword').value;if(password.length<12||password.length>128){showModalMsg('비밀번호는 12~128자로 입력하세요.');userEl('userReplacementPassword').focus();return;}const self=userSelf(userAdmin.editing);if(await queueUserChange({password})){userEl('userReplacementPassword').value='';showToast('비밀번호를 변경했습니다.');if(self)location.href='/login.html';}}
+const userFilterDropdowns=new Map();
+function setupUserFilterDropdown(id){
+ const source=userEl(id),wrap=document.createElement('div'),button=document.createElement('button'),label=document.createElement('span'),panel=document.createElement('div');
+ wrap.className='user-filter-dropdown';source.before(wrap);wrap.append(source,button,panel);source.hidden=true;source.classList.add('user-filter-source');
+ button.type='button';button.id=id+'Button';button.className='user-filter-button';button.setAttribute('aria-haspopup','listbox');button.setAttribute('aria-controls',id+'Panel');button.setAttribute('aria-expanded','false');
+ label.className='user-filter-label';button.append(label);button.insertAdjacentHTML('beforeend','<svg class="user-filter-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+ panel.id=id+'Panel';panel.className='user-filter-panel';panel.setAttribute('popover','auto');panel.setAttribute('role','listbox');panel.setAttribute('aria-label',source.getAttribute('aria-label'));
+ function sync(){label.textContent=source.selectedOptions[0]?.textContent||'';button.setAttribute('aria-label',source.getAttribute('aria-label')+': '+label.textContent);button.classList.toggle('user-filter-applied',!!source.value);}
+ function close(focus=false){if(panel.matches(':popover-open'))panel.hidePopover();if(focus)button.focus();}
+ function open(){
+  if(panel.matches(':popover-open'))return;
+  panel.replaceChildren();
+  for(const option of source.options){const item=document.createElement('button');item.type='button';item.className='user-filter-option';item.setAttribute('role','option');item.setAttribute('aria-selected',String(option.selected));item.tabIndex=-1;item.textContent=option.textContent;
+   item.onclick=()=>{source.value=option.value;close(true);source.dispatchEvent(new Event('input',{bubbles:true}));};panel.append(item);}
+  const rect=button.getBoundingClientRect(),width=Math.min(Math.max(180,rect.width),innerWidth-16),below=innerHeight-rect.bottom-14,above=rect.top-14;
+  panel.style.width=width+'px';panel.style.left=Math.max(8,Math.min(rect.left,innerWidth-width-8))+'px';panel.style.maxHeight=Math.max(44,Math.min(320,Math.max(below,above)))+'px';
+  panel.showPopover();const height=panel.getBoundingClientRect().height;panel.style.top=(below>=height?rect.bottom+6:Math.max(8,rect.top-height-6))+'px';
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)panel.animate([{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'translateY(0)'}],{duration:150,easing:'ease'});
+  const selected=panel.querySelector('[aria-selected=true]');selected?.focus({preventScroll:true});if(selected)panel.scrollTop=selected.offsetTop-panel.clientHeight/2+selected.offsetHeight/2;
+ }
+ button.onclick=()=>panel.matches(':popover-open')?close():open();
+ button.onkeydown=event=>{if(['ArrowDown','ArrowUp'].includes(event.key)){event.preventDefault();open();}};
+ panel.addEventListener('beforetoggle',event=>{button.setAttribute('aria-expanded',String(event.newState==='open'));if(event.newState==='closed')panel.getAnimations().forEach(animation=>animation.cancel());});
+ panel.onkeydown=event=>{const items=[...panel.querySelectorAll('[role=option]')],index=items.indexOf(document.activeElement);if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;items[next]?.focus();}else if(event.key==='Escape'){event.preventDefault();close(true);}else if(event.key==='Tab'){close(true);}};
+ window.addEventListener('resize',()=>close());
+ window.addEventListener('scroll',event=>{if(!panel.contains(event.target))close();},true);
+ userFilterDropdowns.set(id,{sync,button});sync();
+}
 function setupUserList(){
  if(userEl('userSearch'))return;
  const toolbar=document.querySelector('#tabUsers .user-toolbar');
  const resetIcon='<svg class="user-toolbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a8 8 0 1 1 2 7M4 5v6h6"/></svg>';
  toolbar.insertAdjacentHTML('afterbegin','<div class="user-search-unified"><label class="user-search-field"><svg class="user-toolbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input aria-label="사용자 검색" id="userSearch" type="search" placeholder="이름 · 아이디 · 부서 검색"></label><select aria-label="부서" id="userDepartmentFilter"><option value="">전체 부서</option></select><select aria-label="역할" id="userRoleFilter"><option value="">전체 역할</option><option value="sysadmin">시스템 관리자</option><option value="admin">관리자</option><option value="worker">작업자</option></select><select aria-label="계정 상태" id="userStatusFilter"><option value="">전체 상태</option><option value="active">사용 중</option><option value="invited">재설정 필요</option><option value="suspended">중지</option></select><button type="button" id="userReset" aria-label="검색 조건 초기화" title="검색 조건 초기화">'+resetIcon+'</button></div>');
+ for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter'])setupUserFilterDropdown(id);
  const card=document.querySelector('#tabUsers .toss-user-card');
  const refresh=document.createElement('button');refresh.type='button';refresh.id='userRefresh';refresh.setAttribute('aria-label','명부 새로고침');refresh.title='명부 새로고침';refresh.innerHTML=resetIcon;card.querySelector('.user-roster-heading').append(refresh);
  const actions=document.createElement('div');actions.className='user-list-actions';actions.id='userSelectionActions';actions.hidden=true;actions.innerHTML='<span id="userSelectionCount" role="status"></span><div><button type="button" id="userBulk" disabled>선택 사용자 부서 변경</button><button type="button" id="userClearSelection">선택 해제</button></div>';toolbar.after(actions);
@@ -114,7 +143,7 @@ function renderAdminUsers(){
  const users=userAdmin.users,query=userEl('userSearch').value.toLowerCase().trim(),role=userEl('userRoleFilter').value,status=userEl('userStatusFilter').value,department=userEl('userDepartmentFilter').value;
  const departmentFilter=userEl('userDepartmentFilter'),departments=[...new Set(users.map(u=>u.department).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
  departmentFilter.replaceChildren(new Option('전체 부서',''),...departments.map(d=>new Option(d,d)));departmentFilter.value=departments.includes(department)?department:'';
- const chips=userEl('userActiveFilters');chips.replaceChildren();for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter']){const field=userEl(id);field.classList.toggle('user-filter-applied',!!field.value);if(!field.value)continue;const chip=document.createElement('button'),text=field.selectedOptions[0].textContent;chip.type='button';chip.textContent=text+' ×';chip.setAttribute('aria-label',text+' 조건 해제');chip.onclick=()=>{field.value='';userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();field.focus();};chips.append(chip);}chips.hidden=!chips.childElementCount;
+ const chips=userEl('userActiveFilters');chips.replaceChildren();for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter']){const field=userEl(id);field.classList.toggle('user-filter-applied',!!field.value);if(!field.value)continue;const chip=document.createElement('button'),text=field.selectedOptions[0].textContent;chip.type='button';chip.textContent=text+' ×';chip.setAttribute('aria-label',text+' 조건 해제');chip.onclick=()=>{field.value='';userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();(userFilterDropdowns.get(id)?.button||field).focus();};chips.append(chip);}chips.hidden=!chips.childElementCount;userFilterDropdowns.forEach(dropdown=>dropdown.sync());
  const filtered=users.filter(u=>(!role||u.role===role)&&(!status||(u.status||'active')===status)&&(!departmentFilter.value||u.department===departmentFilter.value)&&[u.name,userLoginId(u),u.department].join(' ').toLowerCase().includes(query)).sort((a,b)=>a.name.localeCompare(b.name,'ko'));
  const pages=Math.max(1,Math.ceil(filtered.length/50));userAdmin.page=Math.min(pages,Math.max(1,userAdmin.page));const body=userEl('adminUserRows');body.replaceChildren();
  const visible=filtered.slice((userAdmin.page-1)*50,userAdmin.page*50);userAdmin.visibleIds=visible.map(u=>u.id);userEl('userRosterCount').textContent=users.length;

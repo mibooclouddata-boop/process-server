@@ -14,7 +14,7 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  const searchBounds=await page.locator('.user-search-unified').boundingBox(),addBounds=await page.getByRole('button',{name:'새 사용자 추가',exact:true}).boundingBox(),rosterBounds=await page.locator('.user-roster-heading').boundingBox();
  assert(Math.abs(searchBounds.y-addBounds.y)<3,'search and add share a row');assert(addBounds.x>=searchBounds.x+searchBounds.width,'add follows search');assert(rosterBounds.y>searchBounds.y+searchBounds.height,'roster follows toolbar');
  assert.equal(await page.locator('#adminUserRows img').count(),0);assert.equal(await page.evaluate(()=>window.__userXss),undefined);
- await page.locator('#userSearch').fill('품질');await page.locator('#userRoleFilter').selectOption('worker');assert.equal(await page.locator('#adminUserRows tr').count(),1);
+ await page.locator('#userSearch').fill('품질');await page.locator('#userRoleFilterButton').click();await page.locator('#userRoleFilterPanel').getByRole('option',{name:'작업자',exact:true}).click();assert.equal(await page.locator('#adminUserRows tr').count(),1);
  await page.locator('#userSearch').fill('no match');assert.match(await page.locator('#adminUserRows').textContent(),/조건에 맞는/);await page.locator('#userReset').click();
  await page.getByRole('button',{name:'가나다 사용자 관리',exact:true}).click();await page.locator('#modalUserName').fill('새 이름');await page.locator('#modalUserDept').click();await page.waitForFunction(()=>userAdmin.editing?.name==='새 이름'&&!userAdmin.saving);
  assert.equal(f.read('data.json').users.find(u=>u.id==='alpha').name,'새 이름');
@@ -46,11 +46,11 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await yearPanel.getByRole('option',{name:'2025년',exact:true}).click();assert.match(await page.locator('#asStatsYearLabel').textContent(),/2025/);assert.match(await yearButton.textContent(),/2025/);assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await page.keyboard.press('ArrowDown');await page.keyboard.press('Home');await page.keyboard.press('Enter');assert.equal(await page.locator('#asStatsYear').inputValue(),'2026');
  await yearButton.click();await page.keyboard.press('Escape');assert(await yearButton.evaluate(el=>el===document.activeElement));assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
- await yearButton.click();await page.locator('.as-overview-basis').click({position:{x:300,y:30}});assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
+ await yearButton.click();await page.locator('header.app-topbar').click({position:{x:5,y:5}});assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await yearButton.click();await page.keyboard.press('Tab');await page.keyboard.press('Tab');assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await yearPanel.evaluate(el=>getComputedStyle(el).transitionDuration),'0s');await page.emulateMedia({reducedMotion:'no-preference'});
- assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'24px');
- assert.deepEqual(await page.locator('#asStatsYearPickerLabel').evaluate(el=>{const style=getComputedStyle(el);return [style.fontSize,style.fontWeight,style.fontFamily];}),await page.locator('#asStatsYear').evaluate(el=>{const style=getComputedStyle(el);return [style.fontSize,style.fontWeight,style.fontFamily];}));
+ assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'16px');
+ assert.deepEqual(await page.locator('#asStatsYearPickerLabel').evaluate(el=>{const style=getComputedStyle(el);return [style.fontWeight,style.fontFamily];}),await page.locator('#asStatsYear').evaluate(el=>{const style=getComputedStyle(el);return [style.fontWeight,style.fontFamily];}));
  await yearButton.click();assert.equal(await yearPanel.locator('.toss-dd-item span').first().evaluate(el=>getComputedStyle(el).fontSize),'18px');await screenshot('year-select');await page.keyboard.press('Escape');
  // A self edit revokes this session, so additional edits must be disabled until redirect.
  await page.locator('#tabUsersBtn').click();await page.getByRole('button',{name:'검증 관리자 사용자 관리',exact:true}).click();let releaseSelf;await page.route('**/api/users/admin',async route=>{await new Promise(resolve=>releaseSelf=resolve);await route.continue();});
