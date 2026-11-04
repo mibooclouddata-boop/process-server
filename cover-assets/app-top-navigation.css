@@ -1,5 +1,5 @@
-/* One light-gray canvas, with a fine white edge around the application. */
-:root{--flow-shell:#f2f4f6;--flow-workspace:#f2f4f6}
+/* Cool-gray canvas with a lighter navigation capsule and a white outer edge. */
+:root{--flow-shell:#e6eaee;--flow-workspace:#e6eaee}
 body #dashboard{outline:5px solid #fff;outline-offset:-5px}
 body #dashboard .main:has(#tabAs){background:var(--flow-workspace);margin:0;border-radius:0}
 body #dashboard>.app-topbar{gap:24px}
@@ -10,19 +10,19 @@ body #dashboard>.app-topbar .topbar-title img{display:block;width:112px!importan
 @media(min-width:1101px){body #dashboard>.app-topbar{padding-left:10px;padding-right:28px}}
 body #dashboard #appRailToggle,body #dashboard #appMenuToggle{display:none!important}
 body #dashboard>.app-topbar #appNavigation{display:flex!important;flex:1;flex-direction:row;align-items:center;min-width:0;width:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;align-self:stretch;justify-content:flex-start}
-body #dashboard #appNavigation>.tabs{display:flex;flex-direction:row;align-items:center;position:relative;top:auto;isolation:isolate;width:max-content;max-width:100%;gap:8px;padding:4px;background:#fff;border:1px solid var(--border);border-radius:28px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+body #dashboard #appNavigation>.tabs{display:flex;flex-direction:row;align-items:center;position:relative;top:auto;isolation:isolate;width:max-content;max-width:100%;gap:8px;padding:4px;background:#f2f4f6;border:1px solid transparent;outline:3px solid #fff;outline-offset:0;border-radius:28px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
 body #dashboard #appNavigation>.tabs::-webkit-scrollbar{display:none}
 body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 96px;flex-direction:row;justify-content:center;gap:10px;width:96px;box-sizing:border-box;white-space:nowrap;min-height:44px;padding:0 12px;margin:0;text-align:center;letter-spacing:.2px;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
 body #dashboard #appNavigation .rail-full{display:block;font-size:14px}
 body #dashboard #appNavigation :is(.rail-short,.rail-tip){display:none!important}
-body #dashboard #appNavigation :is(.tab,.tab-sub):not([aria-current=page]):is(:hover,:focus-visible){background:#f2f4f680;color:#000}
+body #dashboard #appNavigation :is(.tab,.tab-sub):not([aria-current=page]):is(:hover,:focus-visible){background:#e6eaee;color:#000}
 body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:transparent;color:#fff}
 body #dashboard #appNavigation .top-nav-selection{position:absolute;z-index:0;left:0;top:8px;height:36px;box-sizing:border-box;background:#000;border:1px solid #000;border-radius:18px;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.22,.75,.2,1),opacity .15s ease;will-change:transform}
 body #dashboard #appNavigation[data-motion-ready=true] .top-nav-selection{opacity:1}
 @media(prefers-reduced-motion:reduce){body #dashboard #appNavigation :is(.top-nav-selection,.tab,.tab-sub){transition:none!important}}
 body #dashboard #appNavigation .rail-icon{display:none}
 body #dashboard .app-header-tools{flex:none;margin-left:auto}
-body #dashboard #appAccount>summary{display:flex;align-items:center;justify-content:center;width:54px;height:54px;min-width:54px;min-height:54px;padding:0;border:1px solid var(--border);border-radius:16px;background:#fff;color:var(--text-strong);box-sizing:border-box;transition:background .18s ease}
+body #dashboard #appAccount>summary{display:flex;align-items:center;justify-content:center;width:54px;height:54px;min-width:54px;min-height:54px;padding:0;border:1px solid #d3d9df;border-radius:16px;background:#f2f4f6;color:var(--text-strong);box-sizing:border-box;transition:background .18s ease}
 body #dashboard #appAccount>summary:hover,body #dashboard #appAccount[open]>summary{background:#e9edf1}
 body #dashboard #appAccount>summary :is(.app-avatar,.app-account-copy,.app-chevron){display:none!important}
 body #dashboard #appAccount>summary .top-account-icon{display:block;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -40,4 +40,10 @@ body #dashboard #appAccount>summary .top-account-icon{display:block;width:26px;h
  body #dashboard #appNavigation :is(.tab,.tab-sub){padding:0 12px}
  body #dashboard #appNavigation .rail-full{font-size:13px}
  body #dashboard .app-account-panel{right:0}
+}
+
+@media(min-width:769px){
+ body #dashboard #appNavigation>.tabs{border-radius:32px}
+ body #dashboard #appNavigation :is(.tab,.tab-sub){min-height:50px;border-radius:25px}
+ body #dashboard #appNavigation .top-nav-selection{top:6px;height:46px;border-radius:23px}
 }
