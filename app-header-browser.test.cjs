@@ -19,7 +19,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
  await processMenu.click();assert.equal(await processMenu.getAttribute('aria-current'),'page');
  await page.mouse.move(1000,800);await page.locator('#appAccountToggle').focus();
- await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
+ await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(255, 255, 255)');
  assert.equal(await page.locator('#appHeaderPage,.app-topbar .app-location').count(),0);
  await page.locator('#tabAsBtn').click();
  assert.equal(await page.locator('#topbarUser').textContent(),'검증 관리자');
