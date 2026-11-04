@@ -2358,6 +2358,7 @@ function switchTab(tab, el, sub) {
   }
   if(tab==='users')loadAdminUsers();
   AppHeader.setPage(tab,_asSubMode);
+  if(tab==='process'||tab==='dispatch')AsWriteProgress.showDevelopment(tab==='process'?'공정 관리':'배차 관리');
   if(showLedger&&!matchMedia('(max-width:768px)').matches)document.querySelector('#asSubmenu [data-sub="list"]').focus({preventScroll:true});
 }
 
@@ -4043,7 +4044,7 @@ async function initializeDashboard() {
 }
 document.addEventListener('DOMContentLoaded',initializeDashboard);
 </script>
-<script src="/cover-assets/as-write-progress.js?v=2"></script>
+<script src="/cover-assets/as-write-progress.js?v=3"></script>
 <script src="/as-integrity-ui.js?v=3"></script>
 <script src="/as-workflow-ui.js?v=permissions-1"></script>
 <link rel="stylesheet" href="/cover-assets/as-amount-motion.css?v=1">

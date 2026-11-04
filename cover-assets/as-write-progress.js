@@ -7,10 +7,13 @@ const AsWriteProgress=(()=>{
   if(dialog)return;
   const style=document.createElement('style');
   style.textContent=`
-   #asWriteProgress{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(340px,calc(100vw - 32px));height:fit-content;max-height:calc(100dvh - 32px);overflow:auto;padding:32px 24px;border:0;border-radius:18px;background:var(--card,#fff);color:var(--text,#191f28);font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;text-align:center;box-shadow:none}
-   #asWriteProgress::backdrop{background:rgba(15,23,42,.28)}
-   #asWriteProgress h2{margin:20px 0 10px;font-family:inherit;font-size:20px;font-weight:700;line-height:1.4;letter-spacing:-.03em;outline:none}
-   #asWriteProgress p{margin:0;font-family:inherit;font-size:15px;font-weight:500;line-height:1.6;letter-spacing:-.01em;color:var(--text2,#526174);word-break:keep-all}
+   :is(#asWriteProgress,#featureDevelopment){position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(340px,calc(100vw - 32px));height:fit-content;max-height:calc(100dvh - 32px);overflow:auto;padding:32px 24px;border:0;border-radius:18px;background:var(--card,#fff);color:var(--text,#191f28);font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;text-align:center;box-shadow:none}
+   :is(#asWriteProgress,#featureDevelopment)::backdrop{background:rgba(15,23,42,.28)}
+   :is(#asWriteProgress,#featureDevelopment) h2{margin:20px 0 10px;font-family:inherit;font-size:20px;font-weight:700;line-height:1.4;letter-spacing:-.03em;outline:none}
+   :is(#asWriteProgress,#featureDevelopment) p{margin:0;font-family:inherit;font-size:15px;font-weight:500;line-height:1.6;letter-spacing:-.01em;color:var(--text2,#526174);word-break:keep-all}
+   #featureDevelopment .development-icon{display:block;width:36px;height:36px;margin:0 auto;color:var(--brand,#0054a6)}
+   #featureDevelopment button{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--text2,#526174);font:24px/1 sans-serif;cursor:pointer}
+   #featureDevelopment button:focus-visible{outline:2px solid var(--brand,#0054a6);outline-offset:-4px}
    #asWriteProgress .as-write-ring{display:block;width:36px;height:36px;margin:0 auto;box-sizing:border-box;border:3px solid var(--border-strong,#e5e8eb);border-top-color:var(--brand,#0054a6);border-radius:50%;animation:asWriteSpin .8s linear infinite}
    @keyframes asWriteSpin{to{transform:rotate(360deg)}}
    @media(prefers-reduced-motion:reduce){#asWriteProgress .as-write-ring{animation:none}}
@@ -46,5 +49,17 @@ const AsWriteProgress=(()=>{
    requestAnimationFrame(()=>{if(document.activeElement===document.body&&previous?.isConnected&&!previous.disabled&&previous.getClientRects().length)previous.focus();});
   };
  }
- return {start};
+ function showDevelopment(name){
+  create();
+  let notice=document.getElementById('featureDevelopment');
+  if(!notice){
+   notice=document.createElement('dialog');notice.id='featureDevelopment';
+   notice.setAttribute('aria-labelledby','featureDevelopmentTitle');notice.setAttribute('aria-describedby','featureDevelopmentMessage');
+   notice.innerHTML='<button type="button" aria-label="개발 중 안내 닫기">×</button><svg class="development-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18"/></svg><h2 id="featureDevelopmentTitle" tabindex="-1">개발 중</h2><p id="featureDevelopmentMessage"></p>';
+   notice.querySelector('button').onclick=()=>notice.close();document.body.append(notice);
+  }
+  notice.querySelector('p').textContent=name+' 기능을 준비하고 있습니다.';
+  if(!notice.open)notice.showModal();notice.querySelector('h2').focus();
+ }
+ return {start,showDevelopment};
 })();
