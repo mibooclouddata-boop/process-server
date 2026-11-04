@@ -22,15 +22,19 @@ dialog#userModal.user-creating{width:min(620px,calc(100vw - 28px));height:min(70
 #userModal.user-creating .modal-field .user-field-error{color:#b3261e}
 #userModal.user-creating input[aria-invalid=true]{border-color:#b3261e!important}
 #userModal .user-create-password{position:relative}
+#userModal.user-creating .user-create-password:has(input[aria-invalid=true]){animation:user-password-shake .36s ease-out}
+@keyframes user-password-shake{
+ 0%,100%{transform:translateX(0)}
+ 25%{transform:translateX(-5px)}
+ 55%{transform:translateX(4px)}
+ 80%{transform:translateX(-2px)}
+}
 #userModal .user-create-password #modalUserPw{padding-right:50px}
 #userCreatePasswordToggle{position:absolute;right:1px;top:1px;width:44px;height:44px;padding:0;border:0;border-radius:5px;background:transparent;color:#5c6978;display:grid;place-items:center;cursor:pointer}
 #userCreatePasswordToggle:hover{background:#edf3f9}
 #userCreatePasswordToggle svg{width:20px;height:20px}
-#userModal .user-create-review{display:flex;align-items:center;gap:12px;margin:0 0 18px;min-width:0}
-#userCreateInitial{display:grid;place-items:center;width:36px;height:36px;border:1px solid #c3cdd8;border-radius:50%;color:#004a93;flex:none;font-size:14px}
-#userCreateReview>div{min-width:0}#userCreateName{font-size:14px;overflow-wrap:anywhere}#userCreateDepartment{font-size:12px;color:#5c6978;margin:4px 0 0;overflow-wrap:anywhere}
 #userModal .user-create-roles{display:grid;gap:10px;min-width:0;border:0;padding:0;margin:0}
-#userModal .user-create-roles>label{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid #9daaba;border-radius:6px;min-height:72px;cursor:pointer;margin:0}
+#userModal .user-create-roles>label{display:flex;align-items:center;gap:20px;padding:14px 16px;border:1px solid #9daaba;border-radius:6px;min-height:72px;cursor:pointer;margin:0}
 #userModal .user-create-roles>label:has(input:checked){border-color:#004a93;background:#edf3f9}
 #userModal .user-create-roles input{width:18px;min-width:18px;height:18px;min-height:18px;padding:0;margin:0;accent-color:#004a93;flex:none}
 #userModal .user-create-roles strong{font-size:14px;line-height:1.5;color:#202c3c}

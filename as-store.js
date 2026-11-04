@@ -38,7 +38,7 @@ function createAsStore(filename, {io = fs, timeout = 5000} = {}) {
     }
     return data;
   }
-  async function transaction(operation, {write = true} = {}) {
+  async function transaction(operation, {write = true, beforeWrite} = {}) {
     const started = Date.now(); let descriptor;
     while (descriptor === undefined) {
       try { descriptor = io.openSync(lock, 'wx', 0o600); }
@@ -61,6 +61,7 @@ function createAsStore(filename, {io = fs, timeout = 5000} = {}) {
       try { data = validate(JSON.parse(original)); }
       catch (error) { throw error.status ? error : fault('AS 파일을 읽지 못했습니다. 원본과 백업을 확인하세요.'); }
       if (!io.existsSync(marker)) io.writeFileSync(marker, 'AS store initialized\n', {flag:'wx',mode:0o600});
+      if (write && beforeWrite) await beforeWrite();
       const result = operation(data);
       if (result && typeof result.then === 'function') throw new Error('AS transaction callbacks must be synchronous');
       if (write) {

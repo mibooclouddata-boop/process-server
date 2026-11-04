@@ -23,3 +23,20 @@ test('user filters animate, retain filtering and support keyboard, reset and mob
  await role.click();if(process.env.USER_UI_SCREENSHOT_DIR){require('node:fs').mkdirSync(process.env.USER_UI_SCREENSHOT_DIR,{recursive:true});await panel.evaluate(async e=>Promise.all(e.getAnimations().map(a=>a.finished)));await page.screenshot({path:require('node:path').join(process.env.USER_UI_SCREENSHOT_DIR,'user-filters-desktop.png')});}await page.keyboard.press('Escape');await page.emulateMedia({reducedMotion:'reduce'});await role.click();assert.equal(await panel.evaluate(e=>e.getAnimations().length),0);await page.keyboard.press('Escape');
  for(const width of [390,320]){await page.setViewportSize({width,height:844});for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter']){await page.locator('#'+id+'Button').click();const r=await page.locator('#'+id+'Panel').boundingBox();assert(r.x>=0&&r.x+r.width<=width);if(id==='userRoleFilter'&&process.env.USER_UI_SCREENSHOT_DIR)await page.screenshot({path:require('node:path').join(process.env.USER_UI_SCREENSHOT_DIR,'user-filters-'+width+'.png')});await page.keyboard.press('Escape');}assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
 });
+test('roster separates department and position and uses two account states',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:900}}),page=await context.newPage();
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.route('**/api/users',r=>r.fulfill({json:{users:[{id:'active',name:'가직원',role:'worker',department:'생산',position:'대리',active:true,passwordResetRequired:true},{id:'inactive',name:'나직원',role:'worker',department:'품질',position:'과장',active:false}]}}));
+ await page.goto(f.url+'/dashboard.html');await page.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();
+ assert.deepEqual(await page.locator('.user-column-header th').allTextContents(),['','이름','아이디','부서','직급','역할','계정 상태']);
+ assert.deepEqual(await page.locator('#adminUserRows tr').first().locator('td').allTextContents().then(c=>c.slice(2)),['active','생산','대리','작업자','활성화']);
+ assert.equal(await page.locator('#adminUserRows .user-row-actions, #adminUserRows .user-roster-avatar').count(),0);
+ assert.match(await page.locator('#userRoleFilterButton').textContent(),/전체 역할/);
+ await page.locator('#userStatusFilterButton').click();assert.deepEqual(await page.locator('#userStatusFilterPanel [role=option]').allTextContents(),['전체 상태','활성화','비활성화']);
+ await page.locator('#userStatusFilterPanel').getByRole('option',{name:'비활성화',exact:true}).click();assert.equal(await page.locator('#adminUserRows tr').count(),1);assert.match(await page.locator('#adminUserRows').textContent(),/나직원/);
+ await page.locator('#userStatusFilterButton').click();await page.locator('#userStatusFilterPanel').getByRole('option',{name:'활성화',exact:true}).click();assert.equal(await page.locator('#adminUserRows tr').count(),1);
+ await page.getByRole('button',{name:'가직원 사용자 관리',exact:true}).click();await page.locator('#userModal').waitFor();await page.keyboard.press('Escape');
+ await page.locator('#userReset').click();await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+});

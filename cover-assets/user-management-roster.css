@@ -30,14 +30,11 @@
 #tabUsers .user-search-field:focus-within{outline:2px solid #2c78c5;outline-offset:1px}
 #tabUsers .user-search-unified select{font-family:inherit;flex:0 0 145px;width:145px;min-width:0;min-height:40px;height:40px;border:0;border-left:1px solid #d4dde6;border-radius:0;background:transparent;padding:7px 10px;font-size:14px;font-weight:550;color:#334b61;cursor:pointer}
 #tabUsers .user-search-unified select.user-filter-applied{background:#edf4fc;color:#004a93}
-#tabUsers #userReset,#tabUsers #userRefresh{display:grid;place-items:center;flex:none;width:44px;min-width:44px;height:44px;padding:0;border:0;border-radius:4px;background:transparent;color:#526a81;cursor:pointer}
+#tabUsers #userReset{display:grid;place-items:center;flex:none;width:44px;min-width:44px;height:44px;padding:0;border:0;border-radius:4px;background:transparent;color:#526a81;cursor:pointer}
 #tabUsers #userReset{border-left:1px solid #d4dde6;border-radius:0;margin-left:3px}
-#tabUsers #userReset:hover,#tabUsers #userRefresh:hover{background:#edf3f9;color:#004a93}
+#tabUsers #userReset:hover{background:#edf3f9;color:#004a93}
 #tabUsers .toss-user-new-btn{min-height:48px;height:auto;padding:10px 17px;border-radius:6px;font-size:14px;font-weight:650;line-height:1.4;gap:8px;background:#004a93;color:#fff;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;white-space:nowrap;flex:none}
 #tabUsers .toss-user-new-btn:hover{background:#003a75}
-#tabUsers .user-roster-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;margin-bottom:10px;padding:0;border:0}
-#tabUsers .user-roster-heading h2{font-size:15px;font-weight:700;color:var(--user-ink);margin:0;display:flex;gap:10px;align-items:center}
-#tabUsers .user-roster-heading h2 span{font-size:12px;font-weight:400;background:transparent;color:var(--user-muted);padding:0}
 #tabUsers .user-list-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;margin-bottom:16px;background:#f0f5fa;border:1px solid var(--user-line);border-radius:5px;color:#004a93;font-size:13px}
 #tabUsers .user-list-actions>div,#tabUsers .user-pager>div{display:flex;gap:8px;flex-wrap:wrap}
 #tabUsers :is(.user-list-actions,.user-pager) button{min-height:44px;padding:8px 12px;border:1px solid #bac4d0;border-radius:5px;background:#fff;color:#344354;font:500 13px/1.4 'Pretendard Variable',Pretendard,sans-serif;cursor:pointer}
@@ -47,24 +44,24 @@
 #tabUsers #userActiveFilters{display:flex;gap:8px;flex-wrap:wrap;padding:0 0 16px}
 #tabUsers #userActiveFilters button{min-height:44px;padding:8px 11px;border:1px solid #adc7e2;background:#eaf2fc;border-radius:4px;color:#004a93;font:600 13px/1.4 'Pretendard Variable',Pretendard,sans-serif;cursor:pointer}
 #tabUsers .table-wrap{max-height:65vh;overflow:auto;border:0;scroll-padding:50px 12px 12px;max-width:100%}
-#tabUsers .user-roster-table{width:100%;min-width:0;border-collapse:separate;border-spacing:0;table-layout:fixed;font-family:inherit;font-size:14px;font-weight:400;letter-spacing:0;color:var(--user-ink);font-variant-numeric:tabular-nums}
-#tabUsers .user-roster-table th{position:sticky;top:0;z-index:1;text-align:left;background:#fff;color:var(--user-muted);font-size:12px;font-weight:400;line-height:1.5;height:40px;padding:10px 8px;border:0;white-space:nowrap;letter-spacing:0}
-#tabUsers .user-roster-table th:nth-child(3){width:23%}#tabUsers .user-roster-table th:nth-child(4){width:16%}#tabUsers .user-roster-table th:nth-child(5){width:16%}#tabUsers .user-roster-table th:nth-child(6){width:62px}
-#tabUsers .user-roster-table td{position:static;text-align:left;vertical-align:middle;padding:10px 8px;height:76px;font-size:14px;font-weight:400;line-height:1.5;border:0;border-top:1px solid var(--user-line);color:var(--user-ink);background:#fff;overflow-wrap:anywhere;white-space:normal}
+#tabUsers .user-roster-table{width:100%;min-width:0;border-collapse:separate;border-spacing:0;table-layout:fixed;font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;font-size:15px;font-weight:500;letter-spacing:0;color:#202a36;font-variant-numeric:tabular-nums}
+#tabUsers .user-roster-table th{position:sticky;top:0;z-index:1;text-align:left;background:#fff;color:#172334;font-size:15px;font-weight:600;line-height:1.5;height:40px;padding:10px 8px;border:0;white-space:nowrap;letter-spacing:0}
+#tabUsers .user-roster-table td{position:static;text-align:left;vertical-align:middle;padding:10px 8px;height:76px;font-size:15px;font-weight:500;line-height:1.5;border:0;border-top:1px solid var(--user-line);color:#202a36;background:#fff;overflow-wrap:anywhere;white-space:normal}
 #tabUsers .user-roster-table tbody tr:hover td{background:#f8fafc}
 #tabUsers .user-roster-table .user-row-selected td{background:#f0f5fa}
 #tabUsers .user-roster-table small{display:block;font-size:12px;font-weight:400;line-height:1.5;color:var(--user-muted);letter-spacing:0;margin-top:4px;overflow-wrap:anywhere}
+#tabUsers .user-roster-table .user-name-button{font:inherit;color:inherit}
 #tabUsers .user-roster-person{display:flex;align-items:center;gap:12px;min-width:0}#tabUsers .user-roster-person>div{min-width:0}
-#tabUsers .user-roster-avatar{display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;border:1px solid var(--user-line);background:transparent;border-radius:50%;color:var(--user-muted);font-size:12px;font-weight:400}
-#tabUsers .user-status{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;border-radius:0;font-size:12px;font-weight:400;line-height:1.5;background:transparent;white-space:nowrap}
+
+#tabUsers .user-status{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;border-radius:0;font-size:inherit;font-weight:inherit;line-height:1.5;background:transparent;white-space:nowrap}
 #tabUsers .user-status:before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
-#tabUsers .user-status-active{color:#25704e}#tabUsers .user-status-invited{color:#855b16}#tabUsers .user-status-suspended{color:#5c6978}
+#tabUsers .user-status-active{color:#25704e}#tabUsers .user-status-suspended{color:#5c6978}
 #tabUsers .user-roster-table .user-select-cell{width:44px;padding:0;text-align:center}
 #tabUsers .user-check-target{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;cursor:pointer}
 #tabUsers .user-check-target input{width:16px;height:16px;accent-color:#004a93;cursor:pointer}
-#tabUsers .user-row-actions{display:flex;align-items:center}
-#tabUsers .user-row-actions button{min-height:44px;min-width:44px;padding:8px;border:0;border-radius:4px;background:transparent;font:500 13px/1.4 'Pretendard Variable',Pretendard,sans-serif;cursor:pointer}
-#tabUsers .user-detail-btn{color:#004a93}#tabUsers .user-row-actions button:hover:not(:disabled){background:#f0f5fa}
+
+
+
 #tabUsers .user-roster-table .user-roster-empty{padding:44px 20px;text-align:center;color:var(--user-muted);white-space:normal;font-weight:400}
 #tabUsers .user-pager{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;border-top:1px solid var(--user-line);font-size:12px;font-weight:400;color:var(--user-muted)}
 #userModal :is(button,input,select):focus-visible,#tabUsers :is(button,input,select):focus-visible{outline:2px solid #2c78c5;outline-offset:2px}
@@ -75,8 +72,8 @@ dialog#userModal[open]{display:block}dialog#userModal::backdrop{background:#0007
 @media(max-width:650px){
  #tabUsers .toss-user-card{padding:18px 14px 0;border-radius:9px}#tabUsers .user-toolbar{padding-bottom:20px}#tabUsers .toss-user-new-btn{width:100%;margin-left:0}
  #tabUsers .user-search-unified{flex-wrap:wrap;padding:0 6px 6px}#tabUsers .user-search-unified .user-search-field{flex-basis:100%;padding-left:6px;border-bottom:1px solid #d4dde6;border-radius:0;margin-bottom:6px}#tabUsers .user-search-unified input{font-size:16px}#tabUsers .user-search-unified select{flex:1 1 0;width:0;min-width:0;min-height:44px;height:44px;border:0;font-size:12px;padding:7px 2px}#tabUsers #userReset{margin-left:0}
- #tabUsers .user-roster-table :is(th,td):nth-child(3),#tabUsers .user-roster-table :is(th,td):nth-child(4){display:none}#tabUsers .user-roster-table th:nth-child(5){width:30%}#tabUsers .user-roster-table th:nth-child(6){width:44px}
- #tabUsers .user-roster-table .user-select-cell{width:32px}#tabUsers .user-check-target{min-width:32px}#tabUsers .user-roster-table td{height:72px;padding:10px 4px}#tabUsers .user-roster-table th{padding:8px 4px;font-size:11px}#tabUsers .user-roster-avatar{display:none}#tabUsers .user-roster-person{gap:0}#tabUsers .user-status{font-size:11px;gap:4px}#tabUsers .user-row-actions button{font-size:12px;padding:6px}#tabUsers .user-roster-table small{font-size:11px}
+ #tabUsers .user-roster-table .user-select-cell{width:32px}#tabUsers .user-check-target{min-width:32px}#tabUsers .user-roster-table td{height:72px;padding:10px 4px}#tabUsers .user-roster-table th{padding:8px 4px}#tabUsers .user-roster-table .user-name-button{font:inherit;color:inherit}
+#tabUsers .user-roster-person{gap:0}#tabUsers .user-status{gap:4px}#tabUsers .user-roster-table small{font-size:11px}
  #tabUsers .user-list-actions{flex-wrap:wrap}#tabUsers .user-pager{flex-wrap:wrap;font-size:11px;gap:8px}
 }
 
@@ -101,6 +98,22 @@ dialog#userModal{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw -
 #userModal .user-account-options{border:1px solid #c0ccd8;border-radius:4px;overflow:hidden}#userModal .user-account-option{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 16px;border-bottom:1px solid #d0dae4;background:#fbfcfe}#userModal .user-account-option:last-child{border:0}#userModal .user-account-option h4{margin:0;display:flex;gap:9px;align-items:center;flex-wrap:wrap;font-size:14px;color:#27394b}#userModal .user-account-option p{font-size:12px;color:#526172;line-height:1.7;margin:6px 0 0}#userModal .user-account-option button,#userChangePassword{font-family:inherit;flex:none;min-height:44px;padding:9px 12px;min-width:108px;background:white;border:1px solid #adbdcc;border-radius:4px;font-size:13px;font-weight:650;color:#263d53;cursor:pointer}#userModal .user-account-delete{background:#fffafa}#userModal .user-account-delete h4,#userModal #userDeleteAccount{color:#a52b34}#userModal button:disabled{cursor:not-allowed;opacity:.55}
 #userModal .user-account-details{margin-top:16px;padding:0 3px;font-size:13px;color:#526172}#userModal .user-account-details summary{cursor:pointer;min-height:42px;padding:12px 0;font-weight:650;color:#334b62}#userModal .user-account-details label,#userModal .user-account-details small{display:block;margin:7px 0}#userReplacementPassword{min-height:44px;padding:10px;border:1px solid #adbdcc;border-radius:4px;font-family:inherit;font-size:16px;width:100%}#userHistory{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;font-size:12px;line-height:1.8}
 #userModal .modal-msg{display:block;flex:none;height:0;min-height:0;overflow:hidden;margin:0 24px;padding:0;border:0;background:transparent;border-radius:0;color:#a52b34;font-size:12px;font-weight:550}#userModal .modal-msg.error:not(:empty){height:42px;padding:4px 0;overflow:auto}#userModal .modal-footer{position:static;flex:none;flex-wrap:nowrap;margin:0;padding:13px 24px;border-top:1px solid #bdc9d5;background:#f7f9fc;display:flex;align-items:center;justify-content:flex-end;gap:10px}#userModalFooterHint{margin-right:auto;font-size:12px;color:#526172}#userModal .modal-footer button{min-height:44px;min-width:76px;font-size:14px;flex:none}
-#userModal .user-status{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid #b8c9bd;border-radius:3px;font-size:12px;font-weight:650;color:#176348;background:#edf7f1}#userModal .user-status-suspended,#userModal .user-status-invited{color:#854614;background:#fff4e8;border-color:#dfbf9d}#userModal #userSaveStatus.user-save-error{color:#a52b34}
+#userModal .user-status{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid #b8c9bd;border-radius:3px;font-size:12px;font-weight:650;color:#176348;background:#edf7f1}#userModal .user-status-suspended{color:#854614;background:#fff4e8;border-color:#dfbf9d}#userModal #userSaveStatus.user-save-error{color:#a52b34}
 #tabUsers .user-name-button{font:inherit;font-size:14px;font-weight:650;border:0;background:transparent;padding:0;text-align:left;color:#202c3c;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#tabUsers .user-name-button:hover{text-decoration:underline;text-underline-offset:4px}#tabUsers .user-roster-table tbody tr{cursor:pointer}
 @media(max-width:650px){dialog#userModal{width:calc(100vw - 20px);height:94dvh}#userModal .modal-header{padding:16px}#userModal .modal-header h3{font-size:20px}#userModalIdentity{font-size:12px}#userModal .user-save-strip{padding:6px 16px;font-size:11px}#userReloadCurrent{font-size:11px;max-width:106px}#userModal .user-modal-tabs{gap:21px;margin:0 16px}#userModal .user-modal-tabs button{font-size:13px}#userModal .modal-body{padding:17px 16px}#userModal .modal-row{grid-template-columns:1fr;gap:16px;margin-bottom:16px}#userModal .modal-steps{grid-template-columns:repeat(2,minmax(0,1fr))}#userModal .modal-step-item{font-size:13px;padding:10px}#userModal .user-account-option{align-items:stretch;flex-direction:column;gap:12px;padding:15px}#userModal .user-account-option>button{align-self:flex-start;min-width:130px}#userModal .modal-footer{padding:12px 16px;gap:8px}#userModalFooterHint{font-size:11px}#userModal .modal-footer button{flex:none;font-size:13px}#userModal .modal-msg{margin:0 16px}}
+
+#tabUsers .user-roster-table .user-group-header th{top:0;height:36px;padding:8px 12px;font-size:14px;font-weight:600;background:#f3f5f7;border-bottom:1px solid var(--user-line)}
+#tabUsers .user-roster-table .user-column-header th{top:36px}
+#tabUsers .user-roster-table .user-group-header th+th,#tabUsers .user-roster-table .user-column-header th:nth-child(6),#tabUsers .user-roster-table tbody td:nth-child(6){border-left:1px solid #cbd5e0;padding-left:16px}
+
+
+
+#tabUsers .user-col-select{width:44px}#tabUsers .user-col-id{width:18%}#tabUsers .user-col-department{width:16%}#tabUsers .user-col-position{width:12%}#tabUsers .user-col-permission{width:16%}#tabUsers .user-col-status{width:14%}
+@media(max-width:650px){#tabUsers .user-col-select{width:32px}#tabUsers :is(.user-col-id,.user-col-status){width:30%}#tabUsers :is(.user-col-department,.user-col-position,.user-col-permission){display:none}#tabUsers .user-roster-table :is(.user-column-header th,td):is(:nth-child(4),:nth-child(5),:nth-child(6)){display:none}#tabUsers .user-roster-table .user-group-header{display:none}#tabUsers .user-roster-table .user-column-header th{top:0}}
+#userModal #userPermissionChoices{display:grid;gap:12px;margin-top:16px}
+#userModal .user-permission-option{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;padding:16px;border:1px solid var(--border-strong);border-radius:6px;cursor:pointer}
+#userModal .user-permission-option strong{display:block;font-size:15px;font-weight:600;color:#111}
+#userModal .user-permission-option small{display:block;font-size:13px;line-height:1.5;color:var(--text2);margin-top:4px}
+#userModal .user-permission-option input{width:20px;height:20px;min-width:20px;accent-color:#202a36;cursor:pointer}
+#userModal .user-permission-option:has(input:disabled){cursor:default}
+@media(max-width:650px){#userModal .user-modal-tabs{gap:16px}#userModal .user-permission-option{padding:12px}}

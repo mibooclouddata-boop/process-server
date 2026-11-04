@@ -1075,7 +1075,7 @@ tbody tr:hover td{background:var(--surface-muted)}
 <style id="as-list-drawer-style">
 #asSubList .as-toolbar{padding:16px;border:1px solid var(--border);box-shadow:none;background:var(--card)}#asSubList .as-toolbar-row{gap:10px;flex-wrap:wrap}#asSubList .as-toolbar-divider{display:none}#asSubList .as-list-actions{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--card)}#asSubList .as-list-actions .as-toolbar-label{display:none}#asSubList .as-erp-table{min-width:1600px}#asSubList .as-erp-table tbody td{height:48px;font-size:13px!important}#asSubList .as-erp-table tbody td:nth-child(11),#asSubList .as-erp-table tbody td:nth-child(12),#asSubList .as-erp-table tbody td:nth-child(13){text-align:left}#asSubList .as-new-label{width:auto!important;padding:0 16px!important;gap:8px}#asSubList .as-query-btn{border-color:var(--brand);color:var(--brand);background:white}#asModal{justify-content:center;align-items:center;padding:24px}#asModal>.modal-box{width:min(640px,100%);max-width:640px;height:auto;max-height:calc(100dvh - 48px);border-radius:16px;margin:auto;display:flex;flex-direction:column}#asModal .modal-body{flex:1;overflow:auto;padding:22px 24px}#asModal .modal-header,#asModal .modal-footer{flex-shrink:0;padding:18px 24px}#asModal input:not([type=checkbox]):not([type=file]),#asModal select{min-height:42px}#asModal textarea{min-height:88px}#asModal .modal-footer{border-top:1px solid var(--border);background:var(--surface-subtle)}@media(max-width:600px){#asSubList .as-list-actions{flex-wrap:wrap}.as-detail-head,.as-detail-body,.as-detail-footer{padding:18px}.as-detail-footer{flex-wrap:wrap}#asModal input,#asModal select,#asModal textarea{font-size:16px}}
 
-.main:has(:is(#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){display:flex;flex-direction:column}
+.main:has(:is(#tabprocess,#tabdispatch,#tabUsers):not([style*="display:none"]):not([style*="display: none"])){display:flex;flex-direction:column}
 #tabprocess,#tabdispatch{flex:1}
 .main:has(:is(#tabAs,#tabUsers,#tabprocess,#tabdispatch):not([style*="display:none"]):not([style*="display: none"])){max-width:none;min-width:0;padding-inline:32px;scrollbar-gutter:stable both-edges}
 #tabAs #asSubStats{max-width:none;width:100%;margin-inline:0}
@@ -1690,8 +1690,8 @@ body #asSubStats .as-reason-heat-cell{font-family:var(--ui-font);font-size:14px;
 body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 </style>
 <link rel="stylesheet" href="/cover-assets/as-kpi-compact.css?v=4">
-<link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=4">
-<link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=1">
+<link rel="stylesheet" href="/cover-assets/user-management-roster.css?v=5">
+<link rel="stylesheet" href="/cover-assets/user-create-wizard.css?v=2">
 <link rel="stylesheet" href="/cover-assets/as-year-select.css?v=4">
 <link rel="stylesheet" href="/cover-assets/app-header.css?v=3">
 <link rel="stylesheet" href="/cover-assets/app-light-theme.css?v=19">
@@ -1774,16 +1774,17 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
             <span>사용자 추가</span>
           </button>
         </div>
-        <div class="user-roster-heading"><h2>사용자 명부 <span id="userRosterCount">0</span></h2></div>
         <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 명부, 좁은 화면에서는 가로로 스크롤">
           <table class="user-roster-table">
-            <thead><tr>
+            <colgroup><col class="user-col-select"><col><col class="user-col-id"><col class="user-col-department"><col class="user-col-position"><col class="user-col-permission"><col class="user-col-status"></colgroup>
+            <thead><tr class="user-group-header"><th scope="colgroup" colspan="5">기본정보</th><th scope="colgroup" colspan="2">권한 관리</th></tr><tr class="user-column-header">
               <th scope="col" class="user-select-cell"><label class="user-check-target"><input type="checkbox" id="userSelectPage" aria-label="현재 페이지 사용자 전체 선택"></label></th>
-              <th scope="col">사용자</th>
-              <th scope="col">부서 / 직급</th>
+              <th scope="col">이름</th>
+              <th scope="col">아이디</th>
+              <th scope="col">부서</th>
+              <th scope="col">직급</th>
               <th scope="col">역할</th>
               <th scope="col">계정 상태</th>
-              <th scope="col">관리</th>
             </tr></thead>
             <tbody id="adminUserRows"></tbody>
           </table>
@@ -2129,16 +2130,16 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <div class="user-save-strip"><span id="userSaveStatus" role="status" aria-live="polite">사용자 정보를 입력하세요.</span><button type="button" id="userReloadCurrent" hidden onclick="reloadEditingUser()">최신 정보 다시 불러오기</button></div>
         <nav class="user-modal-tabs" id="userModalTabs" role="tablist" aria-label="사용자 관리 항목">
           <button type="button" role="tab" id="userTabInfo" data-user-tab="info" aria-controls="userPanelInfo" aria-selected="true" onclick="selectUserModalTab('info')">기본정보</button>
+          <button type="button" role="tab" id="userTabPermissions" data-user-tab="permissions" aria-controls="userPanelPermissions" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('permissions')">권한 부여</button>
           <button type="button" role="tab" id="userTabAccount" data-user-tab="account" aria-controls="userPanelAccount" aria-selected="false" tabindex="-1" onclick="selectUserModalTab('account')">계정 사용관리</button>
         </nav>
         <div class="modal-body">
         <ol id="userCreateSteps" class="user-create-steps" aria-label="사용자 등록 단계" hidden>
-          <li><span>1</span>직원 정보</li><li><span>2</span>로그인 정보</li><li><span>3</span>역할 확인</li>
+          <li><span>1</span>직원 정보</li><li><span>2</span>로그인 정보</li><li><span>3</span>역할 부여</li>
         </ol>
         <section id="userPanelInfo" role="tabpanel" aria-labelledby="userTabInfo">
           <h4 class="user-section-title" id="userCreateHeading" tabindex="-1">기본정보</h4>
           <p id="userCreateDescription" class="user-create-description" hidden></p>
-          <div id="userCreateReview" class="user-create-review" hidden><span id="userCreateInitial" aria-hidden="true"></span><div><strong id="userCreateName"></strong><p id="userCreateDepartment"></p></div></div>
           <div class="modal-row">
             <div class="modal-field" data-create-step="1">
               <label for="modalUserId">아이디 *</label>
@@ -2166,11 +2167,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
                 <option value="admin">관리자</option>
                 <option value="sysadmin">시스템 관리자</option>
               </select>
-              <fieldset id="userCreateRoleChoices" class="user-create-roles" hidden>
-                <legend class="as-chart-sr-only">사용자 역할</legend>
-                <label><input type="radio" name="userCreateRole" value="worker" checked><span><strong>작업자</strong><small>AS 접수와 진행을 함께 관리합니다.</small></span></label>
-                <label><input type="radio" name="userCreateRole" value="admin"><span><strong>관리자</strong><small>AS 접수와 진행을 함께 관리합니다.</small></span></label>
-                <label><input type="radio" name="userCreateRole" value="sysadmin"><span><strong>시스템 관리자</strong><small>AS 업무와 사용자 계정을 관리합니다.</small></span></label>
+              <fieldset id="userCreateRoleChoices" class="user-create-roles" aria-label="사용자 역할" hidden>
+                <label><input type="radio" name="userCreateRole" value="worker" checked><span><strong>작업자</strong><small>현장에서 담당 공정의 작업을 수행합니다.</small></span></label>
+                <label><input type="radio" name="userCreateRole" value="admin"><span><strong>관리자</strong><small>사용자 계정 관리를 제외한 전반적인 업무를 관리합니다.</small></span></label>
+                <label><input type="radio" name="userCreateRole" value="sysadmin"><span><strong>시스템 관리자</strong><small>모든 권한을 가지며, 사용자 계정과 역할·권한을 관리합니다.</small></span></label>
               </fieldset>
             </div>
           </div>
@@ -2189,11 +2189,12 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <section id="userPanelAccount" role="tabpanel" aria-labelledby="userTabAccount" hidden>
           <h4 class="user-section-title">계정 사용관리</h4>
           <div class="user-account-options">
-            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>중지하면 로그인과 AS 작업이 차단됩니다. 기존 업무 기록은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 중지</button></section>
+            <section class="user-account-option"><div><h4>계정 로그인 <span id="userAccountStatus" class="user-status"></span></h4><p>비활성화하면 로그인과 AS 작업이 차단됩니다. 기존 업무 기록은 유지됩니다.</p></div><button type="button" id="userToggleAccount" onclick="toggleUserAccount()">계정 비활성화</button></section>
             <section class="user-account-option user-account-delete"><div><h4>사용자 삭제</h4><p><span id="userDeleteHint">사용자 명부에서 계정을 삭제합니다. 삭제 시 확인창이 열립니다.</span></p></div><button type="button" id="userDeleteAccount" onclick="deleteAdminUser(userAdmin.editing)">사용자 삭제</button></section>
           </div>
           <details class="user-account-details"><summary>비밀번호 변경</summary><label for="userReplacementPassword">새 비밀번호</label><input type="password" id="userReplacementPassword" minlength="12" maxlength="128" autocomplete="new-password"/><small>12~128자 · 변경하면 해당 계정의 기존 로그인이 종료됩니다.</small><button type="button" id="userChangePassword" onclick="changeUserPassword()">비밀번호 변경</button></details>
         </section>
+        <section id="userPanelPermissions" role="tabpanel" aria-labelledby="userTabPermissions" hidden><h4 class="user-section-title">AS 작업 권한</h4><p id="userPermissionsHint" class="user-modal-help"></p><div id="userPermissionChoices"></div></section>
         </div>
         <div class="modal-msg" id="modalMsg" role="alert" aria-live="assertive" tabindex="-1"></div>
         <div class="modal-footer">
@@ -2211,7 +2212,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 
 <script src="/cover-assets/app-header.js?v=9"></script>
 <script src="/auth-client.js"></script>
-<script src="/user-admin-ui.js?v=3"></script>
+<script src="/as-permissions.js?v=1"></script>
+<script src="/user-admin-ui.js?v=7"></script>
 <script src="/as-amount.js"></script>
 <script src="/as-pdf-preview.js"></script>
 <script>
@@ -3546,6 +3548,7 @@ function formatAsAmountInput(input) {
 }
 function openAsModal(item) {
   if(asSaving)return;
+  if(!AsPermissions.can(currentUser,'create')){showAlert('AS 접수 권한이 없습니다.','warn');return;}
   asEditingId = item ? item.id : null;
   asEditingVersion=asRecordVersion(item);asEditingStatus=item?.status||'';
   document.getElementById('asModalTitle').textContent = item ? 'AS 수정' : 'AS 접수';
@@ -3628,6 +3631,7 @@ function closeAsModal() {
 }
 
 function startRemarkEdit(e, td) {
+  if(!AsPermissions.can(currentUser,'create')){showAlert('AS 접수 권한이 없습니다.','warn');return;}
   e.stopPropagation();
   if(_asRemarkEditing)return;
   const id=td.dataset.id, item=_asFullList.find(a=>String(a.id)===id);
@@ -3663,6 +3667,7 @@ async function saveRemark(inp, id) {
 
 async function submitAs() {
   if(asSaving)return;
+  if(!AsPermissions.can(currentUser,'create')){showAlert('AS 접수 권한이 없습니다.','warn');return;}
   const ship = document.getElementById('asShip').value.trim();
   const block = document.getElementById('asBlock').value.trim();
   const reasonSel = document.getElementById('asReasonSelect').value;
@@ -3768,6 +3773,7 @@ function bulkEditAs() {
 }
 
 async function bulkDeleteAs() {
+  if(!AsPermissions.can(currentUser,'create')){showAlert('AS 접수 권한이 없습니다.','warn');return;}
   const items = _getSelectedAsItems();
   if (!items) return;
   const ok = await showConfirm(`접수 ${items.length}건을 삭제할까요?`, 'danger');
@@ -4039,7 +4045,7 @@ document.addEventListener('DOMContentLoaded',initializeDashboard);
 </script>
 <script src="/cover-assets/as-write-progress.js?v=2"></script>
 <script src="/as-integrity-ui.js?v=3"></script>
-<script src="/as-workflow-ui.js?v=integrity-1"></script>
+<script src="/as-workflow-ui.js?v=permissions-1"></script>
 <link rel="stylesheet" href="/cover-assets/as-amount-motion.css?v=1">
 <script src="/cover-assets/as-amount-motion.js?v=1"></script>
 <script id="as-readable-trend-script">
@@ -4272,7 +4278,7 @@ _onAsRowDblClick=function(e,encoded){if(e.target.closest('input,button,a,.as-rem
  const buttons=document.createElement('div');buttons.className='as-filter-buttons';buttons.append(add);rows[0].classList.add('as-filter-grid');rows[0].replaceChildren(...groups,buttons);
  const edit=rows[1].querySelector('[onclick="bulkEditAs()"]'),del=rows[1].querySelector('[onclick="bulkDeleteAs()"]'),print=rows[1].querySelector('[onclick="bulkPrintAs()"]'),excel=rows[1].querySelector('[onclick="exportAsExcel()"]');
  const exports=document.createElement('div');exports.className='as-export-actions';print.textContent='출력';excel.textContent='Excel';exports.append(print,excel);buttons.replaceChildren(edit,del,exports,add);rows[1].remove();
- const originalUpdate=_updateAsSelectedCount;_updateAsSelectedCount=function(){originalUpdate();const count=document.querySelectorAll('#asTableBody .as-row-cb:checked').length;edit.disabled=count!==1;del.disabled=count===0;};_updateAsSelectedCount();
+ const originalUpdate=_updateAsSelectedCount;_updateAsSelectedCount=function(){originalUpdate();const count=document.querySelectorAll('#asTableBody .as-row-cb:checked').length,allowed=AsPermissions.can(currentUser,'create');edit.disabled=!allowed||count!==1;del.disabled=!allowed||count===0;add.disabled=!allowed;for(const button of [add,edit,del])button.title=allowed?'':'AS 접수 권한이 필요합니다.';};_updateAsSelectedCount();
 })();
 </script><script id="as-ledger-script">
 // Approved ledger interactions; uses the existing authenticated API and read-only preview guard.

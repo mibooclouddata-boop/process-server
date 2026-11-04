@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),{randomUUID}=require('node:crypto');
 const {spawn}=require('node:child_process');
 const {createAsStore}=require('./as-store'),{createAsService}=require('./as-service');
-const owner={id:'fixture-owner',name:'Fixture',role:'worker'},other={id:'fixture-other',name:'Fixture',role:'worker'},admin={id:'fixture-admin',name:'Admin',role:'sysadmin'};
+const owner={id:'fixture-owner',name:'Fixture',role:'worker',asPermissions:['create','production','painting','delivery']},other={id:'fixture-other',name:'Fixture',role:'worker',asPermissions:['create','production','painting','delivery']},admin={id:'fixture-admin',name:'Admin',role:'sysadmin'};
 const base={ship:'TEST',block:'B01',reason:'test reason',deliveryAgreedDate:'2026-11-01'};
 const denied=(fn,status)=>assert.rejects(Promise.resolve().then(fn),{status});
 function fixture(t,options={}){
@@ -12,6 +12,35 @@ function fixture(t,options={}){
   const store=createAsStore(file,options),service=createAsService(store);
   return {dir,file,store,service};
 }
+test('permission revocation while waiting for the store lock blocks writes and cached replay',async t=>{
+ const {service,file}=fixture(t);const key=randomUUID();
+ const first=await service.create(base,[],owner,key);
+ for(const retry of [false,true]){
+  let current=owner,calls=0;
+  fs.writeFileSync(file+'.lock','fixture lock');
+  const pending=service.create(base,[],owner,retry?key:randomUUID(),async()=>{calls++;return current;});
+  assert.equal(calls,0);
+  current={...owner,asPermissions:[]};fs.unlinkSync(file+'.lock');
+  await assert.rejects(pending,{status:403});assert.equal(calls,1);
+ }
+ assert.equal((await service.list()).length,1);
+ assert.equal((await service.history(first.item.id,owner)).length,1);
+ await assert.rejects(service.create(base,[],owner,randomUUID(),async()=>null),{status:401});
+});
+
+test('revocation during a multipart upload prevents commit and cleans uploaded files',async t=>{
+ const express=require('express'),http=require('node:http'),{installAsApi}=require('./as-api');
+ const {dir,service}=fixture(t),uploadsDir=path.join(dir,'uploads');let current=owner,authenticated;
+ const started=new Promise(resolve=>authenticated=resolve);
+ const app=express();installAsApi(app,{service,uploadsDir,authenticate(req,res,next){req.user=current;authenticated();next();},resolveActor:async()=>current});
+ const server=await new Promise(resolve=>{const running=app.listen(0,'127.0.0.1',()=>resolve(running));});t.after(()=>new Promise(resolve=>server.close(resolve)));
+ const boundary='permission-fixture-boundary';
+ const prefix=Object.entries(base).map(([name,value])=>`--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`).join('')+`--${boundary}\r\nContent-Disposition: form-data; name="files"; filename="fixture.txt"\r\nContent-Type: text/plain\r\n\r\nfirst bytes`;
+ let request;const response=new Promise((resolve,reject)=>{request=http.request({host:'127.0.0.1',port:server.address().port,path:'/api/as',method:'POST',headers:{'Content-Type':'multipart/form-data; boundary='+boundary,'X-Requested-With':'process-server','Idempotency-Key':randomUUID()}},res=>{res.resume();res.on('end',()=>resolve(res.statusCode));});request.on('error',reject);});
+ request.write(prefix);await started;current={...owner,asPermissions:[]};request.end(` remaining bytes\r\n--${boundary}--\r\n`);
+ assert.equal(await response,403);assert.deepEqual(await service.list(),[]);assert.deepEqual(fs.readdirSync(uploadsDir),[]);
+});
+
 test('durable retries return one UUID, number and audit event even after reopening the store',async t=>{
   const {file,service}=fixture(t),key=randomUUID();
   const [first,retry]=await Promise.all([service.create(base,[],owner,key),service.create(base,[],owner,key)]);
@@ -175,7 +204,7 @@ test('duplicate legacy IDs/numbers and abandoned locks block writes without sile
 });
 test('separate Node processes serialize monthly numbering and preserve every receipt',async t=>{
   const {file}=fixture(t);
-  const script=`const {createAsService}=require(${JSON.stringify(require.resolve('./as-service'))});const {createAsStore}=require(${JSON.stringify(require.resolve('./as-store'))});const s=createAsService(createAsStore(process.argv[1]));(async()=>{for(let i=0;i<8;i++)await s.create({ship:'TEST',block:'B',reason:'fixture'},[],{id:'worker',name:'Fixture',role:'worker'},require('crypto').randomUUID());})().catch(e=>{console.error(e);process.exitCode=1});`;
+  const script=`const {createAsService}=require(${JSON.stringify(require.resolve('./as-service'))});const {createAsStore}=require(${JSON.stringify(require.resolve('./as-store'))});const s=createAsService(createAsStore(process.argv[1]));(async()=>{for(let i=0;i<8;i++)await s.create({ship:'TEST',block:'B',reason:'fixture'},[],{id:'worker',name:'Fixture',role:'worker',asPermissions:['create','production','painting','delivery']},require('crypto').randomUUID());})().catch(e=>{console.error(e);process.exitCode=1});`;
   await Promise.all(Array.from({length:3},()=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,['-e',script,file],{stdio:['ignore','ignore','pipe']});let stderr='';child.stderr.on('data',chunk=>stderr+=chunk);child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error(stderr)));})));
   const data=JSON.parse(fs.readFileSync(file,'utf8'));assert.equal(data.list.length,24);assert.equal(new Set(data.list.map(r=>r.asNo)).size,24);assert.equal(new Set(data.list.map(r=>r.id)).size,24);assert.equal(data.events.length,24);
 });

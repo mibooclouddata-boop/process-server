@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto');
 const multer=require('multer');
 const attachments=require('./as-files');
-function installAsApi(app,{service,authenticate,uploadsDir}){
+function installAsApi(app,{service,authenticate,uploadsDir,resolveActor}){
   fs.mkdirSync(uploadsDir,{recursive:true});
   const upload=multer({storage:multer.diskStorage({destination:uploadsDir,filename(req,file,cb){
     const ext=path.extname(file.originalname).toLowerCase();
@@ -11,6 +11,7 @@ function installAsApi(app,{service,authenticate,uploadsDir}){
   }}),limits:{fileSize:20*1024*1024,files:10,fields:32,fieldSize:16000,parts:42}}).array('files',10);
   const run=fn=>async(req,res,next)=>{try{await fn(req,res,next);}catch(error){next(error);}};
   const actor=req=>req.user||req.asActor;
+  const freshActor=req=>resolveActor?()=>resolveActor(req):undefined;
   const signedIn=(req,res,next)=>req.user?next():authenticate(req,res,next);
   app.use('/api/as',signedIn,(req,res,next)=>{
     res.set('Cache-Control','no-store');
@@ -33,7 +34,7 @@ function installAsApi(app,{service,authenticate,uploadsDir}){
         try{input=JSON.parse(input.payload);}catch{throw Object.assign(new Error('진행 정보를 확인하세요.'),{status:400});}
       }
       const key=req.get('Idempotency-Key');
-      const result=operation==='create'?await service.create(input,files,actor(req),key):await service[operation](req.params.id,input,files,actor(req),key);
+      const result=operation==='create'?await service.create(input,files,actor(req),key,freshActor(req)):await service[operation](req.params.id,input,files,actor(req),key,freshActor(req));
       committed=true;
       if(result.replayed)attachments.cleanup(req.files,uploadsDir);
       res.json(result);
@@ -42,8 +43,8 @@ function installAsApi(app,{service,authenticate,uploadsDir}){
   app.post('/api/as',parseFiles,save('create'));
   app.put('/api/as/:id',precheck,parseFiles,save('update'));
   app.patch('/api/as/:id/workflow',precheck,parseFiles,save('advance'));
-  app.delete('/api/as/:id',precheck,run(async(req,res)=>res.json(await service.remove(req.params.id,req.body||{},actor(req),req.get('Idempotency-Key')))));
-  app.post('/api/as/:id/restore',precheck,run(async(req,res)=>res.json(await service.restore(req.params.id,req.body||{},actor(req),req.get('Idempotency-Key')))));
+  app.delete('/api/as/:id',precheck,run(async(req,res)=>res.json(await service.remove(req.params.id,req.body||{},actor(req),req.get('Idempotency-Key'),freshActor(req)))));
+  app.post('/api/as/:id/restore',precheck,run(async(req,res)=>res.json(await service.restore(req.params.id,req.body||{},actor(req),req.get('Idempotency-Key'),freshActor(req)))));
   for(const stage of ['review','approve'])app.patch('/api/as/:id/'+stage,(req,res)=>res.status(410).json({error:'진행 관리를 이용하세요.'}));
   app.use('/api/as',(error,req,res,next)=>{
     if(res.headersSent)return next(error);

@@ -1,5 +1,6 @@
 ﻿const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const {applyWorkflow,normalize,dateValid}=require('./as-workflow');
+const AsPermissions=require('./as-permissions');
 const actor={id:'test',name:'테스트 담당',department:'품질'},day='2026-10-20',now='2026-10-20T00:00:00Z';
 const base=()=>({id:'test',status:'접수',deliveryAgreedDate:'2026-10-25',createdBy:actor.name,createdById:actor.id,files:[]});
 const run=(item,input)=>applyWorkflow(item,{revision:item.workflow?.revision||0,...input},actor,day,now);
@@ -80,14 +81,24 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  const context={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
  const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',product:'<script>bad</script>',materialCode:'MAT-01',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
  assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('as-doc-header'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
- assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=integrity-1"><\/script>/g)||[]).length,1);
+ assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=permissions-1"><\/script>/g)||[]).length,1);
 });
 // API persistence, validation, authorization and conflicts are exercised by as-integrity.test.cjs.
 
-test('AS controls allow other active staff and legacy records but exclude examples and blocked accounts',()=>{
- const c={currentUser:{id:'other',role:'worker'},document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};
+test('AS controls require current-stage grants and exclude examples and blocked accounts',()=>{
+ const c={AsPermissions,currentUser:{id:'other',role:'worker',asPermissions:['create']},document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};
  vm.createContext(c);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),c);
- assert.equal(c.asJobCanEdit(base()),true);assert.equal(c.asJobCanEdit({id:'legacy'}),true);
+ assert.equal(c.asJobCanEdit(base()),true);assert.equal(c.asJobCanEdit({id:'legacy',status:'접수'}),true);
+ for(const role of ['worker','admin'])for(const status of ['접수','제작 요청','도장 요청','납품 요청']){
+  c.currentUser={id:'other',role};assert.equal(c.asJobCanEdit({...base(),status}),false);
+  for(const key of AsPermissions.keys){
+   c.currentUser={id:'other',role,asPermissions:[key]};
+   assert.equal(c.asJobCanEdit({...base(),status}),key===AsPermissions.forStatus(status));
+  }
+ }
+ c.currentUser={id:'other',role:'sysadmin'};
+ for(const status of ['접수','제작 요청','도장 요청','납품 요청'])assert.equal(c.asJobCanEdit({...base(),status}),true);
+ for(const status of ['완료','unknown',undefined])assert.equal(c.asJobCanEdit({...base(),status}),false);
  assert.equal(c.asJobCanEdit({id:'list-example-1'}),false);
  for(const user of [null,{id:'other',role:'worker',active:false},{id:'other',role:'worker',passwordResetRequired:true},{id:'other',role:'guest'}]){
   c.currentUser=user;assert.equal(!!c.asJobCanEdit(base()),false);
@@ -140,7 +151,7 @@ test('shared calendar respects stage bounds, clearing and month boundaries',()=>
 test('legacy records without an agreement can enter the new workflow through the dialog',()=>{
  const legacy=normalize({id:'old',status:'승인 요청',createdBy:actor.name,reviewer:'previous'});
  const dialog={open:false,showModal(){this.open=true;},setAttribute(){},addEventListener(){}};
- const context={currentUser:{...actor,role:'sysadmin'},document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}},getElementById:id=>id==='asJobDialog'?dialog:null}};
+ const context={AsPermissions,currentUser:{...actor,role:'sysadmin'},document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}},getElementById:id=>id==='asJobDialog'?dialog:null}};
  vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
  context.openAsWorkflow(legacy);
  assert(dialog.innerHTML.includes('id="asJobLegacyDeadline"'));
@@ -212,11 +223,12 @@ test('remark editing preserves unsaved input on validation, HTTP and network err
 test('bulk deletion reports server failures instead of success, refreshes partial results and honors cancel',async()=>{
  const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  const source=html.slice(html.indexOf('async function bulkDeleteAs()'),html.indexOf('function bulkApproveAs()'));
- for(const scenario of ['success','failure','network','cancel']){
+ for(const scenario of ['success','failure','network','cancel','denied']){
   const alerts=[],requests=[];let refreshes=0;
-  const context={asChangeReason:async()=> 'test reason',asRecordVersion:()=>0,asWrite:async url=>{requests.push(url);if(scenario==='network'||scenario==='failure'&&requests.length>1)throw Error('save failed');return {success:true};},asListExampleReadOnly:()=>false,_getSelectedAsItems:()=>[{id:'one'},{id:'two'}],showConfirm:async()=>scenario!=='cancel',SERVER:'',fetch:async url=>{requests.push(url);if(scenario==='network')throw Error('offline');return {ok:scenario!=='failure'||requests.length===1};},showAlert:(message,type)=>alerts.push({message,type}),loadAsList:()=>refreshes++};
+  const context={AsPermissions,currentUser:{id:'other',role:'worker',asPermissions:scenario==='denied'?[]:['create']},asChangeReason:async()=> 'test reason',asRecordVersion:()=>0,asWrite:async url=>{requests.push(url);if(scenario==='network'||scenario==='failure'&&requests.length>1)throw Error('save failed');return {success:true};},asListExampleReadOnly:()=>false,_getSelectedAsItems:()=>[{id:'one'},{id:'two'}],showConfirm:async()=>scenario!=='cancel',SERVER:'',fetch:async url=>{requests.push(url);if(scenario==='network')throw Error('offline');return {ok:scenario!=='failure'||requests.length===1};},showAlert:(message,type)=>alerts.push({message,type}),loadAsList:()=>refreshes++};
   vm.createContext(context);vm.runInContext(source,context);await context.bulkDeleteAs();
-  if(scenario==='cancel'){assert.equal(requests.length,0);assert.equal(alerts.length,0);assert.equal(refreshes,0);}
+  if(scenario==='denied'){assert.equal(requests.length,0);assert.equal(refreshes,0);assert.equal(alerts[0].type,'warn');}
+  else if(scenario==='cancel'){assert.equal(requests.length,0);assert.equal(alerts.length,0);assert.equal(refreshes,0);}
   else{assert.equal(refreshes,1);assert.equal(alerts.length,1);assert.equal(alerts[0].type,scenario==='success'?'success':'error');}
  }
 });

@@ -13,6 +13,7 @@ const supabaseAuth = AUTH_PROVIDER === 'supabase' ? (()=>{
   return auth.createSupabaseAuth(auth.createSupabaseBackend(auth.configuration()));
 })() : null;
 const passwords = require('./passwords');
+const asPermissions = require('./as-permissions');
 const DATA_DIR = path.resolve(process.env.PROCESS_DATA_DIR || __dirname);
 fs.mkdirSync(DATA_DIR, {recursive:true});
 const DATA_FILE = path.join(DATA_DIR, 'data.json');
@@ -53,6 +54,7 @@ app.get('/as-workflow-ui.js', (req,res)=>res.sendFile('as-workflow-ui.js',{root:
 app.get('/as-integrity-ui.js', (req,res)=>res.sendFile('as-integrity-ui.js',{root:__dirname}));
 app.get('/auth-client.js', (req,res)=>res.sendFile('auth-client.js',{root:__dirname}));
 app.get('/user-admin-ui.js', (req,res)=>res.sendFile('user-admin-ui.js',{root:__dirname}));
+app.get('/as-permissions.js', (req,res)=>res.sendFile('as-permissions.js',{root:__dirname}));
 app.get('/as-amount.js', (req,res)=>res.sendFile('as-amount.js',{root:__dirname}));
 app.get('/as-pdf-preview.js', (req,res)=>res.sendFile('as-pdf-preview.js',{root:__dirname}));
 app.get('/dashboard.html', (req, res) => sendPage(res, 'dashboard.html'));
@@ -79,7 +81,7 @@ function saveData(data) {
 const loginAttempts=new Map();
 let pendingLogins=0;
 const dummyHash=passwords.hashPassword(require('node:crypto').randomBytes(32).toString('hex'));
-function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],department:u.department||'',position:u.position||''};}
+function publicUser(u){return {id:u.id,loginId:u.loginId||u.id,name:u.name,role:u.role,active:u.active!==false,icon:u.icon||'',allowedSteps:u.allowedSteps||[],asPermissions:Array.isArray(u.asPermissions)?u.asPermissions:[],department:u.department||'',position:u.position||''};}
 app.post('/api/login', async (req,res)=>{
   if(supabaseAuth)return supabaseAuth.login(req,res);
   const {id,password}=req.body||{};
@@ -125,6 +127,7 @@ function validateUser(req,res,next){
  const b=req.body||{};
  if(['asReview','asApprove'].some(k=>Object.hasOwn(b,k)))return res.status(400).json({error:'AS 검토·승인 권한은 더 이상 사용하지 않습니다.'});
  if(b.active!==undefined&&typeof b.active!=='boolean')return res.status(400).json({error:'계정 상태를 확인하세요.'});
+ if(b.asPermissions!==undefined&&(!Array.isArray(b.asPermissions)||b.asPermissions.some(key=>!asPermissions.keys.includes(key))||new Set(b.asPermissions).size!==b.asPermissions.length))return res.status(400).json({error:'AS 작업 권한을 확인하세요.'});
  if(b.name!==undefined&&(typeof b.name!=='string'||!b.name.trim()))return res.status(400).json({error:'이름을 입력하세요.'});
  if((b.role!==undefined&&!['worker','admin','sysadmin'].includes(b.role)) || (b.allowedSteps!==undefined&&(!Array.isArray(b.allowedSteps)||b.allowedSteps.some(v=>!['incoming','inspect_wait','inspect_done','paint_wait','paint_done','deliver_wait','deliver_done'].includes(v)))) || ['name','department','position','icon'].some(k=>b[k]!==undefined&&(typeof b[k]!=='string'||b[k].length>100)))return res.status(400).json({error:'사용자 정보를 확인하세요.'});
  if((req.method==='POST'||b.password)&&!passwords.validPassword(b.password))return res.status(400).json({error:'비밀번호는 12~128자로 입력하세요.'});
@@ -138,7 +141,7 @@ app.post('/api/users', validateUser, (req, res) => {
   const icon = req.body.icon || '';
   const department = req.body.department || '';
   const position = req.body.position || '';
-  data.users.push({ id, passwordHash: passwords.hashPassword(password), name, role: role || 'worker', active: req.body.active ?? true, icon, allowedSteps: allowedSteps || [], department, position });
+  data.users.push({ id, passwordHash: passwords.hashPassword(password), name, role: role || 'worker', active: req.body.active ?? true, icon, allowedSteps: allowedSteps || [], asPermissions:req.body.asPermissions||[], department, position });
   saveData(data);
   res.json({ success: true });
 });
@@ -154,6 +157,7 @@ app.put('/api/users/:id', validateUser, (req, res) => {
   asSessions.revokeUser(req.params.id);
   if (name) data.users[idx].name = name;
   if (role) data.users[idx].role = role;
+  if (req.body.asPermissions !== undefined) data.users[idx].asPermissions = req.body.asPermissions;
   if (req.body.active !== undefined) data.users[idx].active = req.body.active;
   if (req.body.icon !== undefined) data.users[idx].icon = req.body.icon;
   if (req.body.department !== undefined) data.users[idx].department = req.body.department;
@@ -176,7 +180,12 @@ app.delete('/api/users/:id', (req, res) => {
 });
 
 // ── AS 접수 ──
-require('./as-api').installAsApi(app, {service:asService,authenticate,uploadsDir:UPLOADS_DIR});
+function resolveAsActor(req){
+  if(supabaseAuth)return supabaseAuth.resolve(req);
+  const id=asSessions.userId(req),user=id&&loadData().users.find(u=>u.id===id);
+  return user&&asSessions.matches(req,user)?user:null;
+}
+require('./as-api').installAsApi(app, {service:asService,authenticate,resolveActor:resolveAsActor,uploadsDir:UPLOADS_DIR});
 app.post('/api/logout', (req,res)=>{if(supabaseAuth)return supabaseAuth.logout(req,res);asSessions.revoke(req,res);res.json({success:true});});
 
 function loadProducts() {
