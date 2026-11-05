@@ -44,16 +44,6 @@ test('self edits redirect after successful save without a revoked-session follow
 test('stale list responses cannot replace the latest list',async()=>{
  const {ctx,run}=setup();ctx.setupUserList=()=>{};let release;ctx.userApi=()=>new Promise(r=>release=r);const first=ctx.loadAdminUsers();ctx.userApi=async()=>({users:[{id:'new'}]});await ctx.loadAdminUsers();release({users:[{id:'old'}]});await first;assert.equal(run('userAdmin.users[0].id'),'new');
 });
-test('bulk edits process self last and report partial failure accurately',async()=>{
- for(const fail of [false,true]){
-  const {ctx,run,redirects}=setup(),calls=[],messages=[];let refreshed=0;
-  ctx.prompt=()=> '품질';ctx.showToast=x=>messages.push(x);ctx.loadAdminUsers=async()=>{refreshed++;};
-  run("userAdmin.users=[{id:'root'},{id:'worker'}];userAdmin.selected=new Set(['root','worker'])");
-  ctx.userApi=async url=>{calls.push(url);if(fail&&url.endsWith('/root'))throw Error('fixture failure');return {success:true};};
-  await ctx.bulkUserDepartment();assert.deepEqual(calls,['/api/users/worker','/api/users/root']);
-  if(fail){assert.equal(refreshed,1);assert.match(messages[0].message,/1명 반영 후 중단/);assert.equal(redirects.length,0);}else{assert.equal(refreshed,0);assert.deepEqual(redirects,['/login.html']);}
- }
-});
 test('local account activation validates state, protects last admin and revokes sessions without changing AS data',async t=>{
  const f=await startFixture();t.after(()=>f.close());let cookie='';
  const req=(url,method='GET',data,auth=cookie)=>fetch(f.url+url,{method,headers:{cookie:auth,'X-Requested-With':'process-server','Content-Type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});

@@ -1,0 +1,24 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
+test('permission roster reflects effective AS permissions without selection actions',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:900}}),page=await context.newPage(),headers={'X-Requested-With':'process-server'},errors=[];page.on('pageerror',e=>errors.push(e.message));
+ assert.equal((await context.request.post(f.url+'/api/login',{headers,data:{id:'admin',password:'Fixture-passphrase-2026!'}})).status(),200);
+ for(const [id,active]of [['operator',true],['inactive',false]])assert.equal((await context.request.post(f.url+'/api/users',{headers,data:{id,name:id,role:'worker',active,password:'Fixture-passphrase-2026!',asPermissions:['production']}})).status(),200);
+ await page.goto(f.url+'/dashboard.html');await page.locator('#tabUsersBtn').click();await page.waitForFunction(()=>document.querySelectorAll('#adminUserRows tr').length===3);
+ const row=id=>page.locator('#adminUserRows tr').filter({has:page.getByRole('button',{name:id+' 사용자 관리',exact:true})});
+ const operator=row('operator'),inactive=row('inactive');
+ assert.equal(await operator.locator('td').count(),11);
+ assert.equal(await operator.getByRole('img',{name:'제작 완료 허용',exact:true}).count(),1);
+ assert.equal(await operator.getByRole('img',{name:/제한$/}).count(),3);
+ assert.equal(await inactive.getByRole('img',{name:/허용$/}).count(),0);
+ const admin=page.locator('#adminUserRows tr').filter({has:page.locator('td:nth-child(3)',{hasText:/^admin$/})});assert.equal(await admin.getByRole('img',{name:/허용$/}).count(),4);
+ await operator.getByRole('checkbox').check();assert.equal(await page.locator('#userSelectionActions,#userBulk,#userClearSelection,.matrix-intro').count(),0);
+ await page.locator('#userSearch').fill('not-a-user');assert.equal(await page.locator('#adminUserRows td').getAttribute('colspan'),'11');await page.locator('#userReset').click();
+ await page.setViewportSize({width:390,height:844});
+ const scroll=page.locator('#tabUsers .table-wrap');assert(await scroll.evaluate(el=>el.scrollWidth>el.clientWidth));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ assert(await page.getByRole('columnheader',{name:'출하 완료',exact:true}).isVisible());
+ assert.deepEqual(errors,[]);
+});

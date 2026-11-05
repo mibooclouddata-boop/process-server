@@ -108,8 +108,12 @@ dialog#userModal{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw -
 
 
 
-#tabUsers .user-col-select{width:44px}#tabUsers .user-col-id{width:18%}#tabUsers .user-col-department{width:16%}#tabUsers .user-col-position{width:12%}#tabUsers .user-col-permission{width:16%}#tabUsers .user-col-status{width:14%}
-@media(max-width:650px){#tabUsers .user-col-select{width:32px}#tabUsers :is(.user-col-id,.user-col-status){width:30%}#tabUsers :is(.user-col-department,.user-col-position,.user-col-permission){display:none}#tabUsers .user-roster-table :is(.user-column-header th,td):is(:nth-child(4),:nth-child(5),:nth-child(6)){display:none}#tabUsers .user-roster-table .user-group-header{display:none}#tabUsers .user-roster-table .user-column-header th{top:0}}
+#tabUsers .user-col-select{width:44px}#tabUsers .user-col-id{width:12%}#tabUsers .user-col-department{width:10%}#tabUsers .user-col-position{width:8%}#tabUsers .user-col-permission{width:13%}#tabUsers .user-col-action{width:8%}#tabUsers .user-col-status{width:10%}
+#tabUsers .user-roster-table{min-width:1120px}
+#tabUsers .user-roster-table .user-permission-cell{text-align:center;white-space:nowrap}
+#tabUsers .user-permission-indicator{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:17px;color:#657487}
+#tabUsers .user-permission-indicator.is-allowed{color:#004a93;font-weight:650}
+@media(max-width:650px){#tabUsers .user-col-select{width:32px}#tabUsers .table-wrap{scroll-padding-top:90px}}
 #userModal #userPermissionChoices{display:grid;gap:12px;margin-top:16px}
 #userModal .user-permission-option{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;padding:16px;border:1px solid var(--border-strong);border-radius:6px;cursor:pointer}
 #userModal .user-permission-option strong{display:block;font-size:15px;font-weight:600;color:#111}
