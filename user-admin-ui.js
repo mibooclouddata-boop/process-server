@@ -127,20 +127,17 @@ function setupUserList(){
  toolbar.insertAdjacentHTML('afterbegin','<div class="user-search-unified"><label class="user-search-field"><svg class="user-toolbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input aria-label="사용자 검색" id="userSearch" type="search" placeholder="이름 · 아이디 · 부서 검색"></label><select aria-label="부서" id="userDepartmentFilter"><option value="">전체 부서</option></select><select aria-label="역할" id="userRoleFilter"><option value="">전체 역할</option><option value="sysadmin">시스템 관리자</option><option value="admin">관리자</option><option value="worker">작업자</option></select><select aria-label="계정 상태" id="userStatusFilter"><option value="">전체 상태</option><option value="active">활성화</option><option value="suspended">비활성화</option></select><button type="button" id="userReset" aria-label="검색 조건 초기화" title="검색 조건 초기화">'+resetIcon+'</button></div>');
  for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter'])setupUserFilterDropdown(id);
  const card=document.querySelector('#tabUsers .toss-user-card');
- const actions=document.createElement('div');actions.className='user-list-actions';actions.id='userSelectionActions';actions.hidden=true;actions.innerHTML='<span id="userSelectionCount" role="status"></span><div><button type="button" id="userBulk" disabled>선택 사용자 부서 변경</button><button type="button" id="userClearSelection">선택 해제</button></div>';toolbar.after(actions);
  const chips=document.createElement('div');chips.id='userActiveFilters';chips.hidden=true;toolbar.after(chips);
  const pager=document.createElement('div');pager.className='user-pager';pager.innerHTML='<span id="userPage" role="status" aria-live="polite"></span><div><button type="button" id="userPrevious">이전</button><button type="button" id="userNext">다음</button></div>';card.append(pager);
  for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).addEventListener('input',()=>{userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();});
  userEl('userReset').onclick=()=>{for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).value='';userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();};
  userEl('userSelectPage').onchange=e=>{for(const id of userAdmin.visibleIds){if(e.target.checked)userAdmin.selected.add(id);else userAdmin.selected.delete(id);}renderAdminUsers();};
- userEl('userPrevious').onclick=()=>{userAdmin.page--;renderAdminUsers();};userEl('userNext').onclick=()=>{userAdmin.page++;renderAdminUsers();};userEl('userBulk').onclick=bulkUserDepartment;
- userEl('userClearSelection').onclick=()=>{userAdmin.selected.clear();renderAdminUsers();userEl('userSelectPage').focus();};
+ userEl('userPrevious').onclick=()=>{userAdmin.page--;renderAdminUsers();};userEl('userNext').onclick=()=>{userAdmin.page++;renderAdminUsers();};
  userEl('modalUserPw').addEventListener('input',()=>{userEl('modalUserPw').removeAttribute('aria-invalid');userEl('userCreateErrorPassword').textContent='';});
  setupUserModal();
 }
 function updateUserSelection(){
- const count=userAdmin.selected.size,ids=userAdmin.visibleIds,selected=ids.filter(id=>userAdmin.selected.has(id)).length;
- userEl('userSelectionCount').textContent=count?`${count}명 선택`:'';userEl('userBulk').disabled=!count;userEl('userSelectionActions').hidden=!count;
+ const ids=userAdmin.visibleIds,selected=ids.filter(id=>userAdmin.selected.has(id)).length;
  const all=userEl('userSelectPage');all.disabled=!ids.length;all.checked=!!ids.length&&selected===ids.length;all.indeterminate=selected>0&&selected<ids.length;
 }
 async function loadAdminUsers(){
@@ -163,10 +160,14 @@ function renderAdminUsers(){
   const identity=cell(''),person=document.createElement('div'),copy=document.createElement('div'),name=document.createElement('button');person.className='user-roster-person';name.type='button';name.className='user-name-button';name.textContent=user.name;name.setAttribute('aria-label',user.name+' 사용자 관리');name.onclick=()=>openUserModal(user);copy.append(name);person.append(copy);identity.append(person);cell(userLoginId(user));
   cell(user.department||'미지정');cell(user.position||'미지정');
   cell(userRoles[user.role]||user.role);
+  for(const [key,title] of Object.entries(userAsPermissions)){
+   const permission=cell(''),badge=document.createElement('span'),allowed=AsPermissions.can(user,key);
+   permission.className='user-permission-cell';badge.className='user-permission-indicator'+(allowed?' is-allowed':'');badge.textContent=allowed?'✓':'—';badge.setAttribute('role','img');badge.setAttribute('aria-label',title+' '+(allowed?'허용':'제한'));permission.append(badge);
+  }
   const state=cell(''),statusBadge=document.createElement('span');statusBadge.className='user-status user-status-'+(['active','suspended'].includes(user.status)?user.status:'active');statusBadge.textContent=userStatuses[user.status]||'활성화';state.append(statusBadge);
 row.onclick=e=>{if(!e.target.closest('button,input,label,select,a'))openUserModal(user);};body.append(row);
  }
- if(!filtered.length){const row=body.insertRow(),td=row.insertCell();td.colSpan=7;td.className='user-roster-empty';td.textContent=users.length?'조건에 맞는 사용자가 없습니다. 검색어나 필터를 확인하세요.':'등록된 사용자가 없습니다.';}
+ if(!filtered.length){const row=body.insertRow(),td=row.insertCell();td.colSpan=11;td.className='user-roster-empty';td.textContent=users.length?'조건에 맞는 사용자가 없습니다. 검색어나 필터를 확인하세요.':'등록된 사용자가 없습니다.';}
  userEl('userPage').textContent=`${filtered.length}명 · ${userAdmin.page} / ${pages}페이지`;userEl('userPrevious').disabled=userAdmin.page===1;userEl('userNext').disabled=userAdmin.page===pages;
  updateUserSelection();
 }
@@ -183,13 +184,4 @@ async function deleteAdminUser(user){
  if(!user||userSelf(user)||userAdmin.busy||userAdmin.failed)return;const id=user.id;if(!await flushUserChanges())return;user=userAdmin.users.find(u=>u.id===id)||user;
  const deactivate=user.authProvider==='supabase';if(!confirm(user.name+' ('+userLoginId(user)+') 계정을 '+(deactivate?'비활성화':'삭제')+'하시겠습니까? 기존 AS 기록은 유지됩니다.'))return;
  userAdmin.busy=true;paintUserModal();try{await userApi('/api/users/'+encodeURIComponent(id),{method:'DELETE'});userAdmin.busy=false;if(userAdmin.editing?.id===id)await closeUserModal(true);showToast(deactivate?'계정을 비활성화했습니다.':'사용자를 삭제했습니다.');await loadAdminUsers();}catch(e){showModalMsg(e.message);}finally{userAdmin.busy=false;paintUserModal();}
-}
-async function bulkUserDepartment(){
- if(userAdmin.busy||!userAdmin.selected.size)return;
- const department=prompt(userAdmin.selected.size+'명의 새 부서를 입력하세요. 빈칸은 부서를 해제합니다.');if(department===null)return;if(department.length>100){showToast({message:'부서는 100자 이하로 입력하세요.',type:'error'});return;}
- // Use the existing provider's update endpoint; process self last because its session is revoked.
- const users=userAdmin.users.filter(u=>userAdmin.selected.has(u.id)).sort((a,b)=>Number(userSelf(a))-Number(userSelf(b)));let completed=0,redirecting=false;userAdmin.busy=true;userEl('userBulk').disabled=true;++userAdmin.loadSequence;
- try{for(const user of users){await userApi('/api/users/'+encodeURIComponent(user.id),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({department:department.trim()})});completed++;if(userSelf(user)){redirecting=true;location.replace('/login.html');return;}}showToast(completed+'명의 부서를 변경했습니다.');}
- catch(e){showToast({message:completed+'명 반영 후 중단되었습니다. '+e.message,type:'error'});}
- finally{userAdmin.busy=false;if(!redirecting)await loadAdminUsers();}
 }

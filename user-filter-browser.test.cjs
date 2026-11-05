@@ -30,8 +30,8 @@ test('roster separates department and position and uses two account states',asyn
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/api/users',r=>r.fulfill({json:{users:[{id:'active',name:'가직원',role:'worker',department:'생산',position:'대리',active:true,passwordResetRequired:true},{id:'inactive',name:'나직원',role:'worker',department:'품질',position:'과장',active:false}]}}));
  await page.goto(f.url+'/dashboard.html');await page.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();
- assert.deepEqual(await page.locator('.user-column-header th').allTextContents(),['','이름','아이디','부서','직급','역할','계정 상태']);
- assert.deepEqual(await page.locator('#adminUserRows tr').first().locator('td').allTextContents().then(c=>c.slice(2)),['active','생산','대리','작업자','활성화']);
+ assert.deepEqual(await page.locator('.user-column-header th').allTextContents(),['','이름','아이디','부서','직급','역할','AS 접수','제작 완료','도장 완료','출하 완료','계정 상태']);
+ assert.deepEqual(await page.locator('#adminUserRows tr').first().locator('td').allTextContents().then(c=>c.slice(2)),['active','생산','대리','작업자','—','—','—','—','활성화']);
  assert.equal(await page.locator('#adminUserRows .user-row-actions, #adminUserRows .user-roster-avatar').count(),0);
  assert.match(await page.locator('#userRoleFilterButton').textContent(),/전체 역할/);
  await page.locator('#userStatusFilterButton').click();assert.deepEqual(await page.locator('#userStatusFilterPanel [role=option]').allTextContents(),['전체 상태','활성화','비활성화']);

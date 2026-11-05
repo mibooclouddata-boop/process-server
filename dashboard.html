@@ -1776,14 +1776,18 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         </div>
         <div class="table-wrap" tabindex="0" role="region" aria-label="사용자 명부, 좁은 화면에서는 가로로 스크롤">
           <table class="user-roster-table">
-            <colgroup><col class="user-col-select"><col><col class="user-col-id"><col class="user-col-department"><col class="user-col-position"><col class="user-col-permission"><col class="user-col-status"></colgroup>
-            <thead><tr class="user-group-header"><th scope="colgroup" colspan="5">기본정보</th><th scope="colgroup" colspan="2">권한 관리</th></tr><tr class="user-column-header">
+            <colgroup><col class="user-col-select"><col><col class="user-col-id"><col class="user-col-department"><col class="user-col-position"><col class="user-col-permission"><col class="user-col-action"><col class="user-col-action"><col class="user-col-action"><col class="user-col-action"><col class="user-col-status"></colgroup>
+            <thead><tr class="user-group-header"><th scope="colgroup" colspan="5">기본정보</th><th scope="colgroup" colspan="6">권한 관리</th></tr><tr class="user-column-header">
               <th scope="col" class="user-select-cell"><label class="user-check-target"><input type="checkbox" id="userSelectPage" aria-label="현재 페이지 사용자 전체 선택"></label></th>
               <th scope="col">이름</th>
               <th scope="col">아이디</th>
               <th scope="col">부서</th>
               <th scope="col">직급</th>
               <th scope="col">역할</th>
+              <th scope="col" class="user-permission-cell">AS 접수</th>
+              <th scope="col" class="user-permission-cell">제작 완료</th>
+              <th scope="col" class="user-permission-cell">도장 완료</th>
+              <th scope="col" class="user-permission-cell">출하 완료</th>
               <th scope="col">계정 상태</th>
             </tr></thead>
             <tbody id="adminUserRows"></tbody>
