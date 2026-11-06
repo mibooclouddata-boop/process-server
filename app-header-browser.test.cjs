@@ -18,6 +18,7 @@ test('light header reflects the session and supports keyboard, mobile navigation
  await page.mouse.move(1000,800);await page.keyboard.press("Tab");await processMenu.focus();
  await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(0, 0, 0)');
  await processMenu.click();assert.equal(await processMenu.getAttribute('aria-current'),'page');
+ await page.getByRole('button',{name:'개발 중 안내 닫기'}).click();
  await page.mouse.move(1000,800);await page.locator('#appAccountToggle').focus();
  await page.waitForFunction(()=>getComputedStyle(document.getElementById('tabprocessBtn')).color==='rgb(255, 255, 255)');
  assert.equal(await page.locator('#appHeaderPage,.app-topbar .app-location').count(),0);
@@ -26,8 +27,14 @@ test('light header reflects the session and supports keyboard, mobile navigation
  assert.equal(await page.locator('#appHeaderRole').textContent(),'시스템 관리자');
  assert.equal(await page.locator('.app-topbar .logout-btn').count(),0);
  assert(await page.locator('#appHeaderRole').isHidden());
- const capsule=await page.locator('#appAccountToggle').evaluate(el=>{const s=getComputedStyle(el);return {background:s.backgroundColor,radius:s.borderRadius,border:s.borderTopWidth,borderColor:s.borderTopColor};});
- assert.deepEqual(capsule,{background:'rgb(255, 255, 255)',radius:'14px',border:'1px',borderColor:'rgb(221, 226, 231)'});
+ assert.equal(await page.locator('.top-account-icon').evaluate(el=>getComputedStyle(el).fill),'rgb(0, 0, 0)');
+ await page.locator('#appAccountToggle').hover();
+ await page.waitForFunction(()=>getComputedStyle(document.querySelector('.top-account-icon')).fill==='rgb(0, 102, 233)');
+ assert.equal(await page.locator('#appAccountToggle').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)');
+ await page.mouse.move(1000,800);
+ await page.waitForFunction(()=>getComputedStyle(document.querySelector('.top-account-icon')).fill==='rgb(0, 0, 0)');
+ const capsule=await page.locator('#appAccountToggle').evaluate(el=>{const s=getComputedStyle(el);return {background:s.backgroundColor,radius:s.borderRadius,border:s.borderTopWidth};});
+ assert.deepEqual(capsule,{background:'rgba(0, 0, 0, 0)',radius:'14px',border:'0px'});
  await page.locator('#appAccountToggle').focus();await page.keyboard.press('Enter');assert(await page.locator('#appAccountPanel').isVisible());
  assert.match(await page.locator('#appAccountPanel').textContent(),/회원 정보/);assert.equal(await page.locator('#appAccountLogin').textContent(),'admin');assert.equal(await page.locator('#appAccountRole').textContent(),'시스템 관리자');assert.equal(await page.locator('#appAccountAvatar').textContent(),'검');
  assert.equal(await page.locator('#appAccountPanel [data-app-logout]').isVisible(),true);await page.keyboard.press('Escape');assert(await page.locator('#appAccountPanel').isHidden());
