@@ -1,5 +1,5 @@
 'use strict';
-const userAdmin={users:[],editing:null,busy:false,baseline:'',page:1,selected:new Set(),visibleIds:[],tab:'info',pending:{},inflight:{},saving:null,failed:false,invalid:null,loadSequence:0};
+const userAdmin={users:[],editing:null,busy:false,baseline:'',page:1,tab:'info',pending:{},inflight:{},saving:null,failed:false,invalid:null,loadSequence:0};
 const userEl=id=>document.getElementById(id);
 const userRoles={sysadmin:'시스템 관리자',admin:'관리자',worker:'작업자'};
 const userStatuses={active:'활성화',suspended:'비활성화'};
@@ -129,47 +129,45 @@ function setupUserList(){
  const card=document.querySelector('#tabUsers .toss-user-card');
  const chips=document.createElement('div');chips.id='userActiveFilters';chips.hidden=true;toolbar.after(chips);
  const pager=document.createElement('div');pager.className='user-pager';pager.innerHTML='<span id="userPage" role="status" aria-live="polite"></span><div><button type="button" id="userPrevious">이전</button><button type="button" id="userNext">다음</button></div>';card.append(pager);
- for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).addEventListener('input',()=>{userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();});
- userEl('userReset').onclick=()=>{for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).value='';userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();};
- userEl('userSelectPage').onchange=e=>{for(const id of userAdmin.visibleIds){if(e.target.checked)userAdmin.selected.add(id);else userAdmin.selected.delete(id);}renderAdminUsers();};
+ for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).addEventListener('input',()=>{userAdmin.page=1;renderAdminUsers();});
+ userEl('userReset').onclick=()=>{for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).value='';userAdmin.page=1;renderAdminUsers();};
  userEl('userPrevious').onclick=()=>{userAdmin.page--;renderAdminUsers();};userEl('userNext').onclick=()=>{userAdmin.page++;renderAdminUsers();};
  userEl('modalUserPw').addEventListener('input',()=>{userEl('modalUserPw').removeAttribute('aria-invalid');userEl('userCreateErrorPassword').textContent='';});
  setupUserModal();
 }
-function updateUserSelection(){
- const ids=userAdmin.visibleIds,selected=ids.filter(id=>userAdmin.selected.has(id)).length;
- const all=userEl('userSelectPage');all.disabled=!ids.length;all.checked=!!ids.length&&selected===ids.length;all.indeterminate=selected>0&&selected<ids.length;
-}
+
 async function loadAdminUsers(){
  setupUserList();if(userAdmin.busy||userAdmin.saving)return;const sequence=++userAdmin.loadSequence;
- try{const data=await userApi('/api/users');if(sequence!==userAdmin.loadSequence)return;if(!Array.isArray(data.users))throw Error('사용자 목록을 확인할 수 없습니다.');userAdmin.users=data.users.map(normalizeAdminUser);userAdmin.selected.clear();renderAdminUsers();}
- catch(e){if(sequence!==userAdmin.loadSequence)return;userAdmin.users=[];userAdmin.selected.clear();renderAdminUsers();userEl('adminUserRows').firstElementChild.firstElementChild.textContent='사용자 목록을 불러오지 못했습니다. 화면을 새로고침한 후 다시 시도하세요.';showToast({message:e.message,type:'error'});}
+ try{const data=await userApi('/api/users');if(sequence!==userAdmin.loadSequence)return;if(!Array.isArray(data.users))throw Error('사용자 목록을 확인할 수 없습니다.');userAdmin.users=data.users.map(normalizeAdminUser);renderAdminUsers();}
+ catch(e){if(sequence!==userAdmin.loadSequence)return;userAdmin.users=[];renderAdminUsers();userEl('adminUserRows').firstElementChild.firstElementChild.textContent='사용자 목록을 불러오지 못했습니다. 화면을 새로고침한 후 다시 시도하세요.';showToast({message:e.message,type:'error'});}
 }
 function renderAdminUsers(){
  const users=userAdmin.users,query=userEl('userSearch').value.toLowerCase().trim(),role=userEl('userRoleFilter').value,status=userEl('userStatusFilter').value,department=userEl('userDepartmentFilter').value;
  const departmentFilter=userEl('userDepartmentFilter'),departments=[...new Set(users.map(u=>u.department).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
  departmentFilter.replaceChildren(new Option('전체 부서',''),...departments.map(d=>new Option(d,d)));departmentFilter.value=departments.includes(department)?department:'';
- const chips=userEl('userActiveFilters');chips.replaceChildren();for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter']){const field=userEl(id);field.classList.toggle('user-filter-applied',!!field.value);if(!field.value)continue;const chip=document.createElement('button'),text=field.selectedOptions[0].textContent;chip.type='button';chip.textContent=text+' ×';chip.setAttribute('aria-label',text+' 조건 해제');chip.onclick=()=>{field.value='';userAdmin.page=1;userAdmin.selected.clear();renderAdminUsers();(userFilterDropdowns.get(id)?.button||field).focus();};chips.append(chip);}chips.hidden=!chips.childElementCount;userFilterDropdowns.forEach(dropdown=>dropdown.sync());
+ const chips=userEl('userActiveFilters');chips.replaceChildren();for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter']){const field=userEl(id);field.classList.toggle('user-filter-applied',!!field.value);if(!field.value)continue;const chip=document.createElement('button'),text=field.selectedOptions[0].textContent;chip.type='button';chip.textContent=text+' ×';chip.setAttribute('aria-label',text+' 조건 해제');chip.onclick=()=>{field.value='';userAdmin.page=1;renderAdminUsers();(userFilterDropdowns.get(id)?.button||field).focus();};chips.append(chip);}chips.hidden=!chips.childElementCount;userFilterDropdowns.forEach(dropdown=>dropdown.sync());
  const filtered=users.filter(u=>(!role||u.role===role)&&(!status||(u.status||'active')===status)&&(!departmentFilter.value||u.department===departmentFilter.value)&&[u.name,userLoginId(u),u.department].join(' ').toLowerCase().includes(query)).sort((a,b)=>a.name.localeCompare(b.name,'ko'));
  const pages=Math.max(1,Math.ceil(filtered.length/50));userAdmin.page=Math.min(pages,Math.max(1,userAdmin.page));const body=userEl('adminUserRows');body.replaceChildren();
- const visible=filtered.slice((userAdmin.page-1)*50,userAdmin.page*50);userAdmin.visibleIds=visible.map(u=>u.id);
+ const visible=filtered.slice((userAdmin.page-1)*50,userAdmin.page*50);
  for(const user of visible){
   const row=document.createElement('tr'),cell=text=>{const td=document.createElement('td');td.textContent=text;row.append(td);return td;};
-  row.classList.toggle('user-row-selected',userAdmin.selected.has(user.id));
-  const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.setAttribute('aria-label',user.name+' 선택');checkbox.checked=userAdmin.selected.has(user.id);checkbox.onchange=()=>{if(checkbox.checked)userAdmin.selected.add(user.id);else userAdmin.selected.delete(user.id);row.classList.toggle('user-row-selected',checkbox.checked);updateUserSelection();};const checkLabel=document.createElement('label');checkLabel.className='user-check-target';checkLabel.append(checkbox);const selection=cell('');selection.className='user-select-cell';selection.append(checkLabel);
   const identity=cell(''),person=document.createElement('div'),copy=document.createElement('div'),name=document.createElement('button');person.className='user-roster-person';name.type='button';name.className='user-name-button';name.textContent=user.name;name.setAttribute('aria-label',user.name+' 사용자 관리');name.onclick=()=>openUserModal(user);copy.append(name);person.append(copy);identity.append(person);cell(userLoginId(user));
   cell(user.department||'미지정');cell(user.position||'미지정');
-  cell(userRoles[user.role]||user.role);
   for(const [key,title] of Object.entries(userAsPermissions)){
    const permission=cell(''),badge=document.createElement('span'),allowed=AsPermissions.can(user,key);
    permission.className='user-permission-cell';badge.className='user-permission-indicator'+(allowed?' is-allowed':'');badge.setAttribute('role','img');badge.setAttribute('aria-label',title+' '+(allowed?'허용':'제한'));badge.title=badge.getAttribute('aria-label');permission.append(badge);
   }
-  const state=cell(''),statusBadge=document.createElement('span');statusBadge.className='user-status user-status-'+(['active','suspended'].includes(user.status)?user.status:'active');statusBadge.textContent=userStatuses[user.status]||'활성화';state.append(statusBadge);
+  cell(userRoles[user.role]||user.role).className='user-role-cell';
+  const state=cell(''),statusBadge=document.createElement('span'),stopped=user.status==='suspended',reset=!stopped&&user.passwordResetRequired;
+  state.className='user-status-cell';statusBadge.className='user-status user-status-'+(stopped?'suspended':reset?'reset':'active');
+  const shape=stopped?'<circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/>':reset?'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/>':'<circle cx="12" cy="12" r="9" fill="currentColor" stroke="none"/><path d="m7.5 12 3 3 6-6" stroke="white"/>';
+  statusBadge.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+shape+'</svg>';
+  statusBadge.append(document.createTextNode(stopped?'사용 중지':reset?'재설정 필요':'사용 가능'));state.append(statusBadge);
 row.onclick=e=>{if(!e.target.closest('button,input,label,select,a'))openUserModal(user);};body.append(row);
  }
- if(!filtered.length){const row=body.insertRow(),td=row.insertCell();td.colSpan=11;td.className='user-roster-empty';td.textContent=users.length?'조건에 맞는 사용자가 없습니다. 검색어나 필터를 확인하세요.':'등록된 사용자가 없습니다.';}
+ if(!filtered.length){const row=body.insertRow(),td=row.insertCell();td.colSpan=10;td.className='user-roster-empty';td.textContent=users.length?'조건에 맞는 사용자가 없습니다. 검색어나 필터를 확인하세요.':'등록된 사용자가 없습니다.';}
  userEl('userPage').textContent=`${filtered.length}명 · ${userAdmin.page} / ${pages}페이지`;userEl('userPrevious').disabled=userAdmin.page===1;userEl('userNext').disabled=userAdmin.page===pages;
- updateUserSelection();
+
 }
 async function submitModalUser(){
  if(userAdmin.busy||userAdmin.editing)return;
