@@ -162,7 +162,7 @@ function renderAdminUsers(){
   cell(userRoles[user.role]||user.role);
   for(const [key,title] of Object.entries(userAsPermissions)){
    const permission=cell(''),badge=document.createElement('span'),allowed=AsPermissions.can(user,key);
-   permission.className='user-permission-cell';badge.className='user-permission-indicator'+(allowed?' is-allowed':'');badge.textContent=allowed?'✓':'—';badge.setAttribute('role','img');badge.setAttribute('aria-label',title+' '+(allowed?'허용':'제한'));permission.append(badge);
+   permission.className='user-permission-cell';badge.className='user-permission-indicator'+(allowed?' is-allowed':'');badge.setAttribute('role','img');badge.setAttribute('aria-label',title+' '+(allowed?'허용':'제한'));badge.title=badge.getAttribute('aria-label');permission.append(badge);
   }
   const state=cell(''),statusBadge=document.createElement('span');statusBadge.className='user-status user-status-'+(['active','suspended'].includes(user.status)?user.status:'active');statusBadge.textContent=userStatuses[user.status]||'활성화';state.append(statusBadge);
 row.onclick=e=>{if(!e.target.closest('button,input,label,select,a'))openUserModal(user);};body.append(row);
