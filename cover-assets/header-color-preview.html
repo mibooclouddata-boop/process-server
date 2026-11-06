@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>헤더 내비게이션 색상 시안</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Malgun Gothic",sans-serif;color:#202123;background:#f2f4f6}iframe{display:block;width:100%;height:calc(100dvh - 64px);border:0}footer{height:64px;display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 16px;background:white;border-top:1px solid #d9dee5}p{margin:0;font-size:13px}fieldset{display:flex;gap:4px;border:0;padding:0;margin:0}button{min-height:44px;padding:0 16px;border:1px solid #c9d1dc;border-radius:8px;background:white;color:#202123;cursor:pointer;font:inherit;font-size:13px}button[aria-pressed=true]{border-color:#0066e9;background:#0066e9;color:white}button:focus-visible{outline:2px solid #0066e9;outline-offset:2px}@media(max-width:600px){footer{height:108px;flex-wrap:wrap;gap:4px}iframe{height:calc(100dvh - 108px)}p{width:100%;text-align:center;font-size:12px}}
+</style>
+</head>
+<body>
+<iframe id="screen" src="/dashboard" title="실제 대시보드에서 헤더 색상 비교"></iframe>
+<footer>
+<p>글자 색상 시안 · 검정 → 마우스를 올리면 파랑</p>
+<fieldset aria-label="시안 비교">
+<button type="button" data-preview="original" aria-pressed="false">현재 검정색</button>
+<button type="button" data-preview="blue" aria-pressed="true">글자만 파란색</button>
+</fieldset>
+</footer>
+<script src="/cover-assets/header-color-preview.js?v=3"></script>
+</body>
+</html>
