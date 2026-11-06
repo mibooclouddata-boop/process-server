@@ -8,7 +8,7 @@
  if(accountToggle){
   const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
   icon.setAttribute('viewBox','0 0 24 24');icon.setAttribute('aria-hidden','true');icon.classList.add('top-account-icon');
-  icon.innerHTML='<circle cx="12" cy="8" r="3.5"/><path d="M4.5 20v-2a7.5 7.5 0 0 1 15 0v2"/>';
+  icon.innerHTML='<circle cx="12" cy="6.5" r="4"/><path d="M3 21a9 7.5 0 0 1 18 0Z"/>';
   accountToggle.append(icon);
  }
  const tabs=navigation.querySelector('.tabs'),selection=document.createElement('span');
