@@ -34,6 +34,8 @@ window.AppHeader=(()=>{
    const targets=[...root.querySelectorAll(selectors[page])].filter(el=>!seen.has(el)&&el.getClientRects().length);
    targets.forEach((el,index)=>{
     seen.add(el);
+    // Saving in the user dialog rebuilds rows behind it, not a new page entry.
+    if(page==='users'&&document.getElementById('userModal')?.open)return;
     // Cap the stagger so a full table never delays access to the last row.
     const animation=el.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'translateY(0)'}],{duration:300,delay:Math.min(index,8)*35,easing:'cubic-bezier(.22,.7,.2,1)',fill:'backwards'});
     animations.push(animation);

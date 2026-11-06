@@ -27,6 +27,6 @@ test('permission roster reflects effective AS permissions without selection acti
  await page.locator('#userSearch').fill('not-a-user');assert.equal(await page.locator('#adminUserRows td').getAttribute('colspan'),'11');await page.locator('#userReset').click();
  await page.setViewportSize({width:390,height:844});
  const scroll=page.locator('#tabUsers .table-wrap');assert(await scroll.evaluate(el=>el.scrollWidth>el.clientWidth));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
- assert(await page.getByRole('columnheader',{name:'출하 완료',exact:true}).isVisible());
+ assert(await page.getByRole('columnheader',{name:'납품 완료',exact:true}).isVisible());
  assert.deepEqual(errors,[]);
 });
