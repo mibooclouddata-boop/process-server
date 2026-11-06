@@ -11,6 +11,7 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await page.route('**/*',route=>route.request().url().startsWith(f.url)?route.continue():route.abort());
  await page.goto(f.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
  await page.locator('#tabUsersBtn').click();await page.waitForFunction(()=>document.querySelectorAll('#adminUserRows tr').length===4);
+ await page.evaluate(()=>Promise.all(document.getAnimations().map(animation=>animation.finished.catch(()=>{}))));
  const searchBounds=await page.locator('.user-search-unified').boundingBox(),addBounds=await page.getByRole('button',{name:'새 사용자 추가',exact:true}).boundingBox(),rosterBounds=await page.locator('.user-roster-table thead').boundingBox();
  assert(Math.abs(searchBounds.y-addBounds.y)<3,'search and add share a row');assert(addBounds.x>=searchBounds.x+searchBounds.width,'add follows search');assert(rosterBounds.y>searchBounds.y+searchBounds.height,'roster follows toolbar');
  assert.equal(await page.locator('#adminUserRows img').count(),0);assert.equal(await page.evaluate(()=>window.__userXss),undefined);

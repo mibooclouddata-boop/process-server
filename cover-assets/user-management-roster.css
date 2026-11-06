@@ -54,7 +54,6 @@
 #tabUsers .user-roster-person{display:flex;align-items:center;gap:12px;min-width:0}#tabUsers .user-roster-person>div{min-width:0}
 
 #tabUsers .user-status{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;border-radius:0;font-size:inherit;font-weight:inherit;line-height:1.5;background:transparent;white-space:nowrap}
-#tabUsers .user-status:before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
 #tabUsers .user-status-active{color:#25704e}#tabUsers .user-status-suspended{color:#5c6978}
 #tabUsers .user-roster-table .user-select-cell{width:44px;padding:0;text-align:center}
 #tabUsers .user-check-target{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;cursor:pointer}
@@ -102,9 +101,6 @@ dialog#userModal{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw -
 #tabUsers .user-name-button{font:inherit;font-size:14px;font-weight:650;border:0;background:transparent;padding:0;text-align:left;color:#202c3c;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#tabUsers .user-name-button:hover{text-decoration:underline;text-underline-offset:4px}#tabUsers .user-roster-table tbody tr{cursor:pointer}
 @media(max-width:650px){dialog#userModal{width:calc(100vw - 20px);height:94dvh}#userModal .modal-header{padding:16px}#userModal .modal-header h3{font-size:20px}#userModalIdentity{font-size:12px}#userModal .user-save-strip{padding:6px 16px;font-size:11px}#userReloadCurrent{font-size:11px;max-width:106px}#userModal .user-modal-tabs{gap:21px;margin:0 16px}#userModal .user-modal-tabs button{font-size:13px}#userModal .modal-body{padding:17px 16px}#userModal .modal-row{grid-template-columns:1fr;gap:16px;margin-bottom:16px}#userModal .modal-steps{grid-template-columns:repeat(2,minmax(0,1fr))}#userModal .modal-step-item{font-size:13px;padding:10px}#userModal .user-account-option{align-items:stretch;flex-direction:column;gap:12px;padding:15px}#userModal .user-account-option>button{align-self:flex-start;min-width:130px}#userModal .modal-footer{padding:12px 16px;gap:8px}#userModalFooterHint{font-size:11px}#userModal .modal-footer button{flex:none;font-size:13px}#userModal .modal-msg{margin:0 16px}}
 
-#tabUsers .user-roster-table .user-group-header th{top:0;height:36px;padding:8px 12px;font-size:14px;font-weight:600;background:#f3f5f7;border-bottom:1px solid var(--user-line)}
-#tabUsers .user-roster-table .user-column-header th{top:36px}
-#tabUsers .user-roster-table .user-group-header th+th,#tabUsers .user-roster-table .user-column-header th:nth-child(6),#tabUsers .user-roster-table tbody td:nth-child(6){border-left:1px solid #cbd5e0;padding-left:16px}
 
 
 
@@ -124,3 +120,22 @@ dialog#userModal{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw -
 #userModal .user-permission-option input{width:20px;height:20px;min-width:20px;accent-color:#202a36;cursor:pointer}
 #userModal .user-permission-option:has(input:disabled){cursor:default}
 @media(max-width:650px){#userModal .user-modal-tabs{gap:16px}#userModal .user-permission-option{padding:12px}}
+
+/* Approved compact roster and check/pause account indicators. */
+body #tabUsers .toss-user-card{flex:0 1 auto!important;padding:24px!important;border-radius:12px;box-shadow:none}
+#tabUsers .user-toolbar{padding-bottom:18px;gap:12px}
+#tabUsers .user-search-unified{border-color:#d9dfe6;border-radius:6px}
+#tabUsers .user-search-unified input,#tabUsers .user-filter-button{font-size:14px;font-weight:400}
+body #tabUsers .table-wrap{flex:0 1 auto!important;max-height:calc(100dvh - 260px);min-height:0;border-bottom:1px solid #e4e8ed;scroll-padding:42px 0 0}
+#tabUsers .user-roster-table{min-width:1000px;font-size:14px;font-weight:400;color:#000}
+#tabUsers .user-roster-table th{height:42px;padding:10px 14px;top:0;border-bottom:1px solid #e5e9ee;font-size:14px;font-weight:600;color:#000}
+#tabUsers .user-roster-table td{height:56px;padding:10px 14px;border:0;border-bottom:1px solid #edf0f3;font-size:14px;font-weight:400;color:#000}
+#tabUsers .user-roster-table tbody tr:last-child td{border-bottom:0}
+#tabUsers .user-roster-table :is(.user-role-cell,.user-status-cell){text-align:center}
+#tabUsers .user-roster-table :is(th,td):nth-child(5),#tabUsers .user-roster-table :is(th,td):nth-child(9){border-left:1px solid #e5e9ee}
+#tabUsers .user-col-name{width:12%}#tabUsers .user-col-id{width:13%}#tabUsers .user-col-department{width:10%}#tabUsers .user-col-position{width:8%}#tabUsers .user-col-action{width:8%}#tabUsers .user-col-permission{width:13%}#tabUsers .user-col-status{width:12%}
+#tabUsers .user-status{gap:7px;color:#000;font-size:14px;font-weight:400}
+#tabUsers .user-status svg{width:20px;height:20px;flex:none;color:#0062cf}
+#tabUsers :is(.user-status-suspended,.user-status-reset) svg{color:#697583}
+#tabUsers .user-pager{margin-top:0;padding-top:12px;border-top:0}
+@media(max-width:768px){body #tabUsers .toss-user-card{padding:14px!important}body #tabUsers .table-wrap{max-height:calc(100dvh - 310px);min-height:180px}#tabUsers .user-roster-table :is(th,td){padding-inline:12px}}
