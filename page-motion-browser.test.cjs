@@ -1,0 +1,47 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
+
+test('page navigation staggers real content, cancels old motion and respects reduced motion',async t=>{
+ const fixture=await startFixture();let browser;
+ t.after(async()=>{await browser?.close();await fixture.close();});
+ fs.writeFileSync(path.join(fixture.dir,'as.json'),JSON.stringify({seq:12,list:Array.from({length:12},(_,i)=>({id:'motion-'+i,asNo:'AS-MOTION-'+i,ship:'TEST',block:'B01',reason:'기타',category:'사내',status:'접수',createdAt:'2026-11-01',version:0}))}));
+ browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'no-preference'}),page=await context.newPage(),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ assert.equal((await context.request.post(fixture.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}})).status(),200);
+ await page.route('**/*',async route=>{
+  if(!route.request().url().startsWith(fixture.url))return route.abort();
+  if(route.request().url()===fixture.url+'/api/as')await new Promise(resolve=>setTimeout(resolve,180));
+  return route.continue();
+ });
+ await page.goto(fixture.url+'/dashboard.html');
+ await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.waitForFunction(()=>!document.getElementById('dashboard').inert);
+ const motion=()=>page.evaluate(()=>document.getAnimations().filter(a=>a.effect.getKeyframes().some(f=>f.transform==='translateY(14px)')).map(a=>({target:a.effect.target.id||a.effect.target.tagName,delay:a.effect.getTiming().delay,visible:!!a.effect.target.getClientRects().length})));
+ await page.locator('#asSubmenu [data-sub="list"]').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#asTableBody tr[data-id]').length===12);
+ await page.waitForFunction(()=>[...document.querySelectorAll('#asTableBody tr[data-id]')].some(row=>row.getAnimations().length>0));
+ const rows=await page.locator('#asTableBody tr[data-id]').evaluateAll(es=>es.map(e=>e.getAnimations()[0]?.effect.getTiming().delay));
+ assert.equal(rows.length,12);assert(rows[0]<rows[1]);assert(Math.max(...rows)<=280);
+ await page.evaluate(()=>{switchTab('as',document.getElementById('tabAsBtn'),'stats');switchTab('as',document.querySelector('[data-sub="list"]'),'list');switchTab('as',document.getElementById('tabAsBtn'),'stats');});
+ await page.waitForTimeout(50);
+ assert((await motion()).every(a=>a.visible));
+ await page.waitForFunction(()=>document.querySelector('#asKpiRow button').getAnimations().some(a=>a.effect.getKeyframes()[0].transform==='translateY(14px)'));
+ assert((await motion()).length>=5);
+ assert(new Set((await motion()).map(a=>a.delay)).size>1);
+ await page.locator('#tabprocessBtn').click();
+ await page.locator('#featureDevelopment').waitFor({state:'visible'});
+ await page.waitForFunction(()=>document.querySelector('#featureDevelopment h2').getAnimations().length>0);
+ await page.locator('#featureDevelopment button').click();
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.locator('#asSubmenu [data-sub="list"]').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#asTableBody tr[data-id]').length===12);
+ assert.deepEqual(await motion(),[]);
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#tabAsBtn').click();await page.locator('#asStatsContent').waitFor({state:'visible'});
+ await page.waitForFunction(()=>document.querySelector('#asKpiRow button').getAnimations().length>0);
+ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ assert.deepEqual(errors,[]);
+});
