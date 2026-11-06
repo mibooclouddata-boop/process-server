@@ -15,9 +15,9 @@ body #dashboard #appNavigation>.tabs::-webkit-scrollbar{display:none}
 body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 96px;flex-direction:row;justify-content:center;gap:10px;width:96px;box-sizing:border-box;white-space:nowrap;height:44px;min-height:44px;padding:0 10px;margin:0;text-align:center;letter-spacing:0;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
 body #dashboard #appNavigation .rail-full{display:block;font-size:14px}
 body #dashboard #appNavigation :is(.rail-short,.rail-tip){display:none!important}
-body #dashboard #appNavigation :is(.tab,.tab-sub):not([aria-current=page]):is(:hover,:focus-visible){background:#f2f4f680;color:#000}
-body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:transparent;color:#fff}
-body #dashboard #appNavigation .top-nav-selection{position:absolute;z-index:0;left:0;top:6px;height:36px;box-sizing:border-box;background:#000;border:1px solid #000;border-radius:22px;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.22,.75,.2,1),opacity .15s ease;will-change:transform}
+body #dashboard #appNavigation :is(.tab,.tab-sub),body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:transparent;color:#000}
+body #dashboard #appNavigation :is(.tab,.tab-sub):is(:hover,:focus-visible),body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]:is(:hover,:focus-visible){background:transparent;color:#0066e9}
+body #dashboard #appNavigation .top-nav-selection{display:none}
 body #dashboard #appNavigation[data-motion-ready=true] .top-nav-selection{opacity:1}
 @media(prefers-reduced-motion:reduce){body #dashboard #appNavigation :is(.top-nav-selection,.tab,.tab-sub){transition:none!important}}
 body #dashboard #appNavigation .rail-icon{display:none}

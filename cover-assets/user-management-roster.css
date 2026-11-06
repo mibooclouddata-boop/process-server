@@ -111,8 +111,11 @@ dialog#userModal{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw -
 #tabUsers .user-col-select{width:44px}#tabUsers .user-col-id{width:12%}#tabUsers .user-col-department{width:10%}#tabUsers .user-col-position{width:8%}#tabUsers .user-col-permission{width:13%}#tabUsers .user-col-action{width:8%}#tabUsers .user-col-status{width:10%}
 #tabUsers .user-roster-table{min-width:1120px}
 #tabUsers .user-roster-table .user-permission-cell{text-align:center;white-space:nowrap}
-#tabUsers .user-permission-indicator{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:17px;color:#657487}
-#tabUsers .user-permission-indicator.is-allowed{color:#004a93;font-weight:650}
+#tabUsers .user-permission-indicator{position:relative;display:inline-grid;place-items:center;min-width:28px;min-height:28px;vertical-align:middle;color:#647180;cursor:default}
+#tabUsers .user-permission-indicator::before{content:'';box-sizing:border-box;width:14px;height:14px;border:1.5px solid currentColor;border-radius:50%}
+#tabUsers .user-permission-indicator.is-allowed{color:#0062cf}
+#tabUsers .user-permission-indicator.is-allowed::before{background:currentColor}
+#tabUsers .user-permission-indicator:not(.is-allowed)::after{content:'';position:absolute;width:6px;height:1.5px;background:currentColor}
 @media(max-width:650px){#tabUsers .user-col-select{width:32px}#tabUsers .table-wrap{scroll-padding-top:90px}}
 #userModal #userPermissionChoices{display:grid;gap:12px;margin-top:16px}
 #userModal .user-permission-option{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;padding:16px;border:1px solid var(--border-strong);border-radius:6px;cursor:pointer}
