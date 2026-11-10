@@ -23,7 +23,7 @@ test('balanced overview aligns charts and inline comparison, and header switches
  };
  await page.locator('#asStatsChart .month-button').nth(10).click();
  assert.equal(await page.locator('#comparison-count').textContent(),'1건');assert.equal(await page.locator('#comparison-change-value').textContent(),'−58');
- assert((await page.locator('.as-readable-trend .as-chart-unit').textContent()).includes('이번 달 진행 중'));
+ assert.equal(await page.locator('.as-readable-trend .as-chart-unit').count(),0);
  for(const [width,height] of [[1440,900],[1280,800],[1920,1080],[390,844]]){
   await page.setViewportSize({width,height});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -41,7 +41,7 @@ test('balanced overview aligns charts and inline comparison, and header switches
  }
  await page.setViewportSize({width:1440,height:900});await page.locator('#asSubmenu [data-sub=stats]').click();await page.keyboard.press('ArrowDown');await page.keyboard.press('Escape');
  assert.equal(await page.locator('#asSubmenu [data-sub=stats]').getAttribute('aria-expanded'),'false');
- await page.locator('#asStatsChart .month-button').nth(9).click();assert.equal(await page.locator('.as-readable-trend .as-chart-unit').textContent(),'단위: 건');
+ await page.locator('#asStatsChart .month-button').nth(9).click();assert.equal(await page.locator('.as-readable-trend .as-chart-unit').count(),0);
  await page.locator('#asKpiRow button').first().click();await page.locator('#asSubList').waitFor({state:'visible'});assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('as-balanced-active')),false);
  for(const [width,height] of [[1440,900],[1280,800],[1101,760],[1024,768],[768,1024],[390,844],[1440,600]]){
   await page.setViewportSize({width,height});

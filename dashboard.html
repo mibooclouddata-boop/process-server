@@ -1701,7 +1701,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/cover-assets/app-header-placement.js?v=2" defer></script>
 <link rel="stylesheet" href="/cover-assets/app-top-navigation.css?v=12">
 <script src="/cover-assets/app-top-navigation.js?v=2" defer></script>
-<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=18">
+<link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=19">
 <link rel="stylesheet" href="/cover-assets/as-recent-hover.css?v=2">
 <script src="/cover-assets/as-overview-balanced.js?v=9" defer></script>
 <link rel="stylesheet" href="/cover-assets/as-scroll-slider.css?v=3">
@@ -1939,7 +1939,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
       <div><span id="asStatsPendingLabel">연간 미처리</span><strong id="asStatsPending"></strong><p id="asStatsPendingHint"></p></div>
     </div>
     <div class="as-overview-charts">
-    <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2><span class="as-chart-unit">단위: 건</span></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div>
+    <div class="as-trend-stack"><div class="as-stats-chart-panel"><div class="as-stats-chart-heading"><h2>월별 접수 추이</h2></div><p id="asStatsChartHint" class="as-chart-sr-only">월을 선택하면 해당 월의 접수 건수와 사유를 확인할 수 있습니다. 단위: 건</p><div class="as-stats-chart-scroll"><div id="asStatsChart" class="as-stats-chart" role="group" aria-label="월별 접수 건수"></div></div><p id="asStatsEmpty" hidden>선택한 연도에 접수된 AS가 없습니다.</p></div>
     <section class="as-daily-section as-stats-chart-panel" aria-labelledby="asAmountTitle">
       <div class="as-stats-chart-heading"><h3 id="asAmountTitle">월별 금액 집계</h3><span class="as-chart-unit">단위: 만 원</span></div>
       <div class="as-amount-selection" role="status" aria-live="polite" aria-atomic="true"><strong id="asAmountSelectedValue">—</strong></div>
@@ -4203,7 +4203,6 @@ function createAsReadableTrend(chart){
  const heading=root.querySelector('.as-trend-stack .as-stats-chart-heading');
  const trendPanel=heading.closest('.as-stats-chart-panel');
  const readableTrend=createAsReadableTrend($('asStatsChart'));
- trendPanel.querySelector('.plot').append(heading.querySelector('.as-chart-unit'));
  const columnAmounts=createAsColumnAmounts($('asAmountChart'));
  const monthlyPanelObserver=new ResizeObserver(()=>{
   const height=trendPanel.getBoundingClientRect().height;
@@ -4217,8 +4216,6 @@ function createAsReadableTrend(chart){
   const year=Number($('asStatsYear').value),month=_asStatsSelectedMonth;if(!year||month<1||month>12)return;
   const today=asJobToday(),currentYear=Number(today.slice(0,4)),currentMonth=Number(today.slice(5,7));
   const future=m=>year>currentYear||(year===currentYear&&m>currentMonth),ongoing=year===currentYear&&month===currentMonth;
-  const chartUnit=trendPanel.querySelector('.as-chart-unit');
-  if(chartUnit){chartUnit.textContent=ongoing?'이번 달 진행 중 · 단위: 건':'단위: 건';chartUnit.title=ongoing?'이번 달 현재까지의 접수와 지난달 전체 접수를 비교합니다.':'';}
   const sum=summarizeAsStatistics(_asStatsRecords,year,month);
   root.querySelectorAll('#asKpiRow button').forEach(button=>button.setAttribute('aria-label',button.querySelector('span').textContent+' '+button.querySelector('strong').textContent+'건, 해당 조건의 접수 목록 보기'));
   $('comparison-count').innerHTML=future(month)&&!sum.current?'미도래':format(sum.current)+'<small>건</small>';
