@@ -2203,6 +2203,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         <div class="modal-footer">
           <span id="userModalFooterHint">변경은 서버에 바로 저장됩니다.</span>
           <button type="button" id="userModalCancel" class="admin-btn admin-btn-secondary" onclick="closeUserModal()">닫기</button>
+          <button type="button" id="userPermissionsSave" class="admin-btn admin-btn-primary" onclick="saveUserPermissions()" hidden>저장</button>
           <button type="button" id="userCreatePrevious" class="admin-btn admin-btn-secondary" onclick="changeUserCreateStep(userAdmin.createStep-1)" hidden>이전</button>
           <button type="button" id="userCreateSubmit" class="admin-btn admin-btn-primary" onclick="submitModalUser()">사용자 등록</button>
         </div>
@@ -2216,7 +2217,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <script src="/cover-assets/app-header.js?v=11"></script>
 <script src="/auth-client.js"></script>
 <script src="/as-permissions.js?v=1"></script>
-<script src="/user-admin-ui.js?v=9"></script>
+<script src="/user-admin-ui.js?v=12"></script>
 <script src="/as-amount.js"></script>
 <script src="/as-pdf-preview.js"></script>
 <script>

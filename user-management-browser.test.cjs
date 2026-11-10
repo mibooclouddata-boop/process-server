@@ -50,7 +50,7 @@ test('roster, autosave tabs, errors, account controls and year selection work in
  await yearButton.click();await page.locator('header.app-topbar').click({position:{x:5,y:5}});assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await yearButton.click();await page.keyboard.press('Tab');await page.keyboard.press('Tab');assert.equal(await yearButton.getAttribute('aria-expanded'),'false');
  await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await yearPanel.evaluate(el=>getComputedStyle(el).transitionDuration),'0s');await page.emulateMedia({reducedMotion:'no-preference'});
- assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'16px');
+ assert.equal(await yearButton.evaluate(el=>getComputedStyle(el).fontSize),'18px');
  assert.deepEqual(await page.locator('#asStatsYearPickerLabel').evaluate(el=>{const style=getComputedStyle(el);return [style.fontWeight,style.fontFamily];}),await page.locator('#asStatsYear').evaluate(el=>{const style=getComputedStyle(el);return [style.fontWeight,style.fontFamily];}));
  await yearButton.click();assert.equal(await yearPanel.locator('.toss-dd-item span').first().evaluate(el=>getComputedStyle(el).fontSize),'18px');await screenshot('year-select');await page.keyboard.press('Escape');
  // A self edit revokes this session, so additional edits must be disabled until redirect.
