@@ -14,7 +14,7 @@ body #asSubStats[data-overview-theme] .as-overview-basis{display:none!important}
 body #asSubStats[data-overview-theme] .as-product-panel{display:none!important}
 body #asSubStats[data-overview-theme] :is(.as-readable-trend .as-stats-chart-heading,.as-reason-heatmap-heading){flex-wrap:wrap}
 body #asSubStats[data-overview-theme] .as-period-controls{position:relative;z-index:25;flex:none;gap:0}
-body #asSubStats[data-overview-theme] #asStatsYearPickerBtn{min-width:100px;height:28px;font-size:16px;line-height:24px;padding:0 4px;gap:6px}
+body #asSubStats[data-overview-theme] #asStatsYearPickerBtn{min-width:100px;height:32px;font-size:18px;line-height:28px;padding:0 4px;gap:6px}
 body #asSubStats[data-overview-theme] #asStatsYearPickerPanel{left:auto;right:0}
 body #asSubStats[data-overview-theme] .as-readable-trend .comparison-main>div{flex-direction:row;align-items:baseline;gap:16px;flex-wrap:wrap}
 body #asSubStats[data-overview-theme] #comparison-change{align-self:baseline}
@@ -56,7 +56,7 @@ body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:
  body.as-balanced-active #asSubStats[data-overview-theme][data-overview-page="2"] .as-reason-heat-cell{font-size:14px;min-height:44px}
  body.as-balanced-active #asSubStats[data-overview-theme] .as-stats-chart-panel :is(h2,h3){font-size:16px;line-height:24px}
  body.as-balanced-active #asSubStats[data-overview-theme] :is(.as-stats-chart-heading,.as-reason-heading,.as-product-heading){min-height:24px;margin:0 0 8px;gap:8px}
- body.as-balanced-active #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){font-size:12px!important;line-height:18px!important}
+ body.as-balanced-active #asSubStats[data-overview-theme] :is(.as-chart-unit,#asStatsReasonsHint,#asStatsProductsHint){font-size:14px!important;line-height:21px!important}
  body.as-balanced-active #asSubStats[data-overview-theme] .month-comparison{margin:0 0 8px;padding:0;min-height:36px}
  body.as-balanced-active #asSubStats[data-overview-theme] .comparison-main>div{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:baseline;justify-content:flex-start;gap:16px;width:100%}
  body.as-balanced-active #asSubStats[data-overview-theme] #comparison-count{font-size:28px;line-height:36px}
@@ -114,3 +114,7 @@ body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-pan
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-scale i:nth-child(6){background:#244b73}
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-controls button{width:156px;min-height:44px;padding:4px;font-size:14px;line-height:20px;border-radius:8px}
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-controls button span{font-size:14px;line-height:20px;padding:6px 12px}
+
+body #asSubStats[data-overview-theme] .as-readable-trend .as-stats-chart-heading{justify-content:space-between}
+body #asSubStats[data-overview-theme] .as-readable-trend .as-stats-chart-heading>.as-period-controls{margin-left:auto}
+body #asSubStats[data-overview-theme] .as-readable-trend .plot>.as-chart-unit{position:absolute;top:0;right:12px;margin:0;text-align:right;z-index:1;pointer-events:none}
