@@ -11,7 +11,7 @@
     "test:as-browser": "node --test as-integrity-browser.test.cjs as-write-progress-browser.test.cjs as-overview-browser.test.cjs",
     "test:users-browser": "node --test user-pagination-browser.test.cjs user-management-browser.test.cjs user-create-wizard-browser.test.cjs user-filter-browser.test.cjs user-permissions-browser.test.cjs user-permission-roster-browser.test.cjs",
     "test:login-browser": "node --test login-transition-browser.test.cjs session-idle-browser.test.cjs login-failure-browser.test.cjs",
-    "test:theme-browser": "node --test app-header-browser.test.cjs readable-balance-browser.test.cjs compact-navigation-browser.test.cjs overview-card-height-browser.test.cjs"
+    "test:theme-browser": "node --test app-header-browser.test.cjs header-font-stability-browser.test.cjs readable-balance-browser.test.cjs compact-navigation-browser.test.cjs overview-card-height-browser.test.cjs"
   },
   "keywords": [],
   "author": "",
