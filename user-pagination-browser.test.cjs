@@ -6,7 +6,7 @@ test('user pagination shows 50 people, numbered navigation, and resets after fil
  const data=f.read('data.json'),admin=data.users[0];
  data.users=[admin,...Array.from({length:599},(_,i)=>({...admin,id:'demo'+String(i+1).padStart(3,'0'),name:'가상 사용자 '+String(i+1).padStart(3,'0'),role:'worker'}))];
  fs.writeFileSync(path.join(f.dir,'data.json'),JSON.stringify(data));
- browser=await chromium.launch({headless:true,channel:'msedge'});
+ browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:process.platform==='win32'?{channel:'msedge'}:{})});
  const context=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce'}),page=await context.newPage();
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
