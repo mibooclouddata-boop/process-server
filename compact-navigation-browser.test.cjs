@@ -10,7 +10,7 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
  await page.route('**/*',route=>route.request().url().startsWith(f.url)?route.continue():route.abort());
  await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
  await expect(page.locator('#appNavigation #asSubmenu [data-sub=stats]')).toHaveCSS('opacity','1');assert.equal(await page.locator('.main #asSubmenu').count(),0);
- await expect(page.locator('#asSubmenu [data-sub=list]')).toHaveCSS('opacity','1');
+ await expect(page.locator('#asSubmenu [data-sub=list]')).toBeHidden();
  const nav=page.locator('#appNavigation'),toggle=page.locator('#appRailToggle'),product=nav.locator('[data-sub=product]');
  const showOverview=async()=>{await nav.locator('#tabAsBtn').click();if(await page.locator('#asOverviewMenu').isVisible())await page.getByRole('menuitemradio',{name:'접수 현황',exact:true}).click();};
  await expect(toggle).toBeHidden();await expect(page.locator('#appMenuToggle')).toBeHidden();
@@ -18,10 +18,13 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
  await expect(nav.locator('.tabs')).toHaveCSS('border-top-width','1px');
  await expect(nav.locator('.tabs')).toHaveCSS('border-top-style','solid');
  await expect(page.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
- await product.click();await page.locator('#asSubProduct').waitFor({state:'visible'});await expect(product).toHaveAttribute('aria-current','page');
+ await nav.locator('#tabprocessBtn').hover();await page.getByRole('menuitem',{name:'제품 목록',exact:true}).click();await page.locator('#asSubProduct').waitFor({state:'visible'});await expect(nav.locator('#tabprocessBtn')).toHaveAttribute('aria-current','page');await expect(product).toBeHidden();
  await showOverview();await page.locator('#asStatsContent').waitFor({state:'visible'});
  await page.locator('#tabAsBtn').focus();await page.keyboard.press('ArrowRight');
- await expect(page.locator('#asSubmenu [data-sub=list]')).toHaveAttribute('aria-current','page');
+ await expect(page.locator('#tabprocessBtn')).toHaveAttribute('aria-current','page');
+ await page.locator('#featureDevelopment button').click();
+ await page.locator('#tabAsBtn').click();await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();
+ await expect(page.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
  await page.locator('#asSubList').waitFor({state:'visible'});await expect(nav).toBeVisible();
  await page.waitForFunction(()=>document.getElementById('asTableBody').rows.length===20);
  assert.equal(await page.locator('#asLedgerBack').count(),0);
@@ -33,8 +36,8 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
  }
  await page.evaluate(()=>_renderAsPage());
  await showOverview();await expect(page.locator('#asSubmenu [data-sub=stats]')).toBeFocused();
- for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();await page.locator('#featureDevelopment button').click();}
- await showOverview();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();
+ for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeHidden();await page.locator('#featureDevelopment button').click();}
+ await showOverview();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeHidden();
  await nav.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
  for(const width of [768,390,320]){
   await page.setViewportSize({width,height:844});await expect(nav).toBeVisible();await expect(toggle).toBeHidden();
@@ -43,7 +46,7 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
   await showOverview();await expect(nav).toBeVisible();
   await nav.locator('#tabAsBtn').focus();await page.keyboard.press('ArrowLeft');
   await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
-  await page.keyboard.press('ArrowRight');await expect(nav.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
+  await page.keyboard.press('ArrowRight');await page.getByRole('menuitemradio',{name:'접수 현황',exact:true}).click();await expect(nav.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
   await expect(page.locator('.top-nav-selection')).toBeHidden();
  }
  await page.setViewportSize({width:1440,height:300});await nav.locator('#tabUsersBtn').click();await expect(page.locator('#tabUsers')).toBeVisible();

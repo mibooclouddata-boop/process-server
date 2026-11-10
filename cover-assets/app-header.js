@@ -108,7 +108,8 @@ window.AppHeader=(()=>{
    const wasFocused=navigation.contains(document.activeElement)&&document.body.classList.contains('app-nav-open');
    closeNavigation(wasFocused);account.open=false;
    document.querySelectorAll('#appNavigation [aria-current],#asSubmenu [aria-current]').forEach(el=>el.removeAttribute('aria-current'));
-   const current=['process','dispatch'].includes(tab)?document.getElementById('tab'+tab+'Btn'):tab==='users'?document.getElementById('tabUsersBtn'):navigation.querySelector(`[data-sub="${sub||'stats'}"]`);
+   const activeSub=navigation.dataset.asCombined==='true'&&sub==='list'?'stats':sub||'stats';
+   const current=tab==='as'&&sub==='product'&&navigation.dataset.asCombined==='true'?document.getElementById('tabprocessBtn'):['process','dispatch'].includes(tab)?document.getElementById('tab'+tab+'Btn'):tab==='users'?document.getElementById('tabUsersBtn'):navigation.querySelector(`[data-sub="${activeSub}"]`);
    current?.setAttribute('aria-current','page');
    pageMotion.start(tab,sub);
   }

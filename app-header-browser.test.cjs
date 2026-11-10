@@ -52,8 +52,8 @@ test('light header reflects the session and supports keyboard, mobile navigation
  await page.setViewportSize({width:375,height:844});assert(await page.locator('#appNavigation').isVisible());
  assert(await page.locator('#topbarUser').isHidden());assert(await page.locator('#appMenuToggle').isHidden());
  await page.locator('#tabAsBtn').click();assert(await page.locator('#appNavigation').isVisible());
- await page.locator('[data-sub="list"]').click();assert(await page.locator('.topbar').isVisible());
- await page.locator('#asSubmenu [data-sub=stats]').click();assert(await page.locator('#asSubStats').isVisible());
+ await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();assert(await page.locator('.topbar').isVisible());
+ await page.locator('#asSubmenu [data-sub=stats]').click();await page.getByRole('menuitemradio',{name:'접수 현황',exact:true}).click();assert(await page.locator('#asSubStats').isVisible());
  await page.keyboard.press('Escape');assert(await page.locator('#appNavigation').isVisible());
  await page.locator('#tabUsersBtn').click();await shot('header-mobile');
  await page.locator('#appAccountToggle').click();const panel=await page.locator('#appAccountPanel').boundingBox();assert(panel.x>=0&&panel.x+panel.width<=376,JSON.stringify(panel));

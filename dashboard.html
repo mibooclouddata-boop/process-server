@@ -1707,8 +1707,8 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
 <link rel="stylesheet" href="/cover-assets/as-overview-balanced.css?v=19">
 <link rel="stylesheet" href="/cover-assets/as-recent-hover.css?v=2">
 <script src="/cover-assets/as-overview-balanced.js?v=10" defer></script>
-<link rel="stylesheet" href="/cover-assets/app-mega-menu.css?v=1">
-<script src="/cover-assets/app-mega-menu.js?v=1" defer></script>
+<link rel="stylesheet" href="/cover-assets/app-mega-menu.css?v=4">
+<script src="/cover-assets/app-mega-menu.js?v=6" defer></script>
 <link rel="stylesheet" href="/cover-assets/as-scroll-slider.css?v=3">
 <script src="/cover-assets/as-scroll-slider.js?v=3" defer></script>
 </head>
@@ -2219,7 +2219,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
   </div>
 </div>
 
-<script src="/cover-assets/app-header.js?v=11"></script>
+<script src="/cover-assets/app-header.js?v=14"></script>
 <script src="/auth-client.js"></script>
 <script src="/as-permissions.js?v=1"></script>
 <script src="/user-admin-ui.js?v=14"></script>
@@ -2368,7 +2368,7 @@ function switchTab(tab, el, sub) {
   if(tab==='users')loadAdminUsers();
   AppHeader.setPage(tab,_asSubMode);
   if(tab==='process'||tab==='dispatch')AsWriteProgress.showDevelopment(tab==='process'?'공정 관리':'배차 관리');
-  if(showLedger&&!matchMedia('(max-width:768px)').matches)document.querySelector('#asSubmenu [data-sub="list"]').focus({preventScroll:true});
+  if(showLedger&&!matchMedia('(max-width:768px)').matches)document.getElementById('tabAsBtn').focus({preventScroll:true});
 }
 
 // ── 텍스트영역 자동 크기 ──
