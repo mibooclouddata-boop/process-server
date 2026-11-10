@@ -49,7 +49,7 @@ test('balanced overview aligns charts and inline comparison, and header switches
   await page.locator('#asStatsContent:not([hidden])').waitFor();await page.evaluate(()=>window.scrollTo(0,0));
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
   const stats=await page.locator('#asStatsContent').boundingBox();
-  await page.locator('#asSubmenu [data-sub=list]').click();await page.locator('#asSubList').waitFor({state:'visible'});
+  await page.locator('#tabAsBtn').click();await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();await page.locator('#asSubList').waitFor({state:'visible'});
   await page.evaluate(()=>window.scrollTo(0,0));await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
   const list=await page.locator('#asSubList').boundingBox();
   for(const edge of ['x','y','right',...(width>=1101&&height>=760?['bottom']:[])]){

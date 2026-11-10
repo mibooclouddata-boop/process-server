@@ -1,9 +1,9 @@
 .app-mega-menu{position:fixed;inset:auto;margin:0;width:600px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 100px);overflow:auto;padding:22px;background:#fff;color:#202123;border:1px solid #d9e0e7;border-radius:14px;box-shadow:0 14px 30px #172b4917;font-family:var(--ui-font),'Malgun Gothic',sans-serif}
 .app-mega-menu::backdrop{background:transparent}
+body #dashboard #appNavigation .mega-as-list-source{display:none!important}
 .app-mega-menu:popover-open{animation:mega-appear .16s ease-out}
 .mega-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 6px 18px}
 .mega-heading strong{font-size:17px;font-weight:700;line-height:26px}
-.mega-heading span{font-size:12px;color:#626970}
 .mega-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
 .mega-group h3{font-size:12px;font-weight:500;color:#626970;margin:0 0 8px;padding:0 10px;line-height:18px}
 .app-mega-menu .mega-link{display:flex;align-items:center;gap:12px;min-height:56px;width:100%;padding:10px;border:0;border-radius:8px;background:#fff;color:#202123;font:inherit;text-align:left;cursor:pointer}
@@ -12,8 +12,8 @@
 .mega-copy small{font-size:12px;color:#626970;line-height:18px}
 .mega-arrow{font-size:17px;color:#77818b}
 .app-mega-menu .mega-link:hover{background:#f2f4f6}
-.app-mega-menu .mega-link[aria-checked=true]{background:#f3f7fc}
-.app-mega-menu .mega-link[aria-checked=true] strong{color:#1458bc}
+.app-mega-menu .mega-link[aria-current=page]{background:#f3f7fc}
+.app-mega-menu .mega-link[aria-current=page] strong{color:#1458bc}
 .app-mega-menu .mega-link:focus-visible{outline:2px solid #155eef;outline-offset:-2px;background:#f2f4f6}
 body #dashboard #appNavigation .mega-caret{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;flex:none;transition:transform .15s}
 body #dashboard #appNavigation [aria-expanded=true] .mega-caret{transform:rotate(180deg)}
