@@ -1,3 +1,4 @@
+const monitoring = require('./sentry-monitoring');
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -237,6 +238,7 @@ app.use((err, req, res, next) => {
   if (err.message && err.message.startsWith('허용되지 않는')) {
     return res.status(400).json({ error: err.message });
   }
+  monitoring.reportError(err);
   res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
 });
 

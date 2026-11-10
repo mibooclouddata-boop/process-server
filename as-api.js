@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto');
 const multer=require('multer');
 const attachments=require('./as-files');
+const monitoring=require('./sentry-monitoring');
 function installAsApi(app,{service,authenticate,uploadsDir,resolveActor}){
   fs.mkdirSync(uploadsDir,{recursive:true});
   const upload=multer({storage:multer.diskStorage({destination:uploadsDir,filename(req,file,cb){
@@ -49,6 +50,7 @@ function installAsApi(app,{service,authenticate,uploadsDir,resolveActor}){
   app.use('/api/as',(error,req,res,next)=>{
     if(res.headersSent)return next(error);
     const status=error.status||500;
+    if(status>=500)monitoring.reportError(error);
     if(status>=500)console.error('AS 저장 오류:',error.code||error.message);
     res.status(status).json({error:error.status?error.message:'접수를 저장하지 못했습니다. 같은 요청으로 재시도하세요.'});
   });
