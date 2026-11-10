@@ -10,6 +10,18 @@ test('permissions tab grants AS actions, locks sysadmin and preserves failed edi
  await page.goto(f.url+'/dashboard.html');await page.locator('#tabUsersBtn').click();
  assert.equal(await page.locator('#adminUserRows [data-as-permission]').count(),0);
  const box=key=>page.locator('#userPermissionChoices input[data-as-permission="'+key+'"]');
+ const savePermissions=async()=>{
+  await page.locator('#userPermissionsSave').click();
+  const progress=page.locator('#asWriteProgress');await progress.waitFor({state:'visible',timeout:1500});
+  assert.equal(await page.locator('#asWriteProgressTitle').textContent(),'저장 중');
+  assert.equal(await page.locator('.as-write-ring').evaluate(e=>getComputedStyle(e).animationName),'asWriteSpin');
+  assert(await page.locator('#userPermissionsSave').isDisabled());
+  await page.keyboard.press('Escape');assert(await progress.isVisible());
+  await progress.waitFor({state:'hidden'});await page.locator('#toastContainer').waitFor({state:'visible'});
+  assert.match(await page.locator('#appToastMessage').textContent(),/권한.*(저장|실패)/);
+  const confirm=page.locator('#toastContainer .app-toast-confirm');if(await confirm.count())await confirm.click();
+  else await page.locator('#toastContainer').waitFor({state:'hidden'});
+ };
  await page.getByRole('button',{name:'검증 관리자 사용자 관리',exact:true}).click();await page.locator('#userTabPermissions').click();
  assert.equal(await page.locator('#userPermissionChoices input').count(),4);for(const input of await page.locator('#userPermissionChoices input').all()){assert(await input.isChecked());assert(await input.isDisabled());}
  await page.keyboard.press('Escape');await page.getByRole('button',{name:'권한 테스트 사용자 관리',exact:true}).click();await page.locator('#userTabPermissions').click();
@@ -19,13 +31,13 @@ test('permissions tab grants AS actions, locks sysadmin and preserves failed edi
   const animate=Element.prototype.animate;
   Element.prototype.animate=function(...args){if(this.closest('#tabUsers'))permissionSaveMotion.push(this.tagName);return animate.apply(this,args);};
  });
- await box('production').check();await page.waitForFunction(()=>!userAdmin.busy);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,['production']);
+ await box('production').check();assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions||[],[]);await page.locator('#userModalCancel').click();await page.getByRole('button',{name:'권한 테스트 사용자 관리',exact:true}).click();await page.locator('#userTabPermissions').click();assert.equal(await box('production').isChecked(),false);await box('production').check();await savePermissions();await page.waitForFunction(()=>!userAdmin.busy);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,['production']);
  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
  assert.deepEqual(await page.evaluate(()=>permissionSaveMotion),[],'granting a permission must not replay roster motion');
  await page.route('**/api/users/operator',r=>r.fulfill({status:503,json:{error:'권한 저장 실패'}}));
- await box('painting').click();await page.waitForFunction(()=>userAdmin.failed&&!userAdmin.busy);assert(await box('painting').isDisabled());assert.match(await page.locator('#modalMsg').textContent(),/권한 저장 실패/);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,['production']);
+ await box('painting').click();await savePermissions();await page.waitForFunction(()=>userAdmin.failed&&!userAdmin.busy);assert(await box('painting').isDisabled());assert.match(await page.locator('#modalMsg').textContent(),/권한 저장 실패/);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,['production']);
  await page.unroute('**/api/users/operator');page.once('dialog',d=>d.accept());await page.locator('#userReloadCurrent').click();await page.waitForFunction(()=>!userAdmin.failed&&!userAdmin.busy);await page.locator('#userTabPermissions').click();assert.equal(await box('painting').isChecked(),false);
- await box('production').uncheck();await page.waitForFunction(()=>!userAdmin.busy);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,[]);
+ await box('production').uncheck();await savePermissions();await page.waitForFunction(()=>!userAdmin.busy);assert.deepEqual(f.read('data.json').users.find(u=>u.id==='operator').asPermissions,[]);
  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
  assert.deepEqual(await page.evaluate(()=>permissionSaveMotion),[],'revoking a permission must not replay roster motion');
  await page.locator('#userTabAccount').focus();await page.keyboard.press('ArrowLeft');assert.equal(await page.locator('#userTabPermissions').getAttribute('aria-selected'),'true');
