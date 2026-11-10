@@ -1,5 +1,6 @@
 'use strict';
 const {createClient} = require('@supabase/supabase-js');
+const monitoring = require('./sentry-monitoring');
 const {randomBytes, randomUUID, createHash, createHmac, createCipheriv, createDecipheriv} = require('node:crypto');
 
 const COOKIE = 'ps_session';
@@ -133,8 +134,11 @@ function requestToken(req) {
 }
 function createSupabaseAuth(backend, env = process.env) {
   const cookieOptions = req => ({httpOnly:true, sameSite:'strict', secure:env.SESSION_COOKIE_SECURE === 'true' || !!req.secure, path:'/'});
-  const safeError = (res, error) => res.status([400,401,403,404,409,429,503].includes(error.status) ? error.status : 503)
-    .json({error:[400,401,403,404,409,429].includes(error.status) ? error.message : unavailable().message});
+  const safeError = (res, error) => {
+    monitoring.reportError(error);
+    return res.status([400,401,403,404,409,429,503].includes(error.status) ? error.status : 503)
+      .json({error:[400,401,403,404,409,429].includes(error.status) ? error.message : unavailable().message});
+  };
   return {
     async login(req,res) {
       const {id, password} = req.body || {};

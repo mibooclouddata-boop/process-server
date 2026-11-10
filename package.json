@@ -11,7 +11,10 @@
     "test:as-browser": "node --test as-integrity-browser.test.cjs as-write-progress-browser.test.cjs as-overview-browser.test.cjs",
     "test:users-browser": "node --test user-pagination-browser.test.cjs user-management-browser.test.cjs user-create-wizard-browser.test.cjs user-filter-browser.test.cjs user-permissions-browser.test.cjs user-permission-roster-browser.test.cjs",
     "test:login-browser": "node --test login-transition-browser.test.cjs session-idle-browser.test.cjs login-failure-browser.test.cjs",
-    "test:theme-browser": "node --test app-header-browser.test.cjs header-font-stability-browser.test.cjs readable-balance-browser.test.cjs compact-navigation-browser.test.cjs overview-card-height-browser.test.cjs hover-mega-menu-browser.test.cjs"
+    "test:theme-browser": "node --test app-header-browser.test.cjs header-font-stability-browser.test.cjs readable-balance-browser.test.cjs compact-navigation-browser.test.cjs overview-card-height-browser.test.cjs hover-mega-menu-browser.test.cjs",
+    "start:sentry": "node --env-file=.env.sentry.local server.js",
+    "test:sentry": "node --test sentry-monitoring.test.cjs",
+    "sentry:verify": "node --env-file=.env.sentry.local scripts/verify-sentry.cjs"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +24,8 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "multer": "^2.1.1",
-    "@supabase/supabase-js": "^2.118.0"
+    "@supabase/supabase-js": "^2.118.0",
+    "@sentry/node": "^11.11.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
