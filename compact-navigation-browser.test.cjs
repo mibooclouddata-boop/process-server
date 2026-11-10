@@ -33,7 +33,7 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
  }
  await page.evaluate(()=>_renderAsPage());
  await showOverview();await expect(page.locator('#asSubmenu [data-sub=stats]')).toBeFocused();
- for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();}
+ for(const id of ['process','dispatch']){await page.locator('#tab'+id+'Btn').click();await expect(page.locator('#tab'+id)).toBeVisible();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();await page.locator('#featureDevelopment button').click();}
  await showOverview();await expect(page.locator('#asSubmenu [data-sub=list]')).toBeVisible();
  await nav.locator('#tabUsersBtn').click();await page.locator('#adminUserRows tr').first().waitFor();await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
  for(const width of [768,390,320]){
@@ -44,7 +44,7 @@ test('horizontal navigation keeps destinations accessible across keyboard and mo
   await nav.locator('#tabAsBtn').focus();await page.keyboard.press('ArrowLeft');
   await expect(nav.locator('#tabUsersBtn')).toHaveAttribute('aria-current','page');
   await page.keyboard.press('ArrowRight');await expect(nav.locator('#tabAsBtn')).toHaveAttribute('aria-current','page');
-  await page.waitForFunction(()=>{const a=document.querySelector('#appNavigation [aria-current=page]').getBoundingClientRect(),s=document.querySelector('.top-nav-selection').getBoundingClientRect();return Math.abs(a.x-s.x)<1&&Math.abs(a.width-s.width)<1;});
+  await expect(page.locator('.top-nav-selection')).toBeHidden();
  }
  await page.setViewportSize({width:1440,height:300});await nav.locator('#tabUsersBtn').click();await expect(page.locator('#tabUsers')).toBeVisible();
  assert.equal(await page.locator('#menuPreviewTools').count(),0);assert.deepEqual(errors,[]);
