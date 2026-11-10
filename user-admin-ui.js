@@ -148,7 +148,7 @@ function setupUserList(){
  for(const id of ['userDepartmentFilter','userRoleFilter','userStatusFilter'])setupUserFilterDropdown(id);
  const card=document.querySelector('#tabUsers .toss-user-card');
  const chips=document.createElement('div');chips.id='userActiveFilters';chips.hidden=true;toolbar.after(chips);
- const pager=document.createElement('div');pager.className='user-pager';pager.innerHTML='<span id="userPage" role="status" aria-live="polite"></span><div><button type="button" id="userPrevious">이전</button><button type="button" id="userNext">다음</button></div>';card.append(pager);
+ const pager=document.createElement('div');pager.className='user-pager';pager.innerHTML='<span id="userPage" role="status" aria-live="polite"></span><nav class="user-page-navigation" aria-label="사용자 목록 페이지"><button type="button" id="userPrevious" aria-label="이전 페이지">‹</button><div id="userPageNumbers"></div><button type="button" id="userNext" aria-label="다음 페이지">›</button></nav>';card.append(pager);
  for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).addEventListener('input',()=>{userAdmin.page=1;renderAdminUsers();});
  userEl('userReset').onclick=()=>{for(const id of ['userSearch','userDepartmentFilter','userRoleFilter','userStatusFilter'])userEl(id).value='';userAdmin.page=1;renderAdminUsers();};
  userEl('userPrevious').onclick=()=>{userAdmin.page--;renderAdminUsers();};userEl('userNext').onclick=()=>{userAdmin.page++;renderAdminUsers();};
@@ -186,8 +186,22 @@ function renderAdminUsers(){
 row.onclick=e=>{if(!e.target.closest('button,input,label,select,a'))openUserModal(user);};body.append(row);
  }
  if(!filtered.length){const row=body.insertRow(),td=row.insertCell();td.colSpan=10;td.className='user-roster-empty';td.textContent=users.length?'조건에 맞는 사용자가 없습니다. 검색어나 필터를 확인하세요.':'등록된 사용자가 없습니다.';}
- userEl('userPage').textContent=`${filtered.length}명 · ${userAdmin.page} / ${pages}페이지`;userEl('userPrevious').disabled=userAdmin.page===1;userEl('userNext').disabled=userAdmin.page===pages;
+ renderUserPagination(filtered.length,pages);
 
+}
+function renderUserPagination(total,pages){
+ const current=userAdmin.page;
+ userEl('userPage').textContent=total?`전체 ${total.toLocaleString()}명`:'검색 결과 0명';
+ userEl('userPrevious').disabled=current===1;userEl('userNext').disabled=current===pages;
+ const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+ const items=pages<=7?range(1,pages):current<=4?[...range(1,5),null,pages]:current>=pages-3?[1,null,...range(pages-4,pages)]:[1,null,current-1,current,current+1,null,pages];
+ const container=userEl('userPageNumbers');container.replaceChildren();
+ for(const page of items){
+  if(page===null){const gap=document.createElement('span');gap.className='user-page-gap';gap.textContent='…';gap.setAttribute('aria-hidden','true');container.append(gap);continue;}
+  const button=document.createElement('button');button.type='button';button.textContent=page;button.dataset.page=page;button.setAttribute('aria-label',page+'페이지');
+  if(page===current)button.setAttribute('aria-current','page');
+  button.onclick=()=>{userAdmin.page=page;renderAdminUsers();container.querySelector('[aria-current=page]').focus({preventScroll:true});};container.append(button);
+ }
 }
 async function submitModalUser(){
  if(userAdmin.busy||userAdmin.editing)return;
