@@ -1,0 +1,16 @@
+/* Same page controls as the AS list: 36px desktop, 44px touch. */
+body #tabUsers .user-pager{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 0;border:0;color:#626b76;font:400 13px/1.5 'Pretendard Variable',Pretendard,sans-serif}
+body #tabUsers .user-page-navigation{margin-left:auto}
+body #tabUsers #userPage{flex:none;white-space:nowrap}
+body #tabUsers .user-page-navigation,body #tabUsers #userPageNumbers{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;min-width:0;max-width:100%}
+body #tabUsers #userPageNumbers{overflow-x:auto;scrollbar-width:none}
+body #tabUsers .user-pager button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;min-width:36px;height:36px;min-height:36px;padding:0;border:1px solid transparent;border-radius:50%;background:transparent;color:#525b65;font-family:inherit;font-size:14px;font-weight:500;line-height:1;transition:background-color .15s,color .15s}
+body #tabUsers .user-pager button:hover:not(:disabled){background:#f0f2f4;color:#17191c}
+body #tabUsers .user-pager button[aria-current=page],body #tabUsers .user-pager button[aria-current=page]:hover{background:#292d32;color:#fff;font-weight:700}
+body #tabUsers .user-pager button:disabled{opacity:.4;cursor:not-allowed}
+body #tabUsers .user-pager button:focus-visible{outline:2px solid #3d6b91;outline-offset:3px}
+body #tabUsers .user-page-gap{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;color:#737c86}
+@media(max-width:600px){body #tabUsers .user-pager{flex-wrap:wrap;gap:8px;font-size:12px}body #tabUsers .user-page-navigation{flex-basis:100%;justify-content:flex-end}body #tabUsers .user-page-navigation,body #tabUsers #userPageNumbers{gap:0}}
+@media(prefers-reduced-motion:reduce){body #tabUsers .user-pager button{transition:none}}
+
+@media(pointer:coarse){body #tabUsers .user-pager button,body #tabUsers .user-page-gap{width:44px;min-width:44px;height:44px;min-height:44px;flex-basis:44px}}
