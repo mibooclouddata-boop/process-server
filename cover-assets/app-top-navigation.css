@@ -12,8 +12,8 @@ body #dashboard #appRailToggle,body #dashboard #appMenuToggle{display:none!impor
 body #dashboard>.app-topbar #appNavigation{display:flex!important;flex:1;flex-direction:row;align-items:center;min-width:0;width:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;align-self:stretch;justify-content:flex-start}
 body #dashboard #appNavigation>.tabs{display:flex;flex-direction:row;align-items:center;position:relative;top:auto;isolation:isolate;width:max-content;max-width:100%;gap:8px;padding:2px;background:#fff;border:1px solid var(--border);border-radius:26px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
 body #dashboard #appNavigation>.tabs::-webkit-scrollbar{display:none}
-body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 96px;flex-direction:row;justify-content:center;gap:10px;width:96px;box-sizing:border-box;white-space:nowrap;height:44px;min-height:44px;padding:0 10px;margin:0;text-align:center;letter-spacing:0;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
-body #dashboard #appNavigation .rail-full{display:block;font-size:14px}
+body #dashboard #appNavigation :is(.tab,.tab-sub){position:relative;z-index:1;flex:0 0 104px;flex-direction:row;justify-content:center;gap:10px;width:104px;box-sizing:border-box;white-space:nowrap;height:44px;min-height:44px;padding:0 10px;margin:0;text-align:center;letter-spacing:0;border-radius:22px;color:#202123;transition:color .2s ease,background .2s ease}
+body #dashboard #appNavigation .rail-full{display:block;font-size:16px;font-weight:600;line-height:1.5}
 body #dashboard #appNavigation :is(.rail-short,.rail-tip){display:none!important}
 body #dashboard #appNavigation :is(.tab,.tab-sub),body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]{background:transparent;color:#000}
 body #dashboard #appNavigation :is(.tab,.tab-sub):is(:hover,:focus-visible),body #dashboard #appNavigation :is(.tab,.tab-sub)[aria-current=page]:is(:hover,:focus-visible){background:transparent;color:#0066e9}
@@ -28,17 +28,17 @@ body #dashboard #appAccount>summary :is(.app-avatar,.app-account-copy,.app-chevr
 body #dashboard #appAccount>summary .top-account-icon{display:block;width:23px;height:23px;fill:currentColor;stroke:none}
 @media(min-width:1101px){
  body #dashboard #appNavigation>.tabs{width:max-content;gap:8px}
- body #dashboard #appNavigation :is(.tab,.tab-sub){flex:0 0 104px;width:104px;padding-inline:10px}
- body #dashboard #appNavigation .rail-full{font-size:14px;letter-spacing:0}
+ body #dashboard #appNavigation :is(.tab,.tab-sub){flex:0 0 112px;width:112px;padding-inline:10px}
+ body #dashboard #appNavigation .rail-full{font-size:16px;letter-spacing:0}
 }
-@media(max-width:1100px) and (min-width:769px){body #dashboard>.app-topbar{gap:12px;padding-inline:16px}body #dashboard #appNavigation :is(.tab,.tab-sub){width:90px;flex-basis:90px;padding:0 8px;gap:10px}body #dashboard #appNavigation .rail-full{font-size:14px}}
+@media(max-width:1100px) and (min-width:769px){body #dashboard>.app-topbar{gap:12px;padding-inline:16px}body #dashboard #appNavigation :is(.tab,.tab-sub){width:96px;flex-basis:96px;padding:0 8px;gap:10px}body #dashboard #appNavigation .rail-full{font-size:16px}}
 @media(max-width:768px){
  body #dashboard>.app-topbar{height:auto;min-height:112px;flex-wrap:wrap;gap:4px 12px;padding:8px 12px}
  body #dashboard>.app-topbar .topbar-title{flex:0 0 104px;width:104px}
  body #dashboard>.app-topbar .topbar-title img{width:104px!important}
  body #dashboard>.app-topbar #appNavigation{order:3;flex-basis:100%;height:52px}
  body #dashboard #appNavigation :is(.tab,.tab-sub){padding:0 10px}
- body #dashboard #appNavigation .rail-full{font-size:14px}
+ body #dashboard #appNavigation .rail-full{font-size:16px}
  body #dashboard #appNavigation>.tabs{overflow-x:auto;scrollbar-width:thin}
  body #dashboard #appAccount>summary{width:44px;height:44px;min-width:44px;min-height:44px}
  body #dashboard .app-account-panel{right:0}
