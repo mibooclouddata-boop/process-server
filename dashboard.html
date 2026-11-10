@@ -4075,13 +4075,6 @@ function createAsColumnAmounts(chart){
   const W=plot.clientWidth,H=plot.clientHeight,T=compact?24:34,B=H-(compact?28:40),dx=(W-L-R)/12,y=value=>B-value/max*(B-T);
   if(!W||H<80)return;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.replaceChildren();
-  // Group consecutive future months so the label is always visible, even before selection.
-  for(let i=0;i<12;i++){
-   if(!future(i))continue;
-   const start=i;while(i+1<12&&future(i+1))i++;
-   append('rect',{x:L+start*dx,y:6,width:(i-start+1)*dx,height:B-6,rx:4,fill:'#f6f8fb',class:'amount-future-region'});
-   append('text',{x:L+(start+(i-start+1)/2)*dx,y:22,'text-anchor':'middle',class:'amount-future-label'},'미도래');
-  }
   append('rect',{x:L+(month-1+.08)*dx,y:T,width:dx*.84,height:B-T,rx:4,fill:'#eef4ff',class:'amount-selection'});
   ticks.forEach(value=>{append('line',{x1:L,x2:W-R,y1:y(value),y2:y(value),class:'amount-grid'});append('text',{x:L-8,y:y(value)+4,'text-anchor':'end',class:'amount-axis'},scaled(value));});
   [...chart.children].forEach((button,index)=>{
@@ -4092,7 +4085,7 @@ function createAsColumnAmounts(chart){
    button.title=year+'년 '+(index+1)+'월 '+(missing?'미도래':hasAmount?format(amount)+'원':'금액 입력 자료 없음');button.setAttribute('aria-label',button.title);
   });
   const current=sum.amounts[month-1],hasCurrent=sum.amountEntries[month-1]>0;
-  AsAmountMotion.render(document.getElementById('asAmountSelectedValue'),future(month-1)?'미도래':hasCurrent?format(current):'금액 미입력',format(sum.amounts.reduce((max,value)=>value>max?value:max,0n)));
+  AsAmountMotion.render(document.getElementById('asAmountSelectedValue'),future(month-1)?'—':hasCurrent?format(current):'금액 미입력',format(sum.amounts.reduce((max,value)=>value>max?value:max,0n)));
  }
  chart.addEventListener('keydown',event=>{const button=event.target.closest('.as-amount-month');if(!button)return;const index=[...chart.children].indexOf(button);let next;if(event.key==='ArrowRight')next=(index+1)%12;if(event.key==='ArrowLeft')next=(index+11)%12;if(event.key==='Home')next=0;if(event.key==='End')next=11;if(next!==undefined){event.preventDefault();chart.children[next]?.focus({preventScroll:true});}});
  new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(draw);}).observe(plot);
@@ -4163,7 +4156,6 @@ function createAsReadableTrend(chart){
       }
       if(!chosen)continue;
       reserved.push(chosen);labelBounds.push({...chosen,index:i});
-      append(svg,'rect',{x:chosen.x,y:chosen.y,width:chosen.w,height:chosen.h,rx:3,fill:'#fff'});
       append(svg,'text',{x:p.x,y:chosen.y+baseline,'text-anchor':'middle',class:labelClass,'data-month':i+1},text);
     }
     if(mobile){values.forEach((n,i)=>{if(i===selected||([0,2,4,6,8,11].includes(i)&&Math.abs(i-selected)>=2))append(svg,'text',{x:x(i),y:H-7,'text-anchor':'middle',class:'axis-tick month-tick',style:i===selected?'font-weight:750;fill:#124bbb':''},(i+1)+'월');});}
