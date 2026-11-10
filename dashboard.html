@@ -3432,7 +3432,8 @@ function _updateAsSelectedCount() {
 }
 
 function exportAsExcel() {
-  const list = _asFiltered;
+  const selectedIds = new Set(Array.from(document.querySelectorAll('#asTableBody tr.selected'), row => row.dataset.id));
+  const list = selectedIds.size ? _asFiltered.filter(item => selectedIds.has(String(item.id))) : _asFiltered;
   if (!list.length) { alert('내보낼 데이터가 없습니다.'); return; }
   const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','금액 (원)','비고'];
   const rows = list.map(a => [
