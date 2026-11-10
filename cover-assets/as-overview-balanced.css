@@ -98,13 +98,13 @@ body #asSubStats .as-recent-empty{height:100%;min-height:100px;margin:0;display:
 }
 
 /* Approved monthly-type concept 2: legible figures on a six-step blue scale. */
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-heading h2{font-size:18px;font-weight:650;line-height:28px;letter-spacing:-.02em;color:#202123}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table{border-spacing:4px 4px;font-variant-numeric:tabular-nums}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table :is(th,td):first-child{width:116px;padding-right:12px;font-size:14px;font-weight:600;line-height:22px;color:#202123}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table thead th{height:36px;font-size:14px;font-weight:500;line-height:20px;color:#202123}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table :is(th,td):last-child{width:76px;font-size:15px;font-weight:600;color:#202123;background:#f3f6f8;border-radius:4px}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table tfoot :is(th,td){height:38px;font-size:14px;font-weight:600;line-height:20px;border-top:1px solid #dce4eb;padding-top:5px;background:#fff;color:#202123}
-body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heat-cell{font-size:15px;font-weight:500;line-height:24px;min-height:44px;min-width:44px;padding:8px 3px;border-radius:5px;color:var(--heat-ink);background:var(--heat-bg)}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-heading h2{font-size:20px;font-weight:650;line-height:28px;letter-spacing:-.02em;color:#202123}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table{min-width:1100px;border-spacing:4px 4px;font-variant-numeric:tabular-nums}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table :is(th,td):first-child{width:128px;padding-right:12px;font-size:16px;font-weight:600;line-height:22px;color:#202123}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table thead th{height:40px;font-size:16px;font-weight:500;line-height:24px;color:#202123}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table :is(th,td):last-child{width:88px;font-size:18px;font-weight:600;color:#202123;background:#f3f6f8;border-radius:4px}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-table tfoot :is(th,td){height:42px;font-size:18px;font-weight:600;line-height:26px;border-top:1px solid #dce4eb;padding-top:5px;background:#fff;color:#202123}
+body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heat-cell{font-size:18px;font-weight:500;line-height:26px;min-height:44px;min-width:44px;padding:8px 3px;border-radius:5px;color:var(--heat-ink);background:var(--heat-bg)}
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heat-cell[data-future=true]{background:#f8fafb;color:#5f6368;font-weight:400}
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-scale i:nth-child(1){background:#f7f9fb}
 body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-panel .as-reason-heatmap-scale i:nth-child(2){background:#edf3fa}

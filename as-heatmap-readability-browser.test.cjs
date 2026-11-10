@@ -13,11 +13,11 @@ test('monthly type heatmap uses readable type and contrast in both display modes
   await p.setViewportSize(viewport);
   const switchSize=await p.locator('#asReasonHeatToggle').evaluate(e=>({height:e.getBoundingClientRect().height,font:getComputedStyle(e.querySelector('span')).fontSize}));
   assert.ok(switchSize.height>=44);assert.equal(switchSize.font,'14px');
-  assert.equal(await p.locator('.as-reason-heatmap-table thead th').nth(1).evaluate(e=>getComputedStyle(e).fontSize),'14px');
+  assert.equal(await p.locator('.as-reason-heatmap-table thead th').nth(1).evaluate(e=>getComputedStyle(e).fontSize),'16px');
   for(let mode=0;mode<2;mode++){
    const failures=await p.locator('.as-reason-heat-cell').evaluateAll(cells=>{
     const luminance=rgb=>{const v=rgb.match(/[\d.]+/g).slice(0,3).map(n=>{n=Number(n)/255;return n<=.04045?n/12.92:((n+.055)/1.055)**2.4;});return v[0]*.2126+v[1]*.7152+v[2]*.0722;};
-    return cells.flatMap(cell=>{const s=getComputedStyle(cell),a=luminance(s.color),b=luminance(s.backgroundColor),ratio=(Math.max(a,b)+.05)/(Math.min(a,b)+.05);return ratio<4.5||s.fontSize!=='15px'?[{text:cell.textContent,ratio,fontSize:s.fontSize}]:[];});
+    return cells.flatMap(cell=>{const s=getComputedStyle(cell),a=luminance(s.color),b=luminance(s.backgroundColor),ratio=(Math.max(a,b)+.05)/(Math.min(a,b)+.05);return ratio<4.5||s.fontSize!=='18px'?[{text:cell.textContent,ratio,fontSize:s.fontSize}]:[];});
    });assert.deepEqual(failures,[]);
    const cell=p.locator('.as-reason-heat-cell[data-row="0"][data-month="0"]');await cell.click();assert.equal(await cell.getAttribute('aria-pressed'),'true');
    await p.locator('#asReasonHeatToggle').click();
