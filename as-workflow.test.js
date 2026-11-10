@@ -6,17 +6,26 @@ const base=()=>({id:'test',status:'접수',deliveryAgreedDate:'2026-10-25',creat
 const run=(item,input)=>applyWorkflow(item,{revision:item.workflow?.revision||0,...input},actor,day,now);
 const start=item=>run(item,{action:'advance',next:'제작 요청',owner:'제작 담당',dueDate:'2026-10-21'});
 
-test('AS Excel export sizes Korean columns and wrapped rows without losing cell content',async()=>{
+test('AS Excel export respects selection and sizes Korean columns without losing cell content',async()=>{
  const source=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  const fn=source.slice(source.indexOf('function exportAsExcel()'),source.indexOf('let asRemoveFiles'));
- async function exportRows(rows){
+ async function exportRows(rows,selectedIds=[]){
   let blob,download;
   const c={_asFiltered:rows,AsAmount:require('./as-amount'),Blob,alert(){throw Error('unexpected empty export');},
    URL:{createObjectURL(value){blob=value;return 'blob:test';},revokeObjectURL(){}},
-   document:{createElement(){return {click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
+   document:{querySelectorAll(){return selectedIds.map(id=>({dataset:{id:String(id)}}));},createElement(){return {click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
   vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function normalizeAsReason('),source.indexOf('function asStatsDateKey(')),c);vm.runInContext(fn,c);c.exportAsExcel();
   assert.match(download,/\.xls$/);return blob.text();
  }
+ const records=[{id:1,asNo:'SELECT-ONE'},{id:'two',asNo:'SELECT-TWO'},{id:'three',asNo:'EXCLUDED'}];
+ const one=await exportRows(records,['two']);
+ assert.match(one,/>SELECT-TWO<\/td>/);assert(!one.includes('SELECT-ONE'));assert(!one.includes('EXCLUDED'));
+ const multiple=await exportRows(records,['two','1']);
+ assert(multiple.includes('SELECT-ONE'));assert(multiple.includes('SELECT-TWO'));
+ assert(multiple.indexOf('SELECT-ONE')<multiple.indexOf('SELECT-TWO'),'selection keeps the filtered list order');assert(!multiple.includes('EXCLUDED'));
+ const all=await exportRows(records);assert(all.includes('SELECT-ONE'));assert(all.includes('SELECT-TWO'));assert(all.includes('EXCLUDED'));
+ await assert.rejects(exportRows(records,['missing']),/unexpected empty export/);
+ await assert.rejects(exportRows([]),/unexpected empty export/);
  const short=await exportRows([{product:'ABC',reason:'점검',amount:0}]);
  const renamed=await exportRows([{reason:'품질 불량'},{reason:'수량 누락'}]);
  assert(renamed.includes('제작 오작'));assert(renamed.includes('부재 누락'));assert(!renamed.includes('품질 불량'));assert(!renamed.includes('수량 누락'));
