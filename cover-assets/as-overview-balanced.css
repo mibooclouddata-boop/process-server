@@ -117,4 +117,3 @@ body #asSubStats[data-overview-theme][data-overview-page] .as-reason-heatmap-pan
 
 body #asSubStats[data-overview-theme] .as-readable-trend .as-stats-chart-heading{justify-content:space-between}
 body #asSubStats[data-overview-theme] .as-readable-trend .as-stats-chart-heading>.as-period-controls{margin-left:auto}
-body #asSubStats[data-overview-theme] .as-readable-trend .plot>.as-chart-unit{position:absolute;top:0;right:12px;margin:0;text-align:right;z-index:1;pointer-events:none}
