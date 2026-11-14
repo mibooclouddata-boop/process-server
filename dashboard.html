@@ -4350,11 +4350,22 @@ function asLedgerCellKey(e){const cell=e.target.closest('td[tabindex]');if(!cell
 function asLedgerCancelRemark(){if(_asRemarkEditing?.saving)return;_asRemarkEditing=null;_renderAsPage();document.getElementById('asLedgerMessage').textContent='비고 변경을 취소했습니다.';}
 (function setupAsLedger(){
  const list=document.getElementById('asSubList');document.getElementById('asTableBody').addEventListener('keydown',asLedgerCellKey);
- let layoutFrame;
- const refreshLayout=()=>{cancelAnimationFrame(layoutFrame);layoutFrame=requestAnimationFrame(()=>{if(list.getClientRects().length)asLedgerLayoutColumns();});};
- new ResizeObserver(refreshLayout).observe(list.querySelector('.as-ledger-scroll'));
- window.addEventListener('resize',asLedgerLayoutColumns);
- document.fonts.ready.then(refreshLayout);
+ const viewport=list.querySelector('.as-ledger-scroll');
+ let layoutFrame=0,lastSize='';
+ const refreshLayout=()=>{
+  if(layoutFrame)return;
+  layoutFrame=requestAnimationFrame(()=>{
+   layoutFrame=0;
+   if(!list.getClientRects().length)return;
+   const size=viewport.clientWidth+','+viewport.clientHeight;
+   if(size===lastSize)return;
+   lastSize=size;
+   asLedgerLayoutColumns();
+  });
+ };
+ new ResizeObserver(refreshLayout).observe(viewport);
+ window.addEventListener('resize',refreshLayout);
+ document.fonts.ready.then(()=>{lastSize='';refreshLayout();});
  list.addEventListener('click',e=>{if(_asRemarkEditing&&!e.target.closest('.as-ledger-inline')){e.preventDefault();e.stopImmediatePropagation();asLedgerCanLeave();}},true);
  window.addEventListener('beforeunload',e=>{if(_asRemarkEditing){e.preventDefault();e.returnValue='';}});
  document.addEventListener('DOMContentLoaded',()=>{if(location.hash==='#as-list'){document.getElementById('asSubmenu').classList.add('open');switchTab('as',document.querySelector('#asSubmenu [data-sub="list"]'),'list');}});
