@@ -47,3 +47,4 @@ body #dashboard #appAccount>summary .top-account-icon{display:block;width:23px;h
 body #dashboard #appNavigation button:focus-visible{outline:2px solid #2563eb;outline-offset:-2px}
 
 @media(prefers-reduced-motion:reduce){body #dashboard #appAccount>summary{transition:none}}
+body #dashboard #appAccount{display:none}
