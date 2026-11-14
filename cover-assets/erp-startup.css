@@ -1,0 +1,23 @@
+.story .startup-action{position:relative;isolation:isolate;overflow:hidden;width:300px;max-width:100%;gap:16px;border:0;border-radius:8px;font-family:inherit;cursor:pointer;justify-content:center;touch-action:manipulation}
+.startup-action .action-label{position:relative;z-index:2;pointer-events:none}
+.startup-action:focus-visible{outline:3px solid #2584cc;outline-offset:5px}
+.startup-action:disabled{cursor:wait}
+.startup-action.is-loading{background:#17466c}
+.startup-action progress{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;margin:0;appearance:none;background:transparent;pointer-events:none;opacity:.6}
+.startup-action progress[hidden]{display:none}
+.startup-action progress::-webkit-progress-bar{background:transparent}
+.startup-action progress::-webkit-progress-value{background:#438ac0;transition:width .2s linear}
+.startup-action progress::-moz-progress-bar{background:#438ac0}
+.startup-action progress:not([value]){opacity:0}
+.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before,.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::after{content:"";position:absolute;pointer-events:none;width:410px;height:410px;left:calc(50% - 205px);top:44px;border-radius:43%;background:#3b7baa;opacity:.65;animation:startup-wave 5s linear infinite}
+.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before{top:39px;background:#70aed7;opacity:.22;animation-direction:reverse;animation-duration:7s}
+.startup-status{font-size:13px;line-height:1.6;color:var(--muted);margin:12px 0 0;max-width:360px;overflow-wrap:anywhere}
+[hidden]{display:none!important}
+@keyframes startup-wave{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before,.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::after{animation:none}.startup-action progress::-webkit-progress-value{transition:none}}
+
+.startup-dots{position:relative;z-index:2;display:flex;gap:4px;pointer-events:none}
+.startup-dots i{width:4px;height:4px;border-radius:50%;background:#d4edff;animation:startup-dot 1.25s ease-in-out infinite}
+.startup-dots i:nth-child(2){animation-delay:.15s}.startup-dots i:nth-child(3){animation-delay:.3s}
+@keyframes startup-dot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){.startup-dots i{animation:none;opacity:.7}}

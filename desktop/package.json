@@ -7,7 +7,8 @@
     "build": "node run.cjs build",
     "build:local": "node run.cjs build-local",
     "test": "node --test url.test.cjs titlebar.test.cjs update-ui.test.cjs release.test.cjs",
-    "info": "tauri info"
+    "info": "tauri info",
+    "pretest": "node prepare.cjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

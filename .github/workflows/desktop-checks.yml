@@ -1,7 +1,7 @@
 name: Desktop checks
 on:
   pull_request:
-    paths: ['desktop/**', '.github/workflows/desktop-*.yml']
+    paths: ['desktop/**', '.github/workflows/desktop-*.yml', 'cover.html', 'cover-assets/erp-startup.*', 'cover-assets/tide*', 'cover-assets/typography.css', 'cover-assets/headline-motion.css', 'cover-assets/app-flow-theme.css', 'cover-assets/*.otf']
 permissions:
   contents: read
 jobs:
