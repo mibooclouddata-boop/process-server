@@ -108,7 +108,7 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  const context={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
  const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',product:'<script>bad</script>',materialCode:'MAT-01',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
  assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('as-doc-header'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
- assert.equal((html.match(/<script src="\/as-workflow-ui.js\?v=permissions-1"><\/script>/g)||[]).length,1);
+ assert.equal((html.match(/<script src="\/as-workflow-ui\.js\?v=[^"\s]+"><\/script>/g)||[]).length,1);
 });
 // API persistence, validation, authorization and conflicts are exercised by as-integrity.test.cjs.
 
