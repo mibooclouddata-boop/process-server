@@ -1,6 +1,30 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
+
+test('cold login applies Pretendard after delayed font responses without reloading',async t=>{
+ const fixture=await startFixture();let browser,release;
+ const blocked=new Promise(resolve=>release=resolve);
+ t.after(async()=>{release();await browser?.close();await fixture.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage();
+ await page.route('**/*.otf',async route=>{await blocked;await route.continue();});
+ await page.goto(fixture.url+'/login.html',{waitUntil:'domcontentloaded'});
+ await page.waitForTimeout(450);
+ const cdp=await context.newCDPSession(page);await cdp.send('DOM.enable');await cdp.send('CSS.enable');
+ async function renderedFonts(selector){
+  const {root}=await cdp.send('DOM.getDocument');
+  const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});
+  return (await cdp.send('CSS.getPlatformFontsForNode',{nodeId})).fonts;
+ }
+ assert((await renderedFonts('#submitBtn')).every(font=>!font.isCustomFont),'cold load starts without cached webfonts');
+ release();await page.evaluate(()=>document.fonts.ready);
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ for(const selector of ['#identifier + label','.checkbox span','#submitBtn']){
+  const fonts=await renderedFonts(selector);
+  assert(fonts.some(font=>font.isCustomFont&&/Pretendard/i.test(font.familyName)),`${selector} must render Pretendard without a reload: ${JSON.stringify(fonts)}`);
+ }
+});
 test('login crossfade waits for data, recovers, and never replays on refresh or navigation',async t=>{
  const fixture=await startFixture();let browser;t.after(async()=>{await browser?.close();await fixture.close();});
  browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
