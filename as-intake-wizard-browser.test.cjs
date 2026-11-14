@@ -54,6 +54,10 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
  assert.equal(await page.locator('label[for=asActionSelect]').textContent(),'처리 방법');
+ assert.equal(await page.locator('label[for=asReasonSelect]').textContent(),'발생 사유');
+ assert.equal(await page.locator('#asReasonSelect').getAttribute('aria-required'),'true');
+ assert.equal(await page.locator('label[for=asRemark]').textContent(),'상세 내용');
+ assert(await page.locator('#asDeliveryAgreedDateHint').isHidden());
  assert.equal(await page.locator('#asIntakeHeading').textContent(),'어떤 문제가 발생했나요?');
  await checkFooter(true);
  assert.equal(await page.locator('#asIntakeDescription').textContent(),'발생 사유와 처리 방법, 상세 내용을 입력해 주세요.');
@@ -61,12 +65,15 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('실제 접수 연결 검증');
  await page.locator('#asActionSelect').selectOption('현장 시수');
  assert.match(await page.locator('#asDeliveryAgreedDateHint').textContent(),/입력하지 않아도/);
+ assert(await page.locator('#asDeliveryAgreedDateHint').isVisible());
  await page.screenshot({path:path.join(shots,'step-2.png')});
  await page.locator('#asIntakePrevious').click();
  assert.equal(await page.locator('#asShip').inputValue(),'LIVE-FIXTURE');
  assert.equal(await page.getByRole('radio',{name:'사외',exact:true}).isChecked(),true);
  await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asAmount').isVisible(),true);
+ assert.equal(await page.locator('label[for=asAmount]').textContent(),'금액');
+ assert(await page.locator('#asAmountHint').isHidden());
  assert.equal(await page.locator('#asIntakeNext').textContent(),'저장');
  await checkFooter(true);
  assert.equal(await page.locator('#asIntakeHeading').textContent(),'관련 금액과 자료를 첨부해 주세요.');

@@ -27,18 +27,18 @@
  field('asElement').querySelector('label').textContent='엘레멘탈';
  byId('asElement').placeholder='엘레멘탈 입력';
  byId('asShip').placeholder='호선 입력';byId('asBlock').placeholder='블록 입력';
- field('asReasonSelect').querySelector('label').textContent='발생 사유 *';
+ field('asReasonSelect').querySelector('label').textContent='발생 사유';
+ byId('asReasonSelect').setAttribute('aria-required','true');
  field('asActionSelect').querySelector('label').textContent='처리 방법';
  byId('asReasonSelect').options[0].textContent='발생 사유 선택';
  byId('asActionSelect').options[0].textContent='처리 방법 선택';
  byId('asAction').placeholder='처리할 방법을 입력하세요';
  field('asRemark').querySelector('label').textContent='상세 내용';
  byId('asRemark').placeholder='불량 상태, 수량, 현장 요청사항 등을 입력하세요';
- for(const id of ['asShip','asBlock','asReasonSelect']){
+ for(const id of ['asShip','asBlock']){
   const label=field(id).querySelector('label');label.textContent=label.textContent.replace(/\s*\*$/,'');
   const required=document.createElement('small');required.textContent='필수';label.append(required);byId(id).setAttribute('aria-required','true');
  }
- for(const id of ['asRemark','asAmount']){const optional=document.createElement('small');optional.textContent='선택';field(id).querySelector('label').append(optional);}
  const actionRow=document.createElement('div');actionRow.className='modal-row as-wizard-action-row';actionRow.append(field('asActionSelect'),field('asDeliveryAgreedDate'));
  panels[1].append(field('asReasonSelect'),actionRow,field('asRemark'));
  const attachments=field('asFiles');panels[2].append(field('asAmount'),attachments);
@@ -48,12 +48,12 @@
  const fileLimit=document.createElement('p');fileLimit.textContent='파일당 최대 20MB';
  oldPicker.replaceWith(picker);picker.append(fileButton,fileHelp,fileLimit,fileInput);
  body.replaceChildren(heading,...panels,byId('asStatus'));
- byId('asAmountHint').textContent='금액을 입력하는 경우 이체 영수증을 첨부해 주세요.';
+ byId('asAmountHint').textContent='';byId('asAmountHint').hidden=true;
  const previous=document.createElement('button');previous.type='button';previous.id='asIntakePrevious';previous.className='admin-btn admin-btn-secondary';previous.textContent='이전';
  const submit=footer.querySelector('[onclick="submitAs()"]');submit.id='asIntakeNext';footer.insertBefore(previous,submit);
  const cancel=footer.querySelector('[onclick="closeAsModal()"]');cancel.id='asIntakeCancel';
  const message=byId('asModalMsg');message.setAttribute('role','alert');message.setAttribute('aria-live','polite');
- function updateAction(){byId('asDeliveryAgreedDateHint').textContent=byId('asActionSelect').value==='현장 시수'?'현장 시수는 납품 협의일을 입력하지 않아도 됩니다.':'미정이면 비워두세요.';}
+ function updateAction(){const hint=byId('asDeliveryAgreedDateHint'),onSite=byId('asActionSelect').value==='현장 시수';hint.textContent=onSite?'현장 시수는 납품 협의일을 입력하지 않아도 됩니다.':'';hint.hidden=!onSite;}
  function paint(focus=false){
   byId('asIntakeHeading').textContent=titles[step];byId('asIntakeDescription').textContent=descriptions[step];
   panels.forEach((panel,i)=>panel.hidden=i!==step);
