@@ -64,8 +64,9 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('#asReasonSelect').getAttribute('aria-invalid'),'true');
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('실제 접수 연결 검증');
  await page.locator('#asActionSelect').selectOption('현장 시수');
- assert.match(await page.locator('#asDeliveryAgreedDateHint').textContent(),/입력하지 않아도/);
- assert(await page.locator('#asDeliveryAgreedDateHint').isVisible());
+ assert.equal(await page.locator('#asDeliveryAgreedDateHint').textContent(),'');
+ assert(await page.locator('#asDeliveryAgreedDateHint').isHidden());
+ assert(await page.locator('#asDeliveryAgreedDate').isDisabled());
  await page.screenshot({path:path.join(shots,'step-2.png')});
  await page.locator('#asIntakePrevious').click();
  assert.equal(await page.locator('#asShip').inputValue(),'LIVE-FIXTURE');

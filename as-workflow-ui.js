@@ -11,25 +11,47 @@ function openAppDatePicker(input){
   dialog.addEventListener('close',()=>{const target=appDateState.input;if(target?.isConnected)target.focus();});
  }
  appDateState.input=input;
+ appDateState.confirm=input.id==='asDeliveryAgreedDate';
+ appDateState.pending=input.value;
  const anchor=input.value||input.max||asJobToday();
  appDateState.view=new Date(Number(anchor.slice(0,4)),Number(anchor.slice(5,7))-1,1);
  renderAppDatePicker();if(!dialog.open)dialog.showModal();
  dialog.querySelector('.single:not(:disabled),.today:not(:disabled),.toss-cal-cell:not(:disabled)')?.focus();
 }
 function moveAppDatePicker(delta){const d=appDateState.view;appDateState.view=new Date(d.getFullYear(),d.getMonth()+delta,1);renderAppDatePicker();}
-function pickAppDate(value){
+function pickAppDate(value,commit=false){
  const input=appDateState.input;if(!input||input.disabled||(value&&!appDateAllowed(input,value)))return;
+ if(input.readOnly)return;
+ if(appDateState.confirm&&!commit){
+  appDateState.pending=value;renderAppDatePicker();
+  appDateState.dialog.querySelector('.single:not(:disabled)')?.focus();return;
+ }
  input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));appDateState.dialog.close();
 }
 function renderAppDatePicker(){
  const {input,view,dialog}=appDateState,y=view.getFullYear(),m=view.getMonth(),today=asJobToday();
  const start=new Date(y,m,1).getDay();let days='';
- for(let i=0;i<42;i++){
+ const cellCount=appDateState.confirm?Math.ceil((start+new Date(y,m+1,0).getDate())/7)*7:42;
+ for(let i=0;i<cellCount;i++){
   const d=new Date(y,m,i-start+1),value=appDateFmt(d),out=d.getMonth()!==m,disabled=out||!appDateAllowed(input,value);
   days+='<button type="button" class="toss-cal-cell'+(out?' out':'')+(value===today?' today':'')+(value===input.value?' single':'')+'" aria-label="'+value+'" aria-pressed="'+(value===input.value)+'"'+(disabled?' disabled':'')+' onclick="pickAppDate(\''+value+'\')">'+d.getDate()+'</button>';
  }
  const prevEnd=appDateFmt(new Date(y,m,0)),nextStart=appDateFmt(new Date(y,m+1,1));
  dialog.innerHTML='<div class="toss-cal-pop is-open"><div class="toss-cal-header"><button type="button" class="toss-cal-nav" aria-label="이전 달" onclick="moveAppDatePicker(-1)"'+(input.min&&prevEnd<input.min?' disabled':'')+'>‹</button><div class="toss-cal-title">'+y+'년 '+(m+1)+'월</div><button type="button" class="toss-cal-nav" aria-label="다음 달" onclick="moveAppDatePicker(1)"'+(input.max&&nextStart>input.max?' disabled':'')+'>›</button></div><div class="toss-cal-weekdays">'+['일','월','화','수','목','금','토'].map((w,i)=>'<div class="toss-cal-weekday '+(i===0?'sun':i===6?'sat':'')+'">'+w+'</div>').join('')+'</div><div class="toss-cal-grid">'+days+'</div><div class="toss-cal-quick"><button type="button" class="toss-cal-quick-btn" onclick="pickAppDate(\''+today+'\')"'+(!appDateAllowed(input,today)?' disabled':'')+'>오늘</button><button type="button" class="toss-cal-quick-btn reset" onclick="pickAppDate(\'\')">초기화</button><button type="button" class="toss-cal-quick-btn" onclick="appDateState.dialog.close()">닫기</button></div></div>';
+ if(appDateState.confirm){
+  dialog.querySelectorAll('.toss-cal-cell').forEach(cell=>{
+   const selected=cell.getAttribute('aria-label')===appDateState.pending;
+   cell.classList.toggle('single',selected);cell.setAttribute('aria-pressed',String(selected));
+  });
+  const close=document.createElement('button');close.type='button';close.className='as-calendar-close';close.textContent='×';close.setAttribute('aria-label','달력 닫기');close.onclick=()=>dialog.close();
+  const top=document.createElement('div');top.className='as-calendar-top';top.textContent='납품 협의일';top.append(close);dialog.querySelector('.toss-cal-pop').prepend(top);
+  const confirm=document.createElement('button');confirm.type='button';confirm.className='as-calendar-confirm';
+  const pending=appDateState.pending;
+  confirm.disabled=!pending||!appDateAllowed(input,pending);
+  confirm.textContent=pending?Number(pending.slice(5,7))+'월 '+Number(pending.slice(8,10))+'일 선택':'날짜를 선택하세요';
+  confirm.onclick=()=>pickAppDate(appDateState.pending,true);
+  dialog.querySelector('.toss-cal-quick').replaceChildren(confirm);
+ }
 }
 document.addEventListener('click',event=>{
  const input=event.target.closest('input[type="date"]');if(!input)return;event.preventDefault();input.classList.add('app-date-input');openAppDatePicker(input);
