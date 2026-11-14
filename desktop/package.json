@@ -1,6 +1,6 @@
 {
   "name": "process-server-desktop",
-  "version": "0.2.2",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "dev": "node run.cjs dev",
