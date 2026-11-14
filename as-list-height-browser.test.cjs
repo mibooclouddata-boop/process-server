@@ -9,7 +9,8 @@ test('AS list fills desktop height and preserves scrolling in smaller windows',a
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
  await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
- await page.locator('#asSubmenu [data-sub=list]').click();
+ await page.getByRole('button',{name:'AS 관리',exact:true}).click();
+ await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();
  for(const [width,height] of [[1440,1000],[1920,1080],[1024,768],[1440,600],[390,844]]){
   await page.setViewportSize({width,height});
   const layout=await page.evaluate(()=>{
@@ -19,9 +20,10 @@ test('AS list fills desktop height and preserves scrolling in smaller windows',a
   });
   console.log(width,height,layout);
   assert.equal(layout.overflow,false);assert(layout.scrollHeight>100);assert.equal(layout.scrollStyle,'auto');
-  if(width>768&&height>650){assert(layout.bottom<=height);assert.deepEqual(layout.insets,[28,28,28,28],'workspace card must have equal outer spacing on all four sides');}
+  if(width>768&&height>650){const inset=width>=1101&&height>=760?10:28;assert(layout.bottom<=height);assert.deepEqual(layout.insets,Array(4).fill(inset),'workspace card must preserve the responsive spacing on all four sides');}
  }
  await page.setViewportSize({width:1440,height:1000});
- await page.locator('#asSubmenu [data-sub=stats]').click();
+ await page.getByRole('button',{name:'AS 관리',exact:true}).click();
+ await page.getByRole('menuitemradio',{name:'접수 현황',exact:true}).click();
  assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('as-reception-active')),false);
 });
