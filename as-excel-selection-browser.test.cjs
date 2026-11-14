@@ -36,7 +36,7 @@ test('Excel downloads only checked AS rows, including select-all on a paginated 
  assert.deepEqual(await exportedNumbers(),Array.from({length:5},(_,i)=>'EXPORT-'+(i+20)));
  await selectAll.uncheck();
  assert.deepEqual(await exportedNumbers(),Array.from({length:25},(_,i)=>'EXPORT-'+i));
- await page.locator('#asSearch').fill('ALPHA');await page.evaluate(()=>_applyAsFilters());
+ await page.locator('#asSearch').fill('ALPHA');await page.waitForFunction(()=>_asFiltered.length===13);
  await checkboxes.nth(1).check();
  assert.deepEqual(await exportedNumbers(),['EXPORT-2']);
  await checkboxes.nth(1).uncheck();
