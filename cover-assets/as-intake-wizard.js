@@ -43,14 +43,15 @@
  panels[1].append(field('asReasonSelect'),actionRow,field('asRemark'));
  const attachments=field('asFiles');panels[2].append(field('asAmount'),attachments);
  const fileInput=byId('asFiles'),oldPicker=fileInput.closest('label'),picker=document.createElement('div');picker.className='as-wizard-file-picker';
- const fileButton=document.createElement('button');fileButton.type='button';fileButton.textContent='파일 선택';fileButton.addEventListener('click',()=>fileInput.click());
- const fileHelp=document.createElement('p');fileHelp.textContent='현장 사진 · 도면 · 이체 영수증';
- const fileLimit=document.createElement('p');fileLimit.textContent='파일당 최대 20MB';
- oldPicker.replaceWith(picker);picker.append(fileButton,fileHelp,fileLimit,fileInput);
+ const attachmentLabel=attachments.querySelector('label');attachmentLabel.textContent='첨부';
+ const fileButton=document.createElement('button');fileButton.type='button';fileButton.id='asFileUpload';attachmentLabel.htmlFor=fileButton.id;
+ fileButton.innerHTML='<span class="as-upload-caption"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-4 4 4-4 4 4M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg><span>파일 업로드</span></span><span class="as-upload-limit">파일당 최대 20MB · 최대 10개</span>';
+ fileButton.setAttribute('aria-label','파일 업로드');fileButton.querySelector('.as-upload-limit').id='asUploadLimit';fileButton.setAttribute('aria-describedby','asUploadLimit');
+ fileButton.addEventListener('click',()=>{if(!asSaving&&!fileInput.disabled)fileInput.click();});
+ oldPicker.replaceWith(picker);picker.append(fileButton,fileInput);
  body.replaceChildren(heading,...panels,byId('asStatus'));
  byId('asAmountHint').textContent='';byId('asAmountHint').hidden=true;
- const previous=document.createElement('button');previous.type='button';previous.id='asIntakePrevious';previous.className='admin-btn admin-btn-secondary';previous.textContent='이전';
- const submit=footer.querySelector('[onclick="submitAs()"]');submit.id='asIntakeNext';footer.insertBefore(previous,submit);
+ const submit=footer.querySelector('[onclick="submitAs()"]');submit.id='asIntakeNext';
  const cancel=footer.querySelector('[onclick="closeAsModal()"]');cancel.id='asIntakeCancel';
  const message=byId('asModalMsg');message.setAttribute('role','alert');message.setAttribute('aria-live','polite');
  const deliveryDate=byId('asDeliveryAgreedDate'),dateControl=document.createElement('div'),clearDate=document.createElement('button');
@@ -72,7 +73,6 @@
   byId('asIntakeHeading').textContent=titles[step];byId('asIntakeDescription').textContent=descriptions[step];
   panels.forEach((panel,i)=>panel.hidden=i!==step);
   nav.querySelectorAll('button').forEach((button,i)=>{if(i===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
-  previous.hidden=step===0;
   submit.textContent=['다음','다음','저장'][step];body.scrollTop=0;
   if(focus)byId('asIntakeHeading').focus({preventScroll:true});
  }
@@ -106,7 +106,6 @@
   // Keep the original API, attachment list, permissions, versioning and retry identity.
   await originalSubmit();
  };
- previous.addEventListener('click',()=>{if(asSaving)return;step--;message.textContent='';paint(true);});
  nav.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||asSaving)return;const target=Number(button.dataset.intakeStep);if(target<=step||(target===step+1&&validate())){step=target;message.textContent='';paint(true);}});
  choices.addEventListener('change',event=>{if(event.target.matches('input'))category.value=event.target.value;});
  byId('asActionSelect').addEventListener('change',updateAction);
