@@ -29,7 +29,8 @@
 #asModal.as-intake-wizard .modal-msg{margin:0 32px 12px;font-size:13px}
 #asModal.as-intake-wizard .modal-msg:empty{display:none}
 #asModal.as-intake-wizard .modal-footer{padding:18px 32px;border-top:1px solid #dfe5ec;background:#fff;flex:none;gap:8px}
-#asIntakeProgress{flex:1;font-size:12px;color:#5c6978}
+#asModal.as-intake-wizard #asIntakeCancel{margin-right:auto;background:transparent;border-color:transparent;color:#626c79;font-weight:500;padding:0 12px}
+#asModal.as-intake-wizard #asIntakeCancel:hover{background:#f1f2f4}
 #asModal.as-intake-wizard .modal-footer button{min-height:44px;border-radius:6px;font-size:14px;min-width:76px}
 #asModal.as-intake-wizard .modal-footer .admin-btn-primary{background:#202123;border-color:#202123}
 #asModal.as-intake-wizard #asIntakeNext{min-width:115px}
