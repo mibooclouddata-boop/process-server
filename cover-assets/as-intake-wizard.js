@@ -53,7 +53,21 @@
  const submit=footer.querySelector('[onclick="submitAs()"]');submit.id='asIntakeNext';footer.insertBefore(previous,submit);
  const cancel=footer.querySelector('[onclick="closeAsModal()"]');cancel.id='asIntakeCancel';
  const message=byId('asModalMsg');message.setAttribute('role','alert');message.setAttribute('aria-live','polite');
- function updateAction(){const hint=byId('asDeliveryAgreedDateHint'),onSite=byId('asActionSelect').value==='현장 시수';hint.textContent=onSite?'현장 시수는 납품 협의일을 입력하지 않아도 됩니다.':'';hint.hidden=!onSite;}
+ const deliveryDate=byId('asDeliveryAgreedDate'),dateControl=document.createElement('div'),clearDate=document.createElement('button');
+ dateControl.className='as-date-control';deliveryDate.before(dateControl);dateControl.append(deliveryDate);
+ clearDate.type='button';clearDate.className='as-date-clear';clearDate.textContent='×';clearDate.setAttribute('aria-label','납품 협의일 지우기');dateControl.append(clearDate);
+ function syncDateClear(){clearDate.hidden=!deliveryDate.value||deliveryDate.disabled||deliveryDate.readOnly;}
+ clearDate.addEventListener('click',()=>{
+  if(deliveryDate.disabled||deliveryDate.readOnly||asSaving)return;
+  deliveryDate.value='';deliveryDate.dispatchEvent(new Event('input',{bubbles:true}));deliveryDate.dispatchEvent(new Event('change',{bubbles:true}));deliveryDate.focus();
+ });
+ deliveryDate.addEventListener('input',syncDateClear);deliveryDate.addEventListener('change',syncDateClear);
+ function updateAction(){
+  const hint=byId('asDeliveryAgreedDateHint'),date=byId('asDeliveryAgreedDate'),onSite=byId('asActionSelect').value==='현장 시수';
+  hint.textContent='';hint.hidden=true;date.disabled=onSite;date.closest('.modal-field').classList.toggle('as-date-inactive',onSite);
+  if(onSite)date.removeAttribute('aria-invalid');
+  syncDateClear();
+ }
  function paint(focus=false){
   byId('asIntakeHeading').textContent=titles[step];byId('asIntakeDescription').textContent=descriptions[step];
   panels.forEach((panel,i)=>panel.hidden=i!==step);

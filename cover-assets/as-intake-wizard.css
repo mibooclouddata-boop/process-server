@@ -48,3 +48,26 @@
 #asModal.as-intake-wizard .as-wizard-file-picker{padding:22px 18px;border:1px dashed #8e99a7;border-radius:6px;background:#fafbfc;display:flex;flex-direction:column;align-items:center;gap:6px}
 #asModal.as-intake-wizard .as-wizard-file-picker button{min-height:44px;padding:8px 18px;border:1px solid #939daa;border-radius:6px;background:#fff;color:#202123;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:4px}
 #asModal.as-intake-wizard .as-wizard-file-picker p{font-size:13px;color:#626c79;line-height:1.6;margin:0}
+#asModal.as-intake-wizard #asDeliveryAgreedDate{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease!important}
+#asModal.as-intake-wizard .as-date-inactive #asDeliveryAgreedDate{background:#eef0f3!important;border-color:#d4d9df!important;color:#8a939f!important;cursor:not-allowed;opacity:1}
+#asModal.as-intake-wizard .modal-field:has(#asDeliveryAgreedDate)>label{transition:color 180ms ease}
+#asModal.as-intake-wizard .as-date-inactive>label{color:#7a8491!important}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell{height:44px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell:not(:disabled){color:var(--text-strong,#202123)}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell:disabled{color:var(--text-faint,#687078);font-weight:400}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell.single:not(:disabled){background:var(--brand,#202123);color:#fff;font-weight:700}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell.today{font-weight:800}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-cell.out{visibility:hidden}
+#appDatePicker .as-calendar-top{display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:8px}
+#appDatePicker .as-calendar-close{width:44px;height:44px;background:transparent;border:0;border-radius:6px;font-size:24px;color:var(--text-strong);cursor:pointer}
+#appDatePicker .as-calendar-close:hover{background:var(--surface-muted)}
+#appDatePicker .as-calendar-confirm{width:100%;min-height:44px;border:0;border-radius:6px;background:var(--brand);color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#appDatePicker .as-calendar-confirm:disabled{background:#eef0f3;color:#626c79;cursor:default}
+body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-quick{margin-top:8px;padding-top:8px}
+#asModal.as-intake-wizard .as-date-control{position:relative}
+#asModal.as-intake-wizard .as-date-control input{width:100%;box-sizing:border-box;padding-right:44px!important}
+#asModal.as-intake-wizard .as-date-clear{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:40px;height:44px;border:0;border-radius:6px;background:transparent;color:#626c79;font-size:22px;cursor:pointer}
+#asModal.as-intake-wizard .as-date-clear:hover{background:#eef0f3;color:#202123}
+#asModal.as-intake-wizard .as-date-clear[hidden]{display:none}
+#asModal.as-intake-wizard .as-date-control:has(.as-date-clear:not([hidden])) input::-webkit-calendar-picker-indicator{opacity:0}
+@media(prefers-reduced-motion:reduce){#asModal.as-intake-wizard #asDeliveryAgreedDate,#asModal.as-intake-wizard .modal-field:has(#asDeliveryAgreedDate)>label{transition:none!important}}
