@@ -2671,13 +2671,14 @@ dependencies = [
 
 [[package]]
 name = "process-server-desktop"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "reqwest",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-updater",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

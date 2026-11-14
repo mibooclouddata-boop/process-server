@@ -1,10 +1,9 @@
-Process ERP 0.2.0 — 로컬 테스트용 사전 릴리즈
+Process ERP 0.2.1 ? local-test prerelease
 
-- 앱 시작 시 필수 업데이트 확인, 다운로드·서명 검증·설치 기능 추가
-- 미부중공업 로고로 앱 아이콘과 시작 화면 변경
-- 테두리 없는 둥근 창, 헤더 드래그, 화면 배율 75~200% 및 설정 저장
+- Set both the native window icon and the separate Windows taskbar ICON_BIG to the MIBOO star symbol.
+- Remove the extra console window from local-test installers.
+- Check the Windows GUI executable subsystem before publishing.
 
-이 버전은 같은 PC의 http://127.0.0.1:3000 서버에 접속하는 테스트용입니다.
-운영 ERP 주소는 아직 설정하지 않았습니다. 0.1.2에서 처음 이동할 때는 수동 설치가 필요합니다.
-업데이트 확인에 인터넷 연결이 필요하며, 확인에 실패하면 재시도 화면에서 대기합니다.
-업무 데이터와 DB 스키마 변경은 없습니다. 서버는 설치 파일에 포함하지 않습니다.
+Connects to http://127.0.0.1:3000/ on the same PC. No production server deployment or database changes.
+Existing 0.2.0 installations receive this version through the mandatory startup updater.
+Rollback: manually reinstall desktop-v0.2.0 and restore the test-channel metadata to that version. ERP data is not included in installers.

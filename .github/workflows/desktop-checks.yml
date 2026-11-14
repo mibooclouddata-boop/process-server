@@ -15,8 +15,8 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix desktop
       - run: npm test --prefix desktop
-      - name: Check Rust integration
+      - name: Test Rust integration and native taskbar icon
         working-directory: desktop/src-tauri
         env:
           PROCESS_SERVER_URL: http://127.0.0.1:3000/
-        run: cargo check --locked --target x86_64-pc-windows-msvc
+        run: cargo test --locked --target x86_64-pc-windows-msvc

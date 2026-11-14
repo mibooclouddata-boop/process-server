@@ -1,7 +1,9 @@
-﻿#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+﻿#![windows_subsystem = "windows"]
 use tauri::{ipc::CapabilityBuilder, Listener, Manager, Webview, WebviewBuilder, WebviewUrl, WindowBuilder, LogicalPosition, LogicalSize, Rect};
 use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
 mod updates;
+#[cfg(windows)]
+mod taskbar;
 
 fn sync_zoom(content: &Webview, factor: f64) {
     let _ = content.eval(format!("window.__processZoom={factor};document.documentElement?.style.setProperty('--desktop-zoom','{factor}');window.dispatchEvent(new Event('process-zoom'));"));
@@ -51,9 +53,12 @@ fn main() {
             .remote(format!("{}/*", server.origin().ascii_serialization()))
             .permission("core:window:allow-start-dragging"))?;
         let window = WindowBuilder::new(app, "main")
+            .icon(tauri::include_image!("icons/icon.png"))?
             .title("Process ERP").decorations(false).transparent(true)
             // Windows otherwise adds a white outline to undecorated windows.
             .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).build()?;
+        #[cfg(windows)]
+        taskbar::set_icon(&window)?;
         let origin = server.origin();
         let allowed = Arc::new(AtomicBool::new(false));
         let navigation_allowed = allowed.clone();

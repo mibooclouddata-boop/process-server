@@ -38,6 +38,8 @@ jobs:
           if (-not $env:TAURI_SIGNING_PRIVATE_KEY) { throw 'Signing secret missing' }
           npm run build:local
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node verify-windows-binary.cjs src-tauri/target/x86_64-pc-windows-msvc/debug/process-server-desktop.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node release.cjs
       - name: Create draft prerelease
         env:
