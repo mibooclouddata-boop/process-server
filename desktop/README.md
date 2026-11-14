@@ -1,0 +1,61 @@
+# Process ERP Desktop
+
+Tauri 2 Windows 클라이언트. 기존 Express 서버의 화면·세션을 사용합니다.
+서버와 DB는 앱에 포함하지 않습니다. 원격 화면에는 창 드래그 권한만 부여합니다.
+
+기본 타이틀바 없이 둥근 창을 사용하며, 헤더의 빈 곳이나 오른쪽 위 이동 손잡이로 창을 움직입니다.
+오른쪽 위 배율 선택에서 75·90·100·110·125·150·175·200%를 선택할 수 있습니다.
+ERP 화면만 확대하며 창 버튼의 크기는 유지합니다. 선택한 배율은 로컬 앱에 저장됩니다.
+
+## 개발 실행
+
+Rust MSVC 툴체인, Microsoft C++ Build Tools 및 Windows SDK, WebView2가 필요합니다.
+설치 후 새 터미널에서 실행하세요.
+
+```powershell
+# 별도 터미널에서 테스트 데이터로 ERP 서버 실행
+# 기존 서버의 데이터·인증 환경 설정을 먼저 확인하세요.
+cd C:\process-server\desktop
+npm.cmd ci
+$env:PROCESS_SERVER_URL = 'http://localhost:3000/'
+npm.cmd run dev
+```
+
+접속 불가 시 네트워크와 서버를 확인하고 앱의 `서버 다시 연결` 메뉴를 사용합니다.
+서버가 중단된 경우 WebView2 기본 오류 화면이 표시될 수 있습니다.
+일반 웹뷰 탐색은 설정한 서버 origin으로 제한하며 새 창은 차단합니다.
+현재 ERP의 PDF 미리보기·인쇄는 iframe을 사용합니다.
+
+## 설치 프로그램
+
+```powershell
+# 로컬 검증용 (debug, 운영 배포 금지)
+npm.cmd run build:local
+# 운영용: 실제 HTTPS 서버 주소를 지정
+$env:PROCESS_SERVER_URL = 'https://YOUR-ERP-HOST/'
+npm.cmd run build
+```
+
+결과: 로컬 검증용은 `src-tauri/target/x86_64-pc-windows-msvc/debug/bundle/nsis/`, 운영용은 `src-tauri/target/release/bundle/nsis/`.
+운영 빌드는 HTTPS 주소가 없으면 실패합니다. 개발 버전만 loopback HTTP 및 실행 시 주소 재지정을 허용합니다.
+0.2.0부터 서명 검증을 사용하는 필수 업데이트를 지원합니다. Windows Authenticode 코드서명은 별도이며 아직 구성하지 않았습니다.
+서버 릴리즈와 앱 배포는 별도로 관리합니다. 상세 절차는 [RELEASING.md](RELEASING.md)를 따릅니다.
+
+## 검증
+
+```powershell
+npm.cmd test
+node smoke.cjs
+```
+
+smoke 테스트는 debug 실행 파일을 먼저 빌드해야 하며 별도 임시 서버·테스트 계정·웹뷰 프로필을 사용합니다.
+실제 업무 데이터나 운영 서버에 접속하지 않습니다.
+
+## 확인 결과 (2026-11-14)
+
+- 주소 정책, 창 버튼, 둥근 모서리, 헤더 드래그, 배율 저장 테스트 6개 통과.
+- 0.1.2 로컬 설치 파일 생성 완료. 실제 WebView2에서 100·125·150% 전환, 화면 이동 후 배율 유지, 저장한 선택 복원, 창 버튼 크기 유지 검증 통과.
+- 0.2.0: 테스트 8개와 실제 WebView2 필수 업데이트 차단, 네트워크 실패 재시도, 잘못된 서명 거부, 원격 ERP의 업데이트 명령 거부 검증.
+- 실제 Tauri WebView2에서 로그인, 세션 유지, 첨부파일 업로드, 접수서 미리보기, 다운로드, 외부 탐색 차단, 로그아웃 검증 통과.
+- Windows 설치 도구는 재부팅 필요 코드 3010을 반환했으나 현 세션에서 빌드·실행은 성공했습니다.
+- 실제 프린터 출력, 설치/제거 전체 흐름, 연결 실패 후 메뉴 재시도, 운영 HTTPS 연결은 아직 수동 검증하지 않았습니다.

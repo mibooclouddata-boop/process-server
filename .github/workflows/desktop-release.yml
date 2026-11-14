@@ -1,0 +1,48 @@
+name: Desktop signed prerelease
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: startsWith(github.ref, 'refs/tags/desktop-v')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify release belongs to main
+        shell: bash
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            desktop/package-lock.json
+      - run: npm ci
+      - run: npm ci --prefix desktop
+      - run: npm test --prefix desktop
+      - name: Build signed local-test installer
+        working-directory: desktop
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          PROCESS_SERVER_URL: http://127.0.0.1:3000/
+        run: |
+          if (-not $env:TAURI_SIGNING_PRIVATE_KEY) { throw 'Signing secret missing' }
+          npm run build:local
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node release.cjs
+      - name: Create draft prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $bundle = 'desktop/src-tauri/target/x86_64-pc-windows-msvc/debug/bundle/nsis'
+          $assets = Get-ChildItem $bundle -File | Where-Object { $_.Name -like 'Process-ERP_*' -or $_.Name -eq 'latest.json' } | ForEach-Object FullName
+          gh release create $env:GITHUB_REF_NAME @assets --verify-tag --draft --prerelease --title "Process ERP $env:GITHUB_REF_NAME (local test)" --notes-file desktop/RELEASE_NOTES.md

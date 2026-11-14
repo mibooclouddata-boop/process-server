@@ -1,0 +1,50 @@
+name: Publish approved desktop test release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Reviewed desktop-vX.Y.Z tag on main'
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: desktop-test-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate release and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^desktop-v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          target=$(gh release view "$RELEASE_TAG" --json targetCommitish --jq .targetCommitish)
+          if git rev-parse --verify "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            sha=$(git rev-parse "$RELEASE_TAG^{commit}")
+          else
+            [[ "$target" =~ ^[0-9a-f]{40}$ ]]
+            sha=$(git rev-parse "$target^{commit}")
+          fi
+          git merge-base --is-ancestor "$sha" origin/main
+          echo "RELEASE_SHA=$sha" >> "$GITHUB_ENV"
+          gh release download "$RELEASE_TAG" --pattern latest.json --dir release
+          node desktop/validate-channel.cjs release/latest.json "$RELEASE_TAG"
+          gh release view "$RELEASE_TAG" --json assets > release/assets.json
+          node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync("release/latest.json"));const a=JSON.parse(fs.readFileSync("release/assets.json")).assets;const n=decodeURIComponent(new URL(m.platforms["windows-x86_64"].url).pathname.split("/").pop());if(!a.some(x=>x.name===n)||!a.some(x=>x.name===n+".sig"))throw Error("Installer/signature missing");'
+      - name: Publish installer, then update test channel
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease --latest=false
+          if ! gh release view desktop-test-channel >/dev/null 2>&1; then
+            gh release create desktop-test-channel --target "$RELEASE_SHA" --prerelease --latest=false --title 'Desktop test update channel' --notes 'Mutable test-channel metadata only. Installers remain in immutable desktop-vX.Y.Z releases.'
+          fi
+          gh release upload desktop-test-channel release/latest.json --clobber

@@ -1,0 +1,10 @@
+:root{font-family:"Segoe UI","Malgun Gothic",sans-serif;color:#24272b;background:transparent;font-synthesis:none}
+html{clip-path:inset(0 round 26px)}html.process-desktop-maximized{clip-path:none}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#eef0f2;padding:64px 28px}
+.update-card{width:min(480px,100%);padding:44px;background:#fff;border-radius:26px}
+.brand{display:block;width:260px;max-width:100%;height:auto;margin-bottom:38px}
+h1{font-size:26px;line-height:1.35;letter-spacing:-.04em;margin:0 0 12px}p{font-size:15px;line-height:1.7;margin:0 0 20px}
+#version{color:#656c74;font-size:13px}#notes{white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;background:#f3f4f5;border-radius:12px;padding:18px}
+button{width:100%;min-height:48px;border:0;border-radius:12px;background:#272b30;color:white;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}button:hover:not(:disabled){background:#424850}button:focus-visible{outline:3px solid #287ac2;outline-offset:3px}button:disabled{cursor:wait;background:#e5e8eb;color:#59616b}
+progress{display:block;width:100%;height:8px;margin:0 0 24px;accent-color:#343a40}progress[hidden]{display:none}.hint{font-size:12px;color:#656c74;margin:18px 0 0;text-align:center}
+@media(max-height:700px){.update-card{padding:28px}.brand{margin-bottom:24px}#notes{max-height:120px}}
