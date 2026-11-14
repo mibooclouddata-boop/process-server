@@ -38,7 +38,7 @@ test('desktop access shows three dots for at least two seconds and ignores dupli
  });
  await page.addInitScript(()=>{window.calls=[];window.__TAURI_INTERNALS__={invoke:async(command,args)=>calls.push(args.event)};});
  await page.goto('https://desktop.test/');await page.evaluate(()=>renderUpdate({state:'ready'}));
- await page.clock.install();await page.clock.pauseAt(new Date());
+ await page.clock.install({time:new Date(0)});await page.clock.pauseAt(new Date(60000));
  await page.locator('#action').click();
  assert.equal(await page.locator('.startup-dots').isVisible(),true);
  assert.equal(await page.locator('.startup-dots i').count(),3);
@@ -59,7 +59,7 @@ test('browser access keeps the same minimum dots duration for immediate errors a
   if(name==='login.html')return route.fulfill({status:route.request().method()==='HEAD'&&fail?503:200,contentType:'text/html',body:'<h1>Login</h1>'});
   return route.fulfill({body:fs.readFileSync(path.join(__dirname,'..',name)),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});
  });
- await page.goto('https://erp.test/');await page.clock.install();await page.clock.pauseAt(new Date());
+ await page.goto('https://erp.test/');await page.clock.install({time:new Date(0)});await page.clock.pauseAt(new Date(60000));
  await page.locator('#action').click();assert(await page.locator('.startup-dots').isVisible());
  await page.clock.runFor(1999);assert(await page.locator('#action').isDisabled());assert.equal(page.url(),'https://erp.test/');
  await page.clock.runFor(1);await page.getByRole('button',{name:'다시 시도'}).waitFor();
