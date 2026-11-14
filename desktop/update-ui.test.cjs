@@ -20,6 +20,7 @@ test('required update separates connection waves from install dots and resumes a
   assert.equal(await page.locator('#action .action-label').innerText(),'업무시스템 접속');
   assert.equal(await page.locator('#action').isDisabled(),false);
   await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();
+  await page.waitForFunction(()=>calls.length===2);
   assert.equal(await page.evaluate(()=>calls.length),2,'Access starts only after the user clicks');
   await page.evaluate(()=>window.renderUpdate({state:'available',version:'0.2.1',current:'0.2.0',notes:'<img src=x onerror=alert(1)>\n배율 개선'}));
   assert.equal(await page.getByRole('button',{name:'나중에'}).count(),0);
@@ -56,7 +57,7 @@ test('required update separates connection waves from install dots and resumes a
   await page.evaluate(()=>window.renderUpdate({state:'connecting'}));
   assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none','No wave when entering ERP');
   assert.equal(await page.locator('progress').isVisible(),false);
-  assert.equal(await page.locator('.startup-dots').isVisible(),false);
+  assert.equal(await page.locator('.startup-dots').isVisible(),true);
   await page.evaluate(()=>window.renderUpdate({state:'error',message:'다운로드에 실패했습니다.'}));
   assert.equal(await page.evaluate(()=>localStorage.getItem('erp-update-access-pending')),null);
   assert.equal(await page.locator('.startup-dots').isVisible(),false);

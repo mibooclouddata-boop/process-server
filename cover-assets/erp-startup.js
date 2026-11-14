@@ -24,7 +24,8 @@
  }
  function busy(text,updating=false){label.textContent=text;action.disabled=true;action.setAttribute('aria-busy','true');action.classList.add('is-loading');action.classList.toggle('is-connecting',!updating);dots.hidden=!updating;progress.hidden=updating;progress.removeAttribute('value');}
  function ready(text){label.textContent=text;action.disabled=false;action.setAttribute('aria-busy','false');action.classList.remove('is-loading','is-connecting');progress.hidden=true;dots.hidden=true;}
- function connecting(){busy('업무시스템 접속 중');action.classList.remove('is-loading','is-connecting');progress.hidden=true;}
+ const minimumAccessMotion=()=>new Promise(resolve=>setTimeout(resolve,2000));
+ function connecting(){busy('업무시스템 접속 중',true);progress.hidden=true;}
  window.renderUpdate=data=>{
   status.hidden=true;status.textContent='';
   busy('업무시스템 접속 중');
@@ -46,7 +47,7 @@
  };
  const emit=async event=>{
   if(event==='desktop-update-install')pendingAccess(true);
-  if(event==='desktop-access')connecting();
+  if(event==='desktop-access'){connecting();await minimumAccessMotion();}
   else busy(event==='desktop-update-install'?'업데이트 설치 중':'업무시스템 접속 중',event==='desktop-update-install');
   try{await window.__TAURI_INTERNALS__.invoke('plugin:event|emit',{event:event==='desktop-access'?'desktop-update-check':event,payload:null});}
   catch{window.renderUpdate({state:'error',message:'연결을 시작하지 못했습니다. 다시 시도해 주세요.'});}
@@ -56,8 +57,8 @@
   if(desktop){await emit(next);return;}
   connecting();status.hidden=true;
   try{
-   const response=await fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)});
-   if(!response.ok)throw Error('Server unavailable');
+   const [response]=await Promise.all([fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)}).catch(()=>null),minimumAccessMotion()]);
+   if(!response?.ok)throw Error('Server unavailable');
    location.assign(destination.href);
   }catch{ready('다시 시도');status.hidden=false;status.textContent='업무시스템에 연결할 수 없습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.';}
  });

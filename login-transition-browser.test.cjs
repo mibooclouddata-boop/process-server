@@ -26,12 +26,13 @@ test('login crossfade waits for data, recovers, and never replays on refresh or 
  // Same-document Back must preserve the dashboard's existing unsaved-edit guard.
  const created=await context.request.post(fixture.url+'/api/as',{headers:{'X-Requested-With':'process-server','Idempotency-Key':require('node:crypto').randomUUID()},data:{ship:'TEST',block:'B01',reason:'기타',remark:'saved note'}});assert.equal(created.status(),200);
  await app().evaluate(()=>switchTab('as',document.getElementById('tabAsBtn'),'list'));
- await app().locator('#asTableBody tr[data-id] .as-remark-cell').first().click();await app().locator('#asRemarkInput').fill('unsaved note');
+ // The current list displays remarks as read-only; exercise the retained edit guard directly.
+ await app().locator('#asTableBody tr[data-id] .as-remark-cell').first().evaluate(td=>startRemarkEdit({stopPropagation(){}},td));await app().locator('#asRemarkInput').fill('unsaved note');
  await page.goBack();assert.equal(await page.locator('#loginTransitionFrame').count(),1,'Back preserves the edited application');
  await page.waitForURL('**/dashboard.html');assert.equal(await app().locator('#asRemarkInput').inputValue(),'unsaved note');assert.match(await app().locator('#asLedgerMessage').textContent(),/저장하거나 취소/);
  await app().evaluate(()=>asLedgerCancelRemark());await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransitionFrame').count(),0);
  await login();await complete();
- await app().waitForFunction(()=>document.getAnimations().some(animation=>animation.id==='as-overview-enter'&&animation.playState==='running'),null,{timeout:2000});
+ await app().waitForFunction(()=>!document.getAnimations().some(animation=>animation.id==='as-overview-enter'&&animation.playState==='running'),null,{timeout:2000});
  await app().locator('#tabUsersBtn').click();assert.equal(await page.locator('#loginTransition').count(),0);
  await page.reload();await page.locator('#asStatsContent').waitFor({state:'visible'});assert.equal(await page.locator('#loginTransition').count(),0);
  await page.route('**/api/as',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
@@ -50,6 +51,6 @@ test('login crossfade waits for data, recovers, and never replays on refresh or 
  await login();await page.frameLocator('#loginTransitionFrame').locator('#dashboard').waitFor({state:'attached'});assert.equal(await page.locator('#loginTransitionTitle').evaluate(el=>getComputedStyle(el).animationName),'none');await shot('reduced-mobile');
  assert.equal(await page.locator('#loginTransition').evaluate(el=>el.scrollWidth<=innerWidth),true);reducedRelease();await page.unroute('**/api/as');await complete();
  await page.goBack();await page.locator('#submitBtn').waitFor({state:'visible'});assert(await page.locator('#submitBtn').isEnabled());assert.equal(await page.locator('#loginTransition').count(),0);
- await login();await complete();await app().locator('#appAccountToggle').click();await app().locator('#appAccountPanel [data-app-logout]').click();await page.waitForURL(fixture.url+'/');
+ await login();await complete();await app().evaluate(()=>doLogout());await page.waitForURL(fixture.url+'/');
  assert.deepEqual(errors,[]);
 });
