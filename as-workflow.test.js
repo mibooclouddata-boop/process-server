@@ -9,11 +9,11 @@ const start=item=>run(item,{action:'advance',next:'제작 요청',owner:'제작 
 test('AS Excel export respects selection and sizes Korean columns without losing cell content',async()=>{
  const source=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  const fn=source.slice(source.indexOf('function exportAsExcel()'),source.indexOf('let asRemoveFiles'));
- async function exportRows(rows,selectedIds=[]){
+ async function exportRows(rows,selectedIds=[],measure){
   let blob,download;
   const c={_asFiltered:rows,AsAmount:require('./as-amount'),Blob,alert(){throw Error('unexpected empty export');},
    URL:{createObjectURL(value){blob=value;return 'blob:test';},revokeObjectURL(){}},
-   document:{querySelectorAll(){return selectedIds.map(id=>({dataset:{id:String(id)}}));},createElement(){return {click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
+   document:{querySelectorAll(){return selectedIds.map(id=>({dataset:{id:String(id)}}));},createElement(name){return name==='canvas'&&measure?{getContext:()=>measure}:{click(){download=this.download;}};},body:{appendChild(){},removeChild(){}}}};
   vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function normalizeAsReason('),source.indexOf('function asStatsDateKey(')),c);vm.runInContext(fn,c);c.exportAsExcel();
   assert.match(download,/\.xls$/);return blob.text();
  }
@@ -33,11 +33,16 @@ test('AS Excel export respects selection and sizes Korean columns without losing
  const widths=html=>[...html.matchAll(/<col width="(\d+)"/g)].map(m=>Number(m[1]));
  assert.equal(widths(long).length,13);
  assert(widths(long)[6]>widths(short)[6],'product width grows with its actual content');
- assert(widths(long)[7]<=420,'long prose wraps instead of creating an unbounded column');
+ assert(widths(long)[7]>420,'long prose expands the column to remain on one line');
  const heights=html=>[...html.matchAll(/<tr height="(\d+)"/g)].map(m=>Number(m[1]));
- assert(heights(long)[1]>heights(short)[1],'wrapped Korean text receives a taller row');
- assert.match(long,/다음 줄/);assert.match(long,/<br style="mso-data-placement:same-cell">/);
+ assert.equal(heights(long)[1],heights(short)[1],'long content keeps the same single-line row height');
+ assert.match(long,/다음 줄/);assert(!long.includes('<br'),'entered line breaks become spaces only in the export');assert.match(long,/white-space:nowrap/);assert.equal([...long.matchAll(/<td[^>]*mso-text-control:shrinktofit/g)].length,13);
  assert.match(long,/A&amp;B &lt;확인&gt;/);assert.match(long,/>1234567<\/td>/);assert.match(short,/>0<\/td>/);
+ const measure={measureText(text){return {width:[...text].reduce((n,c)=>n+(c==='W'?15:c==='i'?3:8),0)}}};
+ const narrow=await exportRows([{product:'iiiiiiiiiiii'}],[],measure),wide=await exportRows([{product:'WWWWWWWWWWWW'}],[],measure);
+ assert(widths(wide)[6]>widths(narrow)[6],'wide glyphs receive more width');
+ for(const [,px,pt] of wide.matchAll(/<col width="(\d+)" style="width:([\d.]+)pt;/g))assert.equal(Number(pt),Number(px)*.75);
+ assert.equal([...wide.matchAll(/<col[^>]*width:[\d.]+pt;/g)].length,13);
  const cells=[...long.matchAll(/<(?:td|th)\b([^>]*)>/g)];
  assert.equal(cells.length,26);
  for(const [,attributes] of cells){
