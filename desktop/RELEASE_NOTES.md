@@ -1,4 +1,4 @@
-Process ERP 0.2.1 ? local-test prerelease
+Process ERP 0.2.1 - local-test prerelease
 
 - Set both the native window icon and the separate Windows taskbar ICON_BIG to the MIBOO star symbol.
 - Remove the extra console window from local-test installers.
