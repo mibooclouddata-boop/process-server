@@ -23,7 +23,15 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(asModalSize.width,userModalSize.width,'AS and new-user modals use the same width');
  assert.equal(asModalSize.height,userModalSize.height,'AS and new-user modals use the same height');
  assert.equal(await page.locator('#asIntakeSteps').isVisible(),true,JSON.stringify(errors));
- assert.equal(await page.locator('#asIntakeSteps [aria-current=step]').textContent(),'1자재 · 위치');
+ assert.equal(await page.locator('#asIntakeSteps [aria-current=step]').textContent(),'1기본 정보');
+ assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
+ assert.equal(await page.locator('#asIntakeDescription,.as-wizard-heading').count(),0);
+ const layout=await Promise.all(['asProduct','asMaterialCode','asShip','asBlock','asElement'].map(id=>page.locator('#'+id).boundingBox()));
+ assert(layout[0].y<layout[1].y&&layout[1].y<layout[2].y,'material name and code precede location');
+ assert(Math.abs(layout[0].width-layout[1].width)<1&&layout[0].width>500,'material fields span the form');
+ assert.equal(layout[2].y,layout[3].y);assert.equal(layout[3].y,layout[4].y);
+ assert.equal(await page.locator('#asIntakeSteps [aria-current=step]>span').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(32, 33, 35)');
+ assert.equal(await page.locator('#asProduct').evaluate(el=>getComputedStyle(el).fontSize),'16px');
  assert.equal(await page.locator('#asCategoryChoices input:not([hidden])').count(),2);
  const shots=path.join(__dirname,'.artifacts','as-intake-live');fs.mkdirSync(shots,{recursive:true});
  await page.screenshot({path:path.join(shots,'step-1.png')});
@@ -34,6 +42,8 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.locator('#asElement').fill('E-01');
  await page.locator('#asIntakeNext').click();
  await page.locator('#asIntakeNext').click();
+ assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
+ assert.equal(await page.locator('label[for=asActionSelect]').textContent(),'처리 방법');
  assert.equal(await page.locator('#asReasonSelect').getAttribute('aria-invalid'),'true');
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('실제 접수 연결 검증');
  await page.locator('#asActionSelect').selectOption('현장 시수');
@@ -44,6 +54,7 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.getByRole('radio',{name:'사외',exact:true}).isChecked(),true);
  await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asAmount').isVisible(),true);
+ assert.equal(await page.locator('#asIntakeNext').textContent(),'저장');
  assert.equal(await page.locator('#asFiles').count(),1);
  assert.equal(await page.locator('#asModal').getByText('앞서 입력한 내용',{exact:true}).count(),0);
  await page.screenshot({path:path.join(shots,'step-3.png')});
@@ -68,6 +79,8 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.screenshot({path:path.join(shots,'mobile.png')});
  const bounds=await page.locator('#asModal>.modal-box').boundingBox();
  assert(bounds.x>=0&&bounds.x+bounds.width<=390&&bounds.y>=0&&bounds.y+bounds.height<=844);
+ const locations=await Promise.all(['asShip','asBlock','asElement'].map(id=>page.locator('#'+id).boundingBox()));
+ assert(locations[0].y<locations[1].y&&locations[1].y<locations[2].y);
  await page.evaluate(()=>{closeAsModal();openAsModal({..._asFullList[0],category:'기타'});});
  assert.equal(await page.getByRole('radio',{name:'기타',exact:true}).isChecked(),true);
  await page.evaluate(()=>{closeAsModal();openAsModal();});
