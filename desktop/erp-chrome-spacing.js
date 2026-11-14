@@ -1,5 +1,5 @@
 (() => {
-  // ERP gets only window dragging; all other window controls stay in the local overlay.
+  // Window controls stay in the local overlay; ERP only reports its workspace visibility.
   const apply = () => {
     const background = document.body.dataset.desktopStartup === 'true' ? 'var(--flow-shell,#e5eaf0)' : getComputedStyle(document.body).background;
     const style = document.createElement('style');
@@ -16,6 +16,23 @@
     };
     syncZoom();
     try {window.top.addEventListener('process-zoom', syncZoom);window.addEventListener('pagehide',()=>window.top.removeEventListener('process-zoom',syncZoom),{once:true});} catch {}
+    let workspaceActive=false;
+    const syncWorkspace=()=>{
+      if(window.top!==window.self){try{window.top.__mipsSyncWorkspace?.();}catch{}return;}
+      const frame=document.getElementById('loginTransitionFrame');
+      let doc=document,visible=true;
+      if(frame){visible=frame.getAttribute('aria-hidden')==='false';try{doc=frame.contentDocument;}catch{doc=null;}}
+      const dashboard=doc?.getElementById('dashboard');
+      const active=!!(visible&&dashboard?.querySelector('.app-topbar')&&!dashboard.inert&&doc.defaultView.getComputedStyle(dashboard).display!=='none');
+      if(active===workspaceActive)return;
+      workspaceActive=active;
+      window.__TAURI_INTERNALS__?.invoke('workspace_window',{active}).catch(console.error);
+    };
+    if(window.top===window.self)window.__mipsSyncWorkspace=syncWorkspace;
+    const workspaceObserver=new MutationObserver(syncWorkspace);
+    workspaceObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','hidden','inert','aria-hidden','class']});
+    window.addEventListener('pagehide',()=>workspaceObserver.disconnect(),{once:true});
+    syncWorkspace();
     document.addEventListener('mousedown', event => {
       if (event.button !== 0 || !event.target.closest('.app-topbar,.topbar')) return;
       if (event.target.closest('button,a,input,select,textarea,summary,[role="button"],[contenteditable]')) return;

@@ -36,7 +36,7 @@ async function freePort() {
     });
     await new Promise(resolve=>updateServer.listen(0,'127.0.0.1',resolve));
     const port = await freePort();
-    app = spawn(exe, [], {env:{...process.env,
+    app = spawn(exe, [], {stdio:['ignore','inherit','inherit'],env:{...process.env,
       PROCESS_SERVER_URL: fixture.url,
       PROCESS_UPDATE_URL: `http://127.0.0.1:${updateServer.address().port}/update`,
       WEBVIEW2_USER_DATA_FOLDER: profile,
@@ -63,17 +63,9 @@ async function freePort() {
     }
     assert(page, 'ERP window was not created: ' + JSON.stringify(context.pages().map(p => p.url())));
     assert(controls, 'Local titlebar was not created');
-    assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),true,'The application must start maximized');
-    await page.waitForFunction(()=>document.documentElement.classList.contains('process-desktop-maximized'));
-    assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).clipPath),'none','Maximized startup fills the square screen edges');
-    const maximizedViewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight,screenWidth:screen.availWidth,screenHeight:screen.availHeight}));
-    assert(Math.abs(maximizedViewport.width-maximizedViewport.screenWidth)<=16,'Content must fill the maximized screen width');
-    assert(Math.abs(maximizedViewport.height-maximizedViewport.screenHeight)<=16,'Content must fill the maximized screen height');
-    await controls.getByRole('button',{name:'이전 크기로',exact:true}).click();
-    await controls.waitForFunction(async()=>!await window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
-    await page.waitForFunction(()=>!document.documentElement.classList.contains('process-desktop-maximized'));
-    assert.notEqual(await page.evaluate(()=>getComputedStyle(document.documentElement).clipPath),'none','Restoring the window keeps rounded corners');
-    console.log('PASS: maximized startup, filled edges, restore button and rounded window');
+    assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),false,'Landing must start in a normal window');
+    assert.notEqual(await page.evaluate(()=>getComputedStyle(document.documentElement).clipPath),'none','Landing keeps rounded corners');
+    assert.equal(await page.evaluate(async()=>{try{await window.__TAURI_INTERNALS__.invoke('workspace_window',{active:true});return false;}catch{return true;}}),true,'Local startup cannot request ERP workspace mode');
     if(process.env.DESKTOP_SMOKE_STARTUP_ONLY==='1')return;
     await page.getByRole('button',{name:'다시 시도'}).waitFor();
     await controls.getByRole('button',{name:'다시 연결',exact:true}).click();
@@ -150,15 +142,25 @@ async function freePort() {
       catch { return true; }
     }), true, 'Remote ERP must not get local chrome permissions');
     await page.goto(fixture.url + '/login.html');
+    assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),false,'Login remains a normal window');
     await page.locator('#identifier').fill('admin');
     await page.locator('#password').fill('Fixture-passphrase-2026!');
     await page.locator('#submitBtn').click();
     await page.waitForURL('**/dashboard.html', {timeout:30000});
+    await controls.waitForFunction(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
+    await page.waitForFunction(()=>document.documentElement.classList.contains('process-desktop-maximized'));
+    const maximizedViewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight,screenWidth:screen.availWidth,screenHeight:screen.availHeight}));
+    assert(Math.abs(maximizedViewport.width-maximizedViewport.screenWidth)<=16,'Workspace fills screen width after login');
+    assert(Math.abs(maximizedViewport.height-maximizedViewport.screenHeight)<=16,'Workspace fills screen height after login');
+    await controls.getByRole('button',{name:'이전 크기로',exact:true}).click();
+    await controls.waitForFunction(async()=>!await window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
     const me = await page.evaluate(async () => ({status:(await fetch('/api/me')).status}));
     assert.equal(me.status, 200);
     // Login keeps the dashboard in a transition iframe; reload also verifies the session survives navigation.
     await page.reload();
     await page.waitForFunction(() => typeof openAsModal === 'function' && currentUser?.id === 'admin');
+    await page.evaluate(()=>window.__TAURI_INTERNALS__.invoke('workspace_window',{active:true}));
+    assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),false,'Refresh must preserve a manually restored workspace window');
     console.log('Restored viewport', await page.evaluate(() => ({width:innerWidth,height:innerHeight,clip:getComputedStyle(document.documentElement).clipPath})), 'original', originalViewport);
     await page.evaluate(() => openAsModal());
     await page.locator('#asShip').fill('DESKTOP TEST');
@@ -204,8 +206,10 @@ async function freePort() {
     await page.screenshot({path:path.join(shots, 'dashboard.png'), omitBackground:true});
     await controls.screenshot({path:path.join(shots, 'titlebar.png')});
     if (process.env.DESKTOP_SMOKE_HOLD === '1') { console.log('READY FOR SCREENSHOT'); await delay(60000); }
-    const logout = await page.evaluate(async () => (await fetch('/api/logout', {method:'POST',headers:{'X-Requested-With':'process-server'}})).status);
-    assert.equal(logout, 200);
+    await controls.getByRole('button',{name:'최대화',exact:true}).click();
+    await controls.waitForFunction(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
+    await page.evaluate(()=>doLogout());await page.waitForURL(fixture.url+'/');
+    await controls.waitForFunction(async()=>!await window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
     assert.equal((await context.request.get(fixture.url + '/api/me')).status(), 401);
     const closed = new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Close control failed')), 10000);
