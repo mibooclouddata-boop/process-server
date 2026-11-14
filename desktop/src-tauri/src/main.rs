@@ -57,9 +57,10 @@ fn main() {
             .icon(tauri::include_image!("icons/icon.png"))?
             .title(APP_NAME).decorations(false).transparent(true)
             // Windows otherwise adds a white outline to undecorated windows.
-            .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).build()?;
+            .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).maximized(true).build()?;
         #[cfg(windows)]
         taskbar::set_icon(&window)?;
+        let initial_size = window.inner_size()?.to_logical::<f64>(window.scale_factor()?);
         let origin = server.origin();
         let allowed = Arc::new(AtomicBool::new(false));
         let navigation_allowed = allowed.clone();
@@ -76,7 +77,7 @@ fn main() {
                 })
                 .on_navigation(move |url| (navigation_allowed.load(Ordering::SeqCst) && url.origin() == origin) || matches!(url.as_str(), "http://tauri.localhost/" | "http://tauri.localhost/index.html" | "tauri://localhost/" | "tauri://localhost/index.html"))
                 .on_new_window(|_, _| tauri::webview::NewWindowResponse::Deny),
-            LogicalPosition::new(0.0, 0.0), LogicalSize::new(1440.0, 960.0))?;
+            LogicalPosition::new(0.0, 0.0), initial_size)?;
         let zoom_content = content.clone();
         app.listen("desktop-zoom", move |event| {
             if let Ok(factor) = serde_json::from_str::<f64>(event.payload()) {
@@ -91,7 +92,7 @@ fn main() {
                 .transparent(true).initialization_script(include_str!("../../titlebar.js"))
                 .on_navigation(|url| matches!(url.as_str(), "http://tauri.localhost/titlebar.html" | "tauri://localhost/titlebar.html"))
                 .on_new_window(|_, _| tauri::webview::NewWindowResponse::Deny),
-            LogicalPosition::new(1192.0, 18.0), LogicalSize::new(232.0, 32.0))?;
+            LogicalPosition::new((initial_size.width - 248.0).max(0.0), 18.0), LogicalSize::new(232.0, 32.0))?;
         let resize_window = window.clone();
         let resize_chrome = chrome.clone();
         let resize_content = content.clone();
