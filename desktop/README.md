@@ -1,4 +1,4 @@
-# Process ERP Desktop
+# MIPS Desktop
 
 Tauri 2 Windows 클라이언트. 기존 Express 서버의 화면·세션을 사용합니다.
 서버와 DB는 앱에 포함하지 않습니다. 원격 화면에는 창 드래그 권한만 부여합니다.

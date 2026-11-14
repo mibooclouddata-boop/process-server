@@ -26,7 +26,7 @@
     applyZoom();
     buttons[0].onclick = () => window.__TAURI_INTERNALS__.invoke('plugin:event|emit', {event:'desktop-reconnect',payload:null}).catch(report);
     window.addEventListener('process-connection-status', () => {
-      buttons[0].title = window.__processConnectionStatus === 'Process ERP' ? '다시 연결' : window.__processConnectionStatus;
+      buttons[0].title = window.__processConnectionStatus === 'MIPS' ? '다시 연결' : window.__processConnectionStatus;
     });
     buttons[1].onclick = () => invoke('minimize').catch(report);
     const update = async () => {

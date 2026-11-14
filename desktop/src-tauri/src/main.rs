@@ -2,6 +2,7 @@
 use tauri::{ipc::CapabilityBuilder, Listener, Manager, Webview, WebviewBuilder, WebviewUrl, WindowBuilder, LogicalPosition, LogicalSize, Rect};
 use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
 mod updates;
+const APP_NAME: &str = "MIPS";
 #[cfg(windows)]
 mod taskbar;
 
@@ -17,10 +18,10 @@ fn connect(content: Webview, chrome: Webview, server: tauri::Url, busy: Arc<Atom
             .redirect(reqwest::redirect::Policy::none())
             .build().and_then(|client| client.head(server.clone()).send());
         let status = if result.is_ok_and(|response| !response.status().is_server_error()) {
-            if content.navigate(server.join("login.html").unwrap_or(server)).is_ok() { "Process ERP" } else { "연결 실패 · 다시 연결을 눌러주세요" }
+            if content.navigate(server.join("login.html").unwrap_or(server)).is_ok() { APP_NAME } else { "연결 실패 · 다시 연결을 눌러주세요" }
         } else { "연결 실패 · 다시 연결을 눌러주세요" };
         let encoded = serde_json::to_string(status).expect("status string");
-        if status != "Process ERP" {
+        if status != APP_NAME {
             let _ = content.eval(format!("(() => {{ const el=document.getElementById('connection-status'); if(el) el.textContent={encoded}; window.renderUpdate?.({{state:'error',message:{encoded}}}); }})();"));
         }
         let _ = chrome.eval(format!("window.__processConnectionStatus={encoded};window.dispatchEvent(new Event('process-connection-status'));"));
@@ -54,7 +55,7 @@ fn main() {
             .permission("core:window:allow-start-dragging"))?;
         let window = WindowBuilder::new(app, "main")
             .icon(tauri::include_image!("icons/icon.png"))?
-            .title("Process ERP").decorations(false).transparent(true)
+            .title(APP_NAME).decorations(false).transparent(true)
             // Windows otherwise adds a white outline to undecorated windows.
             .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).build()?;
         #[cfg(windows)]
@@ -122,5 +123,5 @@ fn main() {
         // Reload after listeners exist: the first local page may finish loading during setup.
         content.navigate(tauri::Url::parse("http://tauri.localhost/index.html")?)?;
         Ok(())
-    }).run(tauri::generate_context!()).expect("Failed to run Process ERP");
+    }).run(tauri::generate_context!()).expect("Failed to run MIPS");
 }

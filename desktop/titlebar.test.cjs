@@ -21,6 +21,8 @@ test('desktop controls are accessible, dispatch narrow window commands, and skip
       'plugin:window|minimize', 'plugin:window|toggle_maximize', 'plugin:window|close'
     ]);
     assert.equal(await page.frames()[1].locator('#process-window-controls').count(), 0);
+    await page.evaluate(()=>{window.__processConnectionStatus='MIPS';window.dispatchEvent(new Event('process-connection-status'));});
+    assert.equal(await page.getByRole('button',{name:'다시 연결',exact:true}).getAttribute('title'),'다시 연결');
   } finally { await browser.close(); }
 });
 test('desktop shell rounds the full viewport and removes rounding when maximized', async () => {

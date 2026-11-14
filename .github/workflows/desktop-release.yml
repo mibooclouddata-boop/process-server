@@ -47,4 +47,4 @@ jobs:
         run: |
           $bundle = 'desktop/src-tauri/target/x86_64-pc-windows-msvc/debug/bundle/nsis'
           $assets = Get-ChildItem $bundle -File | Where-Object { $_.Name -like 'Process-ERP_*' -or $_.Name -eq 'latest.json' } | ForEach-Object FullName
-          gh release create $env:GITHUB_REF_NAME @assets --verify-tag --draft --prerelease --title "Process ERP $env:GITHUB_REF_NAME (local test)" --notes-file desktop/RELEASE_NOTES.md
+          gh release create $env:GITHUB_REF_NAME @assets --verify-tag --draft --prerelease --title "MIPS $env:GITHUB_REF_NAME (local test)" --notes-file desktop/RELEASE_NOTES.md

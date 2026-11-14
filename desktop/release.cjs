@@ -14,7 +14,7 @@ if(require.main===module){
  if(config.version!==version||!cargo.includes(`version = "${version}"`))throw new Error('Version files disagree');
  if(process.env.GITHUB_REF_TYPE==='tag'&&process.env.GITHUB_REF_NAME!==`desktop-v${version}`)throw new Error('Tag does not match app version');
  const dir=path.resolve(process.argv[2]||path.join(__dirname,'src-tauri/target/x86_64-pc-windows-msvc/debug/bundle/nsis'));
- const source=`Process ERP_${version}_x64-setup.exe`;
+ const source=`${config.productName}_${version}_x64-setup.exe`;
  const filename=`Process-ERP_${version}_x64-setup.exe`;
  // GitHub normalizes spaces in asset names; publish a stable ASCII filename.
  fs.copyFileSync(path.join(dir,source),path.join(dir,filename));
