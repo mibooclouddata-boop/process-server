@@ -45,9 +45,13 @@
 #asModal.as-intake-wizard .as-wizard-heading{margin-bottom:24px}
 #asModal.as-intake-wizard .as-wizard-heading h4{margin:0 0 8px;font-size:20px;line-height:1.5;font-weight:700;color:#202123;letter-spacing:-.025em;word-break:keep-all}
 #asModal.as-intake-wizard .as-wizard-heading p{margin:0;font-size:13px;line-height:1.6;color:#5c6978;word-break:keep-all}
-#asModal.as-intake-wizard .as-wizard-file-picker{padding:22px 18px;border:1px dashed #8e99a7;border-radius:6px;background:#fafbfc;display:flex;flex-direction:column;align-items:center;gap:6px}
-#asModal.as-intake-wizard .as-wizard-file-picker button{min-height:44px;padding:8px 18px;border:1px solid #939daa;border-radius:6px;background:#fff;color:#202123;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:4px}
-#asModal.as-intake-wizard .as-wizard-file-picker p{font-size:13px;color:#626c79;line-height:1.6;margin:0}
+#asModal.as-intake-wizard .as-wizard-file-picker{width:100%}
+#asModal.as-intake-wizard #asFileUpload{width:100%;height:180px;padding:18px;border:1px solid #a0a8b2;border-radius:6px;background:#fff;color:#202123;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:border-color 160ms ease}
+#asModal.as-intake-wizard #asFileUpload:hover{border-color:#202123}
+#asModal.as-intake-wizard #asFileUpload:disabled{cursor:default;opacity:.6}
+#asModal.as-intake-wizard .as-upload-caption{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:700}
+#asModal.as-intake-wizard .as-upload-caption svg{width:18px;height:18px;flex:none}
+#asModal.as-intake-wizard .as-upload-limit{font-size:12px;font-weight:400;color:#626b77;line-height:1.5}
 #asModal.as-intake-wizard #asDeliveryAgreedDate{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease!important}
 #asModal.as-intake-wizard .as-date-inactive #asDeliveryAgreedDate{background:#eef0f3!important;border-color:#d4d9df!important;color:#8a939f!important;cursor:not-allowed;opacity:1}
 #asModal.as-intake-wizard .modal-field:has(#asDeliveryAgreedDate)>label{transition:color 180ms ease}

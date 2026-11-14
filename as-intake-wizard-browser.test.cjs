@@ -26,13 +26,12 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('#asIntakeSteps [aria-current=step]').textContent(),'1기본 정보');
  assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
  assert.equal(await page.locator('#asIntakeProgress').count(),0);
- const checkFooter=async hasPrevious=>{
+ const checkFooter=async()=>{
   const cancel=await page.locator('#asIntakeCancel').boundingBox(),next=await page.locator('#asIntakeNext').boundingBox();
   assert(cancel&&next&&cancel.x+cancel.width<next.x,'cancel remains visible on the left');
-  assert.equal(await page.locator('#asIntakePrevious').isVisible(),hasPrevious);
-  if(hasPrevious){const previous=await page.locator('#asIntakePrevious').boundingBox();assert(previous.x>cancel.x+cancel.width&&previous.x+previous.width<=next.x,'previous and next sit together on the right');}
+  assert.equal(await page.locator('#asIntakePrevious').count(),0);
  };
- await checkFooter(false);
+ await checkFooter();
  assert.equal(await page.locator('#asIntakeHeading').textContent(),'AS가 필요한 자재를 알려주세요.');
  assert.equal(await page.locator('#asIntakeDescription').textContent(),'자재명과 코드, 호선·블록·엘레멘탈을 입력해 주세요.');
  assert.equal(await page.locator('.as-wizard-notice').count(),0);
@@ -59,7 +58,7 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('label[for=asRemark]').textContent(),'상세 내용');
  assert(await page.locator('#asDeliveryAgreedDateHint').isHidden());
  assert.equal(await page.locator('#asIntakeHeading').textContent(),'어떤 문제가 발생했나요?');
- await checkFooter(true);
+ await checkFooter();
  assert.equal(await page.locator('#asIntakeDescription').textContent(),'발생 사유와 처리 방법, 상세 내용을 입력해 주세요.');
  assert.equal(await page.locator('#asReasonSelect').getAttribute('aria-invalid'),'true');
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('실제 접수 연결 검증');
@@ -68,7 +67,7 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert(await page.locator('#asDeliveryAgreedDateHint').isHidden());
  assert(await page.locator('#asDeliveryAgreedDate').isDisabled());
  await page.screenshot({path:path.join(shots,'step-2.png')});
- await page.locator('#asIntakePrevious').click();
+ await page.locator('[data-intake-step="0"]').click();
  assert.equal(await page.locator('#asShip').inputValue(),'LIVE-FIXTURE');
  assert.equal(await page.getByRole('radio',{name:'사외',exact:true}).isChecked(),true);
  await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
@@ -76,13 +75,19 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('label[for=asAmount]').textContent(),'금액');
  assert(await page.locator('#asAmountHint').isHidden());
  assert.equal(await page.locator('#asIntakeNext').textContent(),'저장');
- await checkFooter(true);
+ await checkFooter();
  assert.equal(await page.locator('#asIntakeHeading').textContent(),'관련 금액과 자료를 첨부해 주세요.');
  assert.equal(await page.locator('#asIntakeDescription').textContent(),'금액과 현장 사진, 도면, 이체 영수증을 추가해 주세요.');
  assert.equal(await page.locator('#asFiles').count(),1);
+ assert.equal(await page.locator('label[for=asFileUpload]').textContent(),'첨부');
+ assert.equal(await page.locator('.as-upload-caption').textContent(),'파일 업로드');
+ assert.equal(await page.getByRole('button',{name:'파일 업로드',exact:true}).count(),1);
+ assert.equal(await page.locator('.as-upload-limit').textContent(),'파일당 최대 20MB · 최대 10개');
+ assert.equal((await page.locator('#asFileUpload').boundingBox()).height,180);
  assert.equal(await page.locator('#asModal').getByText('앞서 입력한 내용',{exact:true}).count(),0);
  await page.screenshot({path:path.join(shots,'step-3.png')});
- await page.locator('#asFiles').setInputFiles({name:'fixture.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n%%EOF')});
+ const fileChooser=page.waitForEvent('filechooser');await page.locator('#asFileUpload').click();
+ await (await fileChooser).setFiles({name:'fixture.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n%%EOF')});
  await page.locator('#asIntakeNext').click();await page.locator('#asModal').waitFor({state:'hidden'});
  let item=fixture.read('as.json').list[0];
  assert.equal(item.category,'사외');assert.equal(item.ship,'LIVE-FIXTURE');assert.equal(item.element,'E-01');
@@ -105,10 +110,16 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert(bounds.x>=0&&bounds.x+bounds.width<=390&&bounds.y>=0&&bounds.y+bounds.height<=844);
  const locations=await Promise.all(['asShip','asBlock','asElement'].map(id=>page.locator('#'+id).boundingBox()));
  assert(locations[0].y<locations[1].y&&locations[1].y<locations[2].y);
- await checkFooter(false);
+ await checkFooter();
  await page.evaluate(()=>{closeAsModal();openAsModal({..._asFullList[0],category:'기타'});});
  assert.equal(await page.getByRole('radio',{name:'기타',exact:true}).isChecked(),true);
- await page.locator('#asIntakeNext').click();await checkFooter(true);
+ await page.locator('#asIntakeNext').click();await checkFooter();
+ await page.locator('#asIntakeNext').click();
+ await page.locator('#asFileUpload').scrollIntoViewIfNeeded();
+ const uploadBounds=await page.locator('#asFileUpload').boundingBox(),footerBounds=await page.locator('#asModal .modal-footer').boundingBox();
+ assert.equal(uploadBounds.height,180);
+ assert(uploadBounds.x>=0&&uploadBounds.x+uploadBounds.width<=390&&uploadBounds.y+uploadBounds.height<=footerBounds.y);
+ await page.screenshot({path:path.join(shots,'mobile-upload.png')});
  await page.locator('#asIntakeCancel').click();await page.locator('#asModal').waitFor({state:'hidden'});
  await page.evaluate(()=>{closeAsModal();openAsModal();});
  assert.equal(await page.getByRole('radio',{name:'기타',exact:true}).isVisible(),false);
