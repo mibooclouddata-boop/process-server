@@ -149,7 +149,7 @@ function createAsService(store, {clock=()=>new Date()} = {}) {
       return mutate('update',id,{...values,version,status:input.status,removeFiles:removed,changeReason},files,actor,key,(data,item,now,actor)=>{
         if(input.status!==undefined&&input.status!==workflow.normalize(item).status)fail('상태는 진행 관리에서 변경하세요.');
         if(item.status==='완료'&&!changeReason)fail('완료된 접수의 정정 사유를 입력하세요.');
-        if(workflow.normalize(item).status!=='접수'&&values.deliveryAgreedDate==='')fail('진행 중이거나 완료된 접수의 납품 협의일은 지울 수 없습니다.');
+        if(workflow.normalize(item).status!=='접수'&&(values.deliveryAgreedDate??item.deliveryAgreedDate??'')===''&&(values.action??item.action)!=='현장 시수')fail('진행 중이거나 완료된 접수의 납품 협의일은 지울 수 없습니다.');
         Object.assign(item,values);retire(item,removed,actor,now);appendFiles(item,files);return item;
       },resolveActor);
     },

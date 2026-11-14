@@ -98,6 +98,19 @@ test('legacy records without creator IDs remain editable by any active staff wit
   assert.equal(item.createdById,undefined);assert.equal(item.updatedById,other.id);
 });
 
+test('on-site deadline exemption survives progress and editing without exempting other actions',async t=>{
+ const {service}=fixture(t);
+ let {item}=await service.create({...base,action:'현장 시수',deliveryAgreedDate:''},[],owner,randomUUID());
+ item=(await service.advance(item.id,{version:item.version,action:'advance',next:'제작 요청'},[],owner,randomUUID())).item;
+ item=(await service.update(item.id,{version:item.version,remark:'onsite edit'},[],owner,randomUUID())).item;
+ assert.equal(item.deliveryAgreedDate,'');assert.equal(item.remark,'onsite edit');
+ await denied(()=>service.update(item.id,{version:item.version,action:'출장 AS'},[],owner,randomUUID()),400);
+ item=(await service.update(item.id,{version:item.version,action:'출장 AS',deliveryAgreedDate:'2026-12-01'},[],owner,randomUUID())).item;
+ await denied(()=>service.update(item.id,{version:item.version,deliveryAgreedDate:''},[],owner,randomUUID()),400);
+ item=(await service.update(item.id,{version:item.version,action:'현장 시수',deliveryAgreedDate:''},[],owner,randomUUID())).item;
+ assert.equal(item.action,'현장 시수');assert.equal(item.deliveryAgreedDate,'');
+});
+
 test('orphan cleanup is dry by default and preserves deleted, retired and recent files',async t=>{
   const {dir,file,store,service}=fixture(t),root=path.join(dir,'uploads');fs.mkdirSync(root);
   const names=['current.txt','retired.txt','abandoned.txt','recent.txt'];

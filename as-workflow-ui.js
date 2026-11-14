@@ -43,7 +43,7 @@ function asJobEsc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&
 function asJobToday(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
 function asWorkflowDelayHtml(item,showDate=true){
  const due=item.deliveryAgreedDate;
- if(!due)return '<small class="as-job-due">일정 미협의</small>';
+ if(!due)return '<small class="as-job-due">'+(item.action==='현장 시수'?'현장 시수':'일정 미협의')+'</small>';
  const completed=item.deliveredDate||item.workflow?.stages?.['납품 요청']?.completedDate;
  const days=Math.round((Date.parse(completed||asJobToday())-Date.parse(due))/86400000);
  const label=item.status==='완료'?(completed?(days>0?days+'일 지연 완료':'기한 내 완료'):'완료'):(days>0?days+'일 지연':days===0?'오늘 납품':'D-'+(-days));
@@ -68,7 +68,7 @@ function openAsWorkflow(item){
  const previousDate=item.workflow?.stages?.[AS_JOB_STAGES[AS_JOB_STAGES.indexOf(item.status)-1]]?.completedDate;
  const active=AS_JOB_STAGES.includes(item.status);
  const editable=asJobCanEdit(item)&&!!asJobNext(item);
- const missingDeadline=!item.deliveryAgreedDate;
+ const missingDeadline=!item.deliveryAgreedDate&&item.action!=='현장 시수';
  const legacyDeadline=missingDeadline&&!!item.legacyStatus;
  const label=asJobActionLabel(item);
  dialog.innerHTML='<header><h2 id="asJobTitle" tabindex="-1" autofocus>'+label+'</h2></header>'
@@ -85,7 +85,7 @@ async function saveAsJob(action){
  if(!asJobState.item||!asJobCanEdit(asJobState.item)){showAlert('이 작업을 처리할 권한이 없습니다.','warn');return;}
  const item=asJobState.item,get=id=>document.getElementById(id)?.value||'';
   const payload={action,version:asRecordVersion(item),revision:item.workflow?.revision||0,next:asJobNext(item),completedDate:get('asJobCompleted'),completionNote:get('asJobCompletionNote')};
- if(!item.deliveryAgreedDate&&item.legacyStatus)payload.deliveryAgreedDate=get('asJobLegacyDeadline');
+ if(!item.deliveryAgreedDate&&item.legacyStatus&&item.action!=='현장 시수')payload.deliveryAgreedDate=get('asJobLegacyDeadline');
  const form=new FormData();form.append('payload',JSON.stringify(payload));
  const files=document.getElementById('asJobFiles')?.files||[];
  const error=document.getElementById('asJobError');

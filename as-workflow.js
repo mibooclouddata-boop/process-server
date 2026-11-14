@@ -23,8 +23,8 @@ function applyWorkflow(source,input,actor,day=today(),now=new Date().toISOString
   const current=STAGES.indexOf(item.status);
   const wf=item.workflow||{revision:0,stages:{},history:[]};
   const history=(type,detail)=>wf.history.push({type,...detail,at:now,by:actor.name,byUserId:actor.id||''});
-  const agreement=input.deliveryAgreedDate ?? item.deliveryAgreedDate;
-  if(!dateValid(agreement)) fail('제작 요청 전에 납품 협의일을 입력하세요.');
+  const agreement=input.deliveryAgreedDate ?? item.deliveryAgreedDate ?? '';
+  if(!dateValid(agreement)&&!(item.action==='현장 시수'&&agreement==='')) fail('제작 요청 전에 납품 협의일을 입력하세요.');
   if(agreement!==item.deliveryAgreedDate) history('deadline',{previousDate:item.deliveryAgreedDate||'',date:agreement});
   item.deliveryAgreedDate=agreement;
   const plan=(stage)=>{
