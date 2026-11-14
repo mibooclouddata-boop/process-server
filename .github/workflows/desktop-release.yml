@@ -41,6 +41,8 @@ jobs:
           node verify-windows-binary.cjs src-tauri/target/x86_64-pc-windows-msvc/debug/process-server-desktop.exe
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node release.cjs
+      - name: Verify legacy installation migration in isolated paths
+        run: node desktop/installer-migration.test.cjs
       - name: Create draft prerelease
         env:
           GH_TOKEN: ${{ github.token }}
