@@ -77,10 +77,10 @@ async function freePort() {
     await page.getByRole('button',{name:'다시 시도'}).waitFor();
     assert(page.url().startsWith('http://tauri.localhost/'),'Invalid signature must not unlock ERP');
     updateMode='none';
-    await page.evaluate(()=>localStorage.setItem('erp-update-access-pending','true'));
+    await page.evaluate(()=>localStorage.removeItem('erp-update-access-pending'));
     await page.reload();
     await page.getByRole('button',{name:'업무시스템 접속',exact:true}).waitFor();
-    assert(page.url().startsWith('http://tauri.localhost/'),'Updated app waits for access after startup check');
+    assert(page.url().startsWith('http://tauri.localhost/'),'Normal startup waits for access even without a post-update flag');
     await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();
     await page.waitForURL(fixture.url+'/**');
     console.log('PASS: mandatory update gate, offline retry, bypass rejection, invalid signature rejected, post-update access');
