@@ -56,7 +56,10 @@
   },dispose(){}};
  }
  function draw(){if(!renderer)return;renderer.draw();frames++;canvas.dataset.frames=String(frames);canvas.dataset.ready='true';canvas.dataset.renderer=renderer.name;}
- function resize(){const rect=canvas.getBoundingClientRect();w=Math.max(1,rect.width);h=Math.max(1,rect.height);dpr=Math.min(devicePixelRatio||1,1.6);const width=Math.round(w*dpr),height=Math.round(h*dpr);if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}scale=Math.min(w*(w<450?.26:.30),h*.34)*(innerWidth<=700?1:Number(canvas.dataset.zoom)||1);draw();}
+ function resize(){const rect=canvas.getBoundingClientRect();w=Math.max(1,rect.width);h=Math.max(1,rect.height);dpr=Math.min(devicePixelRatio||1,1.6);const width=Math.round(w*dpr),height=Math.round(h*dpr);if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}const zoom=innerWidth<=700?1:Number(canvas.dataset.zoom)||1;
+  // The projected particle cloud fits within a radius of 2 at every phase.
+  const fit=Math.max(1,Math.min(w*(w<450?.5:.46)-16,h*.45-16)/2);
+  scale=Math.min(Math.min(w*(w<450?.26:.30),h*.34)*zoom,fit);draw();}
  // Reduced motion uses a gentle pace rather than freezing the cover.
  function running(){return !!renderer&&visible&&!document.hidden;}
  function tick(now){frame=0;if(!running())return;if(!last)last=now;time+=Math.min(.05,(now-last)/1000)*(reduced.matches?.35:1);last=now;draw();frame=requestAnimationFrame(tick);}
