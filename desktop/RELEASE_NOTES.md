@@ -1,21 +1,21 @@
-﻿MIPS 0.3.3 - local-test prerelease
+﻿MIPS 0.3.4 - local-test prerelease
 
-Includes merged PRs #132-#142 since desktop-v0.3.2. Feature baseline: 4a6a5db035643bc7d2129c345654d3cb4286a6a9. The final versioned tag commit and installer SHA256 will be recorded at publication. Published tags and installers are immutable.
+Includes merged PRs #144-#146 since desktop-v0.3.3. Feature baseline: a1541d557b58ec1e50d44b1730fbcb5b77536147. The final release tag commit and installer SHA256 must be recorded at publication.
 
 Desktop changes:
-- Rename the application to MIPS, retaining app identity, settings and the star icon.
-- Refine startup corners, update checks and access/login transition motion.
+- Start the application maximized and fill the display.
+- Save AS Excel exports through the native Windows Save As dialog, retaining selected rows and ledger formatting. Cancellation, duplicate clicks and failures are handled explicitly.
 
 Matching ERP server changes:
-- Apply Pretendard on the first login visit without a refresh.
-- Refine all three AS intake stages, material fields, wording and footer buttons.
-- Disable delivery date entry for on-site work and remove redundant hints.
-- Explicit calendar selection confirmation, cancel without changes, input clear button, stronger date contrast and compact week layout.
-- Single-line AS Excel exports with ledger formatting.
+- Replace the AS attachment selector with a 180px upload area, centered upload icon and Korean label, and the 20MB-per-file / 10-files-per-request hint.
+- Remove the Previous button; use the numbered steps to revisit earlier form sections.
 
-Connects to http://127.0.0.1:3000/ on the same PC. ERP server files are separate and are not deployed by installing this app. Server improvements require the matching reviewed server source. No production HTTPS server or production deployment is included.
+Installer migration: verified per-user Process ERP registrations and owned desktop/start-menu shortcuts are migrated to MIPS, including installations where both names exist. Existing taskbar link targets, icons and descriptions are updated in place. Only the two known legacy managed files are removed; settings and other files remain. Conflicting shortcuts or locked legacy files defer cleanup instead of removing unrelated files.
 
-Release validation covers desktop unit/UI checks, native build and isolated WebView2 smoke checks, AS intake/calendar browser checks and AS workflow tests. Final outcomes are recorded at publication. The release workflow repeats desktop checks, signs the installer and verifies the Windows executable.
+Migration scope: standard per-user shortcuts are covered. A pinned shortcut retains its existing filename to preserve the pin; Windows may retain a cached label. Custom renamed shortcuts are not rewritten. Native fixture checks use silent update installation with an explicit destination; a live upgrade/relaunch from the user's 0.3.2 process is not part of that fixture verification.
 
-Database changes: none. ERP records and attachments are not packaged or replaced.
-Recovery: retain previous versioned assets. Restore the previous test-channel manifest to stop further upgrades; already upgraded apps require manual reinstall or a higher-version corrective release. App rollback does not restore ERP data.
+Connects to http://127.0.0.1:3000/ on the same PC. Server files are separate and are not deployed by installing this app. No production deployment is included.
+
+Validation: desktop checks 17/17, AS workflow checks 19/19, AS intake and Excel selection browser checks passed. Signed Windows build and actual WebView2 smoke passed (maximized launch, update gate, zoom, Excel bridge, login, attachments, preview and logout). Seven isolated native installer cases passed, including repeated updates and preservation of user files: old-only, both installed, MIPS-only, same-path, unrelated shortcuts, shortcut collision and destination junction. The fixture also rejects installation outside its designated directory. Publication hashes are recorded before release.
+Database changes: none. ERP data and attachments are not packaged or overwritten.
+Recovery: retain earlier immutable installers. Restore the previous test-channel manifest to stop further upgrades. Already upgraded apps require manual reinstall or a higher-version corrective release. App rollback does not restore server data.
