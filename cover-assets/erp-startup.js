@@ -13,6 +13,9 @@
  action.append(progress,label,dots);link.replaceWith(action);
  const status=document.createElement('p');status.id='connection-status';status.className='startup-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.hidden=true;
  action.after(status);
+ const minimumConnectionMs=5000;
+ const waitForConnection=()=>new Promise(resolve=>setTimeout(resolve,minimumConnectionMs));
+ let checkingStarted=performance.now(),stateTimer;
  let next='desktop-update-check';
  const updatePending='erp-update-access-pending';
  function pendingAccess(value){
@@ -24,9 +27,17 @@
  }
  function busy(text,updating=false){label.textContent=text;action.disabled=true;action.setAttribute('aria-busy','true');action.classList.add('is-loading');action.classList.toggle('is-connecting',!updating);dots.hidden=!updating;progress.hidden=updating;progress.removeAttribute('value');}
  function ready(text){label.textContent=text;action.disabled=false;action.setAttribute('aria-busy','false');action.classList.remove('is-loading','is-connecting');progress.hidden=true;dots.hidden=true;}
- const minimumAccessMotion=()=>new Promise(resolve=>setTimeout(resolve,2000));
  function connecting(){busy('업무시스템 접속 중',true);progress.hidden=true;}
  window.renderUpdate=data=>{
+  clearTimeout(stateTimer);
+  if(data.state==='checking')checkingStarted=performance.now();
+  const remaining=minimumConnectionMs-(performance.now()-checkingStarted);
+  if(['ready','available'].includes(data.state)&&remaining>0){
+   stateTimer=setTimeout(()=>renderUpdateNow(data),remaining);return;
+  }
+  renderUpdateNow(data);
+ };
+ const renderUpdateNow=data=>{
   status.hidden=true;status.textContent='';
   busy('업무시스템 접속 중');
   if(data.state==='ready'){
@@ -47,9 +58,9 @@
  };
  const emit=async event=>{
   if(event==='desktop-update-install')pendingAccess(true);
-  if(event==='desktop-access'){connecting();await minimumAccessMotion();}
+  if(event==='desktop-access')connecting();
   else busy(event==='desktop-update-install'?'업데이트 설치 중':'업무시스템 접속 중',event==='desktop-update-install');
-  try{await window.__TAURI_INTERNALS__.invoke('plugin:event|emit',{event:event==='desktop-access'?'desktop-update-check':event,payload:null});}
+  try{if(event==='desktop-access')await waitForConnection();await window.__TAURI_INTERNALS__.invoke('plugin:event|emit',{event:event==='desktop-access'?'desktop-update-check':event,payload:null});}
   catch{window.renderUpdate({state:'error',message:'연결을 시작하지 못했습니다. 다시 시도해 주세요.'});}
  };
  action.addEventListener('click',async()=>{
@@ -57,7 +68,7 @@
   if(desktop){await emit(next);return;}
   connecting();status.hidden=true;
   try{
-   const [response]=await Promise.all([fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)}).catch(()=>null),minimumAccessMotion()]);
+   const [response]=await Promise.all([fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)}).catch(()=>null),waitForConnection()]);
    if(!response?.ok)throw Error('Server unavailable');
    location.assign(destination.href);
   }catch{ready('다시 시도');status.hidden=false;status.textContent='업무시스템에 연결할 수 없습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.';}

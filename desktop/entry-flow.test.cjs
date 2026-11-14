@@ -23,6 +23,7 @@ test('bundled landing corners are transparent even before startup JavaScript fin
   for(const [x,y] of [[0,0],[999,0],[0,699],[999,699]])assert.equal(png.data[(y*png.width+x)*4+3],0,'Every native landing corner must be transparent before scripts load');
  }finally{release?.();await navigation;}
  await page.evaluate(()=>renderUpdate({state:'ready'}));
+ await page.waitForFunction(()=>!document.getElementById('action').disabled);
  assert.equal(await page.evaluate(()=>getComputedStyle(document.body,'::before').backgroundColor),'rgb(229, 234, 240)','The native bootstrap must preserve the landing background');
  const shots=path.join(__dirname,'../.artifacts/entry-flow');fs.mkdirSync(shots,{recursive:true});
  await page.screenshot({path:path.join(shots,'landing-rounded.png'),omitBackground:true});
@@ -37,8 +38,8 @@ test('desktop access shows three dots for at least two seconds and ignores dupli
   return route.fulfill({body:fs.readFileSync(path.join(__dirname,'assets',name)),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});
  });
  await page.addInitScript(()=>{window.calls=[];window.__TAURI_INTERNALS__={invoke:async(command,args)=>calls.push(args.event)};});
- await page.goto('https://desktop.test/');await page.evaluate(()=>renderUpdate({state:'ready'}));
  await page.clock.install({time:new Date(0)});await page.clock.pauseAt(new Date(60000));
+ await page.goto('https://desktop.test/');await page.evaluate(()=>renderUpdate({state:'ready'}));await page.clock.runFor(5000);
  await page.locator('#action').click();
  assert.equal(await page.locator('.startup-dots').isVisible(),true);
  assert.equal(await page.locator('.startup-dots i').count(),3);
@@ -48,6 +49,7 @@ test('desktop access shows three dots for at least two seconds and ignores dupli
  await page.screenshot({path:path.join(shots,'access-dots.png'),omitBackground:true});
  await page.evaluate(()=>document.getElementById('action').click());
  await page.clock.runFor(1999);assert.equal(await page.evaluate(()=>calls.length),1,'Do not leave the landing before two seconds');
+ await page.clock.runFor(3000);assert.equal(await page.evaluate(()=>calls.length),1,'Preserve the existing five-second connection minimum');
  await page.clock.runFor(1);await page.waitForFunction(()=>calls.length===2);
  assert.deepEqual(await page.evaluate(()=>calls),['desktop-update-check','desktop-update-check']);
 });
@@ -62,9 +64,10 @@ test('browser access keeps the same minimum dots duration for immediate errors a
  await page.goto('https://erp.test/');await page.clock.install({time:new Date(0)});await page.clock.pauseAt(new Date(60000));
  await page.locator('#action').click();assert(await page.locator('.startup-dots').isVisible());
  await page.clock.runFor(1999);assert(await page.locator('#action').isDisabled());assert.equal(page.url(),'https://erp.test/');
+ await page.clock.runFor(3000);assert(await page.locator('#action').isDisabled());
  await page.clock.runFor(1);await page.getByRole('button',{name:'다시 시도'}).waitFor();
  fail=false;await page.locator('#action').click();await page.clock.runFor(1999);assert.equal(page.url(),'https://erp.test/');
- await page.clock.runFor(1);await page.waitForURL('https://erp.test/login.html');
+ await page.clock.runFor(3001);await page.waitForURL('https://erp.test/login.html');
 });
 
 test('login reveals the workspace once without a second page entrance on a later DOM update',async t=>{

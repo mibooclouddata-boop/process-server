@@ -9,12 +9,12 @@
 .startup-action progress::-webkit-progress-value{background:#438ac0;transition:width .2s linear}
 .startup-action progress::-moz-progress-bar{background:#438ac0}
 .startup-action progress:not([value]){opacity:0}
-.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before,.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::after{content:"";position:absolute;pointer-events:none;width:410px;height:410px;left:calc(50% - 205px);top:44px;border-radius:43%;background:#3b7baa;opacity:.65;animation:startup-wave 5s linear infinite}
-.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before{top:39px;background:#70aed7;opacity:.22;animation-direction:reverse;animation-duration:7s}
+.startup-action.is-connecting::before,.startup-action.is-connecting::after{content:"";position:absolute;pointer-events:none;width:410px;height:410px;left:calc(50% - 205px);top:44px;border-radius:43%;background:#3b7baa;opacity:.65;animation:startup-wave 5s linear infinite}
+.startup-action.is-connecting::before{top:39px;background:#70aed7;opacity:.22;animation-direction:reverse;animation-duration:7s}
 .startup-status{font-size:13px;line-height:1.6;color:var(--muted);margin:12px 0 0;max-width:360px;overflow-wrap:anywhere}
 [hidden]{display:none!important}
 @keyframes startup-wave{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::before,.startup-action.is-connecting:has(progress:not([value]):not([hidden]))::after{animation:none}.startup-action progress::-webkit-progress-value{transition:none}}
+@media(prefers-reduced-motion:reduce){.startup-action.is-connecting::before,.startup-action.is-connecting::after{animation:none}.startup-action progress::-webkit-progress-value{transition:none}}
 
 .startup-dots{position:relative;z-index:2;display:flex;gap:4px;pointer-events:none}
 .startup-dots i{width:4px;height:4px;border-radius:50%;background:#d4edff;animation:startup-dot 1.25s ease-in-out infinite}
