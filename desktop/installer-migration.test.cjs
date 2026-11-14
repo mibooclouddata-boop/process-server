@@ -6,7 +6,9 @@ const assert=require('node:assert/strict'),{execFileSync}=require('node:child_pr
 const generated=path.resolve(process.env.CARGO_TARGET_DIR||path.join(__dirname,'src-tauri/target'),'x86_64-pc-windows-msvc/debug/nsis/x64');
 const config=require('./src-tauri/tauri.conf.json');
 assert.equal(config.bundle.windows.nsis.installerHooks,'windows/migrate-legacy.nsh');
-const id=crypto.randomUUID(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'mips-installer-test-'));
+// Hosted Windows runners can expose TEMP through an 8.3 alias (RUNNER~1).
+// Normalize the fixture root before deriving registry, shortcut and installer paths.
+const id=crypto.randomUUID(),dir=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'mips-installer-test-')));
 const reg='Software\\ProcessServerInstallerTests\\'+id;
 const maker=path.join(process.env.LOCALAPPDATA,'tauri/NSIS/makensis.exe');
 function ps(code){return execFileSync('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from("$ProgressPreference='SilentlyContinue';$ErrorActionPreference='Stop';"+code,'utf16le').toString('base64')],{encoding:'utf8',windowsHide:true}).trim();}
