@@ -25,7 +25,9 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('#asIntakeSteps').isVisible(),true,JSON.stringify(errors));
  assert.equal(await page.locator('#asIntakeSteps [aria-current=step]').textContent(),'1기본 정보');
  assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
- assert.equal(await page.locator('#asIntakeDescription,.as-wizard-heading').count(),0);
+ assert.equal(await page.locator('#asIntakeHeading').textContent(),'AS가 필요한 자재를 알려주세요.');
+ assert.equal(await page.locator('#asIntakeDescription').textContent(),'자재명과 코드, 호선·블록·엘레멘탈을 입력해 주세요.');
+ assert.equal(await page.locator('.as-wizard-notice').count(),0);
  const layout=await Promise.all(['asProduct','asMaterialCode','asShip','asBlock','asElement'].map(id=>page.locator('#'+id).boundingBox()));
  assert(layout[0].y<layout[1].y&&layout[1].y<layout[2].y,'material name and code precede location');
  assert(Math.abs(layout[0].width-layout[1].width)<1&&layout[0].width>500,'material fields span the form');
@@ -44,6 +46,8 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asIntakeNext').textContent(),'다음');
  assert.equal(await page.locator('label[for=asActionSelect]').textContent(),'처리 방법');
+ assert.equal(await page.locator('#asIntakeHeading').textContent(),'어떤 문제가 발생했나요?');
+ assert.equal(await page.locator('#asIntakeDescription').textContent(),'발생 사유와 처리 방법, 상세 내용을 입력해 주세요.');
  assert.equal(await page.locator('#asReasonSelect').getAttribute('aria-invalid'),'true');
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('실제 접수 연결 검증');
  await page.locator('#asActionSelect').selectOption('현장 시수');
@@ -55,6 +59,8 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asAmount').isVisible(),true);
  assert.equal(await page.locator('#asIntakeNext').textContent(),'저장');
+ assert.equal(await page.locator('#asIntakeHeading').textContent(),'관련 금액과 자료를 첨부해 주세요.');
+ assert.equal(await page.locator('#asIntakeDescription').textContent(),'금액과 현장 사진, 도면, 이체 영수증을 추가해 주세요.');
  assert.equal(await page.locator('#asFiles').count(),1);
  assert.equal(await page.locator('#asModal').getByText('앞서 입력한 내용',{exact:true}).count(),0);
  await page.screenshot({path:path.join(shots,'step-3.png')});
