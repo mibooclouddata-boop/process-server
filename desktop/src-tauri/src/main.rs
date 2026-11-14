@@ -4,6 +4,22 @@ use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
 mod updates;
 mod downloads;
 const APP_NAME: &str = "MIPS";
+struct WorkspaceMode(Mutex<bool>);
+
+#[tauri::command]
+fn workspace_window(webview: Webview, state: tauri::State<'_, WorkspaceMode>, active: bool) -> Result<(), String> {
+    let url = webview.url().map_err(|error| error.to_string())?;
+    if webview.label() != "erp" || url.origin() != webview.app_handle().state::<downloads::DownloadOrigin>().0.origin() {
+        return Err("업무 시스템에서만 화면 모드를 전환할 수 있습니다.".into());
+    }
+    let mut current = state.0.lock().map_err(|error| error.to_string())?;
+    if *current != active {
+        let window = webview.window();
+        if active { window.maximize() } else { window.unmaximize() }.map_err(|error| error.to_string())?;
+        *current = active;
+    }
+    Ok(())
+}
 #[cfg(windows)]
 mod taskbar;
 
@@ -40,10 +56,11 @@ fn main() {
     assert!(server.username().is_empty() && server.password().is_none() && server.query().is_none() && server.fragment().is_none());
     tauri::Builder::default().plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![downloads::save_excel])
+        .invoke_handler(tauri::generate_handler![downloads::save_excel, workspace_window])
         .setup(move |app| {
         app.manage(downloads::DownloadOrigin(server.clone()));
-        // Bundled chrome handles controls; ERP gets dragging and a user-selected Excel save.
+        app.manage(WorkspaceMode(Mutex::new(false)));
+        // Bundled chrome owns controls; ERP reports workspace visibility and can drag/save Excel.
         app.add_capability(CapabilityBuilder::new("desktop-window-controls")
             .webview("titlebar")
             .permission("core:window:allow-minimize")
@@ -58,12 +75,13 @@ fn main() {
             .webview("erp").local(false)
             .remote(format!("{}/*", server.origin().ascii_serialization()))
             .permission("core:window:allow-start-dragging")
-            .permission("allow-save-excel"))?;
+            .permission("allow-save-excel")
+            .permission("allow-workspace-window"))?;
         let window = WindowBuilder::new(app, "main")
             .icon(tauri::include_image!("icons/icon.png"))?
             .title(APP_NAME).decorations(false).transparent(true)
             // Windows otherwise adds a white outline to undecorated windows.
-            .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).maximized(true).build()?;
+            .shadow(false).inner_size(1440.0, 960.0).min_inner_size(1000.0, 700.0).build()?;
         #[cfg(windows)]
         taskbar::set_icon(&window)?;
         let initial_size = window.inner_size()?.to_logical::<f64>(window.scale_factor()?);
@@ -75,7 +93,12 @@ fn main() {
         let content = window.add_child(
             WebviewBuilder::new("erp", WebviewUrl::App("index.html".into())).transparent(true).initialization_script_for_all_frames(include_str!("../../erp-chrome-spacing.js"))
                 .initialization_script_for_all_frames(include_str!("../../excel-download.js"))
-                .on_page_load(move |webview, _| {
+                .on_page_load(move |webview, payload| {
+                    if matches!(payload.url().path(), "/" | "/cover.html" | "/login.html" | "/index.html") {
+                        let mode = webview.app_handle().state::<WorkspaceMode>();
+                        *mode.0.lock().expect("workspace mode") = false;
+                        let _ = webview.window().unmaximize();
+                    }
                     let maximized = webview.window().is_maximized().unwrap_or(false);
                     let _ = webview.eval(format!("document.documentElement?.classList.toggle('process-desktop-maximized',{maximized});"));
                     let factor = *load_zoom.lock().expect("zoom state");
