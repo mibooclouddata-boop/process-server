@@ -4,8 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>HANKUK MIBOO — 로그인</title>
+<link rel="preload" href="/cover-assets/regular.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="/cover-assets/bold.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="/cover-assets/login-transition.css?v=4">
 <style>
+  /* Login must adopt downloaded fonts even on a slow first visit.
+     Keep the shared dashboard's optional font policy unchanged. */
+  @font-face { font-family: 'Pretendard Variable'; src: url('/cover-assets/regular.otf'); font-weight: 100 599; font-display: swap; }
+  @font-face { font-family: 'Pretendard Variable'; src: url('/cover-assets/bold.otf'); font-weight: 600 900; font-display: swap; }
   :root {
     --toss-blue: #004A93;
     --toss-blue-hover: #003a75;
