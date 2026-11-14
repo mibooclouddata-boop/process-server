@@ -36,7 +36,7 @@ async function freePort() {
     });
     await new Promise(resolve=>updateServer.listen(0,'127.0.0.1',resolve));
     const port = await freePort();
-    app = spawn(exe, [], {windowsHide:true, env:{...process.env,
+    app = spawn(exe, [], {env:{...process.env,
       PROCESS_SERVER_URL: fixture.url,
       PROCESS_UPDATE_URL: `http://127.0.0.1:${updateServer.address().port}/update`,
       WEBVIEW2_USER_DATA_FOLDER: profile,
@@ -61,7 +61,7 @@ async function freePort() {
       if (page && controls) break;
       await delay(200);
     }
-    assert(page, 'ERP window was not created');
+    assert(page, 'ERP window was not created: ' + JSON.stringify(context.pages().map(p => p.url())));
     assert(controls, 'Local titlebar was not created');
     await page.getByRole('button',{name:'다시 시도'}).waitFor();
     await controls.getByRole('button',{name:'다시 연결',exact:true}).click();
