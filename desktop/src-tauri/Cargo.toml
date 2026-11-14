@@ -1,6 +1,6 @@
 [package]
 name = "process-server-desktop"
-version = "0.3.0"
+version = "0.3.1"
 description = "Process Server ERP desktop client"
 edition = "2021"
 

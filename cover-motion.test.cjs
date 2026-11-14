@@ -25,7 +25,7 @@ function setup(options = {}) {
   function makeCanvas(dataset = {zoom:'1.05'}) {
     return {
       dataset: {...dataset}, width: 600, height: 600, events: {},
-      getBoundingClientRect: () => ({width:900, height:700}),
+      getBoundingClientRect: () => ({width:options.width||900, height:options.height||700}),
       getContext(type) {
         if(type === '2d') return options.noCanvas ? null : ctx;
         if(options.glThrows) throw Error('GPU unavailable');
@@ -113,4 +113,14 @@ test('hidden and offscreen pages pause; returning and back navigation resume onc
 test('unavailable WebGL and Canvas show a readable error without a loop', () => {
   const app=setup({noGL:true,noCanvas:true});
   assert.equal(app.error.hidden,false); assert.equal(app.scheduled.size,0);
+});
+
+test('particles stay inside a compact canvas throughout motion', () => {
+  for (const [width,height] of [[680,700],[870,720],[980,960],[375,330]]) {
+    const app=setup({noGL:true,width,height});
+    for(let frame=0;frame<12;frame++){
+      assert.ok(app.samples.every(([x,y])=>x>=2&&x<=width-2&&y>=2&&y<=height-2),width+'x'+height+' particle clipped');
+      app.samples.length=0;app.step(1000+frame*10000);
+    }
+  }
 });
