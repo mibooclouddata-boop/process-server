@@ -20,7 +20,7 @@ async function freePort() {
   return port;
 }
 (async () => {
-  const exe = path.join(process.env.CARGO_TARGET_DIR || path.join(__dirname,'src-tauri/target'), 'x86_64-pc-windows-msvc/debug/process-server-desktop.exe');
+  const exe = process.env.PROCESS_DESKTOP_EXE || path.join(process.env.CARGO_TARGET_DIR || path.join(__dirname,'src-tauri/target'), 'x86_64-pc-windows-msvc/debug/process-server-desktop.exe');
   assert(fs.existsSync(exe), 'Build the debug executable first');
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'process-desktop-smoke-'));
   let app, browser, fixture, updateServer;
@@ -103,6 +103,16 @@ async function freePort() {
     // Native navigation can replace the initial local document during CDP attachment.
     for (let i = 0; i < 60 && !page.url().startsWith(fixture.url + '/'); i++) await delay(250);
     assert(page.url().startsWith(fixture.url + '/'), `Server did not open: ${page.url()}`);
+    const invalidExcel = await page.evaluate(async () => {
+      try { await window.__TAURI_INTERNALS__.invoke('save_excel', {name:'invalid.exe',bytes:[1]}); return ''; }
+      catch (error) { return String(error); }
+    });
+    assert.match(invalidExcel, /올바른 Excel 파일 이름/, 'Configured ERP may invoke only the validated Excel save path');
+    assert.equal(await controls.evaluate(async () => {
+      try { await window.__TAURI_INTERNALS__.invoke('save_excel', {name:'invalid.exe',bytes:[1]}); return false; }
+      catch (error) { return /not allowed|not permitted|업무 시스템/.test(String(error)); }
+    }), true, 'Local titlebar must not receive the Excel save capability');
+    console.log('PASS: native Excel bridge available to ERP, invalid filenames rejected, local titlebar denied');
     const originalViewport = await page.evaluate(() => ({width:innerWidth,height:innerHeight}));
     const originalDpr = await page.evaluate(() => devicePixelRatio);
     const controlsDpr = await controls.evaluate(() => devicePixelRatio);
@@ -167,6 +177,14 @@ async function freePort() {
     await page.frameLocator('#printFrame').getByText('DESKTOP TEST', {exact:false}).first().waitFor();
     await page.evaluate(() => closeFileViewer());
     assert.equal(await page.evaluate(() => typeof window.__TAURI__), 'undefined');
+    if (process.env.DESKTOP_EXCEL_DIALOG_SMOKE === '1') {
+      await page.evaluate(() => exportAsExcel());
+      console.log('READY: native Excel Save As dialog');
+      await page.getByRole('status').filter({hasText:'Excel을 저장했습니다.'}).waitFor({timeout:180000});
+      const savedPath = (await page.getByRole('status').filter({hasText:'Excel을 저장했습니다.'}).textContent()).replace('Excel을 저장했습니다. ', '');
+      assert.match(fs.readFileSync(savedPath, 'utf8'), /DESKTOP TEST/);
+      console.log('PASS: actual AS Excel button, native Save As and saved ledger content');
+    }
     const cdp = await context.newCDPSession(page);
     await cdp.send('Browser.setDownloadBehavior', {behavior:'allow', downloadPath:profile});
     await page.evaluate(() => {

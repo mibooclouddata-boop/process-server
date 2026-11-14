@@ -2,6 +2,7 @@
 use tauri::{ipc::CapabilityBuilder, Listener, Manager, Webview, WebviewBuilder, WebviewUrl, WindowBuilder, LogicalPosition, LogicalSize, Rect};
 use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
 mod updates;
+mod downloads;
 const APP_NAME: &str = "MIPS";
 #[cfg(windows)]
 mod taskbar;
@@ -37,8 +38,12 @@ fn main() {
     let loopback = matches!(server.host_str(), Some("localhost" | "127.0.0.1" | "[::1]"));
     assert!(server.scheme() == "https" || (cfg!(debug_assertions) && loopback && server.scheme() == "http"));
     assert!(server.username().is_empty() && server.password().is_none() && server.query().is_none() && server.fragment().is_none());
-    tauri::Builder::default().plugin(tauri_plugin_updater::Builder::new().build()).setup(move |app| {
-        // Bundled chrome handles controls; the ERP only gets window dragging.
+    tauri::Builder::default().plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![downloads::save_excel])
+        .setup(move |app| {
+        app.manage(downloads::DownloadOrigin(server.clone()));
+        // Bundled chrome handles controls; ERP gets dragging and a user-selected Excel save.
         app.add_capability(CapabilityBuilder::new("desktop-window-controls")
             .webview("titlebar")
             .permission("core:window:allow-minimize")
@@ -52,7 +57,8 @@ fn main() {
         app.add_capability(CapabilityBuilder::new("erp-header-drag")
             .webview("erp").local(false)
             .remote(format!("{}/*", server.origin().ascii_serialization()))
-            .permission("core:window:allow-start-dragging"))?;
+            .permission("core:window:allow-start-dragging")
+            .permission("allow-save-excel"))?;
         let window = WindowBuilder::new(app, "main")
             .icon(tauri::include_image!("icons/icon.png"))?
             .title(APP_NAME).decorations(false).transparent(true)
@@ -68,6 +74,7 @@ fn main() {
         let load_zoom = zoom.clone();
         let content = window.add_child(
             WebviewBuilder::new("erp", WebviewUrl::App("index.html".into())).transparent(true).initialization_script_for_all_frames(include_str!("../../erp-chrome-spacing.js"))
+                .initialization_script_for_all_frames(include_str!("../../excel-download.js"))
                 .on_page_load(move |webview, _| {
                     let maximized = webview.window().is_maximized().unwrap_or(false);
                     let _ = webview.eval(format!("document.documentElement?.classList.toggle('process-desktop-maximized',{maximized});"));

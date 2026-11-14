@@ -1,0 +1,40 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
+const {chromium}=require('playwright');
+test('desktop Excel save keeps bytes and handles cancel, failure, duplicate clicks and ordinary links',async t=>{
+ const browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});t.after(()=>browser.close());
+ const page=await browser.newPage();
+ await page.goto('about:blank');
+ await page.evaluate(()=>{window.calls=[];window.__TAURI_INTERNALS__={invoke:(command,args)=>new Promise((resolve,reject)=>{calls.push({command,args});window.resolveSave=resolve;window.rejectSave=reject;})};});
+ await page.addScriptTag({path:path.join(__dirname,'excel-download.js')});
+ await page.evaluate(()=>{const a=document.createElement('a');a.id='excel';a.download='AS접수목록.xls';a.href=URL.createObjectURL(new Blob([new Uint8Array([239,187,191,65,66,67])],{type:'application/vnd.ms-excel'}));document.body.append(a);a.click();a.click();});
+ await page.waitForFunction(()=>calls.length===1);
+ assert.deepEqual(await page.evaluate(()=>calls[0]),{command:'save_excel',args:{name:'AS접수목록.xls',bytes:[239,187,191,65,66,67]}});
+ await page.evaluate(()=>resolveSave(null));await page.getByRole('status').filter({hasText:'저장을 취소했습니다'}).waitFor();
+ await page.evaluate(()=>document.getElementById('excel').click());await page.waitForFunction(()=>calls.length===2);
+ await page.evaluate(()=>rejectSave('디스크 공간이 부족합니다'));await page.getByRole('status').filter({hasText:'저장하지 못했습니다'}).waitFor();
+ assert.match(await page.getByRole('status').textContent(),/디스크 공간/);
+ await page.evaluate(()=>document.getElementById('excel').click());await page.waitForFunction(()=>calls.length===3);
+ await page.evaluate(()=>resolveSave('C:\\Downloads\\AS접수목록.xls'));await page.getByRole('status').filter({hasText:'저장했습니다'}).waitFor();
+ const cancelled=await page.evaluate(()=>{const a=document.createElement('a');a.download='image.png';a.href='blob:https://example.test/test';const e=new MouseEvent('click',{bubbles:true,cancelable:true});a.addEventListener('click',()=>{},{});document.body.append(a);a.dispatchEvent(e);return e.defaultPrevented;});
+ assert.equal(cancelled,false);
+ assert.equal(await page.evaluate(()=>calls.length),3);
+});
+
+test('real ledger export reaches the native bridge without changing selected rows or formatting',async t=>{
+ const {startFixture}=require('../test-support/as-fixture.cjs');const fixture=await startFixture();let browser;
+ t.after(async()=>{await browser?.close();await fixture.close();});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});
+ const context=await browser.newContext(),page=await context.newPage();
+ await context.request.post(fixture.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ await page.addInitScript(()=>{window.calls=[];window.__TAURI_INTERNALS__={invoke:async(command,args)=>{calls.push({command,args});return 'C:\\Downloads\\ledger.xls';}};});
+ await page.addInitScript({path:path.join(__dirname,'excel-download.js')});
+ await page.goto(fixture.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
+ await page.evaluate(async()=>{switchTab('as',document.querySelector('[data-sub="list"]'),'list');await loadAsList();_asFullList=[{id:'native',asNo:'NATIVE-1',ship:'한 줄 장부',status:'접수',files:[],createdAt:'2026-11-14'}];_asFiltered=_asFullList;_renderAsPage();});
+ await page.locator('#asTableBody .as-row-cb').check();
+ await page.getByRole('button',{name:'Excel',exact:true}).click();await page.waitForFunction(()=>calls.some(c=>c.command==='save_excel'));
+ const result=await page.evaluate(()=>calls.find(c=>c.command==='save_excel'));
+ const html=Buffer.from(result.args.bytes).toString('utf8');
+ assert.match(result.args.name,/^AS접수목록_.*\.xls$/);assert.match(html,/NATIVE-1/);assert.match(html,/한 줄 장부/);assert.match(html,/nowrap/);assert.match(html,/돋움/);assert.match(html,/shrinktofit/);
+ await page.getByRole('status').filter({hasText:'저장했습니다'}).waitFor();
+});

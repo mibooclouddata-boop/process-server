@@ -6,7 +6,7 @@
     "dev": "node run.cjs dev",
     "build": "node run.cjs build",
     "build:local": "node run.cjs build-local",
-    "test": "node --test url.test.cjs titlebar.test.cjs update-ui.test.cjs entry-flow.test.cjs release.test.cjs",
+    "test": "node --test url.test.cjs titlebar.test.cjs update-ui.test.cjs entry-flow.test.cjs release.test.cjs excel-download.test.cjs",
     "info": "tauri info",
     "pretest": "node prepare.cjs"
   },
