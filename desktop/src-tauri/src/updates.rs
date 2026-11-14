@@ -19,7 +19,7 @@ pub fn setup(app: &AppHandle, content: Webview, allowed: Arc<AtomicBool>, connec
     app.listen("desktop-update-check", move |_| {
         if allowed.load(Ordering::SeqCst) { connect(); return; }
         if check_busy.swap(true, Ordering::SeqCst) { return; }
-        let (app, view, pending, busy, allowed, connect) = (handle.clone(), view.clone(), check_pending.clone(), check_busy.clone(), allowed.clone(), connect.clone());
+        let (app, view, pending, busy, allowed) = (handle.clone(), view.clone(), check_pending.clone(), check_busy.clone(), allowed.clone());
         tauri::async_runtime::spawn(async move {
             render(&view, json!({"state":"checking"}));
             *pending.lock().unwrap() = None;
@@ -46,8 +46,8 @@ pub fn setup(app: &AppHandle, content: Webview, allowed: Arc<AtomicBool>, connec
                 }
                 Ok(None) => {
                     allowed.store(true,Ordering::SeqCst);
-                    render(&view,json!({"state":"connecting"}));
-                    connect();
+                    // The local cover decides whether a just-updated app waits for access.
+                    render(&view,json!({"state":"ready"}));
                 }
                 Err(error) => {
                     eprintln!("Update check failed: {error}");

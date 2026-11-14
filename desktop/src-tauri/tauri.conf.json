@@ -10,7 +10,7 @@
     "windows": [],
     "security": {
       "capabilities": [],
-      "csp": "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' asset: http://asset.localhost"
+      "csp": "default-src 'none'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self' asset: http://asset.localhost"
     }
   },
   "bundle": {

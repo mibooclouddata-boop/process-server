@@ -77,9 +77,13 @@ async function freePort() {
     await page.getByRole('button',{name:'다시 시도'}).waitFor();
     assert(page.url().startsWith('http://tauri.localhost/'),'Invalid signature must not unlock ERP');
     updateMode='none';
-    await page.getByRole('button',{name:'다시 시도'}).click();
+    await page.evaluate(()=>localStorage.setItem('erp-update-access-pending','true'));
+    await page.reload();
+    await page.getByRole('button',{name:'업무시스템 접속',exact:true}).waitFor();
+    assert(page.url().startsWith('http://tauri.localhost/'),'Updated app waits for access after startup check');
+    await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();
     await page.waitForURL(fixture.url+'/**');
-    console.log('PASS: mandatory update gate, offline retry, bypass rejection, invalid signature rejected');
+    console.log('PASS: mandatory update gate, offline retry, bypass rejection, invalid signature rejected, post-update access');
     assert.equal(await controls.locator('button').first().evaluate(el => getComputedStyle(el).width), '32px');
     // Native navigation can replace the initial local document during CDP attachment.
     for (let i = 0; i < 60 && !page.url().startsWith(fixture.url + '/'); i++) await delay(250);

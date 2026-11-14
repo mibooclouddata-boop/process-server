@@ -17,7 +17,7 @@ fn connect(content: Webview, chrome: Webview, server: tauri::Url, busy: Arc<Atom
             .redirect(reqwest::redirect::Policy::none())
             .build().and_then(|client| client.head(server.clone()).send());
         let status = if result.is_ok_and(|response| !response.status().is_server_error()) {
-            if content.navigate(server).is_ok() { "Process ERP" } else { "연결 실패 · 다시 연결을 눌러주세요" }
+            if content.navigate(server.join("login.html").unwrap_or(server)).is_ok() { "Process ERP" } else { "연결 실패 · 다시 연결을 눌러주세요" }
         } else { "연결 실패 · 다시 연결을 눌러주세요" };
         let encoded = serde_json::to_string(status).expect("status string");
         if status != "Process ERP" {

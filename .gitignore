@@ -19,3 +19,6 @@ data/
 supabase/.temp/
 # AS atomic storage generations and process locks
 as.json.*
+
+# Generated desktop cover assets (desktop/prepare.cjs)
+desktop/assets/cover-assets/
