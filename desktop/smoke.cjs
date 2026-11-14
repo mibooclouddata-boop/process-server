@@ -63,6 +63,18 @@ async function freePort() {
     }
     assert(page, 'ERP window was not created: ' + JSON.stringify(context.pages().map(p => p.url())));
     assert(controls, 'Local titlebar was not created');
+    assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),true,'The application must start maximized');
+    await page.waitForFunction(()=>document.documentElement.classList.contains('process-desktop-maximized'));
+    assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).clipPath),'none','Maximized startup fills the square screen edges');
+    const maximizedViewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight,screenWidth:screen.availWidth,screenHeight:screen.availHeight}));
+    assert(Math.abs(maximizedViewport.width-maximizedViewport.screenWidth)<=16,'Content must fill the maximized screen width');
+    assert(Math.abs(maximizedViewport.height-maximizedViewport.screenHeight)<=16,'Content must fill the maximized screen height');
+    await controls.getByRole('button',{name:'이전 크기로',exact:true}).click();
+    await controls.waitForFunction(async()=>!await window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'}));
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('process-desktop-maximized'));
+    assert.notEqual(await page.evaluate(()=>getComputedStyle(document.documentElement).clipPath),'none','Restoring the window keeps rounded corners');
+    console.log('PASS: maximized startup, filled edges, restore button and rounded window');
+    if(process.env.DESKTOP_SMOKE_STARTUP_ONLY==='1')return;
     await page.getByRole('button',{name:'다시 시도'}).waitFor();
     await controls.getByRole('button',{name:'다시 연결',exact:true}).click();
     await page.evaluate(url=>{location.href=url;},fixture.url);
