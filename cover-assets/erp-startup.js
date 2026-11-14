@@ -41,7 +41,7 @@
   }else if(data.state==='installing'){
    busy('업데이트 설치 중',true);
   }else if(data.state==='error'){
-   pendingAccess(false);
+   if(next==='desktop-update-install')pendingAccess(false);
    ready('다시 시도');next='desktop-update-check';status.hidden=false;status.textContent=data.message;
   }
  };

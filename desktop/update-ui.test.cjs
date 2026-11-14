@@ -41,6 +41,8 @@ test('required update separates connection waves from install dots and resumes a
   assert.equal(await page.locator('.startup-dots').isVisible(),true);
   assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none');
   await page.reload();
+  await page.evaluate(()=>window.renderUpdate({state:'error',message:'연결 실패'}));
+  assert.equal(await page.evaluate(()=>localStorage.getItem('erp-update-access-pending')),'true','A failed check after restart must preserve post-update access');
   await page.evaluate(()=>window.renderUpdate({state:'ready'}));
   assert.equal(await page.locator('#action .action-label').innerText(),'업무시스템 접속');
   assert.equal(await page.evaluate(()=>calls.length),1,'Updated app waits for access after restart');
