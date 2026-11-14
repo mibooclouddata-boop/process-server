@@ -48,8 +48,10 @@ test('central write indicator follows actual responses and preserves forms on fa
  });
  await page.evaluate(()=>openAsModal());
  await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('B01');
+ await page.locator('#asIntakeNext').click();
  await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('로딩 검증');
  await page.locator('#asDeliveryAgreedDate').fill('2099-12-31');
+ await page.locator('#asIntakeNext').click();
  const save=page.locator('#asModal button[onclick="submitAs()"]'),progress=page.locator('#asWriteProgress');
  const failedRequest=nextRequest(),failedStarted=Date.now();
  await save.click();await failedRequest;await progress.waitFor({state:'visible'});

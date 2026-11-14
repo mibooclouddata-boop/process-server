@@ -15,7 +15,9 @@ test('browser retries a committed receipt once, preserves stale edits, and recor
   await page.goto(fixture.url+'/dashboard.html');await page.waitForFunction(()=>currentUser?.id==='admin');
   await page.evaluate(()=>openAsModal());
   await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('B01');
+  await page.locator('#asIntakeNext').click();
   await page.locator('#asReasonSelect').selectOption('기타');await page.locator('#asReason').fill('browser fixture');
+  await page.locator('#asIntakeNext').click();
   await page.locator('#asFiles').setInputFiles({name:'fixture.txt',mimeType:'text/plain',buffer:Buffer.from('fixture attachment')});
   let dropped=false;const keys=[];
   await page.route('**/api/as',async route=>{
@@ -39,9 +41,10 @@ test('browser retries a committed receipt once, preserves stale edits, and recor
   assert(await page.locator('#asViewerRequestReview').isVisible());
   await page.evaluate(()=>closeFileViewer());
   await page.evaluate(async()=>{await loadAsList();openAsModal(_asFullList[0]);});
+  await page.locator('#asIntakeNext').click();
   const id=stored.list[0].id;
   assert.equal((await context.request.put(fixture.url+'/api/as/'+id,{headers:headers(),data:{version:0,remark:'another editor'}})).status(),200);
-  await page.locator('#asRemark').fill('unsaved draft');await save.click();
+  await page.locator('#asRemark').fill('unsaved draft');await page.locator('#asIntakeNext').click();await save.click();
   await page.waitForFunction(()=>!asSaving&&document.getElementById('asModalMsg').textContent.includes('다른 사용자'));
   assert.equal(await page.locator('#asRemark').inputValue(),'unsaved draft');assert.equal(fixture.read('as.json').list[0].remark,'another editor');
   await page.evaluate(()=>closeAsModal());

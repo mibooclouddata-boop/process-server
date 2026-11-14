@@ -61,6 +61,15 @@ test('sequential stages and delivery deadline are required',()=>{
  assert.throws(()=>run(base(),{action:'advance',next:'완료',completionNote:'완료'}));
  assert.throws(()=>run(a,{action:'advance',next:'완료',completedDate:day,completionNote:'완료'}));
 });
+
+test('on-site work permits no delivery agreement but still rejects malformed dates',()=>{
+ let item=start({...base(),action:'현장 시수',deliveryAgreedDate:''});
+ assert.equal(item.deliveryAgreedDate,'');
+ for(const next of ['도장 요청','납품 요청','완료'])item=run(item,{action:'advance',next,completedDate:day});
+ assert.equal(item.status,'완료');
+ assert.throws(()=>start({...base(),action:'현장 시수',deliveryAgreedDate:'2026-02-30'}));
+ for(const action of ['출장 AS','신품 제작',''])assert.throws(()=>start({...base(),action,deliveryAgreedDate:''}));
+});
 test('bad dates, reverse moves and concurrent edits rejected without mutation',()=>{
  assert.equal(dateValid('2026-02-30'),false);assert.equal(dateValid('2024-02-29'),true);
  assert.throws(()=>run(base(),{action:'advance',next:'제작 요청',deliveryAgreedDate:'2026-02-30'}));
