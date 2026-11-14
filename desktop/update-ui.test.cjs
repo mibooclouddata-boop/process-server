@@ -53,11 +53,11 @@ test('required update separates connection waves from install dots and resumes a
   assert.equal(await page.evaluate(()=>calls.length),1,'Updated app waits for access after restart');
   await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();await page.clock.fastForward(5000);
   assert.equal(await page.evaluate(()=>calls.at(-1)),'desktop-update-check');
-  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'startup-wave');
+  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none');
   await page.evaluate(()=>window.renderUpdate({state:'connecting'}));
-  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'startup-wave','Keep the wave when entering ERP');
+  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none','Access uses dots while startup checks keep their wave');
   assert.equal(await page.locator('progress').isVisible(),false);
-  assert.equal(await page.locator('.startup-dots').isVisible(),false);
+  assert.equal(await page.locator('.startup-dots').isVisible(),true);
   await page.evaluate(()=>window.renderUpdate({state:'error',message:'다운로드에 실패했습니다.'}));
   assert.equal(await page.evaluate(()=>localStorage.getItem('erp-update-access-pending')),null);
   assert.equal(await page.locator('.startup-dots').isVisible(),false);
@@ -86,7 +86,7 @@ test('real browser cover checks the login endpoint and recovers from connection 
   await page.locator('#action').click();
   assert.equal(await page.locator('#action').isDisabled(),true);
   assert.equal(await page.locator('#action .action-label').innerText(),'업무시스템 접속 중');
-  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'startup-wave');
+  assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none');
   while(!release)await new Promise(r=>setTimeout(r,10));
   release();await page.getByRole('button',{name:'다시 시도'}).waitFor();
   assert.equal(page.url(),'https://erp.test/');
@@ -100,7 +100,7 @@ test('startup waves remain for five seconds before update availability and ERP a
  const browser=await chromium.launch({headless:true,channel:'msedge'});
  try{
  const page=await browser.newPage();
- await page.clock.install({time:new Date('2026-01-01T00:00:00Z')});await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));
+ await page.clock.install({time:new Date(0)});await page.clock.pauseAt(new Date(60000));
  await page.route('https://startup.test/**',route=>{
  const name=new URL(route.request().url()).pathname.slice(1)||'cover.html';
  let body=fs.readFileSync(path.join(__dirname,'..',name));
@@ -121,7 +121,8 @@ test('startup waves remain for five seconds before update availability and ERP a
  const before=await page.evaluate(()=>calls.length);
  await page.locator('#action').click();
  await page.clock.fastForward(4999);assert.equal(await page.evaluate(()=>calls.length),before,'Do not leave the cover before five seconds');
- assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'startup-wave');
+ assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'none');
+ assert(await page.locator('.startup-dots').isVisible(),'Access keeps dots throughout the existing five-second minimum');
  await page.clock.fastForward(1);assert.equal(await page.evaluate(()=>calls.length),before+1);
  await page.evaluate(()=>renderUpdate({state:'checking'}));
  await page.evaluate(()=>renderUpdate({state:'ready'}));

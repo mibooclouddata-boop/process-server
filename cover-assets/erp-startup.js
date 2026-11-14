@@ -27,7 +27,7 @@
  }
  function busy(text,updating=false){label.textContent=text;action.disabled=true;action.setAttribute('aria-busy','true');action.classList.add('is-loading');action.classList.toggle('is-connecting',!updating);dots.hidden=!updating;progress.hidden=updating;progress.removeAttribute('value');}
  function ready(text){label.textContent=text;action.disabled=false;action.setAttribute('aria-busy','false');action.classList.remove('is-loading','is-connecting');progress.hidden=true;dots.hidden=true;}
- function connecting(){busy('업무시스템 접속 중');progress.hidden=true;}
+ function connecting(){busy('업무시스템 접속 중',true);progress.hidden=true;}
  window.renderUpdate=data=>{
   clearTimeout(stateTimer);
   if(data.state==='checking')checkingStarted=performance.now();
@@ -68,7 +68,8 @@
   if(desktop){await emit(next);return;}
   connecting();status.hidden=true;
   try{
-   await Promise.all([fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)}).then(response=>{if(!response.ok)throw Error('Server unavailable');return response;}),waitForConnection()]);
+   const [response]=await Promise.all([fetch(destination,{method:'HEAD',cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)}).catch(()=>null),waitForConnection()]);
+   if(!response?.ok)throw Error('Server unavailable');
    location.assign(destination.href);
   }catch{ready('다시 시도');status.hidden=false;status.textContent='업무시스템에 연결할 수 없습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.';}
  });

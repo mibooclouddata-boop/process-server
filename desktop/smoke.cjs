@@ -81,8 +81,11 @@ async function freePort() {
     await page.reload();
     await page.getByRole('button',{name:'업무시스템 접속',exact:true}).waitFor();
     assert(page.url().startsWith('http://tauri.localhost/'),'Normal startup waits for access even without a post-update flag');
+    const accessStarted=Date.now();
     await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();
+    assert(await page.locator('.startup-dots').isVisible(),'Access displays three dots');
     await page.waitForURL(fixture.url+'/**');
+    assert(Date.now()-accessStarted>=2000,'Access motion must last at least two seconds');
     console.log('PASS: mandatory update gate, offline retry, bypass rejection, invalid signature rejected, post-update access');
     assert.equal(await controls.locator('button').first().evaluate(el => getComputedStyle(el).width), '32px');
     // Native navigation can replace the initial local document during CDP attachment.
@@ -138,8 +141,10 @@ async function freePort() {
     await page.evaluate(() => openAsModal());
     await page.locator('#asShip').fill('DESKTOP TEST');
     await page.locator('#asBlock').fill('B01');
+    await page.locator('#asIntakeNext').click();
     await page.locator('#asReasonSelect').selectOption('기타');
     await page.locator('#asReason').fill('Tauri verification');
+    await page.locator('#asIntakeNext').click();
     await page.locator('#asFiles').setInputFiles({name:'desktop.txt',mimeType:'text/plain',buffer:Buffer.from('desktop attachment')});
     await page.locator('#asModal button[onclick="submitAs()"]' ).click();
     await page.locator('#asModal').waitFor({state:'hidden'});

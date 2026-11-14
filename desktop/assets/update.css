@@ -1,2 +1,4 @@
-html{clip-path:inset(0 round 26px)}
+html{height:100%;background:transparent!important;clip-path:inset(0 round calc(26px / var(--desktop-zoom,1)))}
+body{background:transparent!important;isolation:isolate}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--flow-shell,#e5eaf0)}
 html.process-desktop-maximized{clip-path:none}

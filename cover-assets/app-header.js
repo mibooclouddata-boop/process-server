@@ -46,7 +46,8 @@ window.AppHeader=(()=>{
   reduced.addEventListener('change',()=>{if(reduced.matches)cancel();});
   return {start(tab,sub){
    cancel();frame=undefined;seen=new WeakSet();page=tab==='as'?(sub||'stats'):tab;
-   if(reduced.matches||!main||!selectors[page])return;
+   // The login crossfade owns the first entrance; observing it here would replay after reveal.
+   if(reduced.matches||!main||!selectors[page]||document.getElementById('dashboard')?.inert)return;
    observer=new MutationObserver(schedule);
    observer.observe(main,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','aria-busy']});
    schedule();

@@ -1,7 +1,7 @@
 (() => {
   // ERP gets only window dragging; all other window controls stay in the local overlay.
   const apply = () => {
-    const background = getComputedStyle(document.body).background;
+    const background = document.body.dataset.desktopStartup === 'true' ? 'var(--flow-shell,#e5eaf0)' : getComputedStyle(document.body).background;
     const style = document.createElement('style');
     style.textContent = 'body #dashboard .app-header-tools{margin-right:calc(248px / var(--desktop-zoom,1))!important}' + (window.top === window.self ? `
       html{height:100%;background:transparent!important;clip-path:inset(0 round calc(var(--app-radius,26px) / var(--desktop-zoom,1)))}
