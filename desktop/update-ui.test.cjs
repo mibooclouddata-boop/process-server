@@ -16,7 +16,11 @@ test('required update separates connection waves from install dots and resumes a
   assert.equal(await page.locator('#action').isDisabled(),true);
   assert.equal(await page.locator('#action').evaluate(el=>getComputedStyle(el,'::after').animationName),'startup-wave');
   await page.evaluate(()=>window.renderUpdate({state:'ready'}));
-  assert.equal(await page.evaluate(()=>calls.length),2,'Normal startup automatically connects after successful check');
+  assert.equal(await page.evaluate(()=>calls.length),1,'A successful check must keep the landing page until access is clicked');
+  assert.equal(await page.locator('#action .action-label').innerText(),'업무시스템 접속');
+  assert.equal(await page.locator('#action').isDisabled(),false);
+  await page.getByRole('button',{name:'업무시스템 접속',exact:true}).click();
+  assert.equal(await page.evaluate(()=>calls.length),2,'Access starts only after the user clicks');
   await page.evaluate(()=>window.renderUpdate({state:'available',version:'0.2.1',current:'0.2.0',notes:'<img src=x onerror=alert(1)>\n배율 개선'}));
   assert.equal(await page.getByRole('button',{name:'나중에'}).count(),0);
   assert.equal(await page.locator('#notes img').count(),0);

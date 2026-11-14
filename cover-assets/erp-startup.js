@@ -29,8 +29,7 @@
   status.hidden=true;status.textContent='';
   busy('업무시스템 접속 중');
   if(data.state==='ready'){
-   if(pendingAccess()){ready('업무시스템 접속');next='desktop-access';pendingAccess(false);}
-   else emit('desktop-access');
+   ready('업무시스템 접속');next='desktop-access';pendingAccess(false);
   }else if(data.state==='connecting'){
    connecting();
   }else if(data.state==='available'){
