@@ -49,17 +49,16 @@
  oldPicker.replaceWith(picker);picker.append(fileButton,fileHelp,fileLimit,fileInput);
  body.replaceChildren(heading,...panels,byId('asStatus'));
  byId('asAmountHint').textContent='금액을 입력하는 경우 이체 영수증을 첨부해 주세요.';
- const progress=document.createElement('span');progress.id='asIntakeProgress';footer.prepend(progress);
  const previous=document.createElement('button');previous.type='button';previous.id='asIntakePrevious';previous.className='admin-btn admin-btn-secondary';previous.textContent='이전';
  const submit=footer.querySelector('[onclick="submitAs()"]');submit.id='asIntakeNext';footer.insertBefore(previous,submit);
- const cancel=footer.querySelector('[onclick="closeAsModal()"]');
+ const cancel=footer.querySelector('[onclick="closeAsModal()"]');cancel.id='asIntakeCancel';
  const message=byId('asModalMsg');message.setAttribute('role','alert');message.setAttribute('aria-live','polite');
  function updateAction(){byId('asDeliveryAgreedDateHint').textContent=byId('asActionSelect').value==='현장 시수'?'현장 시수는 납품 협의일을 입력하지 않아도 됩니다.':'미정이면 비워두세요.';}
  function paint(focus=false){
   byId('asIntakeHeading').textContent=titles[step];byId('asIntakeDescription').textContent=descriptions[step];
   panels.forEach((panel,i)=>panel.hidden=i!==step);
   nav.querySelectorAll('button').forEach((button,i)=>{if(i===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
-  progress.textContent=`${step+1} / 3 단계`;previous.hidden=step===0;cancel.hidden=step>0;
+  previous.hidden=step===0;
   submit.textContent=['다음','다음','저장'][step];body.scrollTop=0;
   if(focus)byId('asIntakeHeading').focus({preventScroll:true});
  }
