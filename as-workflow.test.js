@@ -45,10 +45,14 @@ test('AS Excel export respects selection and sizes Korean columns without losing
  assert.equal([...wide.matchAll(/<col[^>]*width:[\d.]+pt;/g)].length,13);
  const cells=[...long.matchAll(/<(?:td|th)\b([^>]*)>/g)];
  assert.equal(cells.length,26);
- for(const [,attributes] of cells){
-  assert.match(attributes,/align="center"/);assert.match(attributes,/valign="middle"/);
-  assert.match(attributes,/text-align:center;vertical-align:middle/);
- }
+ cells.forEach(([,attributes],index)=>{
+  const column=index%13,alignment=column===11?'right':[2,4,5].includes(column)?'center':'left';
+  assert(attributes.includes('align="'+alignment+'"'));assert.match(attributes,/valign="middle"/);
+  assert(attributes.includes('text-align:'+alignment+';vertical-align:middle'));
+ });
+ assert.match(long,/font-family:"돋움",Dotum,sans-serif;font-size:10\.5pt/);
+ assert.match(long,/border:1px solid #a9b1b8/);assert.match(long,/background:#e4e6e8/);assert.equal([...long.matchAll(/<th bgcolor="#e4e6e8"/g)].length,13);
+ assert.match(long,/height:21\.75pt/);assert.equal(measure.font,'10.5pt "돋움", Dotum, sans-serif');
 });
 test('full route preserves deadline, completion dates and audit history',()=>{
  let a=start(base());assert.equal(a.status,'제작 요청');

@@ -3444,17 +3444,18 @@ function exportAsExcel() {
   // Measure the export font so wide Latin and Korean text receive enough space.
   const measure = document.createElement('canvas').getContext?.('2d');
   // Leave room for differences between browser and Excel font rendering.
-  if (measure) measure.font = '11pt "Malgun Gothic", "맑은 고딕", sans-serif';
+  if (measure) measure.font = '10.5pt "돋움", Dotum, sans-serif';
   const textWidth = text => Math.ceil(measure ? measure.measureText(text.replace(/\t/g, '    ')).width * 1.15 : Array.from(text).reduce((width, ch) => width + (ch === '\t' ? 28 : ch.codePointAt(0) > 255 ? 14 : 7), 0));
   const widths = cols.map(title => Math.max(90, textWidth(title) + 24));
   rows.forEach(row => row.forEach((value, column) => {
     widths[column] = Math.max(widths[column], textWidth(value) + 24);
   }));
   const escapeCell = value => String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>table{border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #999;padding:6px 10px;font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:11pt;font-weight:400;vertical-align:top;white-space:nowrap;word-wrap:normal;overflow-wrap:normal}tr{mso-height-source:auto}th{background:#f2f2f2;text-align:center;vertical-align:middle;font-weight:700}</style></head><body><table>'
+  const cellAlign = column => column === 11 ? 'right' : [2,4,5].includes(column) ? 'center' : 'left';
+  const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>table{border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #a9b1b8;padding:3px 10px;font-family:"돋움",Dotum,sans-serif;font-size:10.5pt;font-weight:400;color:#222c35;vertical-align:middle;white-space:nowrap;word-wrap:normal;overflow-wrap:normal}tr{mso-height-source:auto}th{background:#e4e6e8;color:#20262d;border-bottom:1px solid #808993;vertical-align:middle;font-weight:700}</style></head><body><table>'
     + '<colgroup>' + widths.map(width => '<col width="' + width + '" style="width:' + (width * .75) + 'pt;mso-width-source:userset">').join('') + '</colgroup>'
-    + '<tr height="32">' + cols.map((c, i) => '<th width="' + widths[i] + '" align="center" valign="middle" style="text-align:center;vertical-align:middle;font-weight:700"><b>' + escapeCell(c) + '</b></th>').join('') + '</tr>'
-    + rows.map(r => '<tr height="30" style="height:22.5pt">' + r.map((v, i) => '<td width="' + widths[i] + '" align="center" valign="middle" style="text-align:center;vertical-align:middle;mso-text-control:shrinktofit">' + escapeCell(v) + '</td>').join('') + '</tr>').join('')
+    + '<tr height="39" style="height:29.25pt;mso-height-source:userset">' + cols.map((c, i) => '<th bgcolor="#e4e6e8" width="' + widths[i] + '" align="' + cellAlign(i) + '" valign="middle" style="text-align:' + cellAlign(i) + ';vertical-align:middle;font-weight:700;background-color:#e4e6e8;color:#20262d;border-bottom:1px solid #808993"><b>' + escapeCell(c) + '</b></th>').join('') + '</tr>'
+    + rows.map(r => '<tr height="29" style="height:21.75pt;mso-height-source:userset">' + r.map((v, i) => '<td width="' + widths[i] + '" align="' + cellAlign(i) + '" valign="middle" style="text-align:' + cellAlign(i) + ';vertical-align:middle;mso-text-control:shrinktofit">' + escapeCell(v) + '</td>').join('') + '</tr>').join('')
     + '</table></body></html>';
   const blob = new Blob(['\uFEFF' + htmlExport], { type: 'application/vnd.ms-excel;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
