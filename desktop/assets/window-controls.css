@@ -1,0 +1,7 @@
+html,body{margin:0;padding:0;overflow:hidden;background:transparent}
+#process-window-controls{display:flex;width:232px;height:32px;align-items:center;color:#526073;user-select:none}
+select{box-sizing:border-box;width:72px;flex:0 0 72px;height:28px;border:0;border-radius:6px;background:transparent;color:inherit;font:12px "Segoe UI",sans-serif;padding:0 4px;cursor:pointer}select:hover{background:#e2e7ed}select:focus-visible{outline:2px solid #0066e9;outline-offset:-2px}option{background:#fff;color:#202123}
+button,.drag{box-sizing:border-box;flex:0 0 32px;display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:7px;background:transparent;color:inherit;cursor:default}
+button:hover{background:#e2e7ed;color:#111827}button:focus-visible{outline:2px solid #0066e9;outline-offset:-3px}
+.drag{cursor:grab}.drag:active{cursor:grabbing}.close:hover{background:#c42b1c;color:white}
+svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.2;pointer-events:none}.drag svg{width:16px;height:16px;stroke-width:2;stroke-linecap:round}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Process ERP",
+  "version": "0.2.0",
+  "identifier": "com.processserver.erp",
+  "build": {
+    "frontendDist": "../assets"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "capabilities": [],
+      "csp": "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' asset: http://asset.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": [
+          "Korean"
+        ]
+      }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNFQTdGQUU1M0QyQTQ2NDYKUldSR1Jpbzk1ZnFuUGgvUWVNV2tkaFhoUjdBbkxGSkZaaEpXZW9tZnBOVkFlNFRQVDZ2Y0lEWEcK",
+      "endpoints": [
+        "https://github.com/mibooclouddata-boop/process-server/releases/download/desktop-test-channel/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}
