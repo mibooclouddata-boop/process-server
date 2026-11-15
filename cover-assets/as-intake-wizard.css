@@ -76,7 +76,7 @@ body:has(#asModal.as-intake-wizard.open) #appDatePicker .toss-cal-quick{margin-t
 #asModal.as-intake-wizard .as-date-control:has(.as-date-clear:not([hidden])) input::-webkit-calendar-picker-indicator{opacity:0}
 @media(prefers-reduced-motion:reduce){#asModal.as-intake-wizard #asDeliveryAgreedDate,#asModal.as-intake-wizard .modal-field:has(#asDeliveryAgreedDate)>label{transition:none!important}}
 #asModal.as-intake-wizard :is(#asNewFiles,#asExistingFiles) .as-attachment-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border-bottom:1px solid #e1e4e8;background:none;border-radius:0;color:#202123}
-#asModal.as-intake-wizard .as-attachment-type{width:34px;flex:none;font-size:11px;color:#59636e}
+#asModal.as-intake-wizard .as-attachment-type{width:44px;min-height:0;padding:0;border:0;border-radius:0;display:block;flex:none;font-size:11px;font-weight:400;color:#59636e;white-space:nowrap;overflow-wrap:normal}
 #asModal.as-intake-wizard .as-attachment-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 #asModal.as-intake-wizard .as-attachment-info small{font-size:12px;color:#59636e}
 #asModal.as-intake-wizard .as-attachment-name{font:inherit;font-size:14px;color:#202123;overflow-wrap:anywhere;text-align:left;background:none;border:0;padding:0}
