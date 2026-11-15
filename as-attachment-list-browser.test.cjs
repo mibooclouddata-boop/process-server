@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
 test('attachment list preserves upload control and removes only selected files',async t=>{
  const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close()});
- browser=await chromium.launch({channel:'msedge',headless:true});const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});const context=await browser.newContext({viewport:{width:1440,height:1000}});
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  const page=await context.newPage();await page.goto(f.url+'/dashboard.html#as-list');await page.waitForFunction(()=>typeof currentUser!=='undefined'&&currentUser?.id==='admin');
  await page.evaluate(()=>openAsModal());await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asIntakeNext').click();await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asIntakeNext').click();
