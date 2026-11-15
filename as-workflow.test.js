@@ -47,7 +47,7 @@ test('AS Excel export respects selection and sizes Korean columns without losing
  const cells=[...long.matchAll(/<(?:td|th)\b([^>]*)>/g)];
  assert.equal(cells.length,28);
  cells.forEach(([,attributes],index)=>{
-  const column=index%14,alignment=column===12?'right':[2,5,6].includes(column)?'center':'left';
+  const alignment='center';
   assert(attributes.includes('align="'+alignment+'"'));assert.match(attributes,/valign="middle"/);
   assert(attributes.includes('text-align:'+alignment+';vertical-align:middle'));
  });

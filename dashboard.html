@@ -3458,7 +3458,7 @@ function exportAsExcel() {
     widths[column] = Math.max(widths[column], textWidth(value) + 24);
   }));
   const escapeCell = value => String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const cellAlign = column => column === 12 ? 'right' : [2,5,6].includes(column) ? 'center' : 'left';
+  const cellAlign = () => 'center';
   const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>table{border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #a9b1b8;padding:3px 10px;font-family:"돋움",Dotum,sans-serif;font-size:10.5pt;font-weight:400;color:#222c35;vertical-align:middle;white-space:nowrap;word-wrap:normal;overflow-wrap:normal}tr{mso-height-source:auto}th{background:#e4e6e8;color:#20262d;border-bottom:1px solid #808993;vertical-align:middle;font-weight:700}</style></head><body><table>'
     + '<colgroup>' + widths.map(width => '<col width="' + width + '" style="width:' + (width * .75) + 'pt;mso-width-source:userset">').join('') + '</colgroup>'
     + '<tr height="39" style="height:29.25pt;mso-height-source:userset">' + cols.map((c, i) => '<th bgcolor="#e4e6e8" width="' + widths[i] + '" align="' + cellAlign(i) + '" valign="middle" style="text-align:' + cellAlign(i) + ';vertical-align:middle;font-weight:700;background-color:#e4e6e8;color:#20262d;border-bottom:1px solid #808993"><b>' + escapeCell(c) + '</b></th>').join('') + '</tr>'
