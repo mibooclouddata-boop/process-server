@@ -5,6 +5,22 @@ const {spawn}=require('node:child_process');
 const {createAsStore}=require('./as-store'),{createAsService}=require('./as-service');
 const owner={id:'fixture-owner',name:'Fixture',role:'worker',asPermissions:['create','production','painting','delivery']},other={id:'fixture-other',name:'Fixture',role:'worker',asPermissions:['create','production','painting','delivery']},admin={id:'fixture-admin',name:'Admin',role:'sysadmin'};
 const base={ship:'TEST',block:'B01',reason:'test reason',deliveryAgreedDate:'2026-11-01'};
+test('requesting company is validated, persisted and retained across partial and legacy updates',async t=>{
+ const {service}=fixture(t);
+ let {item}=await service.create({...base,requestingCompany:'  테스트 요청 업체  '},[],owner,randomUUID());
+ assert.equal(item.requestingCompany,'테스트 요청 업체');
+ assert.equal((await service.list())[0].requestingCompany,'테스트 요청 업체');
+ item=(await service.update(item.id,{version:item.version,remark:'부분 수정'},[],owner,randomUUID())).item;
+ assert.equal(item.requestingCompany,'테스트 요청 업체');
+ item=(await service.update(item.id,{version:item.version,requestingCompany:'변경 업체'},[],owner,randomUUID())).item;
+ assert.equal(item.requestingCompany,'변경 업체');
+ item=(await service.update(item.id,{version:item.version,requestingCompany:''},[],owner,randomUUID())).item;
+ assert.equal(item.requestingCompany,'');
+ for(const value of [null,123,{},'가'.repeat(101),'bad\u0001name'])await denied(()=>service.create({...base,requestingCompany:value},[],owner,randomUUID()),400);
+ assert.equal((await service.list()).length,1);
+ assert.equal((await service.history(item.id,owner)).at(-1).before.requestingCompany,'변경 업체');
+ assert.equal((await service.create(base,[],owner,randomUUID())).success,true);
+});
 const denied=(fn,status)=>assert.rejects(Promise.resolve().then(fn),{status});
 function fixture(t,options={}){
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'as-integrity-')),file=path.join(dir,'as.json');

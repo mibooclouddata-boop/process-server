@@ -23,7 +23,7 @@
  choices.innerHTML=['사내','사외','기타'].map(value=>`<label${value==='기타'?' hidden':''}><input type="radio" name="asIntakeCategory" value="${value}"${value==='기타'?' hidden':''}><span>${value}</span></label>`).join('');
  field('asCategory').append(choices);
  field('asCategory').querySelector('label').hidden=true;
- panels[0].append(field('asCategory'),material.querySelector('.as-intake-material'),material.querySelector('.as-intake-location'));
+ panels[0].append(field('asRequestingCompany'),field('asCategory'),material.querySelector('.as-intake-material'),material.querySelector('.as-intake-location'));
  field('asElement').querySelector('label').textContent='엘레멘탈';
  byId('asElement').placeholder='엘레멘탈 입력';
  byId('asShip').placeholder='호선 입력';byId('asBlock').placeholder='블록 입력';
@@ -97,7 +97,7 @@
   if(!modal.classList.contains('open'))return;
   step=0;message.textContent='';modal.querySelectorAll('[aria-invalid]').forEach(input=>input.removeAttribute('aria-invalid'));
   choices.querySelectorAll('input').forEach(input=>{input.checked=input.value===category.value;input.hidden=input.value==='기타'&&category.value!=='기타';input.closest('label').hidden=input.hidden;});
-  updateAction();paint();byId('asProduct').focus({preventScroll:true});
+  updateAction();paint();byId('asRequestingCompany').focus({preventScroll:true});
  };
  window.closeAsModal=function(){if(asSaving)return;originalClose();if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});};
  window.submitAs=async function(){

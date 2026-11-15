@@ -5,7 +5,7 @@ const amount = require('./as-amount');
 const permissions = require('./as-permissions');
 const error = (message, status=400) => Object.assign(new Error(message), {status});
 const fail = (message,status) => {throw error(message,status);};
-const fields = {ship:100,block:100,element:200,product:300,materialCode:100,reason:2000,action:2000,remark:2000};
+const fields = {requestingCompany:100,ship:100,block:100,element:200,product:300,materialCode:100,reason:2000,action:2000,remark:2000};
 function objectInput(input) {if(!input||typeof input!=='object'||Array.isArray(input))fail('올바른 접수 정보가 필요합니다.');}
 function text(value, name, max, required=false) {
   if (typeof value !== 'string' || value.length > max || (required && !value.trim()) || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value)) fail(name+' 값을 확인하세요.');

@@ -2025,6 +2025,10 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
         </div>
         <div class="modal-body">
           <section class="as-intake-section" aria-labelledby="asIntakeMaterialTitle"><h4 id="asIntakeMaterialTitle">자재 정보</h4>
+          <div class="modal-field">
+            <label for="asRequestingCompany">요청 업체</label>
+            <input id="asRequestingCompany" name="requestingCompany" placeholder="요청 업체명 입력" maxlength="100" autocomplete="organization"/>
+          </div>
           <div class="modal-field as-intake-category">
             <label for="asCategory">구분 *</label>
             <select id="asCategory"><option value="사내">사내</option><option value="사외">사외</option><option value="기타">기타</option></select>
@@ -3180,6 +3184,7 @@ function _applyAsFilters() {
       list = list.filter(a =>
         (a.asNo||'').toLowerCase().includes(search) ||
         (a.materialCode||'').toLowerCase().includes(search) ||
+        (a.requestingCompany||'').toLowerCase().includes(search) ||
         (a.ship||'').toLowerCase().includes(search) ||
         (a.block||'').toLowerCase().includes(search) ||
         (a.element||'').toLowerCase().includes(search) ||
@@ -3564,6 +3569,7 @@ function openAsModal(item) {
   asEditingVersion=asRecordVersion(item);asEditingStatus=item?.status||'';
   document.getElementById('asModalTitle').textContent = item ? 'AS 수정' : 'AS 접수';
   document.getElementById('asCategory').value = item ? (item.category||'사내') : '사내';
+  document.getElementById('asRequestingCompany').value = item ? (item.requestingCompany||'') : '';
   document.getElementById('asShip').value = item ? (item.ship||'') : '';
   document.getElementById('asBlock').value = item ? (item.block||'') : '';
   document.getElementById('asElement').value = item ? (item.element||'') : '';
@@ -3693,6 +3699,7 @@ async function submitAs() {
   const fd = new FormData();
   fd.append('amount', amount===null?'':String(amount));
   fd.append('category', document.getElementById('asCategory').value);
+  fd.append('requestingCompany', document.getElementById('asRequestingCompany').value.trim());
   fd.append('ship', ship);
   fd.append('block', block);
   fd.append('element', document.getElementById('asElement').value.trim());
@@ -4377,6 +4384,6 @@ function asLedgerCancelRemark(){if(_asRemarkEditing?.saving)return;_asRemarkEdit
 <script src="/cover-assets/as-reason-motion.js?v=1"></script>
 <script src="/cover-assets/as-delta-motion.js?v=1"></script>
 <link rel="stylesheet" href="/cover-assets/as-intake-wizard.css?v=14">
-<script src="/cover-assets/as-intake-wizard.js?v=13"></script>
+<script src="/cover-assets/as-intake-wizard.js?v=15"></script>
 </body>
 </html>
