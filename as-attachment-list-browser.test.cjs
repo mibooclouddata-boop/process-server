@@ -10,6 +10,9 @@ test('attachment list preserves upload control and removes only selected files',
  await page.locator('#asFiles').setInputFiles([{name:'<img src=x>.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')},{name:'quote.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')}]);
  assert.equal(await page.locator('#asNewFiles .as-attachment-row').count(),2);
  assert.equal(await page.locator('#asNewFiles img').count(),0);
+ await page.locator('#asFiles').setInputFiles({name:'extra.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
+ assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['<img src=x>.pdf','quote.pdf','extra.pdf']);
+ await page.getByRole('button',{name:'extra.pdf 첨부 해제',exact:true}).click();
  await page.locator('#asNewFiles button').first().click();
  assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['quote.pdf']);
  await page.evaluate(()=>renderExistingFiles([{filename:'saved.pdf',name:'Saved.pdf',size:1024},{filename:'old.pdf',name:'Old.pdf'}]));
@@ -18,5 +21,29 @@ test('attachment list preserves upload control and removes only selected files',
  await page.getByRole('button',{name:'Saved.pdf 첨부 해제',exact:true}).click();
  assert.deepEqual(await page.evaluate(()=>asRemoveFiles),['saved.pdf']);
  await page.locator('#asNewFiles button').click();assert.equal(await page.locator('#asFiles').evaluate(el=>el.files.length),0);
+ await page.locator('#asFiles').setInputFiles({name:'fresh.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
+ assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['fresh.pdf']);
+ await page.evaluate(()=>{closeAsModal();openAsModal()});
+ await page.locator('#asFiles').setInputFiles({name:'new-session.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
+ assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['new-session.pdf']);
  assert.deepEqual(f.read('as.json').list,[]);
+ await page.locator('#asFiles').setInputFiles({name:'second.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
+ await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asIntakeNext').click();
+ await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asActionSelect').selectOption('현장 시수');await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
+ await page.locator('#asModal').waitFor({state:'hidden'});
+ assert.deepEqual(f.read('as.json').list[0].files.map(file=>file.name),['new-session.pdf','second.pdf']);
+ await page.evaluate(async()=>{await loadAsList();openAsModal(_asFullList[0]);});
+ await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
+ await page.locator('#asFiles').setInputFiles({name:'additional.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
+ const upload=await page.locator('#asFileUpload').boundingBox(),existing=await page.locator('#asExistingFiles').boundingBox(),selected=await page.locator('#asNewFiles').boundingBox();
+ assert(existing.y>=upload.y+upload.height,'saved attachments appear below upload control');
+ assert(selected.y>=existing.y+existing.height,'new attachments follow saved attachments');
+ const typography=await page.evaluate(()=>['#asNewFiles','#asExistingFiles'].map(id=>['.as-attachment-name','.as-attachment-info small','.as-attachment-remove'].map(selector=>{const s=getComputedStyle(document.querySelector(id+' '+selector));return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.color]})));
+ assert.deepEqual(typography[1],typography[0],'saved and newly selected files use identical typography');
+ await page.locator('#asFiles').setInputFiles({name:'첨부파일_자재내역서.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:Buffer.from('preview')});
+ for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
+  await page.setViewportSize(viewport);
+  const layout=await page.locator('#asNewFiles .as-attachment-row').last().evaluate(row=>{const el=row.querySelector('.as-attachment-type'),s=getComputedStyle(el);return {width:el.clientWidth,scrollWidth:el.scrollWidth,height:el.clientHeight,lineHeight:parseFloat(s.lineHeight)}});
+  assert(layout.height<=Math.ceil(layout.lineHeight),'XLSX label stays on one line');assert(layout.scrollWidth<=layout.width,'XLSX label fits without overflow');
+ }
 });
