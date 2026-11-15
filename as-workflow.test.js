@@ -107,8 +107,17 @@ test('dashboard syntax, document fields and HTML escaping',()=>{
  const html=fs.readFileSync(__dirname+'/dashboard.html','utf8');
  for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
  const context={document:{addEventListener(){},createElement:()=>({}),head:{appendChild(){}}}};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/as-workflow-ui.js','utf8'),context);
- const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',product:'<script>bad</script>',materialCode:'MAT-01',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
+ const printCss=context.getAsCssStr();assert.match(printCss,/@page\{size:A4 portrait;margin:0\}/);assert.match(printCss,/\.page,\.attach-page\{[^}]*padding:12mm 14mm 14mm/);
+ const doc=context.asJobDocument({...start(base()),asNo:'AS-TEST',category:'사외',product:'<script>bad</script>',materialCode:'MAT-01',requestingCompany:'요청 업체',reason:'수량 누락',reviewer:'검토자',approver:'승인자'});
  assert(doc.includes('결재선'));assert(doc.includes('MAT-01'));assert(doc.includes('info-table'));assert(doc.includes('as-doc-header'));assert(doc.includes('as-doc-approval'));assert(doc.includes('&lt;script&gt;'));assert(!doc.includes('<script>bad'));
+ const basicInfo=doc.slice(doc.indexOf('<section'),doc.indexOf('</section>')+10);
+ assert(basicInfo.includes('<h3>기본정보</h3>'));
+ assert(basicInfo.indexOf('사외')<basicInfo.indexOf('요청 업체'));
+ assert(basicInfo.indexOf('요청 업체')<basicInfo.indexOf('자재명'));
+ assert(basicInfo.indexOf('자재명')<basicInfo.indexOf('호선'));
+ assert(basicInfo.indexOf('호선')<basicInfo.indexOf('블록'));
+ assert(basicInfo.indexOf('블록')<basicInfo.indexOf('엘레멘트'));
+ assert(basicInfo.indexOf('엘레멘트')<basicInfo.indexOf('자재코드'));
  assert.equal((html.match(/<script src="\/as-workflow-ui\.js\?v=[^"\s]+"><\/script>/g)||[]).length,1);
 });
 // API persistence, validation, authorization and conflicts are exercised by as-integrity.test.cjs.
@@ -194,10 +203,11 @@ test('receipt groups its number and dates under the title and escapes text exact
  const doc=c.asJobDocument({asNo:'AS-TEST<&>',createdAt:'2026-10-14',deliveryAgreedDate:'2026-10-22',reason:'A & B <확인>',files:[{name:'검사 & 도면.pdf'}]});
  assert(doc.includes('2026.10.14'));assert(doc.includes('2026.10.22'));assert(doc.includes('A &amp; B &lt;확인&gt;'));assert(!doc.includes('&amp;amp;'));assert(doc.includes('검사 &amp; 도면.pdf'));assert(!doc.includes('처리 이력'));assert.equal((doc.match(/납품 협의일/g)||[]).length,1);
  const header=doc.slice(doc.indexOf('<header'),doc.indexOf('</header>'));
- assert(header.includes('A/S 접수서'));assert(header.includes('AS-TEST&lt;&amp;&gt;'));assert(header.includes('2026.10.14'));assert(header.includes('2026.10.22'));
- assert(header.indexOf('접수번호')<header.indexOf('접수일'));assert(header.indexOf('접수일')<header.indexOf('납품 협의일'));assert(header.indexOf('납품 협의일')<header.indexOf('as-doc-approval'));
+ assert(header.includes('A/S 접수서'));assert(header.includes('AS-TEST&lt;&amp;&gt;'));assert(header.includes('2026.10.14'));assert(!header.includes('2026.10.22'));
+ assert(header.indexOf('접수번호')<header.indexOf('접수일'));assert(header.indexOf('접수일')<header.indexOf('as-doc-approval'));
+ assert(doc.indexOf('후속조치')<doc.indexOf('납품 협의일'));
  assert(!doc.includes('MIBOO'));assert(!doc.includes('as-doc-dates'));assert(!doc.includes('도장 요청'));
- const empty=c.asJobDocument({});assert(empty.includes('<dt>접수번호</dt><dd>—</dd>'));assert(empty.includes('<dt>납품 협의일</dt><dd>미정</dd>'));assert(!empty.includes('as-doc-approval-stamp'));
+ const empty=c.asJobDocument({});assert(empty.includes('<dt>접수번호</dt><dd>—</dd>'));assert(empty.includes('<h3>납품 협의일</h3>'));assert(empty.includes('>미정</div>'));assert(!empty.includes('as-doc-approval-stamp'));
 });
 
 test('intake pagination shows 20 records per page and handles the final partial page',()=>{

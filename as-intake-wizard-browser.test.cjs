@@ -25,6 +25,8 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  assert.equal(await page.locator('#asIntakeSteps').isVisible(),true,JSON.stringify(errors));
  assert.equal(await page.locator('#asRequestingCompany').isVisible(),true);
  assert.equal(await page.locator('[data-intake-panel="0"]> :first-child input').getAttribute('id'),'asRequestingCompany');
+ assert.equal(await page.locator('label[for="asShip"] small,label[for="asBlock"] small').count(),0);
+ assert.equal(await page.locator('#asShip').getAttribute('aria-required'),'true');assert.equal(await page.locator('#asBlock').getAttribute('aria-required'),'true');
  assert.equal(await page.getByText('AS를 요청한 업체를 입력해 주세요.',{exact:true}).count(),0);
  assert.equal(await page.locator('#asRequesterLayouts').count(),0);
  await page.locator('#asRequestingCompany').fill('테스트 요청 업체');
