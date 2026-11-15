@@ -37,7 +37,7 @@
  byId('asRemark').placeholder='불량 상태, 수량, 현장 요청사항 등을 입력하세요';
  for(const id of ['asShip','asBlock']){
   const label=field(id).querySelector('label');label.textContent=label.textContent.replace(/\s*\*$/,'');
-  const required=document.createElement('small');required.textContent='필수';label.append(required);byId(id).setAttribute('aria-required','true');
+  byId(id).setAttribute('aria-required','true');
  }
  const actionRow=document.createElement('div');actionRow.className='modal-row as-wizard-action-row';actionRow.append(field('asActionSelect'),field('asDeliveryAgreedDate'));
  panels[1].append(field('asReasonSelect'),actionRow,field('asRemark'));
