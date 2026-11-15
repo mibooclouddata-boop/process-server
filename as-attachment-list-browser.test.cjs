@@ -5,7 +5,7 @@ test('attachment list preserves upload control and removes only selected files',
  browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});const context=await browser.newContext({viewport:{width:1440,height:1000}});
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  const page=await context.newPage();await page.goto(f.url+'/dashboard.html#as-list');await page.waitForFunction(()=>typeof currentUser!=='undefined'&&currentUser?.id==='admin');
- await page.evaluate(()=>openAsModal());await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asIntakeNext').click();await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asIntakeNext').click();
+ await page.evaluate(()=>openAsModal());await page.locator('#asRequestingCompany').fill('Test company');await page.locator('#asProduct').fill('Test material');await page.locator('#asMaterialCode').fill('TEST-01');await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asElement').fill('E-01');await page.locator('#asIntakeNext').click();await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asActionSelect').selectOption('현장 시수');await page.locator('#asIntakeNext').click();
  assert.match(await page.locator('#asFileUpload').textContent(),/파일 업로드.*파일당 최대 20MB · 최대 10개/);
  await page.locator('#asFiles').setInputFiles([{name:'<img src=x>.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')},{name:'quote.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')}]);
  assert.equal(await page.locator('#asNewFiles .as-attachment-row').count(),2);
@@ -28,7 +28,7 @@ test('attachment list preserves upload control and removes only selected files',
  assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['new-session.pdf']);
  assert.deepEqual(f.read('as.json').list,[]);
  await page.locator('#asFiles').setInputFiles({name:'second.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')});
- await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asIntakeNext').click();
+ await page.locator('#asRequestingCompany').fill('Test company');await page.locator('#asProduct').fill('Test material');await page.locator('#asMaterialCode').fill('TEST-01');await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asElement').fill('E-01');await page.locator('#asIntakeNext').click();
  await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asActionSelect').selectOption('현장 시수');await page.locator('#asIntakeNext').click();await page.locator('#asIntakeNext').click();
  await page.locator('#asModal').waitFor({state:'hidden'});
  assert.deepEqual(f.read('as.json').list[0].files.map(file=>file.name),['new-session.pdf','second.pdf']);
@@ -47,3 +47,4 @@ test('attachment list preserves upload control and removes only selected files',
   assert(layout.height<=Math.ceil(layout.lineHeight),'XLSX label stays on one line');assert(layout.scrollWidth<=layout.width,'XLSX label fits without overflow');
  }
 });
+
