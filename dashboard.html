@@ -709,7 +709,7 @@ tbody tr:hover td{background:var(--surface-muted)}
 #tabAs #asSubList .as-erp-table tbody tr{height:52px}
 #tabAs #asSubList .as-erp-table tbody td{padding:10px 12px!important}
 #tabAs #asSubList .as-erp-table tbody tr.as-empty-row{height:180px}
-#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(2),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(11),#tabAs #asSubList .as-erp-table tbody td:nth-child(2),#tabAs #asSubList .as-erp-table tbody td:nth-child(11){border-right:2px solid #d0d4d8!important}
+#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(2),#tabAs #asSubList .as-erp-table .as-column-header th:nth-child(12),#tabAs #asSubList .as-erp-table tbody td:nth-child(2),#tabAs #asSubList .as-erp-table tbody td:nth-child(12){border-right:2px solid #d0d4d8!important}
 
 /* AS intake dialog readability and centered date values. */
 #tabAs #asSubList .toss-date-btn{text-align:center}
@@ -1217,7 +1217,7 @@ body.as-ledger-active .sidebar .tab{font-size:13px;min-height:36px;padding:8px 1
 #tabAs #asSubList .as-erp-table tbody td.as-files-cell{padding:2px!important;text-overflow:clip}
 #tabAs #asSubList .as-files-cell .as-file-badge{min-width:0;max-width:100%;padding:4px;white-space:nowrap;font:inherit;letter-spacing:inherit;color:inherit}
 #tabAs #asSubList .as-erp-table tbody td:nth-child(4){font-weight:var(--ledger-body-weight)!important;color:var(--ledger-text)!important}
-#tabAs #asSubList .as-erp-table tbody td:nth-child(8){font-weight:var(--ledger-body-weight)!important}
+#tabAs #asSubList .as-erp-table tbody td:nth-child(9){font-weight:var(--ledger-body-weight)!important}
 #tabAs #asSubList .as-erp-table .as-status-text{display:block;font-family:inherit!important;font-size:inherit!important;font-weight:inherit!important;line-height:inherit!important}
 #tabAs #asSubList .as-erp-table .as-job-due,#tabAs #asSubList .as-erp-table .as-job-due b{font:inherit}
 #tabAs #asSubList .as-erp-table tbody tr:hover td{background:var(--ledger-hover)!important}
@@ -1901,7 +1901,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
       <div class="as-table-card">
         <div class="as-ledger-scroll" tabindex="0" role="region" aria-label="AS 접수목록, 가로 스크롤 가능">
           <table class="as-erp-table">
-            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+            <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
             <thead>
               <tr class="as-column-header">
                 <th class="no-sort" style="width:36px;min-width:36px;text-align:center"><input type="checkbox" aria-label="현재 페이지 모두 선택" onchange="toggleAsSelectAll(this)" style="accent-color:var(--brand);cursor:pointer"/></th>
@@ -1911,6 +1911,7 @@ body #asSubStats .as-reason-heat-cell[data-future=true]{font-weight:500}
                 <th data-col="createdAt" onclick="sortAsTable('createdAt')">접수일</th>
                 <th data-col="deliveryAgreedDate" onclick="sortAsTable('deliveryAgreedDate')">납품 협의일</th>
                 <th class="no-sort">납기 잔여일</th>
+                <th data-col="requestingCompany" onclick="sortAsTable('requestingCompany')">요청 업체</th>
                 <th data-col="ship" onclick="sortAsTable('ship')">호선</th>
                 <th data-col="block" onclick="sortAsTable('block')">블록</th>
                 <th data-col="element" onclick="sortAsTable('element')">엘레멘트</th>
@@ -2386,6 +2387,7 @@ const AS_DD_CONFIG = {
   asStatsYearPicker: { source:'asStatsYear', get options(){return [...document.getElementById('asStatsYear').options].map(o=>({value:o.value,label:o.textContent}));}, change(){document.getElementById('asStatsYear').dispatchEvent(new Event('change',{bubbles:true}));} },
   asSearchField: { apply:true, options:[
     {value:'all',     label:'전체 항목'},
+    {value:'requestingCompany', label:'요청 업체'},
     {value:'ship',    label:'호선'},
     {value:'block',   label:'블록'},
     {value:'element', label:'엘레멘트'},
@@ -3142,7 +3144,7 @@ let _asListRequest = 0;
 async function loadAsList() {
   if (_asRemarkEditing) return;
   const request=++_asListRequest;
-  document.getElementById('asTableBody').innerHTML='<tr><td colspan="17"><div class="as-empty" role="status">접수목록을 불러오고 있습니다.</div></td></tr>';
+  document.getElementById('asTableBody').innerHTML='<tr><td colspan="18"><div class="as-empty" role="status">접수목록을 불러오고 있습니다.</div></td></tr>';
   document.getElementById('asPagination').style.display='none';
   document.getElementById('asLedgerCount').textContent='조회 중';
   _updateAsSelectedCount();
@@ -3157,7 +3159,7 @@ async function loadAsList() {
   } catch(e) {
     if(request!==_asListRequest)return;
     document.getElementById('asTableBody').innerHTML =
-      '<tr><td colspan="17"><div class="as-empty" role="alert"><p>접수목록을 불러오지 못했습니다.</p><button type="button" class="as-tb-btn" onclick="loadAsList()">다시 조회</button></div></td></tr>';
+      '<tr><td colspan="18"><div class="as-empty" role="alert"><p>접수목록을 불러오지 못했습니다.</p><button type="button" class="as-tb-btn" onclick="loadAsList()">다시 조회</button></div></td></tr>';
     document.getElementById('asLedgerCount').textContent='조회 오류';
   }
 }
@@ -3258,7 +3260,7 @@ function _renderAsPage() {
   _updateAsSelectedCount();
 
   if (!total) {
-    tbody.innerHTML = '<tr class="as-ledger-no-results"><td colspan="17">조건에 맞는 접수 내역이 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr class="as-ledger-no-results"><td colspan="18">조건에 맞는 접수 내역이 없습니다.</td></tr>';
     document.getElementById('asPagination').style.display = 'none';
     _initAsColResizers();
     _updateAsSelectedCount();
@@ -3291,6 +3293,7 @@ function _renderAsPage() {
       <td><span class="as-text-muted">${escapeHtml(dateStr)}</span></td>
       <td><span class="as-text-muted" style="white-space:nowrap">${asJobEsc(a.deliveryAgreedDate||'미정')}</span></td>
       <td class="as-deadline-cell">${asWorkflowDelayHtml(a,false)}</td>
+      <td class="as-requesting-company-cell" title="${escapeHtml(a.requestingCompany||'')}">${escapeHtml(a.requestingCompany||'—')}</td>
       <td style="font-weight:700;font-size:12px;color:#0f172a">${escapeHtml(a.ship||'—')}</td>
       <td style="font-size:12px;color:#475569">${escapeHtml(a.block||'—')}</td>
       <td style="font-size:12px;color:#94a3b8">${escapeHtml(a.element||'—')}</td>
@@ -3440,9 +3443,9 @@ function exportAsExcel() {
   const selectedIds = new Set(Array.from(document.querySelectorAll('#asTableBody tr.selected'), row => row.dataset.id));
   const list = selectedIds.size ? _asFiltered.filter(item => selectedIds.has(String(item.id))) : _asFiltered;
   if (!list.length) { alert('내보낼 데이터가 없습니다.'); return; }
-  const cols = ['접수번호','접수일','구분','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','금액 (원)','비고'];
+  const cols = ['접수번호','접수일','구분','요청 업체','호선','블록','엘레멘트','제품명','사유','후속조치','진행현황','접수자','금액 (원)','비고'];
   const rows = list.map(a => [
-    a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.ship||'', a.block||'', a.element||'', a.product||'',
+    a.asNo||'', (a.createdAt||'').slice(0,10), a.category||'사내', a.requestingCompany||'', a.ship||'', a.block||'', a.element||'', a.product||'',
     normalizeAsReason(a.reason), a.action||'', a.status||'', a.createdBy||'', AsAmount.read(a.amount)??'', a.remark||''
   ].map(value => String(value).replace(/\r\n?|\n|\t/g, ' ')));
   // Excel's HTML importer needs explicit column widths; browser auto-layout is not retained.
@@ -3456,7 +3459,7 @@ function exportAsExcel() {
     widths[column] = Math.max(widths[column], textWidth(value) + 24);
   }));
   const escapeCell = value => String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const cellAlign = column => column === 11 ? 'right' : [2,4,5].includes(column) ? 'center' : 'left';
+  const cellAlign = column => column === 12 ? 'right' : [2,5,6].includes(column) ? 'center' : 'left';
   const htmlExport = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><style>table{border-collapse:collapse;table-layout:fixed}td,th{border:1px solid #a9b1b8;padding:3px 10px;font-family:"돋움",Dotum,sans-serif;font-size:10.5pt;font-weight:400;color:#222c35;vertical-align:middle;white-space:nowrap;word-wrap:normal;overflow-wrap:normal}tr{mso-height-source:auto}th{background:#e4e6e8;color:#20262d;border-bottom:1px solid #808993;vertical-align:middle;font-weight:700}</style></head><body><table>'
     + '<colgroup>' + widths.map(width => '<col width="' + width + '" style="width:' + (width * .75) + 'pt;mso-width-source:userset">').join('') + '</colgroup>'
     + '<tr height="39" style="height:29.25pt;mso-height-source:userset">' + cols.map((c, i) => '<th bgcolor="#e4e6e8" width="' + widths[i] + '" align="' + cellAlign(i) + '" valign="middle" style="text-align:' + cellAlign(i) + ';vertical-align:middle;font-weight:700;background-color:#e4e6e8;color:#20262d;border-bottom:1px solid #808993"><b>' + escapeCell(c) + '</b></th>').join('') + '</tr>'
@@ -4325,19 +4328,19 @@ function asLedgerLayoutColumns(){
  const viewport=table?.parentElement;
  if(!table||!viewport.clientWidth)return;
  const heads=[...table.querySelectorAll('.as-column-header th')],cols=[...table.querySelectorAll('colgroup col')];
- const minimum=[36,60,104,136,122,122,110,76,88,108,180,120,150,58,96,128,120];
- if(_asRemarkEditing)minimum[16]=260;
+ const minimum=[36,60,104,136,122,122,110,140,76,88,108,180,120,150,58,96,128,120];
+ if(_asRemarkEditing)minimum[17]=260;
  const desired=[...minimum],measure=document.createElement('canvas').getContext('2d');
  measure.font='600 15px '+getComputedStyle(document.getElementById('asSubList')).fontFamily;
- const fields=['','','status','asNo','createdAt','deliveryAgreedDate','','ship','block','element','product','reason','action','','createdBy','amount','remark'];
+ const fields=['','','status','asNo','createdAt','deliveryAgreedDate','','requestingCompany','ship','block','element','product','reason','action','','createdBy','amount','remark'];
  for(const item of _asFullList.slice(0,200))fields.forEach((field,i)=>{
   if(!field)return;
   let value=field==='amount'?AsAmount.format(item.amount):String(item[field]||'');if(field==='createdAt')value=value.slice(0,10);
-  desired[i]=Math.max(desired[i],Math.min(i>=10?240:200,Math.ceil(measure.measureText(value).width)+24));
+  desired[i]=Math.max(desired[i],Math.min(i>=11?240:200,Math.ceil(measure.measureText(value).width)+24));
  });
  const totalMinimum=minimum.reduce((a,b)=>a+b,0),totalDesired=desired.reduce((a,b)=>a+b,0);
  const available=Math.max(totalMinimum,viewport.clientWidth);
- const flexible=[10,11,12,16];
+ const flexible=[7,11,12,13,17];
  const widths=desired.map((width,i)=>totalDesired>available
   ?minimum[i]+(width-minimum[i])*(available-totalMinimum)/Math.max(1,totalDesired-totalMinimum)
   :width+(flexible.includes(i)?(available-totalDesired)/flexible.length:0));

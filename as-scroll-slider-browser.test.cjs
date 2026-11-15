@@ -9,9 +9,10 @@ test('mini slider tracks horizontal scrolling and keyboard input without changin
  await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
  await page.route('**/*',r=>r.request().url().startsWith(f.url)?r.continue():r.abort());
  await page.goto(f.url+'/dashboard.html');await page.locator('#asStatsContent').waitFor({state:'visible'});
- await page.locator('#asSubmenu [data-sub=list]').click();
+ await page.getByRole('button',{name:'AS 관리',exact:true}).click();
+ await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();
  const viewport=page.locator('#asSubList .as-ledger-scroll'),slider=page.getByRole('slider',{name:'목록 가로 스크롤 위치'});
- await expect(slider).toBeVisible();assert.equal(await page.locator('.as-column-header th:visible').count(),17);
+ await expect(slider).toBeVisible();assert.equal(await page.locator('.as-column-header th:visible').count(),18);
  const width=await page.locator('.as-erp-table').evaluate(e=>e.getBoundingClientRect().width);
  await slider.fill('200');assert.equal(await viewport.evaluate(e=>e.scrollLeft),200);
  await expect(viewport).toHaveClass(/is-scrolling-horizontal/);
@@ -33,6 +34,8 @@ test('mini slider tracks horizontal scrolling and keyboard input without changin
  await page.setViewportSize({width:375,height:844});await expect(slider).toBeVisible();
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.setViewportSize({width:1440,height:1000});
- await page.locator('#asSubmenu [data-sub=stats]').click();await expect(slider).toBeHidden();
- await page.locator('#asSubmenu [data-sub=list]').click();await expect(slider).toBeVisible();
+ await page.getByRole('button',{name:'AS 관리',exact:true}).click();
+ await page.getByRole('menuitemradio',{name:'접수 현황',exact:true}).click();await expect(slider).toBeHidden();
+ await page.getByRole('button',{name:'AS 관리',exact:true}).click();
+ await page.getByRole('menuitem',{name:'AS 목록',exact:true}).click();await expect(slider).toBeVisible();
 });
