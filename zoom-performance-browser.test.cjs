@@ -21,7 +21,7 @@ test('AS list coalesces resize bursts, skips unchanged dimensions and recalculat
  await page.evaluate(()=>{measures=0;for(let i=0;i<12;i++)dispatchEvent(new Event('resize'));});await settle();
  assert.equal(await page.evaluate(()=>measures),0,'Unchanged dimensions must not remeasure 200 records');
  await page.evaluate(()=>{measures=0;document.querySelector('#asSubList .as-ledger-scroll').style.width='calc(100% - 8px)';for(let i=0;i<12;i++)dispatchEvent(new Event('resize'));});await settle();
- assert.equal(await page.evaluate(()=>measures),2600,'Resize events and observer must share one 200-record measurement');
+ assert.equal(await page.evaluate(()=>measures),2800,'Resize events and observer must share one 200-record measurement across all 14 measured columns');
  const width=await page.locator('#asSubList .as-erp-table').evaluate(el=>el.style.width);assert(parseFloat(width)>1000);
  await page.evaluate(()=>{measures=0;_asFullList[0].ship='새 데이터 반영';_renderAsPage();});await settle();assert(await page.evaluate(()=>measures)>0,'Data refresh must still lay out the table at the same viewport size');
 });

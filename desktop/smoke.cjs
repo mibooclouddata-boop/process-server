@@ -163,11 +163,16 @@ async function freePort() {
     assert.equal(await controls.evaluate(()=>window.__TAURI_INTERNALS__.invoke('plugin:window|is_maximized',{label:'main'})),false,'Refresh must preserve a manually restored workspace window');
     console.log('Restored viewport', await page.evaluate(() => ({width:innerWidth,height:innerHeight,clip:getComputedStyle(document.documentElement).clipPath})), 'original', originalViewport);
     await page.evaluate(() => openAsModal());
+    await page.locator('#asRequestingCompany').fill('Desktop smoke company');
+    await page.locator('#asProduct').fill('Desktop smoke material');
+    await page.locator('#asMaterialCode').fill('DESKTOP-SMOKE-001');
     await page.locator('#asShip').fill('DESKTOP TEST');
     await page.locator('#asBlock').fill('B01');
+    await page.locator('#asElement').fill('E01');
     await page.locator('#asIntakeNext').click();
     await page.locator('#asReasonSelect').selectOption('기타');
     await page.locator('#asReason').fill('Tauri verification');
+    await page.locator('#asActionSelect').selectOption({index:2});
     await page.locator('#asIntakeNext').click();
     await page.locator('#asFiles').setInputFiles({name:'desktop.txt',mimeType:'text/plain',buffer:Buffer.from('desktop attachment')});
     await page.locator('#asModal button[onclick="submitAs()"]' ).click();
