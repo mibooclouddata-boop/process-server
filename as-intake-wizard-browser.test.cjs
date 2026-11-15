@@ -52,6 +52,9 @@ test('real AS intake wizard validates, preserves drafts, and saves on-site work 
  const shots=path.join(__dirname,'.artifacts','as-intake-live');fs.mkdirSync(shots,{recursive:true});
  await page.screenshot({path:path.join(shots,'step-1.png')});
  await page.getByRole('radio',{name:'사외',exact:true}).check();
+ await page.locator('#asProduct').fill('테스트 자재');
+ await page.locator('#asMaterialCode').fill('TEST-01');
+ await page.locator('#asElement').fill('E-01');
  await page.locator('#asIntakeNext').click();
  assert.equal(await page.locator('#asShip').getAttribute('aria-invalid'),'true');
  await page.locator('#asShip').fill('LIVE-FIXTURE');await page.locator('#asBlock').fill('B-101');
