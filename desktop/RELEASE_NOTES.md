@@ -1,22 +1,11 @@
-﻿MIPS 0.3.5 - local-test prerelease
+MIPS 0.3.6 - local-test prerelease
 
-Includes merged PRs #144-#148 since desktop-v0.3.3. Feature baseline: 0fd8aa5 (main after PR #148). The final release tag commit and installer SHA256 must be recorded at publication. desktop-v0.3.4 remains an unpublished immutable tag: its signed build passed, but its Windows CI fixture failed on 8.3 temporary paths. This release normalizes fixture paths before registry/shortcut setup.
+This release advances the desktop app version so installations on the existing desktop test channel receive the mandatory update prompt on their next app start.
 
-Desktop changes:
-- Start the application maximized and fill the display.
-- Save AS Excel exports through the native Windows Save As dialog, retaining selected rows and ledger formatting. Cancellation, duplicate clicks and failures are handled explicitly.
-- Reduce idle login animation work and coalesce AS list layout updates when zooming/resizing (PR #148).
+The desktop app is a wrapper that connects to the ERP server at http://127.0.0.1:3000/. ERP screens and AS workflow changes are served separately and are not included in this desktop installer. The merged server source release v1.1.0 must be deployed to the appropriate ERP server for those changes to appear.
 
-Matching ERP server changes:
-- Replace the AS attachment selector with a 180px upload area, centered upload icon and Korean label, and the 20MB-per-file / 10-files-per-request hint.
-- Remove the Previous button; use the numbered steps to revisit earlier form sections.
+Desktop changes: version and update-channel refresh only. No desktop UI or database changes.
 
-Installer migration: verified per-user Process ERP registrations and owned desktop/start-menu shortcuts are migrated to MIPS, including installations where both names exist. Existing taskbar link targets, icons and descriptions are updated in place. Only the two known legacy managed files are removed; settings and other files remain. Conflicting shortcuts or locked legacy files defer cleanup instead of removing unrelated files.
+Validation and publication details, including the exact tag commit and installer SHA256, are recorded after the signed CI build. Database changes: none. ERP data and attachments are stored on the server and are not packaged or overwritten.
 
-Migration scope: standard per-user shortcuts are covered. A pinned shortcut retains its existing filename to preserve the pin; Windows may retain a cached label. Custom renamed shortcuts are not rewritten. Native fixture checks use silent update installation with an explicit destination; a live upgrade/relaunch from the user's 0.3.2 process is not part of that fixture verification.
-
-Connects to http://127.0.0.1:3000/ on the same PC. Server files are separate and are not deployed by installing this app. No production deployment is included.
-
-Validation: the 0.3.4 baseline passed desktop checks 17/17, AS workflow checks 19/19, AS intake and Excel selection browser checks, signed Windows build and actual WebView2 smoke (maximized launch, update gate, zoom, Excel bridge, login, attachments, preview and logout). This follow-up reruns desktop checks including zoom performance and the seven native installer cases under a short TEMP alias. The fixture rejects installation outside its designated directory and checks repeated updates and preservation of user files. Final CI outcomes and publication hashes are recorded before release.
-Database changes: none. ERP data and attachments are not packaged or overwritten.
-Recovery: retain earlier immutable installers. Restore the previous test-channel manifest to stop further upgrades. Already upgraded apps require manual reinstall or a higher-version corrective release. App rollback does not restore server data.
+Recovery: restore the previous test-channel manifest to stop further upgrades. Already upgraded apps require manual reinstall or a higher-version corrective release. App rollback does not restore server data.
