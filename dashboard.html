@@ -3472,11 +3472,27 @@ function exportAsExcel() {
 
 let asRemoveFiles = [];
 
+function asAttachmentRow(file, openFile, removeFile) {
+  const row=document.createElement('span');row.className='as-existing-file as-attachment-row';
+  const type=document.createElement('span');type.className='as-attachment-type';type.textContent=(file.name.split('.').pop()||'FILE').slice(0,6).toUpperCase();type.setAttribute('aria-hidden','true');
+  const info=document.createElement('span');info.className='as-attachment-info';
+  const name=document.createElement(openFile?'button':'span');name.className='as-attachment-name';name.textContent=file.name;
+  if(openFile){name.type='button';name.addEventListener('click',openFile);}
+  info.append(name);
+  if(Number.isFinite(file.size)&&file.size>=0){const size=document.createElement('small');size.textContent=file.size>=1048576?(file.size/1048576).toFixed(1)+' MB':(file.size/1024).toFixed(1)+' KB';info.append(size);}
+  const remove=document.createElement('button');remove.type='button';remove.className='as-attachment-remove';remove.textContent='×';remove.setAttribute('aria-label',file.name+' 첨부 해제');remove.addEventListener('click',()=>{if(!asSaving)removeFile(remove);});
+  row.append(type,info,remove);return row;
+}
+
 function renderAsFilePreview() {
   const input = document.getElementById('asFiles');
   const wrap = document.getElementById('asNewFiles');
   wrap.replaceChildren();
-  for(const file of input.files){const chip=document.createElement('span');chip.className='as-existing-file';chip.style.cssText='display:inline-flex;padding:4px 10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:11px;color:#166534;margin:0 4px 4px 0';chip.textContent=file.name;wrap.append(chip);}
+  Array.from(input.files).forEach((file,index)=>wrap.append(asAttachmentRow(file,null,()=>{
+    const remaining=new DataTransfer();Array.from(input.files).forEach((item,i)=>{if(i!==index)remaining.items.add(item);});
+    input.files=remaining.files;renderAsFilePreview();document.querySelector('#asNewFiles .as-attachment-remove')?.focus();
+    if(!input.files.length)document.getElementById('asFileUpload').focus();
+  })));
 }
 
 function renderExistingFiles(files) {
@@ -3484,12 +3500,7 @@ function renderExistingFiles(files) {
   asRemoveFiles = [];
   wrap.replaceChildren();
   for(const file of files||[]){
-    const chip=document.createElement('span');chip.className='as-existing-file';chip.dataset.fn=file.filename;
-    chip.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;margin:0 4px 4px 0';
-    const open=document.createElement('button');open.type='button';open.textContent=file.name;open.addEventListener('click',()=>openFileViewer(file.filename,file.name));
-    const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label',file.name+' 첨부 해제');remove.addEventListener('click',()=>removeExistingFile(remove,file.filename));
-    for(const button of [open,remove])button.style.cssText='border:0;background:none;color:#475569;font:inherit;padding:0 2px;cursor:pointer';
-    chip.append(open,remove);wrap.append(chip);
+    const row=asAttachmentRow(file,()=>openFileViewer(file.filename,file.name),button=>removeExistingFile(button,file.filename));row.dataset.fn=file.filename;wrap.append(row);
   }
 }
 
@@ -4383,7 +4394,7 @@ function asLedgerCancelRemark(){if(_asRemarkEditing?.saving)return;_asRemarkEdit
 <script src="/cover-assets/as-trend-number-motion.js?v=2"></script>
 <script src="/cover-assets/as-reason-motion.js?v=1"></script>
 <script src="/cover-assets/as-delta-motion.js?v=1"></script>
-<link rel="stylesheet" href="/cover-assets/as-intake-wizard.css?v=14">
+<link rel="stylesheet" href="/cover-assets/as-intake-wizard.css?v=15">
 <script src="/cover-assets/as-intake-wizard.js?v=15"></script>
 </body>
 </html>

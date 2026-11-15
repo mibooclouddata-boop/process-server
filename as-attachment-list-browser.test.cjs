@@ -1,0 +1,22 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {chromium}=require('playwright'),{startFixture}=require('./test-support/as-fixture.cjs');
+test('attachment list preserves upload control and removes only selected files',async t=>{
+ const f=await startFixture();let browser;t.after(async()=>{await browser?.close();await f.close()});
+ browser=await chromium.launch({headless:true,...(process.platform==='win32'?{channel:'msedge'}:{})});const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ await context.request.post(f.url+'/api/login',{headers:{'X-Requested-With':'process-server'},data:{id:'admin',password:'Fixture-passphrase-2026!'}});
+ const page=await context.newPage();await page.goto(f.url+'/dashboard.html#as-list');await page.waitForFunction(()=>typeof currentUser!=='undefined'&&currentUser?.id==='admin');
+ await page.evaluate(()=>openAsModal());await page.locator('#asShip').fill('TEST');await page.locator('#asBlock').fill('101');await page.locator('#asIntakeNext').click();await page.locator('#asReasonSelect').selectOption({index:1});await page.locator('#asIntakeNext').click();
+ assert.match(await page.locator('#asFileUpload').textContent(),/파일 업로드.*파일당 최대 20MB · 최대 10개/);
+ await page.locator('#asFiles').setInputFiles([{name:'<img src=x>.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')},{name:'quote.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n')}]);
+ assert.equal(await page.locator('#asNewFiles .as-attachment-row').count(),2);
+ assert.equal(await page.locator('#asNewFiles img').count(),0);
+ await page.locator('#asNewFiles button').first().click();
+ assert.deepEqual(await page.locator('#asFiles').evaluate(el=>Array.from(el.files,f=>f.name)),['quote.pdf']);
+ await page.evaluate(()=>renderExistingFiles([{filename:'saved.pdf',name:'Saved.pdf',size:1024},{filename:'old.pdf',name:'Old.pdf'}]));
+ assert.equal(await page.locator('#asExistingFiles .as-attachment-row').count(),2);
+ assert.match(await page.locator('#asExistingFiles').textContent(),/1.0 KB/);
+ await page.getByRole('button',{name:'Saved.pdf 첨부 해제',exact:true}).click();
+ assert.deepEqual(await page.evaluate(()=>asRemoveFiles),['saved.pdf']);
+ await page.locator('#asNewFiles button').click();assert.equal(await page.locator('#asFiles').evaluate(el=>el.files.length),0);
+ assert.deepEqual(f.read('as.json').list,[]);
+});
