@@ -39,6 +39,7 @@
   const label=field(id).querySelector('label');label.textContent=label.textContent.replace(/\s*\*$/,'');
   byId(id).setAttribute('aria-required','true');
  }
+ for(const id of ['asRequestingCompany','asProduct','asMaterialCode','asElement','asReasonSelect','asActionSelect'])byId(id).setAttribute('aria-required','true');
  const actionRow=document.createElement('div');actionRow.className='modal-row as-wizard-action-row';actionRow.append(field('asActionSelect'),field('asDeliveryAgreedDate'));
  panels[1].append(field('asReasonSelect'),actionRow,field('asRemark'));
  const attachments=field('asFiles');panels[2].append(field('asAmount'),attachments);
@@ -76,18 +77,20 @@
   submit.textContent=['다음','다음','저장'][step];body.scrollTop=0;
   if(focus)byId('asIntakeHeading').focus({preventScroll:true});
  }
- function invalid(id,text){const input=byId(id);input.setAttribute('aria-invalid','true');message.className='modal-msg error';message.textContent=text;input.focus();return false;}
+ function invalid(id,text){
+  const input=byId(id);
+  input.removeAttribute('aria-invalid');void input.offsetWidth;input.setAttribute('aria-invalid','true');
+  message.className='modal-msg error as-field-feedback';message.textContent=text;input.focus();return false;
+ }
  function validate(){
   if(step===0){
-   if(!['사내','사외','기타'].includes(category.value))return invalid('asShip','구분을 선택하세요.');
-   if(!byId('asShip').value.trim())return invalid('asShip','호선을 입력하세요.');
-   if(!byId('asBlock').value.trim())return invalid('asBlock','블록을 입력하세요.');
+   for(const [id,label] of [['asRequestingCompany','요청 업체'],['asProduct','자재명'],['asMaterialCode','자재코드'],['asShip','호선'],['asBlock','블록'],['asElement','엘레멘탈']])if(!byId(id).value.trim())return invalid(id,`${label}을(를) 입력하세요.`);
   }
   if(step===1){
    if(!byId('asReasonSelect').value)return invalid('asReasonSelect','사유를 선택하세요.');
+   if(!byId('asActionSelect').value)return invalid('asActionSelect','처리 방법을 선택하세요.');
    if(byId('asReasonSelect').value==='기타'&&!byId('asReason').value.trim())return invalid('asReason','기타 사유를 입력하세요.');
    if(byId('asActionSelect').value==='기타'&&!byId('asAction').value.trim())return invalid('asAction','기타 후속조치를 입력하세요.');
-   if(!byId('asDeliveryAgreedDate').checkValidity())return invalid('asDeliveryAgreedDate','납품 협의일을 올바르게 입력하세요.');
   }
   return true;
  }
