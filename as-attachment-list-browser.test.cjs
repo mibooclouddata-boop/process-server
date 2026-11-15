@@ -47,4 +47,3 @@ test('attachment list preserves upload control and removes only selected files',
   assert(layout.height<=Math.ceil(layout.lineHeight),'XLSX label stays on one line');assert(layout.scrollWidth<=layout.width,'XLSX label fits without overflow');
  }
 });
-
